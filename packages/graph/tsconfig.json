@@ -1,0 +1,17 @@
+{
+  "extends": "../tsconfig-common.json",
+  "compilerOptions": {
+    "outDir": "./dist",
+    "rootDir": "src",
+    "composite": true,
+    "declaration": true,
+    "declarationMap": true
+  },
+  "include": ["./src"],
+  "exclude": ["./src/test/**", "./src/**/*.test.ts", "./src/**/*.spec.ts"],
+  "references": [
+    {
+      "path": "../text-search"
+    }
+  ]
+}

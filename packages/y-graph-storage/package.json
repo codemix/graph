@@ -1,0 +1,32 @@
+{
+  "name": "@codemix/y-graph-storage",
+  "version": "0.0.1",
+  "description": "A YJS storage adapter for the codemix graph database.",
+  "type": "module",
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      }
+    }
+  },
+  "types": "./dist/index.d.ts",
+  "license": "MIT",
+  "scripts": {
+    "build": "tsc",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest"
+  },
+  "devDependencies": {
+    "@vitest/coverage-istanbul": "catalog:",
+    "typescript": "catalog:",
+    "vitest": "catalog:"
+  },
+  "dependencies": {
+    "@codemix/graph": "workspace:*",
+    "yjs": "catalog:",
+    "zod": "catalog:",
+    "zen-observable-ts": "catalog:"
+  }
+}

@@ -1,0 +1,33 @@
+{
+  "name": "@codemix/graph",
+  "version": "0.0.1",
+  "description": "The codemix graph database.",
+  "type": "module",
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      }
+    }
+  },
+  "types": "./dist/index.d.ts",
+  "license": "MIT",
+  "scripts": {
+    "build": "pnpm run build:grammar && tsc",
+    "build:grammar": "peggy --format es src/grammar.peggy -o src/grammar.js --dts --return-types '{\"MultiStatement\": \"import('\\''./AST.js'\\'').Query | import('\\''./AST.js'\\'').UnionQuery | import('\\''./AST.js'\\'').MultiStatement\", \"CypherStatement\": \"import('\\''./AST.js'\\'').Query | import('\\''./AST.js'\\'').UnionQuery\"}' && mkdir -p dist && cp src/grammar.* dist",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest",
+    "test:coverage": "vitest run --coverage"
+  },
+  "devDependencies": {
+    "@vitest/coverage-istanbul": "catalog:",
+    "vitest": "catalog:",
+    "typescript": "catalog:",
+    "peggy": "^5.1.0"
+  },
+  "dependencies": {
+    "@codemix/text-search": "workspace:*",
+    "@standard-schema/spec": "^1.1.0"
+  }
+}
