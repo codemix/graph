@@ -1,6 +1,6 @@
 {
   "name": "@codemix/text-search",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Fast, accurate text search with BM25 scoring and stemming.",
   "license": "MIT",
   "files": [
