@@ -23,10 +23,7 @@ describe("Quantifier3 - Any quantifier", () => {
 
   test("[2] Any quantifier on list literal containing booleans", () => {
     const graph = createTckGraph();
-    const results = executeTckQuery(
-      graph,
-      "RETURN any(x IN [true] WHERE x) AS result",
-    );
+    const results = executeTckQuery(graph, "RETURN any(x IN [true] WHERE x) AS result");
     expect(results).toHaveLength(1);
     // any(x IN [true] WHERE x) is true because at least one element is true
     expect(results[0]).toBe(true);
@@ -35,10 +32,7 @@ describe("Quantifier3 - Any quantifier", () => {
   test("[3] Any quantifier on list literal containing integers", () => {
     const graph = createTckGraph();
     // any(x IN [1, 2, 3] WHERE x = 2) - at least one element equals 2
-    const results = executeTckQuery(
-      graph,
-      "RETURN any(x IN [1, 2, 3] WHERE x = 2) AS result",
-    );
+    const results = executeTckQuery(graph, "RETURN any(x IN [1, 2, 3] WHERE x = 2) AS result");
     expect(results).toHaveLength(1);
     expect(results[0]).toBe(true);
   });
@@ -117,10 +111,7 @@ describe("Quantifier3 - Any quantifier", () => {
 
   test("[10] Any quantifier on lists containing nulls", () => {
     const graph = createTckGraph();
-    const results = executeTckQuery(
-      graph,
-      "RETURN any(x IN [null, 2] WHERE x = 2) AS result",
-    );
+    const results = executeTckQuery(graph, "RETURN any(x IN [null, 2] WHERE x = 2) AS result");
     expect(results).toHaveLength(1);
     // any() is true because at least one element equals 2
     expect(results[0]).toBe(true);
@@ -128,10 +119,7 @@ describe("Quantifier3 - Any quantifier", () => {
 
   test("[11] Any quantifier with IS NULL predicate", () => {
     const graph = createTckGraph();
-    const results = executeTckQuery(
-      graph,
-      "RETURN any(x IN [0, null] WHERE x IS NULL) AS result",
-    );
+    const results = executeTckQuery(graph, "RETURN any(x IN [0, null] WHERE x IS NULL) AS result");
     expect(results).toHaveLength(1);
     // any() is true because at least one element is null
     expect(results[0]).toBe(true);
@@ -161,29 +149,20 @@ describe("Quantifier3 - Any quantifier", () => {
 
   test("[14] Any quantifier is true if predicate is statically true and list is not empty", () => {
     const graph = createTckGraph();
-    const results = executeTckQuery(
-      graph,
-      "RETURN any(x IN [1, null, true] WHERE true) AS result",
-    );
+    const results = executeTckQuery(graph, "RETURN any(x IN [1, null, true] WHERE true) AS result");
     expect(results).toHaveLength(1);
     // any() is true when at least one element satisfies the predicate
     expect(results[0]).toBe(true);
   });
 
-  test.fails(
-    "[15] Fail any quantifier on type mismatch - semantic validation not implemented",
-    () => {
-      // Original: RETURN any(x IN ['Clara'] WHERE x % 2 = 0) AS result
-      // Expected: SyntaxError InvalidArgumentType
-      const graph = createTckGraph();
-      expect(() => {
-        executeTckQuery(
-          graph,
-          "RETURN any(x IN ['Clara'] WHERE x % 2 = 0) AS result",
-        );
-      }).toThrow();
-    },
-  );
+  test.fails("[15] Fail any quantifier on type mismatch - semantic validation not implemented", () => {
+    // Original: RETURN any(x IN ['Clara'] WHERE x % 2 = 0) AS result
+    // Expected: SyntaxError InvalidArgumentType
+    const graph = createTckGraph();
+    expect(() => {
+      executeTckQuery(graph, "RETURN any(x IN ['Clara'] WHERE x % 2 = 0) AS result");
+    }).toThrow();
+  });
 
   // Custom tests demonstrating any() functionality in WHERE clause
 

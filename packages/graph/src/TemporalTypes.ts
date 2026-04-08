@@ -73,11 +73,7 @@ export class DateValue implements TemporalValue {
     const year = map.year;
     const month = map.month;
     const day = map.day;
-    if (
-      typeof year !== "number" ||
-      typeof month !== "number" ||
-      typeof day !== "number"
-    ) {
+    if (typeof year !== "number" || typeof month !== "number" || typeof day !== "number") {
       return null;
     }
     return new DateValue(year, month, day);
@@ -107,9 +103,7 @@ export class DateValue implements TemporalValue {
     // Get first day of year
     const yearStart = new Date(Date.UTC(date.getUTCFullYear(), 0, 1));
     // Calculate full weeks between
-    const weekNo = Math.ceil(
-      ((date.getTime() - yearStart.getTime()) / 86400000 + 1) / 7,
-    );
+    const weekNo = Math.ceil(((date.getTime() - yearStart.getTime()) / 86400000 + 1) / 7);
     return weekNo;
   }
 
@@ -205,12 +199,7 @@ export class LocalTimeValue implements TemporalValue {
   #second: number;
   #nanosecond: number;
 
-  public constructor(
-    hour: number,
-    minute: number,
-    second: number,
-    nanosecond: number = 0,
-  ) {
+  public constructor(hour: number, minute: number, second: number, nanosecond: number = 0) {
     this.#hour = hour;
     this.#minute = minute;
     this.#second = second;
@@ -358,9 +347,7 @@ export class TimeValue implements TemporalValue {
    */
   public static fromString(iso: string): TimeValue | null {
     // Match time with timezone: HH:MM:SS.frac+HH:MM or Z
-    const match = iso.match(
-      /^(\d{2}):(\d{2}):(\d{2})(?:\.(\d{1,9}))?(Z|([+-])(\d{2}):(\d{2}))$/,
-    );
+    const match = iso.match(/^(\d{2}):(\d{2}):(\d{2})(?:\.(\d{1,9}))?(Z|([+-])(\d{2}):(\d{2}))$/);
     if (!match || !match[1] || !match[2] || !match[3]) return null;
 
     const hour = parseInt(match[1], 10);
@@ -488,16 +475,8 @@ export class TimeValue implements TemporalValue {
 
   public compareTo(other: TimeValue): number {
     // Compare by normalized UTC time
-    const thisUTC =
-      this.#hour * 3600 +
-      this.#minute * 60 +
-      this.#second -
-      this.#offsetSeconds;
-    const otherUTC =
-      other.#hour * 3600 +
-      other.#minute * 60 +
-      other.#second -
-      other.#offsetSeconds;
+    const thisUTC = this.#hour * 3600 + this.#minute * 60 + this.#second - this.#offsetSeconds;
+    const otherUTC = other.#hour * 3600 + other.#minute * 60 + other.#second - other.#offsetSeconds;
 
     if (thisUTC !== otherUTC) return thisUTC - otherUTC;
     return this.#nanosecond - other.#nanosecond;
@@ -545,18 +524,8 @@ export class LocalDateTimeValue implements TemporalValue {
    * Format: YYYY-MM-DDTHH:MM:SS.nnnnnnnnn
    */
   public static fromString(iso: string): LocalDateTimeValue | null {
-    const match = iso.match(
-      /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2})(?:\.(\d{1,9}))?$/,
-    );
-    if (
-      !match ||
-      !match[1] ||
-      !match[2] ||
-      !match[3] ||
-      !match[4] ||
-      !match[5] ||
-      !match[6]
-    )
+    const match = iso.match(/^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2})(?:\.(\d{1,9}))?$/);
+    if (!match || !match[1] || !match[2] || !match[3] || !match[4] || !match[5] || !match[6])
       return null;
 
     const year = parseInt(match[1], 10);
@@ -572,23 +541,13 @@ export class LocalDateTimeValue implements TemporalValue {
       nanosecond = parseInt(frac, 10);
     }
 
-    return new LocalDateTimeValue(
-      year,
-      month,
-      day,
-      hour,
-      minute,
-      second,
-      nanosecond,
-    );
+    return new LocalDateTimeValue(year, month, day, hour, minute, second, nanosecond);
   }
 
   /**
    * Create a LocalDateTimeValue from a map of components.
    */
-  public static fromMap(
-    map: Record<string, unknown>,
-  ): LocalDateTimeValue | null {
+  public static fromMap(map: Record<string, unknown>): LocalDateTimeValue | null {
     const year = typeof map.year === "number" ? map.year : null;
     const month = typeof map.month === "number" ? map.month : null;
     const day = typeof map.day === "number" ? map.day : null;
@@ -600,15 +559,7 @@ export class LocalDateTimeValue implements TemporalValue {
     const second = typeof map.second === "number" ? map.second : 0;
     const nanosecond = typeof map.nanosecond === "number" ? map.nanosecond : 0;
 
-    return new LocalDateTimeValue(
-      year,
-      month,
-      day,
-      hour,
-      minute,
-      second,
-      nanosecond,
-    );
+    return new LocalDateTimeValue(year, month, day, hour, minute, second, nanosecond);
   }
 
   // Date properties
@@ -629,9 +580,7 @@ export class LocalDateTimeValue implements TemporalValue {
     const dayNum = date.getUTCDay() || 7;
     date.setUTCDate(date.getUTCDate() + 4 - dayNum);
     const yearStart = new Date(Date.UTC(date.getUTCFullYear(), 0, 1));
-    return Math.ceil(
-      ((date.getTime() - yearStart.getTime()) / 86400000 + 1) / 7,
-    );
+    return Math.ceil(((date.getTime() - yearStart.getTime()) / 86400000 + 1) / 7);
   }
 
   public get dayOfWeek(): number {
@@ -795,15 +744,7 @@ export class DateTimeValue implements TemporalValue {
     const match = iso.match(
       /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2})(?:\.(\d{1,9}))?(Z|([+-])(\d{2}):(\d{2}))?(?:\[([^\]]+)\])?$/,
     );
-    if (
-      !match ||
-      !match[1] ||
-      !match[2] ||
-      !match[3] ||
-      !match[4] ||
-      !match[5] ||
-      !match[6]
-    )
+    if (!match || !match[1] || !match[2] || !match[3] || !match[4] || !match[5] || !match[6])
       return null;
 
     const year = parseInt(match[1], 10);
@@ -898,9 +839,7 @@ export class DateTimeValue implements TemporalValue {
     const dayNum = date.getUTCDay() || 7;
     date.setUTCDate(date.getUTCDate() + 4 - dayNum);
     const yearStart = new Date(Date.UTC(date.getUTCFullYear(), 0, 1));
-    return Math.ceil(
-      ((date.getTime() - yearStart.getTime()) / 86400000 + 1) / 7,
-    );
+    return Math.ceil(((date.getTime() - yearStart.getTime()) / 86400000 + 1) / 7);
   }
 
   public get dayOfWeek(): number {
@@ -964,14 +903,7 @@ export class DateTimeValue implements TemporalValue {
    */
   public get epochSeconds(): number {
     const date = new Date(
-      Date.UTC(
-        this.#year,
-        this.#month - 1,
-        this.#day,
-        this.#hour,
-        this.#minute,
-        this.#second,
-      ),
+      Date.UTC(this.#year, this.#month - 1, this.#day, this.#hour, this.#minute, this.#second),
     );
     // Adjust for timezone offset
     const ms = date.getTime() - this.#offsetSeconds * 1000;
@@ -983,14 +915,7 @@ export class DateTimeValue implements TemporalValue {
    */
   public get epochMillis(): number {
     const date = new Date(
-      Date.UTC(
-        this.#year,
-        this.#month - 1,
-        this.#day,
-        this.#hour,
-        this.#minute,
-        this.#second,
-      ),
+      Date.UTC(this.#year, this.#month - 1, this.#day, this.#hour, this.#minute, this.#second),
     );
     // Adjust for timezone offset
     const ms = date.getTime() - this.#offsetSeconds * 1000;
@@ -1085,14 +1010,7 @@ export class DateTimeValue implements TemporalValue {
     // Compare by UTC instant
     const thisUTC =
       new Date(
-        Date.UTC(
-          this.#year,
-          this.#month - 1,
-          this.#day,
-          this.#hour,
-          this.#minute,
-          this.#second,
-        ),
+        Date.UTC(this.#year, this.#month - 1, this.#day, this.#hour, this.#minute, this.#second),
       ).getTime() -
       this.#offsetSeconds * 1000;
     const otherUTC =
@@ -1476,12 +1394,7 @@ export class DurationValue implements TemporalValue {
    * Negate this duration.
    */
   public negate(): DurationValue {
-    return new DurationValue(
-      -this.#months,
-      -this.#days,
-      -this.#seconds,
-      -this.#nanoseconds,
-    );
+    return new DurationValue(-this.#months, -this.#days, -this.#seconds, -this.#nanoseconds);
   }
 
   /**
@@ -1556,24 +1469,15 @@ export function addDuration(
 
     // Now add days
     const date = new Date(
-      Date.UTC(
-        afterMonths.year,
-        afterMonths.month - 1,
-        afterMonths.day + duration.days,
-      ),
+      Date.UTC(afterMonths.year, afterMonths.month - 1, afterMonths.day + duration.days),
     );
 
     // Add time components (convert to days)
-    const totalSeconds =
-      duration.seconds + duration.nanoseconds / 1_000_000_000;
+    const totalSeconds = duration.seconds + duration.nanoseconds / 1_000_000_000;
     const additionalDays = Math.floor(totalSeconds / 86400);
     date.setUTCDate(date.getUTCDate() + additionalDays);
 
-    return new DateValue(
-      date.getUTCFullYear(),
-      date.getUTCMonth() + 1,
-      date.getUTCDate(),
-    );
+    return new DateValue(date.getUTCFullYear(), date.getUTCMonth() + 1, date.getUTCDate());
   }
 
   if (temporal instanceof LocalTimeValue) {
@@ -1649,15 +1553,13 @@ export function addDuration(
     // Note: Nanosecond precision beyond milliseconds is preserved in the nanosecond component,
     // but the Date object only has millisecond precision for the time calculation.
     const totalMs =
-      date.getTime() +
-      (duration.seconds * 1000 + Math.floor(duration.nanoseconds / 1_000_000));
+      date.getTime() + (duration.seconds * 1000 + Math.floor(duration.nanoseconds / 1_000_000));
     const resultDate = new Date(totalMs);
 
     // Compute nanoseconds - preserve sub-millisecond precision
     const nanosecondRemainder = duration.nanoseconds % 1_000_000;
     const resultNanos = temporal.nanosecond + nanosecondRemainder;
-    const normalizedNanos =
-      ((resultNanos % 1_000_000_000) + 1_000_000_000) % 1_000_000_000;
+    const normalizedNanos = ((resultNanos % 1_000_000_000) + 1_000_000_000) % 1_000_000_000;
 
     return new LocalDateTimeValue(
       resultDate.getUTCFullYear(),
@@ -1695,15 +1597,13 @@ export function addDuration(
     // Note: Nanosecond precision beyond milliseconds is preserved in the nanosecond component,
     // but the Date object only has millisecond precision for the time calculation.
     const totalMs =
-      date.getTime() +
-      (duration.seconds * 1000 + Math.floor(duration.nanoseconds / 1_000_000));
+      date.getTime() + (duration.seconds * 1000 + Math.floor(duration.nanoseconds / 1_000_000));
     const resultDate = new Date(totalMs);
 
     // Compute nanoseconds - preserve sub-millisecond precision
     const nanosecondRemainder = duration.nanoseconds % 1_000_000;
     const resultNanos = temporal.nanosecond + nanosecondRemainder;
-    const normalizedNanos =
-      ((resultNanos % 1_000_000_000) + 1_000_000_000) % 1_000_000_000;
+    const normalizedNanos = ((resultNanos % 1_000_000_000) + 1_000_000_000) % 1_000_000_000;
 
     return new DateTimeValue(
       resultDate.getUTCFullYear(),
@@ -1734,15 +1634,10 @@ export function subtractDuration(
 /**
  * Compute the duration between two temporal values.
  */
-export function durationBetween(
-  start: TemporalValue,
-  end: TemporalValue,
-): DurationValue | null {
+export function durationBetween(start: TemporalValue, end: TemporalValue): DurationValue | null {
   // Handle dates
   if (start instanceof DateValue && end instanceof DateValue) {
-    const _startDate = new Date(
-      Date.UTC(start.year, start.month - 1, start.day),
-    );
+    const _startDate = new Date(Date.UTC(start.year, start.month - 1, start.day));
     const endDate = new Date(Date.UTC(end.year, end.month - 1, end.day));
 
     // Calculate difference in months
@@ -1754,12 +1649,8 @@ export function durationBetween(
     }
 
     // Calculate remaining days
-    const adjustedStart = new Date(
-      Date.UTC(start.year, start.month - 1 + months, start.day),
-    );
-    const days = Math.round(
-      (endDate.getTime() - adjustedStart.getTime()) / (24 * 60 * 60 * 1000),
-    );
+    const adjustedStart = new Date(Date.UTC(start.year, start.month - 1 + months, start.day));
+    const days = Math.round((endDate.getTime() - adjustedStart.getTime()) / (24 * 60 * 60 * 1000));
 
     return new DurationValue(months, days, 0, 0);
   }
@@ -1787,12 +1678,10 @@ export function durationBetween(
   // Handle times with offset (convert to common reference)
   if (start instanceof TimeValue && end instanceof TimeValue) {
     const startNanos =
-      (start.hour * 3600 + start.minute * 60 + start.second - start.offset) *
-        1_000_000_000 +
+      (start.hour * 3600 + start.minute * 60 + start.second - start.offset) * 1_000_000_000 +
       start.nanosecond;
     const endNanos =
-      (end.hour * 3600 + end.minute * 60 + end.second - end.offset) *
-        1_000_000_000 +
+      (end.hour * 3600 + end.minute * 60 + end.second - end.offset) * 1_000_000_000 +
       end.nanosecond;
 
     const diffNanos = endNanos - startNanos;
@@ -1803,10 +1692,7 @@ export function durationBetween(
   }
 
   // Handle local datetimes
-  if (
-    start instanceof LocalDateTimeValue &&
-    end instanceof LocalDateTimeValue
-  ) {
+  if (start instanceof LocalDateTimeValue && end instanceof LocalDateTimeValue) {
     // Calculate months difference
     let months = (end.year - start.year) * 12 + (end.month - start.month);
     if (end.day < start.day) {
@@ -1825,22 +1711,14 @@ export function durationBetween(
       ),
     );
     const endDatetime = new Date(
-      Date.UTC(
-        end.year,
-        end.month - 1,
-        end.day,
-        end.hour,
-        end.minute,
-        end.second,
-      ),
+      Date.UTC(end.year, end.month - 1, end.day, end.hour, end.minute, end.second),
     );
 
     const diffMs = endDatetime.getTime() - adjustedStart.getTime();
     const days = Math.floor(diffMs / (24 * 60 * 60 * 1000));
     const remainingMs = diffMs % (24 * 60 * 60 * 1000);
     const seconds = Math.floor(remainingMs / 1000);
-    const nanoseconds =
-      (remainingMs % 1000) * 1_000_000 + (end.nanosecond - start.nanosecond);
+    const nanoseconds = (remainingMs % 1000) * 1_000_000 + (end.nanosecond - start.nanosecond);
 
     return new DurationValue(months, days, seconds, nanoseconds);
   }
@@ -1867,14 +1745,7 @@ export function durationBetween(
     adjustedStart.setTime(adjustedStart.getTime() - start.offset * 1000);
 
     const endDatetime = new Date(
-      Date.UTC(
-        end.year,
-        end.month - 1,
-        end.day,
-        end.hour,
-        end.minute,
-        end.second,
-      ),
+      Date.UTC(end.year, end.month - 1, end.day, end.hour, end.minute, end.second),
     );
     endDatetime.setTime(endDatetime.getTime() - end.offset * 1000);
 
@@ -1882,8 +1753,7 @@ export function durationBetween(
     const days = Math.floor(diffMs / (24 * 60 * 60 * 1000));
     const remainingMs = diffMs % (24 * 60 * 60 * 1000);
     const seconds = Math.floor(remainingMs / 1000);
-    const nanoseconds =
-      (remainingMs % 1000) * 1_000_000 + (end.nanosecond - start.nanosecond);
+    const nanoseconds = (remainingMs % 1000) * 1_000_000 + (end.nanosecond - start.nanosecond);
 
     return new DurationValue(months, days, seconds, nanoseconds);
   }
@@ -1894,17 +1764,12 @@ export function durationBetween(
 /**
  * Compute the duration between two temporal values in months only.
  */
-export function durationInMonths(
-  start: TemporalValue,
-  end: TemporalValue,
-): DurationValue | null {
+export function durationInMonths(start: TemporalValue, end: TemporalValue): DurationValue | null {
   if (
     (start instanceof DateValue ||
       start instanceof LocalDateTimeValue ||
       start instanceof DateTimeValue) &&
-    (end instanceof DateValue ||
-      end instanceof LocalDateTimeValue ||
-      end instanceof DateTimeValue)
+    (end instanceof DateValue || end instanceof LocalDateTimeValue || end instanceof DateTimeValue)
   ) {
     const startYear = start.year;
     const startMonth = start.month;
@@ -1927,21 +1792,14 @@ export function durationInMonths(
 /**
  * Compute the duration between two temporal values in days only.
  */
-export function durationInDays(
-  start: TemporalValue,
-  end: TemporalValue,
-): DurationValue | null {
+export function durationInDays(start: TemporalValue, end: TemporalValue): DurationValue | null {
   if (
     (start instanceof DateValue ||
       start instanceof LocalDateTimeValue ||
       start instanceof DateTimeValue) &&
-    (end instanceof DateValue ||
-      end instanceof LocalDateTimeValue ||
-      end instanceof DateTimeValue)
+    (end instanceof DateValue || end instanceof LocalDateTimeValue || end instanceof DateTimeValue)
   ) {
-    const startDate = new Date(
-      Date.UTC(start.year, start.month - 1, start.day),
-    );
+    const startDate = new Date(Date.UTC(start.year, start.month - 1, start.day));
     const endDate = new Date(Date.UTC(end.year, end.month - 1, end.day));
     const diffMs = endDate.getTime() - startDate.getTime();
     const days = Math.round(diffMs / (24 * 60 * 60 * 1000));
@@ -1953,10 +1811,7 @@ export function durationInDays(
 /**
  * Compute the duration between two temporal values in seconds only.
  */
-export function durationInSeconds(
-  start: TemporalValue,
-  end: TemporalValue,
-): DurationValue | null {
+export function durationInSeconds(start: TemporalValue, end: TemporalValue): DurationValue | null {
   // Handle time types
   if (
     (start instanceof LocalTimeValue || start instanceof TimeValue) &&
@@ -1966,8 +1821,7 @@ export function durationInSeconds(
     let endSeconds: number;
 
     if (start instanceof TimeValue) {
-      startSeconds =
-        start.hour * 3600 + start.minute * 60 + start.second - start.offset;
+      startSeconds = start.hour * 3600 + start.minute * 60 + start.second - start.offset;
     } else {
       startSeconds = start.hour * 3600 + start.minute * 60 + start.second;
     }
@@ -1992,28 +1846,14 @@ export function durationInSeconds(
     (end instanceof LocalDateTimeValue || end instanceof DateTimeValue)
   ) {
     const startDate = new Date(
-      Date.UTC(
-        start.year,
-        start.month - 1,
-        start.day,
-        start.hour,
-        start.minute,
-        start.second,
-      ),
+      Date.UTC(start.year, start.month - 1, start.day, start.hour, start.minute, start.second),
     );
     if (start instanceof DateTimeValue) {
       startDate.setTime(startDate.getTime() - start.offset * 1000);
     }
 
     const endDate = new Date(
-      Date.UTC(
-        end.year,
-        end.month - 1,
-        end.day,
-        end.hour,
-        end.minute,
-        end.second,
-      ),
+      Date.UTC(end.year, end.month - 1, end.day, end.hour, end.minute, end.second),
     );
     if (end instanceof DateTimeValue) {
       endDate.setTime(endDate.getTime() - end.offset * 1000);
@@ -2021,8 +1861,7 @@ export function durationInSeconds(
 
     const diffMs = endDate.getTime() - startDate.getTime();
     const seconds = Math.floor(diffMs / 1000);
-    const nanoseconds =
-      (diffMs % 1000) * 1_000_000 + (end.nanosecond - start.nanosecond);
+    const nanoseconds = (diffMs % 1000) * 1_000_000 + (end.nanosecond - start.nanosecond);
 
     return new DurationValue(0, 0, seconds, nanoseconds);
   }
@@ -2307,15 +2146,7 @@ export function truncateLocalDateTime(
     if (overrides.second !== undefined) second = overrides.second;
   }
 
-  return new LocalDateTimeValue(
-    year,
-    month,
-    day,
-    hour,
-    minute,
-    second,
-    nanosecond,
-  );
+  return new LocalDateTimeValue(year, month, day, hour, minute, second, nanosecond);
 }
 
 /**

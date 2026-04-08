@@ -9,10 +9,7 @@ describe("Delete5 - Delete clause interoperation with built-in data types", () =
   test.fails("[1] Delete node from a list", () => {
     const graph = createTckGraph();
     executeTckQuery(graph, "CREATE (:User)-[:FRIEND]->(:Friend {name: 'a'})");
-    executeTckQuery(
-      graph,
-      "MATCH (u:User) CREATE (u)-[:FRIEND]->(:Friend {name: 'b'})",
-    );
+    executeTckQuery(graph, "MATCH (u:User) CREATE (u)-[:FRIEND]->(:Friend {name: 'b'})");
     const results = executeTckQuery(
       graph,
       "MATCH (:User)-[:FRIEND]->(n) WITH collect(n) AS friends DETACH DELETE friends[0] RETURN size(friends)",
@@ -34,10 +31,7 @@ describe("Delete5 - Delete clause interoperation with built-in data types", () =
   test.fails("[3] Delete nodes from a map", () => {
     const graph = createTckGraph();
     executeTckQuery(graph, "CREATE (:User {name: 'test'})");
-    executeTckQuery(
-      graph,
-      "MATCH (u:User) WITH {key: u} AS nodes DELETE nodes.key",
-    );
+    executeTckQuery(graph, "MATCH (u:User) WITH {key: u} AS nodes DELETE nodes.key");
     const results = executeTckQuery(graph, "MATCH (u:User) RETURN u");
     expect(results).toHaveLength(0);
   });
@@ -45,10 +39,7 @@ describe("Delete5 - Delete clause interoperation with built-in data types", () =
   test.fails("[4] Delete relationships from a map", () => {
     const graph = createTckGraph();
     executeTckQuery(graph, "CREATE (:User)-[:KNOWS]->(:User)");
-    executeTckQuery(
-      graph,
-      "MATCH (:User)-[r]->(:User) WITH {key: r} AS rels DELETE rels.key",
-    );
+    executeTckQuery(graph, "MATCH (:User)-[r]->(:User) WITH {key: r} AS rels DELETE rels.key");
     const results = executeTckQuery(graph, "MATCH ()-[r]->() RETURN r");
     expect(results).toHaveLength(0);
   });
@@ -115,20 +106,14 @@ describe("Delete5 - Delete clause interoperation with built-in data types", () =
     executeTckQuery(graph, "CREATE (:User {name: 'carol'})");
 
     // Count users then delete all
-    const countBefore = executeTckQuery(
-      graph,
-      "MATCH (u:User) RETURN count(u) AS c",
-    );
+    const countBefore = executeTckQuery(graph, "MATCH (u:User) RETURN count(u) AS c");
     expect(countBefore[0]).toBe(3);
 
     // Delete all users
     executeTckQuery(graph, "MATCH (u:User) DELETE u");
 
     // Count after
-    const countAfter = executeTckQuery(
-      graph,
-      "MATCH (u:User) RETURN count(u) AS c",
-    );
+    const countAfter = executeTckQuery(graph, "MATCH (u:User) RETURN count(u) AS c");
     expect(countAfter[0]).toBe(0);
   });
 });

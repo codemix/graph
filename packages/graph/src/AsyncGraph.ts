@@ -1,18 +1,8 @@
 import { Graph } from "./Graph.js";
 import { GraphSchema } from "./GraphSchema.js";
-import {
-  ElementId,
-  InMemoryGraphStorage,
-  StoredEdge,
-  StoredVertex,
-} from "./GraphStorage.js";
+import { ElementId, InMemoryGraphStorage, StoredEdge, StoredVertex } from "./GraphStorage.js";
 import { createStepsFromJSON, createTraverser, StepJSON } from "./Steps.js";
-import {
-  GraphTraversal,
-  Traversal,
-  TraversalPath,
-  TraversalPathJSON,
-} from "./Traversals.js";
+import { GraphTraversal, Traversal, TraversalPath, TraversalPathJSON } from "./Traversals.js";
 
 /**
  * Serialize a value to JSON and back. Alias for JSON.parse(JSON.stringify(value)).
@@ -127,9 +117,7 @@ export class AsyncGraph<const TSchema extends GraphSchema> {
           value = this.instantiateResult(value);
         }
         return new TraversalPath(
-          result.parent == null
-            ? undefined
-            : this.instantiateResult(result.parent),
+          result.parent == null ? undefined : this.instantiateResult(result.parent),
           value,
           result.labels,
         ) as TPath;
@@ -248,11 +236,7 @@ function* handleAsyncTransaction<TSchema extends GraphSchema>(
           break;
         }
         case "UpdatePropertyOperation": {
-          graph.storage.updateProperty(
-            operation.id,
-            operation.key,
-            operation.value,
-          );
+          graph.storage.updateProperty(operation.id, operation.key, operation.value);
           yield {
             "@type": "AsyncOperationSuccess",
           };

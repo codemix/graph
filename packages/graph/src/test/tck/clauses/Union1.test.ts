@@ -17,10 +17,7 @@ describe("Union1 - Union", () => {
 
   test("[2] Three elements, two unique, distinct", () => {
     const graph = createTckGraph();
-    const results = executeTckQuery(
-      graph,
-      "RETURN 2 AS x UNION RETURN 1 AS x UNION RETURN 2 AS x",
-    );
+    const results = executeTckQuery(graph, "RETURN 2 AS x UNION RETURN 1 AS x UNION RETURN 2 AS x");
     // UNION removes duplicates - 2 appears twice but should appear once
     expect(results).toHaveLength(2);
     expect(results).toContainEqual(1);
@@ -69,15 +66,10 @@ describe("Union1 - Union", () => {
     expect(labels).toContain("B");
   });
 
-  test.fails(
-    "[5] Failing when UNION has different columns - semantic validation not implemented",
-    () => {
-      const graph = createTckGraph();
-      expect(() =>
-        executeTckQuery(graph, "RETURN 1 AS a UNION RETURN 2 AS b"),
-      ).toThrow();
-    },
-  );
+  test.fails("[5] Failing when UNION has different columns - semantic validation not implemented", () => {
+    const graph = createTckGraph();
+    expect(() => executeTckQuery(graph, "RETURN 1 AS a UNION RETURN 2 AS b")).toThrow();
+  });
 
   // Custom tests for supported UNION scenarios
   test("[custom-1] UNION removes duplicate results", () => {
@@ -106,10 +98,7 @@ describe("Union1 - Union", () => {
 
   test("[custom-2] UNION with three queries", () => {
     const graph = createTckGraph();
-    executeTckQuery(
-      graph,
-      "CREATE (:A {num: 1}), (:B {num: 2}), (:C {num: 3})",
-    );
+    executeTckQuery(graph, "CREATE (:A {num: 1}), (:B {num: 2}), (:C {num: 3})");
 
     const results = executeTckQuery(
       graph,
@@ -131,10 +120,7 @@ describe("Union1 - Union", () => {
 
   test("[custom-3] UNION with WHERE clauses", () => {
     const graph = createTckGraph();
-    executeTckQuery(
-      graph,
-      "CREATE (:A {num: 1}), (:A {num: 2}), (:A {num: 3}), (:A {num: 4})",
-    );
+    executeTckQuery(graph, "CREATE (:A {num: 1}), (:A {num: 2}), (:A {num: 3}), (:A {num: 4})");
 
     const results = executeTckQuery(
       graph,

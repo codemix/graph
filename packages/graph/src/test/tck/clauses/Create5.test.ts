@@ -3,12 +3,7 @@
  * Translated from tmp/tck/features/clauses/create/Create5.feature
  */
 import { describe, test, expect } from "vitest";
-import {
-  createTckGraph,
-  executeTckQuery,
-  getLabel,
-  getType,
-} from "../tckHelpers.js";
+import { createTckGraph, executeTckQuery, getLabel, getType } from "../tckHelpers.js";
 
 describe("Create5 - Multiple hops create patterns", () => {
   test("[1] Create a pattern with multiple hops", () => {
@@ -16,10 +11,7 @@ describe("Create5 - Multiple hops create patterns", () => {
     executeTckQuery(graph, "CREATE (:A)-[:R]->(:B)-[:R]->(:C)");
 
     // Verify the chain was created
-    const results = executeTckQuery(
-      graph,
-      "MATCH (a:A)-[:R]->(b:B)-[:R]->(c:C) RETURN a, b, c",
-    );
+    const results = executeTckQuery(graph, "MATCH (a:A)-[:R]->(b:B)-[:R]->(c:C) RETURN a, b, c");
     expect(results).toHaveLength(1);
 
     const [a, b, c] = results[0] as [
@@ -37,10 +29,7 @@ describe("Create5 - Multiple hops create patterns", () => {
     executeTckQuery(graph, "CREATE (:A)<-[:R]-(:B)<-[:R]-(:C)");
 
     // Verify the chain was created (C->B->A)
-    const results = executeTckQuery(
-      graph,
-      "MATCH (a:A)<-[:R]-(b:B)<-[:R]-(c:C) RETURN a, b, c",
-    );
+    const results = executeTckQuery(graph, "MATCH (a:A)<-[:R]-(b:B)<-[:R]-(c:C) RETURN a, b, c");
     expect(results).toHaveLength(1);
 
     const [a, b, c] = results[0] as [
@@ -58,10 +47,7 @@ describe("Create5 - Multiple hops create patterns", () => {
     executeTckQuery(graph, "CREATE (:A)-[:R]->(:B)<-[:R]-(:C)");
 
     // Verify the pattern (A->B<-C)
-    const results = executeTckQuery(
-      graph,
-      "MATCH (a:A)-[:R]->(b:B)<-[:R]-(c:C) RETURN a, b, c",
-    );
+    const results = executeTckQuery(graph, "MATCH (a:A)-[:R]->(b:B)<-[:R]-(c:C) RETURN a, b, c");
     expect(results).toHaveLength(1);
 
     const [a, b, c] = results[0] as [
@@ -101,10 +87,7 @@ describe("Create5 - Multiple hops create patterns", () => {
     executeTckQuery(graph, "CREATE (:A)<-[:R1]-(:B)-[:R2]->(:C)");
 
     // Verify the pattern (A<-B->C)
-    const results = executeTckQuery(
-      graph,
-      "MATCH (a:A)<-[:R1]-(b:B)-[:R2]->(c:C) RETURN a, b, c",
-    );
+    const results = executeTckQuery(graph, "MATCH (a:A)<-[:R1]-(b:B)-[:R2]->(c:C) RETURN a, b, c");
     expect(results).toHaveLength(1);
 
     const [a, b, c] = results[0] as [

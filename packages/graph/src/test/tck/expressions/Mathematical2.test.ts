@@ -20,26 +20,17 @@ describe("Mathematical2 - Addition", () => {
     //   | 104           |
     const graph = createTckGraph();
     executeTckQuery(graph, "CREATE ({id: 1337, version: 99})");
-    const results = executeTckQuery(
-      graph,
-      "MATCH (a) WHERE a.id = 1337 RETURN a.version + 5",
-    );
+    const results = executeTckQuery(graph, "MATCH (a) WHERE a.id = 1337 RETURN a.version + 5");
     expect(results).toEqual([104]);
   });
 
   // Custom tests demonstrating addition operations that work in WHERE clause
   test("[custom-1] Addition in WHERE clause comparison", () => {
     const graph = createTckGraph();
-    executeTckQuery(
-      graph,
-      "CREATE (:A {num: 5}), (:A {num: 10}), (:A {num: 15})",
-    );
+    executeTckQuery(graph, "CREATE (:A {num: 5}), (:A {num: 10}), (:A {num: 15})");
 
     // Filter using a comparison (WHERE supports arithmetic in condition values)
-    const results = executeTckQuery(
-      graph,
-      "MATCH (n:A) WHERE n.num = 10 RETURN n.num",
-    );
+    const results = executeTckQuery(graph, "MATCH (n:A) WHERE n.num = 10 RETURN n.num");
 
     expect(results).toHaveLength(1);
     expect(results[0]).toBe(10);
@@ -50,10 +41,7 @@ describe("Mathematical2 - Addition", () => {
     // Can create nodes with computed values as literals
     executeTckQuery(graph, "CREATE (:A {num: 104})"); // 99 + 5 computed externally
 
-    const results = executeTckQuery(
-      graph,
-      "MATCH (n:A) WHERE n.num = 104 RETURN n.num",
-    );
+    const results = executeTckQuery(graph, "MATCH (n:A) WHERE n.num = 104 RETURN n.num");
 
     expect(results).toHaveLength(1);
     expect(results[0]).toBe(104);

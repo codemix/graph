@@ -16,10 +16,7 @@ describe("Graph2 - Edge source and destination", () => {
       `CREATE (:A {name: 'Source'})-[:T {prop: 'test'}]->(:B {name: 'Target'})`,
     );
 
-    const results = executeTckQuery(
-      graph,
-      "MATCH (:A)-[r:T]->(:B) RETURN startNode(r).name",
-    );
+    const results = executeTckQuery(graph, "MATCH (:A)-[r:T]->(:B) RETURN startNode(r).name");
 
     expect(results).toHaveLength(1);
     expect(results[0]).toBe("Source");
@@ -32,10 +29,7 @@ describe("Graph2 - Edge source and destination", () => {
       `CREATE (:A {name: 'Source'})-[:T {prop: 'test'}]->(:B {name: 'Target'})`,
     );
 
-    const results = executeTckQuery(
-      graph,
-      "MATCH (:A)-[r:T]->(:B) RETURN endNode(r).name",
-    );
+    const results = executeTckQuery(graph, "MATCH (:A)-[r:T]->(:B) RETURN endNode(r).name");
 
     expect(results).toHaveLength(1);
     expect(results[0]).toBe("Target");
@@ -45,15 +39,9 @@ describe("Graph2 - Edge source and destination", () => {
 
   test("[Custom 3] Traversing outgoing relationships gives correct target", () => {
     const graph = createTckGraph();
-    executeTckQuery(
-      graph,
-      `CREATE (:A {name: 'Source'})-[:T]->(:B {name: 'Target'})`,
-    );
+    executeTckQuery(graph, `CREATE (:A {name: 'Source'})-[:T]->(:B {name: 'Target'})`);
 
-    const results = executeTckQuery(
-      graph,
-      "MATCH (a:A)-[:T]->(b:B) RETURN a.name, b.name",
-    );
+    const results = executeTckQuery(graph, "MATCH (a:A)-[:T]->(b:B) RETURN a.name, b.name");
 
     expect(results).toHaveLength(1);
     const [source, target] = results[0] as [string, string];
@@ -63,15 +51,9 @@ describe("Graph2 - Edge source and destination", () => {
 
   test("[Custom 4] Traversing incoming relationships gives correct source", () => {
     const graph = createTckGraph();
-    executeTckQuery(
-      graph,
-      `CREATE (:A {name: 'Source'})-[:T]->(:B {name: 'Target'})`,
-    );
+    executeTckQuery(graph, `CREATE (:A {name: 'Source'})-[:T]->(:B {name: 'Target'})`);
 
-    const results = executeTckQuery(
-      graph,
-      "MATCH (b:B)<-[:T]-(a:A) RETURN a.name, b.name",
-    );
+    const results = executeTckQuery(graph, "MATCH (b:B)<-[:T]-(a:A) RETURN a.name, b.name");
 
     expect(results).toHaveLength(1);
     const [source, target] = results[0] as [string, string];

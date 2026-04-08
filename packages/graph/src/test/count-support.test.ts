@@ -21,10 +21,7 @@ function makeType<T>(_defaultValue: T): StandardSchemaV1<T> {
   };
 }
 
-function executeQuery(
-  graph: Graph<GraphSchema>,
-  queryString: string,
-): unknown[] {
+function executeQuery(graph: Graph<GraphSchema>, queryString: string): unknown[] {
   const ast = parse(queryString) as Query;
   const steps = astToSteps(ast);
   const traverser = createTraverser(steps);
@@ -107,9 +104,7 @@ test("COUNT with AS alias on filtered results - should execute correctly", () =>
 });
 
 test("SUM with AS alias - should parse correctly", () => {
-  const result = parse(
-    "MATCH (n) RETURN SUM(n.salary) AS totalSalary",
-  ) as Query;
+  const result = parse("MATCH (n) RETURN SUM(n.salary) AS totalSalary") as Query;
   expect(result.return).toBeDefined();
   expect(result.return!.items[0]!.aggregate).toBe("SUM");
   expect(result.return!.items[0]!.alias).toBe("totalSalary");
@@ -131,9 +126,7 @@ test("Variable return with AS alias - should parse correctly", () => {
 });
 
 test("DISTINCT labels and COUNT with aliases - should parse correctly", () => {
-  const result = parse(
-    "MATCH (n) RETURN DISTINCT labels(n) AS label, COUNT(n) AS total",
-  ) as Query;
+  const result = parse("MATCH (n) RETURN DISTINCT labels(n) AS label, COUNT(n) AS total") as Query;
   expect(result.return).toBeDefined();
   expect(result.return!.distinct).toBe(true);
   expect(result.return!.items).toHaveLength(2);

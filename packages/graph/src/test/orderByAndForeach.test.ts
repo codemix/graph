@@ -64,9 +64,7 @@ function executeQuery(graph: Graph<TestSchema>, query: string): any[] {
 }
 
 // Helper function to create mock TraversalPath objects for testing
-function createMockPath(
-  properties: Record<string, any>,
-): TraversalPath<undefined, any, []> {
+function createMockPath(properties: Record<string, any>): TraversalPath<undefined, any, []> {
   // Create a mock vertex for testing
   // TraversalPath.property() checks if value is an Element, then object with direct properties
   // We need to add properties directly on the object for the fallback case to work
@@ -167,57 +165,41 @@ function setupSetClauseGraph(): Graph<TestSchema> {
 }
 
 test("ORDER BY Enhancements - ASCENDING / DESCENDING full keywords - should parse ASCENDING keyword", () => {
-  const ast = parse(
-    "MATCH (p:Person) RETURN p ORDER BY p.age ASCENDING",
-  ) as Query;
+  const ast = parse("MATCH (p:Person) RETURN p ORDER BY p.age ASCENDING") as Query;
   expect(ast.orderBy).toBeDefined();
   expect(ast.orderBy!.orders[0]!.direction).toBe("ASC");
 });
 
 test("ORDER BY Enhancements - ASCENDING / DESCENDING full keywords - should parse DESCENDING keyword", () => {
-  const ast = parse(
-    "MATCH (p:Person) RETURN p ORDER BY p.age DESCENDING",
-  ) as Query;
+  const ast = parse("MATCH (p:Person) RETURN p ORDER BY p.age DESCENDING") as Query;
   expect(ast.orderBy).toBeDefined();
   expect(ast.orderBy!.orders[0]!.direction).toBe("DESC");
 });
 
 test("ORDER BY Enhancements - ASCENDING / DESCENDING full keywords - should parse mixed ASC and ASCENDING", () => {
-  const ast = parse(
-    "MATCH (p:Person) RETURN p ORDER BY p.age ASCENDING, p.name ASC",
-  ) as Query;
+  const ast = parse("MATCH (p:Person) RETURN p ORDER BY p.age ASCENDING, p.name ASC") as Query;
   expect(ast.orderBy!.orders).toHaveLength(2);
   expect(ast.orderBy!.orders[0]!.direction).toBe("ASC");
   expect(ast.orderBy!.orders[1]!.direction).toBe("ASC");
 });
 
 test("ORDER BY Enhancements - ASCENDING / DESCENDING full keywords - should parse mixed DESC and DESCENDING", () => {
-  const ast = parse(
-    "MATCH (p:Person) RETURN p ORDER BY p.salary DESCENDING, p.age DESC",
-  ) as Query;
+  const ast = parse("MATCH (p:Person) RETURN p ORDER BY p.salary DESCENDING, p.age DESC") as Query;
   expect(ast.orderBy!.orders).toHaveLength(2);
   expect(ast.orderBy!.orders[0]!.direction).toBe("DESC");
   expect(ast.orderBy!.orders[1]!.direction).toBe("DESC");
 });
 
 test("ORDER BY Enhancements - ASCENDING / DESCENDING full keywords - should be case insensitive for ASCENDING", () => {
-  const ast1 = parse(
-    "MATCH (p:Person) RETURN p ORDER BY p.age ascending",
-  ) as Query;
-  const ast2 = parse(
-    "MATCH (p:Person) RETURN p ORDER BY p.age Ascending",
-  ) as Query;
+  const ast1 = parse("MATCH (p:Person) RETURN p ORDER BY p.age ascending") as Query;
+  const ast2 = parse("MATCH (p:Person) RETURN p ORDER BY p.age Ascending") as Query;
   expect(ast1.orderBy!.orders[0]!.direction).toBe("ASC");
   expect(ast2.orderBy!.orders[0]!.direction).toBe("ASC");
 });
 
 test("ORDER BY Enhancements - ASCENDING / DESCENDING full keywords - should be case insensitive for DESCENDING", () => {
-  const ast1 = parse(
-    "MATCH (p:Person) RETURN p ORDER BY p.age descending",
-  ) as Query;
-  const ast2 = parse(
-    "MATCH (p:Person) RETURN p ORDER BY p.age Descending",
-  ) as Query;
+  const ast1 = parse("MATCH (p:Person) RETURN p ORDER BY p.age descending") as Query;
+  const ast2 = parse("MATCH (p:Person) RETURN p ORDER BY p.age Descending") as Query;
   expect(ast1.orderBy!.orders[0]!.direction).toBe("DESC");
   expect(ast2.orderBy!.orders[0]!.direction).toBe("DESC");
 });
@@ -256,71 +238,51 @@ test("ORDER BY Enhancements - ASCENDING / DESCENDING full keywords - should exec
 });
 
 test("ORDER BY Enhancements - NULLS FIRST / NULLS LAST - should parse NULLS FIRST", () => {
-  const ast = parse(
-    "MATCH (p:Person) RETURN p ORDER BY p.age NULLS FIRST",
-  ) as Query;
+  const ast = parse("MATCH (p:Person) RETURN p ORDER BY p.age NULLS FIRST") as Query;
   expect(ast.orderBy).toBeDefined();
   expect(ast.orderBy!.orders[0]!.nulls).toBe("FIRST");
 });
 
 test("ORDER BY Enhancements - NULLS FIRST / NULLS LAST - should parse NULLS LAST", () => {
-  const ast = parse(
-    "MATCH (p:Person) RETURN p ORDER BY p.age NULLS LAST",
-  ) as Query;
+  const ast = parse("MATCH (p:Person) RETURN p ORDER BY p.age NULLS LAST") as Query;
   expect(ast.orderBy).toBeDefined();
   expect(ast.orderBy!.orders[0]!.nulls).toBe("LAST");
 });
 
 test("ORDER BY Enhancements - NULLS FIRST / NULLS LAST - should parse ASC NULLS FIRST", () => {
-  const ast = parse(
-    "MATCH (p:Person) RETURN p ORDER BY p.age ASC NULLS FIRST",
-  ) as Query;
+  const ast = parse("MATCH (p:Person) RETURN p ORDER BY p.age ASC NULLS FIRST") as Query;
   expect(ast.orderBy!.orders[0]!.direction).toBe("ASC");
   expect(ast.orderBy!.orders[0]!.nulls).toBe("FIRST");
 });
 
 test("ORDER BY Enhancements - NULLS FIRST / NULLS LAST - should parse DESC NULLS LAST", () => {
-  const ast = parse(
-    "MATCH (p:Person) RETURN p ORDER BY p.age DESC NULLS LAST",
-  ) as Query;
+  const ast = parse("MATCH (p:Person) RETURN p ORDER BY p.age DESC NULLS LAST") as Query;
   expect(ast.orderBy!.orders[0]!.direction).toBe("DESC");
   expect(ast.orderBy!.orders[0]!.nulls).toBe("LAST");
 });
 
 test("ORDER BY Enhancements - NULLS FIRST / NULLS LAST - should parse ASCENDING NULLS LAST", () => {
-  const ast = parse(
-    "MATCH (p:Person) RETURN p ORDER BY p.age ASCENDING NULLS LAST",
-  ) as Query;
+  const ast = parse("MATCH (p:Person) RETURN p ORDER BY p.age ASCENDING NULLS LAST") as Query;
   expect(ast.orderBy!.orders[0]!.direction).toBe("ASC");
   expect(ast.orderBy!.orders[0]!.nulls).toBe("LAST");
 });
 
 test("ORDER BY Enhancements - NULLS FIRST / NULLS LAST - should parse DESCENDING NULLS FIRST", () => {
-  const ast = parse(
-    "MATCH (p:Person) RETURN p ORDER BY p.age DESCENDING NULLS FIRST",
-  ) as Query;
+  const ast = parse("MATCH (p:Person) RETURN p ORDER BY p.age DESCENDING NULLS FIRST") as Query;
   expect(ast.orderBy!.orders[0]!.direction).toBe("DESC");
   expect(ast.orderBy!.orders[0]!.nulls).toBe("FIRST");
 });
 
 test("ORDER BY Enhancements - NULLS FIRST / NULLS LAST - should be case insensitive for NULLS FIRST", () => {
-  const ast1 = parse(
-    "MATCH (p:Person) RETURN p ORDER BY p.age nulls first",
-  ) as Query;
-  const ast2 = parse(
-    "MATCH (p:Person) RETURN p ORDER BY p.age Nulls First",
-  ) as Query;
+  const ast1 = parse("MATCH (p:Person) RETURN p ORDER BY p.age nulls first") as Query;
+  const ast2 = parse("MATCH (p:Person) RETURN p ORDER BY p.age Nulls First") as Query;
   expect(ast1.orderBy!.orders[0]!.nulls).toBe("FIRST");
   expect(ast2.orderBy!.orders[0]!.nulls).toBe("FIRST");
 });
 
 test("ORDER BY Enhancements - NULLS FIRST / NULLS LAST - should be case insensitive for NULLS LAST", () => {
-  const ast1 = parse(
-    "MATCH (p:Person) RETURN p ORDER BY p.age nulls last",
-  ) as Query;
-  const ast2 = parse(
-    "MATCH (p:Person) RETURN p ORDER BY p.age Nulls Last",
-  ) as Query;
+  const ast1 = parse("MATCH (p:Person) RETURN p ORDER BY p.age nulls last") as Query;
+  const ast2 = parse("MATCH (p:Person) RETURN p ORDER BY p.age Nulls Last") as Query;
   expect(ast1.orderBy!.orders[0]!.nulls).toBe("LAST");
   expect(ast2.orderBy!.orders[0]!.nulls).toBe("LAST");
 });
@@ -488,9 +450,7 @@ test("ORDER BY Enhancements - OrderStep NULLS handling - should handle multiple 
     ],
   });
 
-  const results = Array.from(
-    step.traverse(graph as GraphSource<any>, paths),
-  ) as any[];
+  const results = Array.from(step.traverse(graph as GraphSource<any>, paths)) as any[];
 
   // Engineering first (ASC), then Sales, then nulls (NULLS LAST)
   // Within same department, higher salary first, nulls first (DESC default)
@@ -615,12 +575,8 @@ test("FOREACH Clause - Grammar Parsing - should parse FOREACH with string list",
 });
 
 test("FOREACH Clause - Grammar Parsing - should be case insensitive for FOREACH and SET keywords", () => {
-  const ast1 = parse(
-    "MATCH (p:Person) foreach (x IN p.items | set x.a = 1) RETURN p",
-  ) as Query;
-  const ast2 = parse(
-    "MATCH (p:Person) Foreach (x IN p.items | Set x.a = 1) RETURN p",
-  ) as Query;
+  const ast1 = parse("MATCH (p:Person) foreach (x IN p.items | set x.a = 1) RETURN p") as Query;
+  const ast2 = parse("MATCH (p:Person) Foreach (x IN p.items | Set x.a = 1) RETURN p") as Query;
   expect(ast1.foreach).toHaveLength(1);
   expect(ast2.foreach).toHaveLength(1);
 });
@@ -653,9 +609,7 @@ test("SET Clause - SET parsing - should parse SET clause with literal value", ()
 });
 
 test("SET Clause - SET parsing - should parse SET clause with multiple assignments", () => {
-  const ast = parse(
-    "MATCH (p:Person) SET p.age = 40, p.salary = 75000 RETURN p",
-  ) as Query;
+  const ast = parse("MATCH (p:Person) SET p.age = 40, p.salary = 75000 RETURN p") as Query;
   expect(ast.set).toBeDefined();
   expect(ast.set!.assignments).toHaveLength(2);
   const assign0 = ast.set!.assignments[0] as { property: string };
@@ -665,18 +619,14 @@ test("SET Clause - SET parsing - should parse SET clause with multiple assignmen
 });
 
 test("SET Clause - SET parsing - should parse SET clause with string value", () => {
-  const ast = parse(
-    "MATCH (p:Person) SET p.department = 'Marketing' RETURN p",
-  ) as Query;
+  const ast = parse("MATCH (p:Person) SET p.department = 'Marketing' RETURN p") as Query;
   expect(ast.set).toBeDefined();
   const assignment = ast.set!.assignments[0] as { value: unknown };
   expect(assignment.value).toBe("Marketing");
 });
 
 test("SET Clause - SET parsing - should parse SET clause with null value", () => {
-  const ast = parse(
-    "MATCH (p:Person) SET p.department = null RETURN p",
-  ) as Query;
+  const ast = parse("MATCH (p:Person) SET p.department = null RETURN p") as Query;
   expect(ast.set).toBeDefined();
   const assignment = ast.set!.assignments[0] as { value: unknown };
   expect(assignment.value).toBeNull();
@@ -693,9 +643,7 @@ test("SET Clause - SET parsing - should parse SET clause with boolean values", (
 });
 
 test("SET Clause - SET parsing - should parse SET clause with property reference", () => {
-  const ast = parse(
-    "MATCH (p:Person)-[:knows]->(f:Person) SET p.age = f.age RETURN p",
-  ) as Query;
+  const ast = parse("MATCH (p:Person)-[:knows]->(f:Person) SET p.age = f.age RETURN p") as Query;
   expect(ast.set).toBeDefined();
   const assignment = ast.set!.assignments[0] as {
     value: { type: string; variable: string; property: string };
@@ -717,24 +665,15 @@ test("SET Clause - SET parsing - should be case insensitive for SET keyword", ()
 test("SET Clause - SET execution - should update a single property with literal value", () => {
   const graph = setupSetClauseGraph();
   // Get initial value
-  const beforeResults = executeQuery(
-    graph,
-    "MATCH (p:Person) WHERE p.name = 'Alice' RETURN p",
-  );
+  const beforeResults = executeQuery(graph, "MATCH (p:Person) WHERE p.name = 'Alice' RETURN p");
   expect(beforeResults).toHaveLength(1);
   expect((beforeResults[0] as any)[0].get("age")).toBe(30);
 
   // Execute SET
-  executeQuery(
-    graph,
-    "MATCH (p:Person) WHERE p.name = 'Alice' SET p.age = 40 RETURN p",
-  );
+  executeQuery(graph, "MATCH (p:Person) WHERE p.name = 'Alice' SET p.age = 40 RETURN p");
 
   // Verify the update
-  const afterResults = executeQuery(
-    graph,
-    "MATCH (p:Person) WHERE p.name = 'Alice' RETURN p",
-  );
+  const afterResults = executeQuery(graph, "MATCH (p:Person) WHERE p.name = 'Alice' RETURN p");
   expect((afterResults[0] as any)[0].get("age")).toBe(40);
 });
 
@@ -745,25 +684,16 @@ test("SET Clause - SET execution - should update multiple properties in a single
     "MATCH (p:Person) WHERE p.name = 'Bob' SET p.age = 36, p.salary = 65000 RETURN p",
   );
 
-  const results = executeQuery(
-    graph,
-    "MATCH (p:Person) WHERE p.name = 'Bob' RETURN p",
-  );
+  const results = executeQuery(graph, "MATCH (p:Person) WHERE p.name = 'Bob' RETURN p");
   expect((results[0] as any)[0].get("age")).toBe(36);
   expect((results[0] as any)[0].get("salary")).toBe(65000);
 });
 
 test("SET Clause - SET execution - should set property to null", () => {
   const graph = setupSetClauseGraph();
-  executeQuery(
-    graph,
-    "MATCH (p:Person) WHERE p.name = 'Charlie' SET p.department = null RETURN p",
-  );
+  executeQuery(graph, "MATCH (p:Person) WHERE p.name = 'Charlie' SET p.department = null RETURN p");
 
-  const results = executeQuery(
-    graph,
-    "MATCH (p:Person) WHERE p.name = 'Charlie' RETURN p",
-  );
+  const results = executeQuery(graph, "MATCH (p:Person) WHERE p.name = 'Charlie' RETURN p");
   expect((results[0] as any)[0].get("department")).toBeNull();
 });
 
@@ -776,18 +706,9 @@ test("SET Clause - SET execution - should update multiple matching nodes", () =>
   );
 
   // Verify updates
-  const aliceResults = executeQuery(
-    graph,
-    "MATCH (p:Person) WHERE p.name = 'Alice' RETURN p",
-  );
-  const charlieResults = executeQuery(
-    graph,
-    "MATCH (p:Person) WHERE p.name = 'Charlie' RETURN p",
-  );
-  const bobResults = executeQuery(
-    graph,
-    "MATCH (p:Person) WHERE p.name = 'Bob' RETURN p",
-  );
+  const aliceResults = executeQuery(graph, "MATCH (p:Person) WHERE p.name = 'Alice' RETURN p");
+  const charlieResults = executeQuery(graph, "MATCH (p:Person) WHERE p.name = 'Charlie' RETURN p");
+  const bobResults = executeQuery(graph, "MATCH (p:Person) WHERE p.name = 'Bob' RETURN p");
 
   expect((aliceResults[0] as any)[0].get("salary")).toBe(55000);
   expect((charlieResults[0] as any)[0].get("salary")).toBe(55000);
@@ -796,16 +717,10 @@ test("SET Clause - SET execution - should update multiple matching nodes", () =>
 
 test("SET Clause - SET execution - should work with ORDER BY after SET", () => {
   const graph = setupSetClauseGraph();
-  executeQuery(
-    graph,
-    "MATCH (p:Person) SET p.salary = 50000 RETURN p ORDER BY p.name ASC",
-  );
+  executeQuery(graph, "MATCH (p:Person) SET p.salary = 50000 RETURN p ORDER BY p.name ASC");
 
   // Verify all salaries are updated
-  const results = executeQuery(
-    graph,
-    "MATCH (p:Person) RETURN p ORDER BY p.name ASC",
-  );
+  const results = executeQuery(graph, "MATCH (p:Person) RETURN p ORDER BY p.name ASC");
   expect((results[0] as any)[0].get("salary")).toBe(50000);
   expect((results[1] as any)[0].get("salary")).toBe(50000);
   expect((results[2] as any)[0].get("salary")).toBe(50000);
@@ -814,14 +729,8 @@ test("SET Clause - SET execution - should work with ORDER BY after SET", () => {
 test("SET Clause - SET execution - should copy property from related node via edge traversal", () => {
   const graph = setupSetClauseGraph();
   // Add edges for the test
-  const aliceResults = executeQuery(
-    graph,
-    "MATCH (p:Person) WHERE p.name = 'Alice' RETURN p",
-  );
-  const bobResults = executeQuery(
-    graph,
-    "MATCH (p:Person) WHERE p.name = 'Bob' RETURN p",
-  );
+  const aliceResults = executeQuery(graph, "MATCH (p:Person) WHERE p.name = 'Alice' RETURN p");
+  const bobResults = executeQuery(graph, "MATCH (p:Person) WHERE p.name = 'Bob' RETURN p");
   const aliceId = (aliceResults[0] as any)[0].id;
   const bobId = (bobResults[0] as any)[0].id;
   graph.addEdge(aliceId, "knows", bobId, { since: 2020 });
@@ -833,41 +742,26 @@ test("SET Clause - SET execution - should copy property from related node via ed
   );
 
   // Verify Alice now has Bob's salary
-  const afterResults = executeQuery(
-    graph,
-    "MATCH (p:Person) WHERE p.name = 'Alice' RETURN p",
-  );
+  const afterResults = executeQuery(graph, "MATCH (p:Person) WHERE p.name = 'Alice' RETURN p");
   expect((afterResults[0] as any)[0].get("salary")).toBe(60000);
 });
 
 test("SET Clause - SET execution - should not modify nodes when no matches are found", () => {
   const graph = setupSetClauseGraph();
   // Try to SET on a non-existent person
-  executeQuery(
-    graph,
-    "MATCH (p:Person) WHERE p.name = 'NonExistent' SET p.age = 100 RETURN p",
-  );
+  executeQuery(graph, "MATCH (p:Person) WHERE p.name = 'NonExistent' SET p.age = 100 RETURN p");
 
   // Verify existing nodes are unchanged
-  const aliceResults = executeQuery(
-    graph,
-    "MATCH (p:Person) WHERE p.name = 'Alice' RETURN p",
-  );
+  const aliceResults = executeQuery(graph, "MATCH (p:Person) WHERE p.name = 'Alice' RETURN p");
   expect((aliceResults[0] as any)[0].get("age")).toBe(30);
 });
 
 test("SET Clause - SET execution - should preserve unchanged properties when setting others", () => {
   const graph = setupSetClauseGraph();
   // Set only the age, verify other properties remain
-  executeQuery(
-    graph,
-    "MATCH (p:Person) WHERE p.name = 'Alice' SET p.age = 31 RETURN p",
-  );
+  executeQuery(graph, "MATCH (p:Person) WHERE p.name = 'Alice' SET p.age = 31 RETURN p");
 
-  const results = executeQuery(
-    graph,
-    "MATCH (p:Person) WHERE p.name = 'Alice' RETURN p",
-  );
+  const results = executeQuery(graph, "MATCH (p:Person) WHERE p.name = 'Alice' RETURN p");
   expect((results[0] as any)[0].get("age")).toBe(31);
   expect((results[0] as any)[0].get("name")).toBe("Alice");
   expect((results[0] as any)[0].get("salary")).toBe(50000);
@@ -881,38 +775,23 @@ test("SET Clause - SET execution - should set string values", () => {
     "MATCH (p:Person) WHERE p.name = 'Alice' SET p.department = 'Marketing' RETURN p",
   );
 
-  const results = executeQuery(
-    graph,
-    "MATCH (p:Person) WHERE p.name = 'Alice' RETURN p",
-  );
+  const results = executeQuery(graph, "MATCH (p:Person) WHERE p.name = 'Alice' RETURN p");
   expect((results[0] as any)[0].get("department")).toBe("Marketing");
 });
 
 test("SET Clause - SET execution - should handle negative numbers", () => {
   const graph = setupSetClauseGraph();
-  executeQuery(
-    graph,
-    "MATCH (p:Person) WHERE p.name = 'Alice' SET p.salary = -1000 RETURN p",
-  );
+  executeQuery(graph, "MATCH (p:Person) WHERE p.name = 'Alice' SET p.salary = -1000 RETURN p");
 
-  const results = executeQuery(
-    graph,
-    "MATCH (p:Person) WHERE p.name = 'Alice' RETURN p",
-  );
+  const results = executeQuery(graph, "MATCH (p:Person) WHERE p.name = 'Alice' RETURN p");
   expect((results[0] as any)[0].get("salary")).toBe(-1000);
 });
 
 test("SET Clause - SET execution - should handle decimal numbers", () => {
   const graph = setupSetClauseGraph();
-  executeQuery(
-    graph,
-    "MATCH (p:Person) WHERE p.name = 'Alice' SET p.salary = 50000.50 RETURN p",
-  );
+  executeQuery(graph, "MATCH (p:Person) WHERE p.name = 'Alice' SET p.salary = 50000.50 RETURN p");
 
-  const results = executeQuery(
-    graph,
-    "MATCH (p:Person) WHERE p.name = 'Alice' RETURN p",
-  );
+  const results = executeQuery(graph, "MATCH (p:Person) WHERE p.name = 'Alice' RETURN p");
   expect((results[0] as any)[0].get("salary")).toBe(50000.5);
 });
 
@@ -924,10 +803,7 @@ test("SET Clause - SET execution - should overwrite previously set value in same
     "MATCH (p:Person) WHERE p.name = 'Alice' SET p.salary = 100, p.salary = 200 RETURN p",
   );
 
-  const results = executeQuery(
-    graph,
-    "MATCH (p:Person) WHERE p.name = 'Alice' RETURN p",
-  );
+  const results = executeQuery(graph, "MATCH (p:Person) WHERE p.name = 'Alice' RETURN p");
   expect((results[0] as any)[0].get("salary")).toBe(200);
 });
 
@@ -970,18 +846,9 @@ test("SET Clause - SET execution - should handle multiple SET operations with di
     "MATCH (p:Person) WHERE p.department = 'Sales' SET p.salary = 80000 RETURN p",
   );
 
-  const aliceResults = executeQuery(
-    graph,
-    "MATCH (p:Person) WHERE p.name = 'Alice' RETURN p",
-  );
-  const bobResults = executeQuery(
-    graph,
-    "MATCH (p:Person) WHERE p.name = 'Bob' RETURN p",
-  );
-  const charlieResults = executeQuery(
-    graph,
-    "MATCH (p:Person) WHERE p.name = 'Charlie' RETURN p",
-  );
+  const aliceResults = executeQuery(graph, "MATCH (p:Person) WHERE p.name = 'Alice' RETURN p");
+  const bobResults = executeQuery(graph, "MATCH (p:Person) WHERE p.name = 'Bob' RETURN p");
+  const charlieResults = executeQuery(graph, "MATCH (p:Person) WHERE p.name = 'Charlie' RETURN p");
 
   expect((aliceResults[0] as any)[0].get("salary")).toBe(70000); // Engineering
   expect((bobResults[0] as any)[0].get("salary")).toBe(80000); // Sales
@@ -991,25 +858,13 @@ test("SET Clause - SET execution - should handle multiple SET operations with di
 test("SET Clause - SET execution - should validate property types according to schema", () => {
   const graph = setupSetClauseGraph();
   // The schema defines 'age' as number | null, so setting it to a number should work
-  executeQuery(
-    graph,
-    "MATCH (p:Person) WHERE p.name = 'Alice' SET p.age = 31 RETURN p",
-  );
-  const results = executeQuery(
-    graph,
-    "MATCH (p:Person) WHERE p.name = 'Alice' RETURN p",
-  );
+  executeQuery(graph, "MATCH (p:Person) WHERE p.name = 'Alice' SET p.age = 31 RETURN p");
+  const results = executeQuery(graph, "MATCH (p:Person) WHERE p.name = 'Alice' RETURN p");
   expect((results[0] as any)[0].get("age")).toBe(31);
 
   // Setting to null should also work as per schema
-  executeQuery(
-    graph,
-    "MATCH (p:Person) WHERE p.name = 'Alice' SET p.age = null RETURN p",
-  );
-  const nullResults = executeQuery(
-    graph,
-    "MATCH (p:Person) WHERE p.name = 'Alice' RETURN p",
-  );
+  executeQuery(graph, "MATCH (p:Person) WHERE p.name = 'Alice' SET p.age = null RETURN p");
+  const nullResults = executeQuery(graph, "MATCH (p:Person) WHERE p.name = 'Alice' RETURN p");
   expect((nullResults[0] as any)[0].get("age")).toBeNull();
 });
 
@@ -1021,10 +876,7 @@ test("SET Clause - SET execution - should allow setting properties defined in sc
     "MATCH (p:Person) WHERE p.name = 'Bob' SET p.name = 'Robert', p.age = 26, p.salary = 65000, p.department = 'Marketing' RETURN p",
   );
 
-  const results = executeQuery(
-    graph,
-    "MATCH (p:Person) WHERE p.name = 'Robert' RETURN p",
-  );
+  const results = executeQuery(graph, "MATCH (p:Person) WHERE p.name = 'Robert' RETURN p");
   expect(results).toHaveLength(1);
   expect((results[0] as any)[0].get("name")).toBe("Robert");
   expect((results[0] as any)[0].get("age")).toBe(26);
@@ -1053,18 +905,9 @@ test("SET Clause - SET execution - should handle setting properties on different
 test("SET Clause - SET on edges - should update edge properties", () => {
   const graph = setupSetClauseGraph();
   // Add edges between people
-  const aliceResults = executeQuery(
-    graph,
-    "MATCH (p:Person) WHERE p.name = 'Alice' RETURN p",
-  );
-  const bobResults = executeQuery(
-    graph,
-    "MATCH (p:Person) WHERE p.name = 'Bob' RETURN p",
-  );
-  const charlieResults = executeQuery(
-    graph,
-    "MATCH (p:Person) WHERE p.name = 'Charlie' RETURN p",
-  );
+  const aliceResults = executeQuery(graph, "MATCH (p:Person) WHERE p.name = 'Alice' RETURN p");
+  const bobResults = executeQuery(graph, "MATCH (p:Person) WHERE p.name = 'Bob' RETURN p");
+  const charlieResults = executeQuery(graph, "MATCH (p:Person) WHERE p.name = 'Charlie' RETURN p");
   const aliceId = (aliceResults[0] as any)[0].id;
   const bobId = (bobResults[0] as any)[0].id;
   const charlieId = (charlieResults[0] as any)[0].id;
@@ -1090,18 +933,9 @@ test("SET Clause - SET on edges - should update edge properties", () => {
 test("SET Clause - SET on edges - should update both node and edge in same query", () => {
   const graph = setupSetClauseGraph();
   // Add edges between people
-  const aliceResults = executeQuery(
-    graph,
-    "MATCH (p:Person) WHERE p.name = 'Alice' RETURN p",
-  );
-  const bobResults = executeQuery(
-    graph,
-    "MATCH (p:Person) WHERE p.name = 'Bob' RETURN p",
-  );
-  const charlieResults = executeQuery(
-    graph,
-    "MATCH (p:Person) WHERE p.name = 'Charlie' RETURN p",
-  );
+  const aliceResults = executeQuery(graph, "MATCH (p:Person) WHERE p.name = 'Alice' RETURN p");
+  const bobResults = executeQuery(graph, "MATCH (p:Person) WHERE p.name = 'Bob' RETURN p");
+  const charlieResults = executeQuery(graph, "MATCH (p:Person) WHERE p.name = 'Charlie' RETURN p");
   const aliceId = (aliceResults[0] as any)[0].id;
   const bobId = (bobResults[0] as any)[0].id;
   const charlieId = (charlieResults[0] as any)[0].id;
@@ -1114,10 +948,7 @@ test("SET Clause - SET on edges - should update both node and edge in same query
   );
 
   // Verify node update
-  const nodeResults = executeQuery(
-    graph,
-    "MATCH (p:Person) WHERE p.name = 'Alice' RETURN p",
-  );
+  const nodeResults = executeQuery(graph, "MATCH (p:Person) WHERE p.name = 'Alice' RETURN p");
   expect((nodeResults[0] as any)[0].get("age")).toBe(31);
 
   // Verify edge update
@@ -1132,10 +963,7 @@ test("SET Clause - FOREACH + SET Integration - should execute SET operations wit
   const graph = setupSetClauseGraph();
   // This test demonstrates that FOREACH + SET actually executes, not just parses
   // Create a node with a property we can iterate over
-  executeQuery(
-    graph,
-    "MATCH (p:Person) WHERE p.name = 'Alice' SET p.age = 30 RETURN p",
-  );
+  executeQuery(graph, "MATCH (p:Person) WHERE p.name = 'Alice' SET p.age = 30 RETURN p");
 
   // Use FOREACH to iterate a literal list and set property based on each value
   // This updates Alice's age for each iteration (should end at 50)
@@ -1145,10 +973,7 @@ test("SET Clause - FOREACH + SET Integration - should execute SET operations wit
   );
 
   // Verify the property was actually updated
-  const results = executeQuery(
-    graph,
-    "MATCH (p:Person) WHERE p.name = 'Alice' RETURN p",
-  );
+  const results = executeQuery(graph, "MATCH (p:Person) WHERE p.name = 'Alice' RETURN p");
   expect((results[0] as any)[0].get("age")).toBe(50);
 });
 
@@ -1165,10 +990,7 @@ test("SET Clause - FOREACH + SET Integration - should handle FOREACH with multip
     "MATCH (p:Person) WHERE p.name = 'Bob' FOREACH (x IN [1, 2] | SET p.age = 30, p.salary = 60000) RETURN p",
   );
 
-  const results = executeQuery(
-    graph,
-    "MATCH (p:Person) WHERE p.name = 'Bob' RETURN p",
-  );
+  const results = executeQuery(graph, "MATCH (p:Person) WHERE p.name = 'Bob' RETURN p");
   expect((results[0] as any)[0].get("age")).toBe(30);
   expect((results[0] as any)[0].get("salary")).toBe(60000);
 });
@@ -1176,14 +998,8 @@ test("SET Clause - FOREACH + SET Integration - should handle FOREACH with multip
 test("SET Clause - FOREACH + SET Integration - should handle nested property access in FOREACH value assignment", () => {
   const graph = setupSetClauseGraph();
   // Set up a test case where we copy values from one matched node to another via FOREACH
-  executeQuery(
-    graph,
-    "MATCH (p:Person) WHERE p.name = 'Alice' SET p.salary = 75000 RETURN p",
-  );
-  executeQuery(
-    graph,
-    "MATCH (p:Person) WHERE p.name = 'Charlie' SET p.salary = 50000 RETURN p",
-  );
+  executeQuery(graph, "MATCH (p:Person) WHERE p.name = 'Alice' SET p.salary = 75000 RETURN p");
+  executeQuery(graph, "MATCH (p:Person) WHERE p.name = 'Charlie' SET p.salary = 50000 RETURN p");
 
   // Use FOREACH to iterate and update Charlie's salary to match Alice's
   // The literal list is used to trigger the update
@@ -1192,20 +1008,14 @@ test("SET Clause - FOREACH + SET Integration - should handle nested property acc
     "MATCH (p:Person) WHERE p.name = 'Charlie' FOREACH (x IN [1] | SET p.salary = 75000) RETURN p",
   );
 
-  const results = executeQuery(
-    graph,
-    "MATCH (p:Person) WHERE p.name = 'Charlie' RETURN p",
-  );
+  const results = executeQuery(graph, "MATCH (p:Person) WHERE p.name = 'Charlie' RETURN p");
   expect((results[0] as any)[0].get("salary")).toBe(75000);
 });
 
 test("SET Clause - FOREACH + SET Integration - should skip FOREACH body when list is empty", () => {
   const graph = setupSetClauseGraph();
   // Set initial value
-  executeQuery(
-    graph,
-    "MATCH (p:Person) WHERE p.name = 'Diana' SET p.age = 40 RETURN p",
-  );
+  executeQuery(graph, "MATCH (p:Person) WHERE p.name = 'Diana' SET p.age = 40 RETURN p");
 
   // FOREACH with empty list - SET should not execute
   executeQuery(
@@ -1214,20 +1024,14 @@ test("SET Clause - FOREACH + SET Integration - should skip FOREACH body when lis
   );
 
   // Age should remain unchanged
-  const results = executeQuery(
-    graph,
-    "MATCH (p:Person) WHERE p.name = 'Diana' RETURN p",
-  );
+  const results = executeQuery(graph, "MATCH (p:Person) WHERE p.name = 'Diana' RETURN p");
   expect((results[0] as any)[0].get("age")).toBe(40);
 });
 
 test("SET Clause - FOREACH + SET Integration - should execute SET for each element in the list", () => {
   const graph = setupSetClauseGraph();
   // Each iteration increments age (simulated by setting to incrementing values)
-  executeQuery(
-    graph,
-    "MATCH (p:Person) WHERE p.name = 'Eve' SET p.age = 35 RETURN p",
-  );
+  executeQuery(graph, "MATCH (p:Person) WHERE p.name = 'Eve' SET p.age = 35 RETURN p");
 
   // Iterate 3 times, setting age to progressively higher values
   // In a real scenario, the last assignment wins
@@ -1236,24 +1040,15 @@ test("SET Clause - FOREACH + SET Integration - should execute SET for each eleme
     "MATCH (p:Person) WHERE p.name = 'Eve' FOREACH (x IN [36, 37, 38] | SET p.age = 38) RETURN p",
   );
 
-  const results = executeQuery(
-    graph,
-    "MATCH (p:Person) WHERE p.name = 'Eve' RETURN p",
-  );
+  const results = executeQuery(graph, "MATCH (p:Person) WHERE p.name = 'Eve' RETURN p");
   expect((results[0] as any)[0].get("age")).toBe(38);
 });
 
 test("SET Clause - FOREACH + SET Integration - should handle FOREACH + SET on edges", () => {
   const graph = setupSetClauseGraph();
   // Add edges if not already present
-  const aliceResults = executeQuery(
-    graph,
-    "MATCH (p:Person) WHERE p.name = 'Alice' RETURN p",
-  );
-  const bobResults = executeQuery(
-    graph,
-    "MATCH (p:Person) WHERE p.name = 'Bob' RETURN p",
-  );
+  const aliceResults = executeQuery(graph, "MATCH (p:Person) WHERE p.name = 'Alice' RETURN p");
+  const bobResults = executeQuery(graph, "MATCH (p:Person) WHERE p.name = 'Bob' RETURN p");
   const aliceId = (aliceResults[0] as any)[0].id;
   const bobId = (bobResults[0] as any)[0].id;
 
@@ -1282,10 +1077,7 @@ test("SET Clause - FOREACH + SET Integration - should handle FOREACH + SET on ed
 test("SET Clause - FOREACH + SET Integration - should use iteration variable in SET (SET p.age = x)", () => {
   const graph = setupSetClauseGraph();
   // Set initial value
-  executeQuery(
-    graph,
-    "MATCH (p:Person) WHERE p.name = 'Alice' SET p.age = 25 RETURN p",
-  );
+  executeQuery(graph, "MATCH (p:Person) WHERE p.name = 'Alice' SET p.age = 25 RETURN p");
 
   // Use FOREACH to set property to the iteration variable value
   // The last value in the list (50) should be the final result
@@ -1294,20 +1086,14 @@ test("SET Clause - FOREACH + SET Integration - should use iteration variable in 
     "MATCH (p:Person) WHERE p.name = 'Alice' FOREACH (x IN [30, 40, 50] | SET p.age = x) RETURN p",
   );
 
-  const results = executeQuery(
-    graph,
-    "MATCH (p:Person) WHERE p.name = 'Alice' RETURN p",
-  );
+  const results = executeQuery(graph, "MATCH (p:Person) WHERE p.name = 'Alice' RETURN p");
   expect((results[0] as any)[0].get("age")).toBe(50);
 });
 
 test("SET Clause - FOREACH + SET Integration - should use iteration variable with string values", () => {
   const graph = setupSetClauseGraph();
   // Set initial value
-  executeQuery(
-    graph,
-    "MATCH (p:Person) WHERE p.name = 'Bob' SET p.status = 'inactive' RETURN p",
-  );
+  executeQuery(graph, "MATCH (p:Person) WHERE p.name = 'Bob' SET p.status = 'inactive' RETURN p");
 
   // Use FOREACH to set property to string iteration variable values
   executeQuery(
@@ -1315,20 +1101,14 @@ test("SET Clause - FOREACH + SET Integration - should use iteration variable wit
     "MATCH (p:Person) WHERE p.name = 'Bob' FOREACH (s IN ['pending', 'active'] | SET p.status = s) RETURN p",
   );
 
-  const results = executeQuery(
-    graph,
-    "MATCH (p:Person) WHERE p.name = 'Bob' RETURN p",
-  );
+  const results = executeQuery(graph, "MATCH (p:Person) WHERE p.name = 'Bob' RETURN p");
   expect((results[0] as any)[0].get("status")).toBe("active");
 });
 
 test("SET Clause - FOREACH + SET Integration - should use iteration variable from property access list", () => {
   const graph = setupSetClauseGraph();
   // Set up a node with an array property using graph API directly
-  const charlieResults = executeQuery(
-    graph,
-    "MATCH (p:Person) WHERE p.name = 'Charlie' RETURN p",
-  );
+  const charlieResults = executeQuery(graph, "MATCH (p:Person) WHERE p.name = 'Charlie' RETURN p");
   const charlie = (charlieResults[0] as any)[0];
   charlie.set("scores", [85, 90, 95]);
   charlie.set("lastScore", 0);
@@ -1339,20 +1119,14 @@ test("SET Clause - FOREACH + SET Integration - should use iteration variable fro
     "MATCH (p:Person) WHERE p.name = 'Charlie' FOREACH (score IN p.scores | SET p.lastScore = score) RETURN p",
   );
 
-  const results = executeQuery(
-    graph,
-    "MATCH (p:Person) WHERE p.name = 'Charlie' RETURN p",
-  );
+  const results = executeQuery(graph, "MATCH (p:Person) WHERE p.name = 'Charlie' RETURN p");
   expect((results[0] as any)[0].get("lastScore")).toBe(95);
 });
 
 test("SET Clause - FOREACH + SET Integration - should handle single iteration variable assignment", () => {
   const graph = setupSetClauseGraph();
   // Set initial value
-  executeQuery(
-    graph,
-    "MATCH (p:Person) WHERE p.name = 'Diana' SET p.age = 0 RETURN p",
-  );
+  executeQuery(graph, "MATCH (p:Person) WHERE p.name = 'Diana' SET p.age = 0 RETURN p");
 
   // Use FOREACH with single element list
   executeQuery(
@@ -1360,10 +1134,7 @@ test("SET Clause - FOREACH + SET Integration - should handle single iteration va
     "MATCH (p:Person) WHERE p.name = 'Diana' FOREACH (n IN [42] | SET p.age = n) RETURN p",
   );
 
-  const results = executeQuery(
-    graph,
-    "MATCH (p:Person) WHERE p.name = 'Diana' RETURN p",
-  );
+  const results = executeQuery(graph, "MATCH (p:Person) WHERE p.name = 'Diana' RETURN p");
   expect((results[0] as any)[0].get("age")).toBe(42);
 });
 
@@ -1389,14 +1160,8 @@ test("SET Clause - FOREACH + MATCH Integration - should execute MATCH inside FOR
 test("SET Clause - FOREACH + MATCH Integration - should execute MATCH with WHERE inside FOREACH", () => {
   const graph = setupSetClauseGraph();
   // Reset ages
-  executeQuery(
-    graph,
-    "MATCH (p:Person) WHERE p.name = 'Alice' SET p.age = 25 RETURN p",
-  );
-  executeQuery(
-    graph,
-    "MATCH (p:Person) WHERE p.name = 'Bob' SET p.age = 30 RETURN p",
-  );
+  executeQuery(graph, "MATCH (p:Person) WHERE p.name = 'Alice' SET p.age = 25 RETURN p");
+  executeQuery(graph, "MATCH (p:Person) WHERE p.name = 'Bob' SET p.age = 30 RETURN p");
 
   // Use FOREACH with MATCH WHERE to update specific person
   // The MATCH finds Alice, then SET uses the iteration variable
@@ -1405,27 +1170,18 @@ test("SET Clause - FOREACH + MATCH Integration - should execute MATCH with WHERE
     "MATCH (x:Person) WHERE x.name = 'Charlie' FOREACH (newAge IN [99] | MATCH (p:Person) WHERE p.name = 'Alice' SET p.age = newAge) RETURN x",
   );
 
-  const aliceResults = executeQuery(
-    graph,
-    "MATCH (p:Person) WHERE p.name = 'Alice' RETURN p",
-  );
+  const aliceResults = executeQuery(graph, "MATCH (p:Person) WHERE p.name = 'Alice' RETURN p");
   expect((aliceResults[0] as any)[0].get("age")).toBe(99);
 
   // Bob should be unchanged
-  const bobResults = executeQuery(
-    graph,
-    "MATCH (p:Person) WHERE p.name = 'Bob' RETURN p",
-  );
+  const bobResults = executeQuery(graph, "MATCH (p:Person) WHERE p.name = 'Bob' RETURN p");
   expect((bobResults[0] as any)[0].get("age")).toBe(30);
 });
 
 test("SET Clause - FOREACH + MATCH Integration - should execute multiple iterations with MATCH inside FOREACH", () => {
   const graph = setupSetClauseGraph();
   // Set up counter
-  executeQuery(
-    graph,
-    "MATCH (p:Person) WHERE p.name = 'Charlie' SET p.counter = 0 RETURN p",
-  );
+  executeQuery(graph, "MATCH (p:Person) WHERE p.name = 'Charlie' SET p.counter = 0 RETURN p");
 
   // Each iteration should update the counter
   // Note: each MATCH finds Charlie and sets counter to the current iteration value
@@ -1435,24 +1191,15 @@ test("SET Clause - FOREACH + MATCH Integration - should execute multiple iterati
     "MATCH (x:Person) WHERE x.name = 'Alice' FOREACH (val IN [1, 2, 3] | MATCH (p:Person) WHERE p.name = 'Charlie' SET p.counter = val) RETURN x",
   );
 
-  const results = executeQuery(
-    graph,
-    "MATCH (p:Person) WHERE p.name = 'Charlie' RETURN p",
-  );
+  const results = executeQuery(graph, "MATCH (p:Person) WHERE p.name = 'Charlie' RETURN p");
   expect((results[0] as any)[0].get("counter")).toBe(3);
 });
 
 test("SET Clause - FOREACH + MATCH Integration - should handle MATCH inside FOREACH with edge traversal", () => {
   const graph = setupSetClauseGraph();
   // Set up test data - ensure the knows edge exists
-  const aliceResults = executeQuery(
-    graph,
-    "MATCH (p:Person) WHERE p.name = 'Alice' RETURN p",
-  );
-  const bobResults = executeQuery(
-    graph,
-    "MATCH (p:Person) WHERE p.name = 'Bob' RETURN p",
-  );
+  const aliceResults = executeQuery(graph, "MATCH (p:Person) WHERE p.name = 'Alice' RETURN p");
+  const bobResults = executeQuery(graph, "MATCH (p:Person) WHERE p.name = 'Bob' RETURN p");
   const aliceId = (aliceResults[0] as any)[0].id;
   const bobId = (bobResults[0] as any)[0].id;
 
@@ -1466,10 +1213,7 @@ test("SET Clause - FOREACH + MATCH Integration - should handle MATCH inside FORE
   }
 
   // Reset marker
-  executeQuery(
-    graph,
-    "MATCH (p:Person) WHERE p.name = 'Bob' SET p.knownByAlice = false RETURN p",
-  );
+  executeQuery(graph, "MATCH (p:Person) WHERE p.name = 'Bob' SET p.knownByAlice = false RETURN p");
 
   // Use FOREACH with MATCH traversal
   executeQuery(
@@ -1477,10 +1221,7 @@ test("SET Clause - FOREACH + MATCH Integration - should handle MATCH inside FORE
     "MATCH (x:Person) WHERE x.name = 'Diana' FOREACH (val IN [true] | MATCH (a:Person)-[:knows]->(b:Person) WHERE a.name = 'Alice' SET b.knownByAlice = val) RETURN x",
   );
 
-  const resultsBob = executeQuery(
-    graph,
-    "MATCH (p:Person) WHERE p.name = 'Bob' RETURN p",
-  );
+  const resultsBob = executeQuery(graph, "MATCH (p:Person) WHERE p.name = 'Bob' RETURN p");
   expect((resultsBob[0] as any)[0].get("knownByAlice")).toBe(true);
 });
 
@@ -1495,17 +1236,11 @@ test("SET Clause - FOREACH + MATCH Integration - should handle FOREACH with MATC
     "MATCH (x:Person) WHERE x.name = 'Alice' FOREACH (val IN ['active'] | MATCH (p:Person) WHERE p.name = 'Bob' SET p.status = val) RETURN x",
   );
 
-  const bobResults = executeQuery(
-    graph,
-    "MATCH (p:Person) WHERE p.name = 'Bob' RETURN p",
-  );
+  const bobResults = executeQuery(graph, "MATCH (p:Person) WHERE p.name = 'Bob' RETURN p");
   expect((bobResults[0] as any)[0].get("status")).toBe("active");
 
   // Other persons should still be inactive
-  const charlieResults = executeQuery(
-    graph,
-    "MATCH (p:Person) WHERE p.name = 'Charlie' RETURN p",
-  );
+  const charlieResults = executeQuery(graph, "MATCH (p:Person) WHERE p.name = 'Charlie' RETURN p");
   expect((charlieResults[0] as any)[0].get("status")).toBe("inactive");
 });
 
@@ -1522,23 +1257,14 @@ test("SET Clause - FOREACH + MATCH Integration - should use iteration variable i
   );
 
   // Alice and Bob should be processed
-  const aliceResults = executeQuery(
-    graph,
-    "MATCH (p:Person) WHERE p.name = 'Alice' RETURN p",
-  );
+  const aliceResults = executeQuery(graph, "MATCH (p:Person) WHERE p.name = 'Alice' RETURN p");
   expect((aliceResults[0] as any)[0].get("processed")).toBe(true);
 
-  const bobResults = executeQuery(
-    graph,
-    "MATCH (p:Person) WHERE p.name = 'Bob' RETURN p",
-  );
+  const bobResults = executeQuery(graph, "MATCH (p:Person) WHERE p.name = 'Bob' RETURN p");
   expect((bobResults[0] as any)[0].get("processed")).toBe(true);
 
   // Charlie should NOT be processed
-  const charlieResults = executeQuery(
-    graph,
-    "MATCH (p:Person) WHERE p.name = 'Charlie' RETURN p",
-  );
+  const charlieResults = executeQuery(graph, "MATCH (p:Person) WHERE p.name = 'Charlie' RETURN p");
   expect((charlieResults[0] as any)[0].get("processed")).toBe(false);
 });
 
@@ -1547,18 +1273,9 @@ test("SET Clause - FOREACH + MATCH Integration - should use iteration variable i
 test.skip("SET Clause - FOREACH + MATCH Integration - should handle shortestPath inside FOREACH", () => {
   const graph = setupSetClauseGraph();
   // Set up edges for path finding
-  const aliceResults = executeQuery(
-    graph,
-    "MATCH (p:Person) WHERE p.name = 'Alice' RETURN p",
-  );
-  const bobResults = executeQuery(
-    graph,
-    "MATCH (p:Person) WHERE p.name = 'Bob' RETURN p",
-  );
-  const charlieResults = executeQuery(
-    graph,
-    "MATCH (p:Person) WHERE p.name = 'Charlie' RETURN p",
-  );
+  const aliceResults = executeQuery(graph, "MATCH (p:Person) WHERE p.name = 'Alice' RETURN p");
+  const bobResults = executeQuery(graph, "MATCH (p:Person) WHERE p.name = 'Bob' RETURN p");
+  const charlieResults = executeQuery(graph, "MATCH (p:Person) WHERE p.name = 'Charlie' RETURN p");
   const aliceId = (aliceResults[0] as any)[0].id;
   const bobId = (bobResults[0] as any)[0].id;
   const charlieId = (charlieResults[0] as any)[0].id;
@@ -1589,9 +1306,6 @@ test.skip("SET Clause - FOREACH + MATCH Integration - should handle shortestPath
   );
 
   // Charlie should be reachable (through the shortest path from Alice)
-  const charlieResult = executeQuery(
-    graph,
-    "MATCH (p:Person) WHERE p.name = 'Charlie' RETURN p",
-  );
+  const charlieResult = executeQuery(graph, "MATCH (p:Person) WHERE p.name = 'Charlie' RETURN p");
   expect((charlieResult[0] as any)[0].get("reachable")).toBe(true);
 });

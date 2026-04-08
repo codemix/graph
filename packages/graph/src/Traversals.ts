@@ -58,10 +58,7 @@ export class TraversalPath<
     this.#value = value;
     this.#labels = labels;
     // Cache depth at construction time since TraversalPath is immutable
-    this.#depth =
-      parent === undefined
-        ? 1
-        : (parent as TraversalPath<any, any, any>).depth + 1;
+    this.#depth = parent === undefined ? 1 : (parent as TraversalPath<any, any, any>).depth + 1;
   }
 
   /**
@@ -110,9 +107,7 @@ export class TraversalPath<
   public with<const TValue, const TLabels extends readonly string[] = []>(
     value: TValue,
     labels: TLabels = [] as unknown as TLabels,
-  ): this extends TraversalPath<any, unknown, any>
-    ? TraversalPath<this, TValue, TLabels>
-    : never {
+  ): this extends TraversalPath<any, unknown, any> ? TraversalPath<this, TValue, TLabels> : never {
     return new TraversalPath(this as any, value, labels) as any;
   }
 
@@ -128,9 +123,7 @@ export class TraversalPath<
       return value.get(propertyName);
     }
     if (typeof value === "object" && value !== null) {
-      return value[
-        propertyName as keyof typeof value
-      ] as PropertyOf<TValue>[TPropertyName];
+      return value[propertyName as keyof typeof value] as PropertyOf<TValue>[TPropertyName];
     }
     return undefined as PropertyOf<TValue>[TPropertyName];
   }
@@ -139,9 +132,7 @@ export class TraversalPath<
    * Get a node in the path by label.
    * @param label The label to get the node by.
    */
-  public get<const TLabel extends string>(
-    label: TLabel,
-  ): GetTraversalPathByLabel<this, TLabel> {
+  public get<const TLabel extends string>(label: TLabel): GetTraversalPathByLabel<this, TLabel> {
     // eslint-disable-next-line @typescript-eslint/no-this-alias
     let node: TraversalPath<any, unknown, any> = this;
     while (node !== undefined) {
@@ -177,10 +168,7 @@ export class TraversalPath<
       "@type": "TraversalPath",
       value: this.#value,
       labels: this.#labels,
-      parent:
-        this.#parent instanceof TraversalPath
-          ? this.#parent.toJSON()
-          : undefined,
+      parent: this.#parent instanceof TraversalPath ? this.#parent.toJSON() : undefined,
     };
   }
 
@@ -192,12 +180,9 @@ export class TraversalPath<
     const parent = this.#parent;
     const value = this.#value;
     const labels = this.#labels;
-    const formattedValue =
-      value instanceof Element ? value.toString() : `#value`;
+    const formattedValue = value instanceof Element ? value.toString() : `#value`;
     const segment =
-      labels.length === 0
-        ? formattedValue
-        : `${formattedValue} as ${labels.join(", ")}`;
+      labels.length === 0 ? formattedValue : `${formattedValue} as ${labels.join(", ")}`;
 
     if (parent === undefined) {
       return segment;
@@ -236,8 +221,7 @@ export class TraversalPath<
   }
 }
 
-type PropertyOf<T> =
-  T extends Element<any, any, infer TProperties, any> ? TProperties : keyof T;
+type PropertyOf<T> = T extends Element<any, any, infer TProperties, any> ? TProperties : keyof T;
 
 type GetTraversalPathValue<TPath> =
   TPath extends TraversalPath<any, infer TValue, any>
@@ -287,28 +271,21 @@ type GetTraversalPathLabelModifiers<TPath> =
     ? TAll | `${"all" | "first" | "last"}:${TAll & string}`
     : never;
 
-type ResolveTraversalPathLabelModifiers<TPath, TPathLabels> =
-  TPathLabels extends readonly [infer THead extends string, ...infer TTail]
-    ? THead extends `all:${infer TName}`
-      ? [
-          readonly GetTraversalPathByLabel<TPath, TName>[],
-          ...ResolveTraversalPathLabelModifiers<TPath, TTail>,
-        ]
-      : THead extends `${"first" | "last"}:${infer TName}`
-        ? [
-            GetTraversalPathByLabel<TPath, TName>,
-            ...ResolveTraversalPathLabelModifiers<TPath, TTail>,
-          ]
-        : [
-            GetTraversalPathByLabel<TPath, THead>,
-            ...ResolveTraversalPathLabelModifiers<TPath, TTail>,
-          ]
-    : [];
+type ResolveTraversalPathLabelModifiers<TPath, TPathLabels> = TPathLabels extends readonly [
+  infer THead extends string,
+  ...infer TTail,
+]
+  ? THead extends `all:${infer TName}`
+    ? [
+        readonly GetTraversalPathByLabel<TPath, TName>[],
+        ...ResolveTraversalPathLabelModifiers<TPath, TTail>,
+      ]
+    : THead extends `${"first" | "last"}:${infer TName}`
+      ? [GetTraversalPathByLabel<TPath, TName>, ...ResolveTraversalPathLabelModifiers<TPath, TTail>]
+      : [GetTraversalPathByLabel<TPath, THead>, ...ResolveTraversalPathLabelModifiers<TPath, TTail>]
+  : [];
 
-export abstract class Traversal<
-  const TSchema extends GraphSchema,
-  const TPath,
-> {
+export abstract class Traversal<const TSchema extends GraphSchema, const TPath> {
   #graph: GraphSource<TSchema>;
   #steps: readonly Step<any>[];
 
@@ -392,28 +369,24 @@ export class GraphTraversal<const TSchema extends GraphSchema> {
   public E<const TLabel extends EdgeLabel<TSchema> = EdgeLabel<TSchema>>(
     ...ids: ElementId<TLabel>[]
   ) {
-    return new EdgeTraversal<
-      TSchema,
-      TraversalPath<undefined, Edge<TSchema, TLabel>, readonly []>
-    >(this.graph, [
-      new FetchEdgesStep({
-        ids,
-      }),
-    ]);
+    return new EdgeTraversal<TSchema, TraversalPath<undefined, Edge<TSchema, TLabel>, readonly []>>(
+      this.graph,
+      [
+        new FetchEdgesStep({
+          ids,
+        }),
+      ],
+    );
   }
 
   /**
    * Start a new traversal from a union of other traversals.
    * @param traversals The traversals to union.
    */
-  public union<
-    const TTraversals extends readonly VertexTraversal<TSchema, any>[],
-  >(
+  public union<const TTraversals extends readonly VertexTraversal<TSchema, any>[]>(
     ...traversals: TTraversals
   ): VertexTraversal<TSchema, GetTraversalPaths<TTraversals>>;
-  public union<
-    const TTraversals extends readonly EdgeTraversal<TSchema, any>[],
-  >(
+  public union<const TTraversals extends readonly EdgeTraversal<TSchema, any>[]>(
     ...traversals: TTraversals
   ): EdgeTraversal<TSchema, GetTraversalPaths<TTraversals>>;
   public union(...traversals: readonly Traversal<TSchema, any>[]) {
@@ -441,22 +414,12 @@ export class GraphTraversal<const TSchema extends GraphSchema> {
    * Start a new traversal from an intersection of other traversals.
    * @param traversals The traversals to intersect.
    */
-  public intersect<
-    const TTraversals extends readonly VertexTraversal<TSchema, any>[],
-  >(
+  public intersect<const TTraversals extends readonly VertexTraversal<TSchema, any>[]>(
     ...traversals: TTraversals
-  ): VertexTraversal<
-    TSchema,
-    GetTraversalPaths<UnionToIntersection<TTraversals>>
-  >;
-  public intersect<
-    const TTraversals extends readonly EdgeTraversal<TSchema, any>[],
-  >(
+  ): VertexTraversal<TSchema, GetTraversalPaths<UnionToIntersection<TTraversals>>>;
+  public intersect<const TTraversals extends readonly EdgeTraversal<TSchema, any>[]>(
     ...traversals: TTraversals
-  ): EdgeTraversal<
-    TSchema,
-    GetTraversalPaths<UnionToIntersection<TTraversals>>
-  >;
+  ): EdgeTraversal<TSchema, GetTraversalPaths<UnionToIntersection<TTraversals>>>;
   public intersect(...traversals: readonly Traversal<TSchema, any>[]) {
     if (traversals.length === 0) {
       throw new Error("At least one traversal must be provided.");
@@ -486,51 +449,37 @@ type GetTraversalPaths<T> =
       ? TPath
       : never;
 
-type UnionToIntersection<T> = (
-  T extends readonly (infer U)[] ? U : never
-) extends infer V
+type UnionToIntersection<T> = (T extends readonly (infer U)[] ? U : never) extends infer V
   ? (V extends any ? (k: V) => void : never) extends (k: infer W) => void
     ? W
     : never
   : never;
 
-type GetEdgeLabels<
-  TSchema extends GraphSchema,
-  TEdgeLabels,
-> = TEdgeLabels extends readonly []
+type GetEdgeLabels<TSchema extends GraphSchema, TEdgeLabels> = TEdgeLabels extends readonly []
   ? EdgeLabel<TSchema>
   : TEdgeLabels extends readonly (infer U extends EdgeLabel<TSchema>)[]
     ? U
     : EdgeLabel<TSchema>;
 
-type GetVertexLabels<
-  TSchema extends GraphSchema,
-  TVertexLabels,
-> = TVertexLabels extends readonly []
+type GetVertexLabels<TSchema extends GraphSchema, TVertexLabels> = TVertexLabels extends readonly []
   ? VertexLabel<TSchema>
   : TVertexLabels extends readonly (infer U extends VertexLabel<TSchema>)[]
     ? U
     : VertexLabel<TSchema>;
 
-export class VertexTraversal<
-  const TSchema extends GraphSchema,
-  const TPath,
-> extends Traversal<TSchema, TPath> {
+export class VertexTraversal<const TSchema extends GraphSchema, const TPath> extends Traversal<
+  TSchema,
+  TPath
+> {
   /**
    * Get the vertices that are connected to the vertices by incoming edges.
    * @param edgeLabels The labels of the edges to get. If no labels are provided, all edges are returned.
    */
-  public in<const TEdgeLabels extends readonly EdgeLabel<TSchema>[]>(
-    ...edgeLabels: TEdgeLabels
-  ) {
+  public in<const TEdgeLabels extends readonly EdgeLabel<TSchema>[]>(...edgeLabels: TEdgeLabels) {
     return new VertexTraversal<
       TSchema,
       TraversalPath<
-        TraversalPath<
-          TPath,
-          Edge<TSchema, GetEdgeLabels<TSchema, TEdgeLabels>>,
-          []
-        >,
+        TraversalPath<TPath, Edge<TSchema, GetEdgeLabels<TSchema, TEdgeLabels>>, []>,
         Vertex<TSchema, VertexLabel<TSchema>>,
         []
       >
@@ -547,17 +496,11 @@ export class VertexTraversal<
    * Get the vertices that are connected to the vertices by outgoing edges.
    * @param edgeLabels The labels of the edges to get. If no labels are provided, all edges are returned.
    */
-  public out<const TEdgeLabels extends readonly EdgeLabel<TSchema>[]>(
-    ...edgeLabels: TEdgeLabels
-  ) {
+  public out<const TEdgeLabels extends readonly EdgeLabel<TSchema>[]>(...edgeLabels: TEdgeLabels) {
     return new VertexTraversal<
       TSchema,
       TraversalPath<
-        TraversalPath<
-          TPath,
-          Edge<TSchema, GetEdgeLabels<TSchema, TEdgeLabels>>,
-          []
-        >,
+        TraversalPath<TPath, Edge<TSchema, GetEdgeLabels<TSchema, TEdgeLabels>>, []>,
         Vertex<TSchema, VertexLabel<TSchema>>,
         []
       >
@@ -574,17 +517,11 @@ export class VertexTraversal<
    * Get the vertices that are connected to the vertices by both incoming and outgoing edges.
    * @param edgeLabels The labels of the edges to get. If no labels are provided, all edges are returned.
    */
-  public both<const TEdgeLabels extends readonly EdgeLabel<TSchema>[]>(
-    ...edgeLabels: TEdgeLabels
-  ) {
+  public both<const TEdgeLabels extends readonly EdgeLabel<TSchema>[]>(...edgeLabels: TEdgeLabels) {
     return new VertexTraversal<
       TSchema,
       TraversalPath<
-        TraversalPath<
-          TPath,
-          Edge<TSchema, GetEdgeLabels<TSchema, TEdgeLabels>>,
-          []
-        >,
+        TraversalPath<TPath, Edge<TSchema, GetEdgeLabels<TSchema, TEdgeLabels>>, []>,
         Vertex<TSchema, VertexLabel<TSchema>>,
         []
       >
@@ -601,16 +538,10 @@ export class VertexTraversal<
    * Get the edges that are connected to the vertices by incoming edges.
    * @param edgeLabels The labels of the edges to get. If no labels are provided, all edges are returned.
    */
-  public inE<const TEdgeLabels extends readonly EdgeLabel<TSchema>[]>(
-    ...edgeLabels: TEdgeLabels
-  ) {
+  public inE<const TEdgeLabels extends readonly EdgeLabel<TSchema>[]>(...edgeLabels: TEdgeLabels) {
     return new EdgeTraversal<
       TSchema,
-      TraversalPath<
-        TPath,
-        Edge<TSchema, GetEdgeLabels<TSchema, TEdgeLabels>>,
-        []
-      >
+      TraversalPath<TPath, Edge<TSchema, GetEdgeLabels<TSchema, TEdgeLabels>>, []>
     >(this.graph, [
       ...this.steps,
       new EdgeStep({
@@ -624,16 +555,10 @@ export class VertexTraversal<
    * Get the edges that are connected to the vertices by outgoing edges.
    * @param edgeLabels The labels of the edges to get. If no labels are provided, all edges are returned.
    */
-  public outE<const TEdgeLabels extends readonly EdgeLabel<TSchema>[]>(
-    ...edgeLabels: TEdgeLabels
-  ) {
+  public outE<const TEdgeLabels extends readonly EdgeLabel<TSchema>[]>(...edgeLabels: TEdgeLabels) {
     return new EdgeTraversal<
       TSchema,
-      TraversalPath<
-        TPath,
-        Edge<TSchema, GetEdgeLabels<TSchema, TEdgeLabels>>,
-        []
-      >
+      TraversalPath<TPath, Edge<TSchema, GetEdgeLabels<TSchema, TEdgeLabels>>, []>
     >(this.graph, [
       ...this.steps,
       new EdgeStep({
@@ -652,11 +577,7 @@ export class VertexTraversal<
   ) {
     return new EdgeTraversal<
       TSchema,
-      TraversalPath<
-        TPath,
-        Edge<TSchema, GetEdgeLabels<TSchema, TEdgeLabels>>,
-        []
-      >
+      TraversalPath<TPath, Edge<TSchema, GetEdgeLabels<TSchema, TEdgeLabels>>, []>
     >(this.graph, [
       ...this.steps,
       new EdgeStep({
@@ -676,10 +597,7 @@ export class VertexTraversal<
       throw new Error("Cannot add a label to an empty traversal.");
     }
     steps[steps.length - 1] = steps[steps.length - 1]!.withLabel(label);
-    return new VertexTraversal<TSchema, AddLabelToTraversalPath<TPath, TLabel>>(
-      this.graph,
-      steps,
-    );
+    return new VertexTraversal<TSchema, AddLabelToTraversalPath<TPath, TLabel>>(this.graph, steps);
   }
 
   /**
@@ -690,8 +608,7 @@ export class VertexTraversal<
     ...labels: TVertexLabels
   ) {
     // if the previous step is a FetchVerticesStep, we need to add the labels to the step directly.
-    const lastStep =
-      this.steps.length > 0 ? this.steps[this.steps.length - 1] : undefined;
+    const lastStep = this.steps.length > 0 ? this.steps[this.steps.length - 1] : undefined;
     if (lastStep instanceof FetchVerticesStep) {
       return new VertexTraversal<
         TSchema,
@@ -715,11 +632,7 @@ export class VertexTraversal<
     return new VertexTraversal<
       TSchema,
       TPath extends TraversalPath<infer TParent, any, infer TLabels>
-        ? TraversalPath<
-            TParent,
-            Vertex<TSchema, GetVertexLabels<TSchema, TVertexLabels>>,
-            TLabels
-          >
+        ? TraversalPath<TParent, Vertex<TSchema, GetVertexLabels<TSchema, TVertexLabels>>, TLabels>
         : TPath
     >(this.graph, [
       ...this.steps,
@@ -738,27 +651,18 @@ export class VertexTraversal<
    */
   public repeat<
     const TGetTraversal extends (
-      parent: VertexTraversal<
-        TSchema,
-        ReplaceRootTraversalPath<TPath, undefined>
-      >,
+      parent: VertexTraversal<TSchema, ReplaceRootTraversalPath<TPath, undefined>>,
     ) => VertexTraversal<TSchema, any>,
   >(getTraversal: TGetTraversal) {
     return new RepeatVertexTraversal<
       TSchema,
-      RepeatVertexTraversalPaths<
-        TPath,
-        PathFromTraversal<ReturnType<TGetTraversal>>
-      >
+      RepeatVertexTraversalPaths<TPath, PathFromTraversal<ReturnType<TGetTraversal>>>
     >(this.graph, [
       ...this.steps,
       new RepeatStep(
         {},
         getTraversal(
-          new VertexTraversal<
-            TSchema,
-            ReplaceRootTraversalPath<TPath, undefined>
-          >(this.graph, []),
+          new VertexTraversal<TSchema, ReplaceRootTraversalPath<TPath, undefined>>(this.graph, []),
         ).steps,
       ),
     ]);
@@ -796,10 +700,7 @@ export class VertexTraversal<
    */
   public has<const TPropertyName extends string>(
     propertyName: TPropertyName,
-  ): VertexTraversal<
-    TSchema,
-    RefineTraversalPathValue<TSchema, TPath, TPropertyName>
-  >;
+  ): VertexTraversal<TSchema, RefineTraversalPathValue<TSchema, TPath, TPropertyName>>;
   /**
    * Filter vertices which have a property with the specified name and value.
    * @param propertyName The name of the property to filter the vertices by.
@@ -808,10 +709,7 @@ export class VertexTraversal<
   public has<const TPropertyName extends string>(
     propertyName: TPropertyName,
     propertyValue: ResolveTraversalPathProperty<TSchema, TPath, TPropertyName>,
-  ): VertexTraversal<
-    TSchema,
-    RefineTraversalPathValue<TSchema, TPath, TPropertyName>
-  >;
+  ): VertexTraversal<TSchema, RefineTraversalPathValue<TSchema, TPath, TPropertyName>>;
   /**
    * Compare the value of a property of the vertices to a specified value.
    * @param propertyName The name of the property to filter the vertices by.
@@ -822,10 +720,7 @@ export class VertexTraversal<
     propertyName: TPropertyName,
     operator: BinaryOperator,
     propertyValue: ResolveTraversalPathProperty<TSchema, TPath, TPropertyName>,
-  ): VertexTraversal<
-    TSchema,
-    RefineTraversalPathValue<TSchema, TPath, TPropertyName>
-  >;
+  ): VertexTraversal<TSchema, RefineTraversalPathValue<TSchema, TPath, TPropertyName>>;
   public has(...args: any[]): VertexTraversal<TSchema, any> {
     let condition: Condition;
     if (args.length === 0) {
@@ -876,15 +771,8 @@ export class VertexTraversal<
    */
   public hasIn<const TPropertyName extends string>(
     propertyName: TPropertyName,
-    values: readonly ResolveTraversalPathProperty<
-      TSchema,
-      TPath,
-      TPropertyName
-    >[],
-  ): VertexTraversal<
-    TSchema,
-    RefineTraversalPathValue<TSchema, TPath, TPropertyName>
-  > {
+    values: readonly ResolveTraversalPathProperty<TSchema, TPath, TPropertyName>[],
+  ): VertexTraversal<TSchema, RefineTraversalPathValue<TSchema, TPath, TPropertyName>> {
     const condition: Condition = ["in", propertyName, values];
     return new VertexTraversal(this.graph, [
       ...this.steps,
@@ -1005,9 +893,7 @@ export class VertexTraversal<
   public not(): VertexTraversal<TSchema, TPath> {
     const lastStep = this.steps[this.steps.length - 1];
     if (!(lastStep instanceof FilterElementsStep)) {
-      throw new Error(
-        "Cannot negate: last step is not a filter step. Use has() or similar first.",
-      );
+      throw new Error("Cannot negate: last step is not a filter step. Use has() or similar first.");
     }
     return new VertexTraversal(this.graph, [
       ...this.steps.slice(0, -1),
@@ -1047,10 +933,7 @@ export class VertexTraversal<
    * Deduplicate the vertices in the traversal.
    */
   public dedup() {
-    return new VertexTraversal<TSchema, TPath>(this.graph, [
-      ...this.steps,
-      new DedupStep({}),
-    ]);
+    return new VertexTraversal<TSchema, TPath>(this.graph, [...this.steps, new DedupStep({})]);
   }
 
   /**
@@ -1058,28 +941,27 @@ export class VertexTraversal<
    * @param pathLabels The labels to select.
    */
   public select<
-    const TPathLabels extends readonly (string &
-      GetTraversalPathLabelModifiers<TPath>)[],
+    const TPathLabels extends readonly (string & GetTraversalPathLabelModifiers<TPath>)[],
   >(...pathLabels: TPathLabels) {
-    return new ValueTraversal<
-      TSchema,
-      ResolveTraversalPathLabelModifiers<TPath, TPathLabels>
-    >(this.graph, [
-      ...this.steps,
-      new SelectStep({
-        pathLabels,
-      }),
-    ]);
+    return new ValueTraversal<TSchema, ResolveTraversalPathLabelModifiers<TPath, TPathLabels>>(
+      this.graph,
+      [
+        ...this.steps,
+        new SelectStep({
+          pathLabels,
+        }),
+      ],
+    );
   }
 
   /**
    * Get the values of the elements in the traversal.
    */
   public values() {
-    return new ValueTraversal<TSchema, GetTraversalPathValue<TPath>>(
-      this.graph,
-      [...this.steps, new ValuesStep({})],
-    );
+    return new ValueTraversal<TSchema, GetTraversalPathValue<TPath>>(this.graph, [
+      ...this.steps,
+      new ValuesStep({}),
+    ]);
   }
 
   /**
@@ -1119,50 +1001,39 @@ export class VertexTraversal<
    * Count the number of vertices in the traversal.
    */
   public count() {
-    return new ValueTraversal<TSchema, number>(this.graph, [
-      ...this.steps,
-      new CountStep({}),
-    ]);
+    return new ValueTraversal<TSchema, number>(this.graph, [...this.steps, new CountStep({})]);
   }
 
   /**
    * Select a single property of the vertices in the traversal.
    * @param propertyName The name of the property to select.
    */
-  public property<
-    const TPropertyName extends keyof GetTraversalPathProperties<TPath>,
-  >(propertyName: TPropertyName) {
-    return new ValueTraversal<
-      TSchema,
-      GetTraversalPathProperties<TPath>[TPropertyName]
-    >(this.graph, [
-      ...this.steps,
-      new MapElementsStep<any>({
-        mapper: (path) => path.value.properties[propertyName],
-      }),
-    ]);
+  public property<const TPropertyName extends keyof GetTraversalPathProperties<TPath>>(
+    propertyName: TPropertyName,
+  ) {
+    return new ValueTraversal<TSchema, GetTraversalPathProperties<TPath>[TPropertyName]>(
+      this.graph,
+      [
+        ...this.steps,
+        new MapElementsStep<any>({
+          mapper: (path) => path.value.properties[propertyName],
+        }),
+      ],
+    );
   }
 
   /**
    * Select specific properties of the vertices in the traversal.
    * @param propertyNames The names of the properties to select.
    */
-  public properties(): ValueTraversal<
-    TSchema,
-    GetTraversalPathProperties<TPath>
-  >;
+  public properties(): ValueTraversal<TSchema, GetTraversalPathProperties<TPath>>;
   public properties<
-    const TPropertyNames extends
-      readonly (keyof GetTraversalPathProperties<TPath>)[],
+    const TPropertyNames extends readonly (keyof GetTraversalPathProperties<TPath>)[],
   >(
     ...propertyNames: TPropertyNames
-  ): ValueTraversal<
-    TSchema,
-    Pick<GetTraversalPathProperties<TPath>, TPropertyNames[number]>
-  >;
+  ): ValueTraversal<TSchema, Pick<GetTraversalPathProperties<TPath>, TPropertyNames[number]>>;
   public properties<
-    const TPropertyNames extends
-      readonly (keyof GetTraversalPathProperties<TPath>)[],
+    const TPropertyNames extends readonly (keyof GetTraversalPathProperties<TPath>)[],
   >(...propertyNames: TPropertyNames) {
     return new ValueTraversal<
       TSchema,
@@ -1178,8 +1049,7 @@ export class VertexTraversal<
           }
           const properties = {} as any;
           for (const propertyName of propertyNames) {
-            properties[propertyName] =
-              storedProps[propertyName as keyof typeof storedProps];
+            properties[propertyName] = storedProps[propertyName as keyof typeof storedProps];
           }
           return properties;
         },
@@ -1220,50 +1090,45 @@ export class OrderVertexTraversal<
    * @param propertyName The name of the property to order by.
    * @param direction The direction to order by.
    */
-  by<
-    const TPropertyName extends keyof GetTraversalPathProperties<TPath> &
-      string,
-  >(propertyName: TPropertyName, direction: OrderDirection = "asc") {
+  by<const TPropertyName extends keyof GetTraversalPathProperties<TPath> & string>(
+    propertyName: TPropertyName,
+    direction: OrderDirection = "asc",
+  ) {
     const steps = [...this.steps];
     let orderStep =
       steps.length > 0 && steps[steps.length - 1] instanceof OrderStep
         ? steps[steps.length - 1]
         : undefined;
     if (!orderStep) {
-      steps.push(
-        new OrderStep({ directions: [{ key: propertyName, direction }] }),
-      );
+      steps.push(new OrderStep({ directions: [{ key: propertyName, direction }] }));
     } else {
       steps[steps.length - 1] = orderStep.clone({
-        directions: [
-          ...orderStep.config.directions,
-          { key: propertyName, direction },
-        ],
+        directions: [...orderStep.config.directions, { key: propertyName, direction }],
       });
     }
     return new OrderVertexTraversal<TSchema, TPath>(this.graph, steps);
   }
 }
 
-export class ValueTraversal<
-  const TSchema extends GraphSchema,
-  const TValue,
-> extends Traversal<TSchema, TValue> {
+export class ValueTraversal<const TSchema extends GraphSchema, const TValue> extends Traversal<
+  TSchema,
+  TValue
+> {
   /**
    * Unfold each value in the traversal.
    */
   public unfold() {
-    return new ValueTraversal<
-      TSchema,
-      TValue extends Iterable<infer U> ? U : TValue
-    >(this.graph, [...this.steps, new UnfoldStep({})]);
+    return new ValueTraversal<TSchema, TValue extends Iterable<infer U> ? U : TValue>(this.graph, [
+      ...this.steps,
+      new UnfoldStep({}),
+    ]);
   }
 
   public values() {
-    return new ValueTraversal<TSchema, GetTraversalPathValue<TValue>>(
-      this.graph,
-      [...this.steps, new ValuesStep({})],
-    );
+    return new ValueTraversal<TSchema, GetTraversalPathValue<TValue>>(this.graph, [
+      ...this.steps,
+      new ValuesStep({}),
+    ]);
   }
 }
 
@@ -1278,11 +1143,7 @@ type ResolveTraversalPathProperty<
   : TPropertyName extends "@label"
     ? string
     : TPath extends TraversalPath<any, infer TValue, any>
-      ? RefineElementValue<
-          TSchema,
-          TValue,
-          TPropertyName
-        > extends infer TElement
+      ? RefineElementValue<TSchema, TValue, TPropertyName> extends infer TElement
         ? TElement extends Element<TSchema, any, infer TProperties, any>
           ? TPropertyName extends keyof TProperties
             ? TProperties[TPropertyName]
@@ -1298,24 +1159,12 @@ type GetTraversalPathProperties<TPath> =
       : never
     : never;
 
-type RefineTraversalPathValue<
-  TSchema extends GraphSchema,
-  TPath,
-  TPropertyName extends string,
-> =
+type RefineTraversalPathValue<TSchema extends GraphSchema, TPath, TPropertyName extends string> =
   TPath extends TraversalPath<infer TParent, infer TValue, infer TLabels>
-    ? TraversalPath<
-        TParent,
-        RefineElementValue<TSchema, TValue, TPropertyName>,
-        TLabels
-      >
+    ? TraversalPath<TParent, RefineElementValue<TSchema, TValue, TPropertyName>, TLabels>
     : undefined;
 
-type RefineElementValue<
-  TSchema extends GraphSchema,
-  TElement,
-  TPropertyName extends string,
-> =
+type RefineElementValue<TSchema extends GraphSchema, TElement, TPropertyName extends string> =
   TElement extends Vertex<TSchema, infer TLabel>
     ? Vertex<
         TSchema,
@@ -1347,23 +1196,16 @@ type RefineElementValue<
       : never;
 
 type RepeatVertexTraversalPaths<THead, TTail> =
-  THead extends TraversalPath<any, unknown, any>
-    ? ReplaceRootTraversalPath<TTail, THead>
-    : never;
+  THead extends TraversalPath<any, unknown, any> ? ReplaceRootTraversalPath<TTail, THead> : never;
 
 type ReplaceRootTraversalPath<TNode, TNewRoot> =
   TNode extends TraversalPath<infer TParent, infer TValue, infer TLabels>
     ? TParent extends undefined
       ? TraversalPath<TNewRoot, TValue, TLabels>
-      : TraversalPath<
-          ReplaceRootTraversalPath<TParent, TNewRoot>,
-          TValue,
-          TLabels
-        >
+      : TraversalPath<ReplaceRootTraversalPath<TParent, TNewRoot>, TValue, TLabels>
     : never;
 
-type PathFromTraversal<TTraversal> =
-  TTraversal extends Traversal<any, infer TPath> ? TPath : never;
+type PathFromTraversal<TTraversal> = TTraversal extends Traversal<any, infer TPath> ? TPath : never;
 
 export class RepeatVertexTraversal<
   const TSchema extends GraphSchema,
@@ -1373,13 +1215,9 @@ export class RepeatVertexTraversal<
    * Repeat the traversal until a sub-traversal returns at least one result.
    */
   public until(
-    getUntilTraversal: (
-      parent: VertexTraversal<TSchema, TPath>,
-    ) => Traversal<any, any>,
+    getUntilTraversal: (parent: VertexTraversal<TSchema, TPath>) => Traversal<any, any>,
   ) {
-    const { steps: untilSteps } = getUntilTraversal(
-      new VertexTraversal(this.graph, []),
-    );
+    const { steps: untilSteps } = getUntilTraversal(new VertexTraversal(this.graph, []));
 
     const { steps: existingSteps } = this;
     const newSteps: Step<any>[] = Array.from({ length: existingSteps.length });
@@ -1403,9 +1241,7 @@ export class RepeatVertexTraversal<
       newSteps[i] = step;
     }
     if (!found) {
-      throw new Error(
-        "Cannot find a repeat step to add an until condition to.",
-      );
+      throw new Error("Cannot find a repeat step to add an until condition to.");
     }
 
     return new RepeatVertexTraversal<TSchema, TPath>(this.graph, newSteps);
@@ -1487,9 +1323,7 @@ export class ShortestPathTraversal<
    * Specify the target vertex by ID.
    * @param targetId The ID of the target vertex.
    */
-  public to<
-    const TTargetLabel extends VertexLabel<TSchema> = VertexLabel<TSchema>,
-  >(
+  public to<const TTargetLabel extends VertexLabel<TSchema> = VertexLabel<TSchema>>(
     targetId: ElementId<TTargetLabel>,
   ): ShortestPathTraversal<
     TSchema,
@@ -1510,9 +1344,7 @@ export class ShortestPathTraversal<
    * @param getTargetTraversal A function that returns a traversal to find the target.
    */
   public to(
-    getTargetTraversal: (
-      parent: VertexTraversal<TSchema, TPath>,
-    ) => VertexTraversal<TSchema, any>,
+    getTargetTraversal: (parent: VertexTraversal<TSchema, TPath>) => VertexTraversal<TSchema, any>,
   ): ShortestPathTraversal<
     TSchema,
     TraversalPath<TPath, Vertex<TSchema, VertexLabel<TSchema>>, readonly []>
@@ -1521,9 +1353,7 @@ export class ShortestPathTraversal<
     targetOrConditionOrTraversal:
       | ElementId
       | Condition
-      | ((
-          parent: VertexTraversal<TSchema, TPath>,
-        ) => VertexTraversal<TSchema, any>),
+      | ((parent: VertexTraversal<TSchema, TPath>) => VertexTraversal<TSchema, any>),
   ): ShortestPathTraversal<TSchema, any> {
     let targetId: ElementId | undefined;
     let targetCondition: Condition | undefined;
@@ -1532,9 +1362,9 @@ export class ShortestPathTraversal<
       const traversal = targetOrConditionOrTraversal(
         new VertexTraversal<TSchema, TPath>(this.graph, []),
       );
-      const filterStep = traversal.steps.find(
-        (step) => step.name === "FilterElements",
-      ) as { config: { condition: Condition } } | undefined;
+      const filterStep = traversal.steps.find((step) => step.name === "FilterElements") as
+        | { config: { condition: Condition } }
+        | undefined;
       if (filterStep) {
         targetCondition = filterStep.config.condition;
       } else {
@@ -1560,9 +1390,7 @@ export class ShortestPathTraversal<
    * Specify edge labels to traverse through.
    * @param edgeLabels The edge labels to traverse.
    */
-  public through(
-    ...edgeLabels: EdgeLabel<TSchema>[]
-  ): ShortestPathTraversal<TSchema, TPath> {
+  public through(...edgeLabels: EdgeLabel<TSchema>[]): ShortestPathTraversal<TSchema, TPath> {
     return this.updateShortestPathStep({ edgeLabels });
   }
 
@@ -1570,9 +1398,7 @@ export class ShortestPathTraversal<
    * Specify the direction of edge traversal.
    * @param direction The direction: "out", "in", or "both".
    */
-  public direction(
-    direction: "in" | "out" | "both",
-  ): ShortestPathTraversal<TSchema, TPath> {
+  public direction(direction: "in" | "out" | "both"): ShortestPathTraversal<TSchema, TPath> {
     return this.updateShortestPathStep({ direction });
   }
 
@@ -1634,10 +1460,10 @@ export class ShortestPathTraversal<
   }
 }
 
-export class EdgeTraversal<
-  const TSchema extends GraphSchema,
-  const TPath,
-> extends Traversal<TSchema, TPath> {
+export class EdgeTraversal<const TSchema extends GraphSchema, const TPath> extends Traversal<
+  TSchema,
+  TPath
+> {
   /**
    * Get the target vertices of the edges (the vertex each edge goes INTO).
    * In Gremlin, inV() returns the vertex at the "in" end of each edge.
@@ -1714,27 +1540,18 @@ export class EdgeTraversal<
       throw new Error("Cannot add a label to an empty traversal.");
     }
     steps[steps.length - 1] = steps[steps.length - 1]!.withLabel(label);
-    return new EdgeTraversal<TSchema, AddLabelToTraversalPath<TPath, TLabel>>(
-      this.graph,
-      steps,
-    );
+    return new EdgeTraversal<TSchema, AddLabelToTraversalPath<TPath, TLabel>>(this.graph, steps);
   }
 
   /**
    * Filter the edges keeping only the ones with the specified labels.
    * @param labels The labels to filter the edges by.
    */
-  public hasLabel<const TEdgeLabels extends readonly EdgeLabel<TSchema>[]>(
-    ...labels: TEdgeLabels
-  ) {
+  public hasLabel<const TEdgeLabels extends readonly EdgeLabel<TSchema>[]>(...labels: TEdgeLabels) {
     return new EdgeTraversal<
       TSchema,
       TPath extends TraversalPath<infer TParent, any, infer TLabels>
-        ? TraversalPath<
-            TParent,
-            Edge<TSchema, GetEdgeLabels<TSchema, TEdgeLabels>>,
-            TLabels
-          >
+        ? TraversalPath<TParent, Edge<TSchema, GetEdgeLabels<TSchema, TEdgeLabels>>, TLabels>
         : undefined
     >(this.graph, [
       ...this.steps,
@@ -1753,10 +1570,7 @@ export class EdgeTraversal<
    */
   public has<const TPropertyName extends string>(
     propertyName: TPropertyName,
-  ): EdgeTraversal<
-    TSchema,
-    RefineTraversalPathValue<TSchema, TPath, TPropertyName>
-  >;
+  ): EdgeTraversal<TSchema, RefineTraversalPathValue<TSchema, TPath, TPropertyName>>;
   /**
    * Filter edges which have a property with the specified name and value.
    * @param propertyName The name of the property to filter the edges by.
@@ -1765,10 +1579,7 @@ export class EdgeTraversal<
   public has<const TPropertyName extends string>(
     propertyName: TPropertyName,
     propertyValue: ResolveTraversalPathProperty<TSchema, TPath, TPropertyName>,
-  ): EdgeTraversal<
-    TSchema,
-    RefineTraversalPathValue<TSchema, TPath, TPropertyName>
-  >;
+  ): EdgeTraversal<TSchema, RefineTraversalPathValue<TSchema, TPath, TPropertyName>>;
   /**
    * Compare the value of a property of the edges to a specified value.
    * @param propertyName The name of the property to filter the edges by.
@@ -1779,10 +1590,7 @@ export class EdgeTraversal<
     propertyName: TPropertyName,
     operator: BinaryOperator,
     propertyValue: ResolveTraversalPathProperty<TSchema, TPath, TPropertyName>,
-  ): EdgeTraversal<
-    TSchema,
-    RefineTraversalPathValue<TSchema, TPath, TPropertyName>
-  >;
+  ): EdgeTraversal<TSchema, RefineTraversalPathValue<TSchema, TPath, TPropertyName>>;
   public has(...args: any[]) {
     let condition: Condition;
     if (args.length === 0) {
@@ -1833,15 +1641,8 @@ export class EdgeTraversal<
    */
   public hasIn<const TPropertyName extends string>(
     propertyName: TPropertyName,
-    values: readonly ResolveTraversalPathProperty<
-      TSchema,
-      TPath,
-      TPropertyName
-    >[],
-  ): EdgeTraversal<
-    TSchema,
-    RefineTraversalPathValue<TSchema, TPath, TPropertyName>
-  > {
+    values: readonly ResolveTraversalPathProperty<TSchema, TPath, TPropertyName>[],
+  ): EdgeTraversal<TSchema, RefineTraversalPathValue<TSchema, TPath, TPropertyName>> {
     const condition: Condition = ["in", propertyName, values];
     return new EdgeTraversal(this.graph, [
       ...this.steps,
@@ -1962,9 +1763,7 @@ export class EdgeTraversal<
   public not(): EdgeTraversal<TSchema, TPath> {
     const lastStep = this.steps[this.steps.length - 1];
     if (!(lastStep instanceof FilterElementsStep)) {
-      throw new Error(
-        "Cannot negate: last step is not a filter step. Use has() or similar first.",
-      );
+      throw new Error("Cannot negate: last step is not a filter step. Use has() or similar first.");
     }
     return new EdgeTraversal(this.graph, [
       ...this.steps.slice(0, -1),
@@ -2010,10 +1809,7 @@ export class EdgeTraversal<
    * Deduplicate the edges in the traversal.
    */
   public dedup() {
-    return new EdgeTraversal<TSchema, TPath>(this.graph, [
-      ...this.steps,
-      new DedupStep({}),
-    ]);
+    return new EdgeTraversal<TSchema, TPath>(this.graph, [...this.steps, new DedupStep({})]);
   }
 
   /**
@@ -2021,27 +1817,26 @@ export class EdgeTraversal<
    * @param pathLabels The labels to select.
    */
   public select<
-    const TPathLabels extends readonly (string &
-      GetTraversalPathLabelModifiers<TPath>)[],
+    const TPathLabels extends readonly (string & GetTraversalPathLabelModifiers<TPath>)[],
   >(...pathLabels: TPathLabels) {
-    return new ValueTraversal<
-      TSchema,
-      ResolveTraversalPathLabelModifiers<TPath, TPathLabels>
-    >(this.graph, [
-      ...this.steps,
-      new SelectStep({
-        pathLabels,
-      }),
-    ]);
+    return new ValueTraversal<TSchema, ResolveTraversalPathLabelModifiers<TPath, TPathLabels>>(
+      this.graph,
+      [
+        ...this.steps,
+        new SelectStep({
+          pathLabels,
+        }),
+      ],
+    );
   }
 
   /**
    * Get the values of the elements in the traversal.
    */
   public values() {
-    return new ValueTraversal<TSchema, GetTraversalPathValue<TPath>>(
-      this.graph,
-      [...this.steps, new ValuesStep({})],
-    );
+    return new ValueTraversal<TSchema, GetTraversalPathValue<TPath>>(this.graph, [
+      ...this.steps,
+      new ValuesStep({}),
+    ]);
   }
 }

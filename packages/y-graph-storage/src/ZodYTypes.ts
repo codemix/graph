@@ -18,10 +18,7 @@ export const ZodYText = z
 export function ZodYArray<TItemType extends z.ZodType>(schema: TItemType) {
   type ItemOutput = z.output<TItemType>;
   return z
-    .union([
-      z.custom<Y.Array<ItemOutput>>((v) => v instanceof Y.Array),
-      z.array(schema),
-    ])
+    .union([z.custom<Y.Array<ItemOutput>>((v) => v instanceof Y.Array), z.array(schema)])
     .transform((val): Y.Array<ItemOutput> => {
       if (val instanceof Y.Array) return val;
       const arr = Y.Array.from(val as any[]);
@@ -35,10 +32,7 @@ export function ZodYArray<TItemType extends z.ZodType>(schema: TItemType) {
 export function ZodYMap<TValueType extends z.ZodType>(schema: TValueType) {
   type ValueOutput = z.output<TValueType>;
   return z
-    .union([
-      z.custom<Y.Map<ValueOutput>>((v) => v instanceof Y.Map),
-      z.record(z.string(), schema),
-    ])
+    .union([z.custom<Y.Map<ValueOutput>>((v) => v instanceof Y.Map), z.record(z.string(), schema)])
     .transform((val): Y.Map<ValueOutput> => {
       if (val instanceof Y.Map) return val;
       const map = new Y.Map<ValueOutput>();
@@ -53,10 +47,7 @@ export function ZodYMap<TValueType extends z.ZodType>(schema: TValueType) {
  * Schema that accepts Y.XmlFragment or string (parsed as XML), always outputs Y.XmlFragment
  */
 export const ZodYXmlFragment = z
-  .union([
-    z.custom<Y.XmlFragment>((v) => v instanceof Y.XmlFragment),
-    z.string(),
-  ])
+  .union([z.custom<Y.XmlFragment>((v) => v instanceof Y.XmlFragment), z.string()])
   .transform((val): Y.XmlFragment => {
     if (val instanceof Y.XmlFragment) return val;
     const fragment = new Y.XmlFragment();

@@ -103,11 +103,7 @@ export class QueryContext<TSchema extends GraphSchema = GraphSchema> {
    * The original context remains unchanged.
    */
   public withParams(additionalParams: QueryParams): QueryContext<TSchema> {
-    return new QueryContext(
-      this.#graph,
-      { ...this.#params, ...additionalParams },
-      this.#options,
-    );
+    return new QueryContext(this.#graph, { ...this.#params, ...additionalParams }, this.#options);
   }
 
   /**

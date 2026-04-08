@@ -19,10 +19,7 @@ describe("Precedence4 - On null value", () => {
   test("[1] IS NULL/IS NOT NULL evaluates correctly", () => {
     const graph = createTckGraph();
     // null IS NULL should be true, null IS NOT NULL should be false
-    const results = executeTckQuery(
-      graph,
-      "RETURN null IS NULL AS a, null IS NOT NULL AS b",
-    );
+    const results = executeTckQuery(graph, "RETURN null IS NULL AS a, null IS NOT NULL AS b");
     expect(results).toHaveLength(1);
     expect(results[0]).toEqual([true, false]);
   });
@@ -66,12 +63,7 @@ describe("Precedence4 - On null value", () => {
               'abc' STARTS WITH (null OR true) AS d`,
     );
     expect(results).toHaveLength(1);
-    const [a, b, c, d] = results[0] as [
-      boolean,
-      boolean | null,
-      boolean,
-      boolean | null,
-    ];
+    const [a, b, c, d] = results[0] as [boolean, boolean | null, boolean, boolean | null];
     expect(a).toBe(true); // Both expressions should be equal
     expect(b).toBe(true); // 'abc' STARTS WITH null = null, null OR true = true
     expect(c).toBe(true); // ('abc' STARTS WITH null) OR true = null OR true = true
@@ -82,10 +74,7 @@ describe("Precedence4 - On null value", () => {
 
   test("[custom-1] IS NULL takes precedence over AND", () => {
     const graph = createTckGraph();
-    executeTckQuery(
-      graph,
-      "CREATE (:A {a: 1}), (:A {a: 2, b: 3}), (:A {b: 4})",
-    );
+    executeTckQuery(graph, "CREATE (:A {a: 1}), (:A {a: 2, b: 3}), (:A {b: 4})");
 
     // a IS NULL AND b IS NOT NULL
     // Should be: (a IS NULL) AND (b IS NOT NULL)
@@ -102,10 +91,7 @@ describe("Precedence4 - On null value", () => {
 
   test("[custom-2] IS NOT NULL takes precedence over OR", () => {
     const graph = createTckGraph();
-    executeTckQuery(
-      graph,
-      "CREATE (:A {a: 1}), (:A {a: 2, b: 3}), (:A {b: 4})",
-    );
+    executeTckQuery(graph, "CREATE (:A {a: 1}), (:A {a: 2, b: 3}), (:A {b: 4})");
 
     // a IS NOT NULL OR b IS NULL
     // Should be: (a IS NOT NULL) OR (b IS NULL)
@@ -137,10 +123,7 @@ describe("Precedence4 - On null value", () => {
   test("[custom-4] IS NULL takes precedence over comparison in WHERE", () => {
     const graph = createTckGraph();
     // Create nodes with various property states
-    executeTckQuery(
-      graph,
-      "CREATE (:A {id: 1, val: 5}), (:A {id: 2}), (:A {id: 3, val: 10})",
-    );
+    executeTckQuery(graph, "CREATE (:A {id: 1, val: 5}), (:A {id: 2}), (:A {id: 3, val: 10})");
 
     // val IS NULL combined with comparison
     // This tests that IS NULL binds before comparison operators
@@ -172,10 +155,7 @@ describe("Precedence4 - On null value", () => {
 
   test("[custom-6] IS NULL with XOR", () => {
     const graph = createTckGraph();
-    executeTckQuery(
-      graph,
-      "CREATE (:A {a: 1}), (:A {b: 2}), (:A {a: 1, b: 2}), (:A {})",
-    );
+    executeTckQuery(graph, "CREATE (:A {a: 1}), (:A {b: 2}), (:A {a: 1, b: 2}), (:A {})");
 
     // a IS NULL XOR b IS NULL
     // Should be: (a IS NULL) XOR (b IS NULL)
@@ -224,10 +204,7 @@ describe("Precedence4 - On null value", () => {
 
   test("[custom-9] Parentheses override IS NULL precedence", () => {
     const graph = createTckGraph();
-    executeTckQuery(
-      graph,
-      "CREATE (:A {id: 1, val: 1}), (:A {id: 2, val: 2}), (:A {id: 3})",
-    );
+    executeTckQuery(graph, "CREATE (:A {id: 1, val: 1}), (:A {id: 2, val: 2}), (:A {id: 3})");
 
     // Without parentheses: val IS NULL OR val = 1
     // Means: (val IS NULL) OR (val = 1)
@@ -247,10 +224,7 @@ describe("Precedence4 - On null value", () => {
 
   test("[custom-10] IS NULL with string operators", () => {
     const graph = createTckGraph();
-    executeTckQuery(
-      graph,
-      "CREATE (:A {name: 'Alice'}), (:A {name: 'Bob'}), (:A {})",
-    );
+    executeTckQuery(graph, "CREATE (:A {name: 'Alice'}), (:A {name: 'Bob'}), (:A {})");
 
     // name IS NOT NULL AND name STARTS WITH 'A'
     const results = executeTckQuery(

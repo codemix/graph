@@ -6,24 +6,18 @@ import { describe, test, expect } from "vitest";
 import { createTckGraph, executeTckQuery } from "../tckHelpers.js";
 
 describe("Aggregation8 - DISTINCT", () => {
-  test.fails(
-    "[1] Distinct on unbound node - OPTIONAL MATCH on empty graph not supported",
-    () => {
-      // Original TCK:
-      // Given empty graph
-      // Query: OPTIONAL MATCH (a) RETURN count(DISTINCT a)
-      // Expected: | count(DISTINCT a) | 0 |
-      //
-      // Limitation: OPTIONAL MATCH on completely empty graph not supported
-      const graph = createTckGraph();
-      const results = executeTckQuery(
-        graph,
-        "OPTIONAL MATCH (a) RETURN count(DISTINCT a)",
-      );
-      expect(results).toHaveLength(1);
-      expect(results[0]).toBe(0);
-    },
-  );
+  test.fails("[1] Distinct on unbound node - OPTIONAL MATCH on empty graph not supported", () => {
+    // Original TCK:
+    // Given empty graph
+    // Query: OPTIONAL MATCH (a) RETURN count(DISTINCT a)
+    // Expected: | count(DISTINCT a) | 0 |
+    //
+    // Limitation: OPTIONAL MATCH on completely empty graph not supported
+    const graph = createTckGraph();
+    const results = executeTckQuery(graph, "OPTIONAL MATCH (a) RETURN count(DISTINCT a)");
+    expect(results).toHaveLength(1);
+    expect(results[0]).toBe(0);
+  });
 
   test.fails("[2] Distinct on null - unlabeled nodes not supported", () => {
     // Original TCK:
@@ -34,10 +28,7 @@ describe("Aggregation8 - DISTINCT", () => {
     // Limitation: Unlabeled nodes not supported
     const graph = createTckGraph();
     executeTckQuery(graph, "CREATE ()");
-    const results = executeTckQuery(
-      graph,
-      "MATCH (a) RETURN count(DISTINCT a.name)",
-    );
+    const results = executeTckQuery(graph, "MATCH (a) RETURN count(DISTINCT a.name)");
     expect(results).toHaveLength(1);
     expect(results[0]).toBe(0);
   });
@@ -71,10 +62,7 @@ describe("Aggregation8 - DISTINCT", () => {
       `CREATE (:Person {name: 'Alice'}), (:Person {name: 'Bob'}), (:Person {name: 'Alice'})`,
     );
 
-    const results = executeTckQuery(
-      graph,
-      "MATCH (n:Person) RETURN count(DISTINCT n.name) AS cnt",
-    );
+    const results = executeTckQuery(graph, "MATCH (n:Person) RETURN count(DISTINCT n.name) AS cnt");
 
     expect(results).toHaveLength(1);
     expect(results[0]).toEqual({ cnt: 2 }); // Alice and Bob
@@ -87,10 +75,7 @@ describe("Aggregation8 - DISTINCT", () => {
       `CREATE (:Person {name: 'Alice'}), (:Person {name: 'Bob'}), (:Person {name: 'Charlie'})`,
     );
 
-    const results = executeTckQuery(
-      graph,
-      "MATCH (n:Person) RETURN count(DISTINCT n) AS cnt",
-    );
+    const results = executeTckQuery(graph, "MATCH (n:Person) RETURN count(DISTINCT n) AS cnt");
 
     expect(results).toHaveLength(1);
     expect(results[0]).toEqual({ cnt: 3 }); // 3 unique nodes
@@ -121,10 +106,7 @@ describe("Aggregation8 - DISTINCT", () => {
       `CREATE (:Item {price: 10}), (:Item {price: 20}), (:Item {price: 10}), (:Item {price: 30})`,
     );
 
-    const results = executeTckQuery(
-      graph,
-      "MATCH (i:Item) RETURN sum(DISTINCT i.price) AS total",
-    );
+    const results = executeTckQuery(graph, "MATCH (i:Item) RETURN sum(DISTINCT i.price) AS total");
 
     expect(results).toHaveLength(1);
     expect(results[0]).toEqual({ total: 60 }); // 10 + 20 + 30
@@ -153,10 +135,7 @@ describe("Aggregation8 - DISTINCT", () => {
       `CREATE (:Item {value: 10}), (:Item {value: 5}), (:Item {value: 10}), (:Item {value: 20})`,
     );
 
-    const results = executeTckQuery(
-      graph,
-      "MATCH (i:Item) RETURN min(DISTINCT i.value) AS minVal",
-    );
+    const results = executeTckQuery(graph, "MATCH (i:Item) RETURN min(DISTINCT i.value) AS minVal");
 
     expect(results).toHaveLength(1);
     expect(results[0]).toEqual({ minVal: 5 });
@@ -169,10 +148,7 @@ describe("Aggregation8 - DISTINCT", () => {
       `CREATE (:Item {value: 10}), (:Item {value: 5}), (:Item {value: 10}), (:Item {value: 20})`,
     );
 
-    const results = executeTckQuery(
-      graph,
-      "MATCH (i:Item) RETURN max(DISTINCT i.value) AS maxVal",
-    );
+    const results = executeTckQuery(graph, "MATCH (i:Item) RETURN max(DISTINCT i.value) AS maxVal");
 
     expect(results).toHaveLength(1);
     expect(results[0]).toEqual({ maxVal: 20 });
@@ -180,10 +156,7 @@ describe("Aggregation8 - DISTINCT", () => {
 
   test("[Custom 8] RETURN DISTINCT with count (alternative approach)", () => {
     const graph = createTckGraph();
-    executeTckQuery(
-      graph,
-      `CREATE (:A {name: 'Alice'}), (:A {name: 'Bob'}), (:A {name: 'Alice'})`,
-    );
+    executeTckQuery(graph, `CREATE (:A {name: 'Alice'}), (:A {name: 'Bob'}), (:A {name: 'Alice'})`);
 
     // Use WITH DISTINCT to de-duplicate before counting
     const results = executeTckQuery(

@@ -21,10 +21,7 @@ function makeType<T>(_defaultValue: T): StandardSchemaV1<T> {
 }
 
 // Helper function to execute a query string against a graph
-function executeQuery(
-  graph: Graph<GraphSchema>,
-  queryString: string,
-): unknown[] {
+function executeQuery(graph: Graph<GraphSchema>, queryString: string): unknown[] {
   const ast = parse(queryString) as Query;
   const steps = astToSteps(ast);
   const traverser = createTraverser(steps);
@@ -129,138 +126,93 @@ function createGraph(): Graph<GraphSchema> {
 
 test("String Predicates, Inequality Operator, and RETURN * Execution - STARTS WITH predicate - should find users whose name starts with 'Alice'", () => {
   const graph = createGraph();
-  const results = executeQuery(
-    graph,
-    "MATCH (u:User) WHERE u.name STARTS WITH 'Alice' RETURN u",
-  );
+  const results = executeQuery(graph, "MATCH (u:User) WHERE u.name STARTS WITH 'Alice' RETURN u");
   expect(results).toHaveLength(1);
 });
 
 test("String Predicates, Inequality Operator, and RETURN * Execution - STARTS WITH predicate - should find users whose email starts with a specific domain part", () => {
   const graph = createGraph();
-  const results = executeQuery(
-    graph,
-    "MATCH (u:User) WHERE u.email STARTS WITH 'alice' RETURN u",
-  );
+  const results = executeQuery(graph, "MATCH (u:User) WHERE u.email STARTS WITH 'alice' RETURN u");
   expect(results).toHaveLength(1);
 });
 
 test("String Predicates, Inequality Operator, and RETURN * Execution - STARTS WITH predicate - should find products with SKU starting with ELEC", () => {
   const graph = createGraph();
-  const results = executeQuery(
-    graph,
-    "MATCH (p:Product) WHERE p.sku STARTS WITH 'ELEC' RETURN p",
-  );
+  const results = executeQuery(graph, "MATCH (p:Product) WHERE p.sku STARTS WITH 'ELEC' RETURN p");
   expect(results).toHaveLength(2);
 });
 
 test("String Predicates, Inequality Operator, and RETURN * Execution - STARTS WITH predicate - should return empty when no match for STARTS WITH", () => {
   const graph = createGraph();
-  const results = executeQuery(
-    graph,
-    "MATCH (u:User) WHERE u.name STARTS WITH 'Zack' RETURN u",
-  );
+  const results = executeQuery(graph, "MATCH (u:User) WHERE u.name STARTS WITH 'Zack' RETURN u");
   expect(results).toHaveLength(0);
 });
 
 test("String Predicates, Inequality Operator, and RETURN * Execution - STARTS WITH predicate - should handle empty string STARTS WITH (matches all)", () => {
   const graph = createGraph();
-  const results = executeQuery(
-    graph,
-    "MATCH (u:User) WHERE u.name STARTS WITH '' RETURN u",
-  );
+  const results = executeQuery(graph, "MATCH (u:User) WHERE u.name STARTS WITH '' RETURN u");
   expect(results).toHaveLength(5);
 });
 
 test("String Predicates, Inequality Operator, and RETURN * Execution - ENDS WITH predicate - should find users whose name ends with 'Smith'", () => {
   const graph = createGraph();
-  const results = executeQuery(
-    graph,
-    "MATCH (u:User) WHERE u.name ENDS WITH 'Smith' RETURN u",
-  );
+  const results = executeQuery(graph, "MATCH (u:User) WHERE u.name ENDS WITH 'Smith' RETURN u");
   expect(results).toHaveLength(1);
 });
 
 test("String Predicates, Inequality Operator, and RETURN * Execution - ENDS WITH predicate - should find users with emails ending in '.com'", () => {
   const graph = createGraph();
-  const results = executeQuery(
-    graph,
-    "MATCH (u:User) WHERE u.email ENDS WITH '.com' RETURN u",
-  );
+  const results = executeQuery(graph, "MATCH (u:User) WHERE u.email ENDS WITH '.com' RETURN u");
   // alice@example.com and charlie@example.com
   expect(results).toHaveLength(2);
 });
 
 test("String Predicates, Inequality Operator, and RETURN * Execution - ENDS WITH predicate - should find users with emails ending in '.org'", () => {
   const graph = createGraph();
-  const results = executeQuery(
-    graph,
-    "MATCH (u:User) WHERE u.email ENDS WITH '.org' RETURN u",
-  );
+  const results = executeQuery(graph, "MATCH (u:User) WHERE u.email ENDS WITH '.org' RETURN u");
   // bob@company.org and diana@company.org
   expect(results).toHaveLength(2);
 });
 
 test("String Predicates, Inequality Operator, and RETURN * Execution - ENDS WITH predicate - should find products with SKU ending in '-001'", () => {
   const graph = createGraph();
-  const results = executeQuery(
-    graph,
-    "MATCH (p:Product) WHERE p.sku ENDS WITH '-001' RETURN p",
-  );
+  const results = executeQuery(graph, "MATCH (p:Product) WHERE p.sku ENDS WITH '-001' RETURN p");
   expect(results).toHaveLength(2);
 });
 
 test("String Predicates, Inequality Operator, and RETURN * Execution - ENDS WITH predicate - should return empty when no match for ENDS WITH", () => {
   const graph = createGraph();
-  const results = executeQuery(
-    graph,
-    "MATCH (u:User) WHERE u.name ENDS WITH 'XYZ' RETURN u",
-  );
+  const results = executeQuery(graph, "MATCH (u:User) WHERE u.name ENDS WITH 'XYZ' RETURN u");
   expect(results).toHaveLength(0);
 });
 
 test("String Predicates, Inequality Operator, and RETURN * Execution - CONTAINS predicate - should find users whose name contains 'Brown'", () => {
   const graph = createGraph();
-  const results = executeQuery(
-    graph,
-    "MATCH (u:User) WHERE u.name CONTAINS 'Brown' RETURN u",
-  );
+  const results = executeQuery(graph, "MATCH (u:User) WHERE u.name CONTAINS 'Brown' RETURN u");
   expect(results).toHaveLength(1);
 });
 
 test("String Predicates, Inequality Operator, and RETURN * Execution - CONTAINS predicate - should find users with emails containing 'example'", () => {
   const graph = createGraph();
-  const results = executeQuery(
-    graph,
-    "MATCH (u:User) WHERE u.email CONTAINS 'example' RETURN u",
-  );
+  const results = executeQuery(graph, "MATCH (u:User) WHERE u.email CONTAINS 'example' RETURN u");
   expect(results).toHaveLength(2);
 });
 
 test("String Predicates, Inequality Operator, and RETURN * Execution - CONTAINS predicate - should find users with emails containing '@'", () => {
   const graph = createGraph();
-  const results = executeQuery(
-    graph,
-    "MATCH (u:User) WHERE u.email CONTAINS '@' RETURN u",
-  );
+  const results = executeQuery(graph, "MATCH (u:User) WHERE u.email CONTAINS '@' RETURN u");
   expect(results).toHaveLength(5);
 });
 
 test("String Predicates, Inequality Operator, and RETURN * Execution - CONTAINS predicate - should find products containing 'Pro' in name", () => {
   const graph = createGraph();
-  const results = executeQuery(
-    graph,
-    "MATCH (p:Product) WHERE p.name CONTAINS 'Pro' RETURN p",
-  );
+  const results = executeQuery(graph, "MATCH (p:Product) WHERE p.name CONTAINS 'Pro' RETURN p");
   expect(results).toHaveLength(1);
 });
 
 test("String Predicates, Inequality Operator, and RETURN * Execution - CONTAINS predicate - should return empty when no match for CONTAINS", () => {
   const graph = createGraph();
-  const results = executeQuery(
-    graph,
-    "MATCH (u:User) WHERE u.name CONTAINS 'XYZ' RETURN u",
-  );
+  const results = executeQuery(graph, "MATCH (u:User) WHERE u.name CONTAINS 'XYZ' RETURN u");
   expect(results).toHaveLength(0);
 });
 
@@ -312,10 +264,7 @@ test("String Predicates, Inequality Operator, and RETURN * Execution - Combining
 
 test("String Predicates, Inequality Operator, and RETURN * Execution - Inequality operator (<>) - should find users with role not equal to admin using <>", () => {
   const graph = createGraph();
-  const results = executeQuery(
-    graph,
-    "MATCH (u:User) WHERE u.role <> 'admin' RETURN u",
-  );
+  const results = executeQuery(graph, "MATCH (u:User) WHERE u.role <> 'admin' RETURN u");
   // user, user, moderator
   expect(results).toHaveLength(3);
 });
@@ -341,33 +290,21 @@ test("String Predicates, Inequality Operator, and RETURN * Execution - Inequalit
 
 test("String Predicates, Inequality Operator, and RETURN * Execution - Inequality operator (<>) - should work with != as well", () => {
   const graph = createGraph();
-  const results1 = executeQuery(
-    graph,
-    "MATCH (u:User) WHERE u.role <> 'admin' RETURN u",
-  );
-  const results2 = executeQuery(
-    graph,
-    "MATCH (u:User) WHERE u.role != 'admin' RETURN u",
-  );
+  const results1 = executeQuery(graph, "MATCH (u:User) WHERE u.role <> 'admin' RETURN u");
+  const results2 = executeQuery(graph, "MATCH (u:User) WHERE u.role != 'admin' RETURN u");
   expect(results1).toHaveLength(results2.length);
 });
 
 test("String Predicates, Inequality Operator, and RETURN * Execution - RETURN * (returnAll) - should return all variables with RETURN *", () => {
   const graph = createGraph();
-  const results = executeQuery(
-    graph,
-    "MATCH (u:User) WHERE u.name STARTS WITH 'Alice' RETURN *",
-  );
+  const results = executeQuery(graph, "MATCH (u:User) WHERE u.name STARTS WITH 'Alice' RETURN *");
   expect(results).toHaveLength(1);
 });
 
 test("String Predicates, Inequality Operator, and RETURN * Execution - RETURN * (returnAll) - should work with RETURN DISTINCT *", () => {
   const graph = createGraph();
   // There are 2 admins, and DISTINCT with RETURN * should return each unique user
-  const results = executeQuery(
-    graph,
-    "MATCH (u:User) WHERE u.role = 'admin' RETURN DISTINCT *",
-  );
+  const results = executeQuery(graph, "MATCH (u:User) WHERE u.role = 'admin' RETURN DISTINCT *");
   // Results should be 2 unique admin users (Alice and Charlie)
   // Note: DedupStep currently deduplicates by the entire result array,
   // which with unique vertex IDs means no actual deduplication occurs
@@ -390,39 +327,27 @@ test("String Predicates, Inequality Operator, and RETURN * Execution - RETURN * 
 test("String Predicates, Inequality Operator, and RETURN * Execution - Edge cases - should handle string predicate on non-string property gracefully", () => {
   const graph = createGraph();
   // age is a number, STARTS WITH should return false
-  const results = executeQuery(
-    graph,
-    "MATCH (u:User) WHERE u.age STARTS WITH '3' RETURN u",
-  );
+  const results = executeQuery(graph, "MATCH (u:User) WHERE u.age STARTS WITH '3' RETURN u");
   expect(results).toHaveLength(0);
 });
 
 test("String Predicates, Inequality Operator, and RETURN * Execution - Edge cases - should handle case-sensitive matching with CONTAINS", () => {
   const graph = createGraph();
-  const results = executeQuery(
-    graph,
-    "MATCH (u:User) WHERE u.name CONTAINS 'alice' RETURN u",
-  );
+  const results = executeQuery(graph, "MATCH (u:User) WHERE u.name CONTAINS 'alice' RETURN u");
   // No match because actual name is "Alice Smith" with capital A
   expect(results).toHaveLength(0);
 });
 
 test("String Predicates, Inequality Operator, and RETURN * Execution - Edge cases - should handle exact case matching with STARTS WITH", () => {
   const graph = createGraph();
-  const results = executeQuery(
-    graph,
-    "MATCH (u:User) WHERE u.name STARTS WITH 'alice' RETURN u",
-  );
+  const results = executeQuery(graph, "MATCH (u:User) WHERE u.name STARTS WITH 'alice' RETURN u");
   // No match - case sensitive
   expect(results).toHaveLength(0);
 });
 
 test("String Predicates, Inequality Operator, and RETURN * Execution - Edge cases - should handle exact case matching with ENDS WITH", () => {
   const graph = createGraph();
-  const results = executeQuery(
-    graph,
-    "MATCH (u:User) WHERE u.name ENDS WITH 'SMITH' RETURN u",
-  );
+  const results = executeQuery(graph, "MATCH (u:User) WHERE u.name ENDS WITH 'SMITH' RETURN u");
   // No match - case sensitive
   expect(results).toHaveLength(0);
 });

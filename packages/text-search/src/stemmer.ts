@@ -246,10 +246,7 @@ function step4(word: string): string {
     if (word.endsWith(suffix)) {
       const stem = word.slice(0, -suffix.length);
       if (suffix === "ion") {
-        if (
-          hasMeasureGreaterThan1(stem) &&
-          (stem.endsWith("s") || stem.endsWith("t"))
-        ) {
+        if (hasMeasureGreaterThan1(stem) && (stem.endsWith("s") || stem.endsWith("t"))) {
           return stem;
         }
       } else if (hasMeasureGreaterThan1(stem)) {

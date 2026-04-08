@@ -3,21 +3,13 @@
  * Translated from tmp/tck/features/clauses/with/With1.feature
  */
 import { describe, test, expect } from "vitest";
-import {
-  createTckGraph,
-  executeTckQuery,
-  getLabel,
-  getProperty,
-} from "../tckHelpers.js";
+import { createTckGraph, executeTckQuery, getLabel, getProperty } from "../tckHelpers.js";
 
 describe("With1 - Forward single variable", () => {
   test("[1] Forwarding a node variable 1 - requires undirected relationship pattern", () => {
     const graph = createTckGraph();
     executeTckQuery(graph, "CREATE (:A)-[:REL]->(:B)");
-    const results = executeTckQuery(
-      graph,
-      "MATCH (a:A) WITH a MATCH (a)-->(b) RETURN *",
-    );
+    const results = executeTckQuery(graph, "MATCH (a:A) WITH a MATCH (a)-->(b) RETURN *");
     expect(results).toHaveLength(1);
     // RETURN * should return both a and b
     expect(results[0]).toBeDefined();
@@ -31,41 +23,29 @@ describe("With1 - Forward single variable", () => {
       "MATCH (a:A) WITH a MATCH (a)-[:REL]->(b:B) RETURN a, b",
     );
     expect(results.length).toBe(1);
-    const [nodeA, nodeB] = results[0] as [
-      Record<string, unknown>,
-      Record<string, unknown>,
-    ];
+    const [nodeA, nodeB] = results[0] as [Record<string, unknown>, Record<string, unknown>];
     expect(getLabel(nodeA)).toBe("A");
     expect(getLabel(nodeB)).toBe("B");
   });
 
-  test.fails(
-    "[2] Forwarding a node variable 2 - requires multi-pattern in second MATCH",
-    () => {
-      const graph = createTckGraph();
-      executeTckQuery(graph, "CREATE (:A)-[:REL]->(:B)");
-      executeTckQuery(graph, "CREATE (:X)");
-      const results = executeTckQuery(
-        graph,
-        "MATCH (a:A) WITH a MATCH (x:X), (a)-->(b) RETURN *",
-      );
-      expect(results).toHaveLength(1);
-    },
-  );
+  test.fails("[2] Forwarding a node variable 2 - requires multi-pattern in second MATCH", () => {
+    const graph = createTckGraph();
+    executeTckQuery(graph, "CREATE (:A)-[:REL]->(:B)");
+    executeTckQuery(graph, "CREATE (:X)");
+    const results = executeTckQuery(graph, "MATCH (a:A) WITH a MATCH (x:X), (a)-->(b) RETURN *");
+    expect(results).toHaveLength(1);
+  });
 
-  test.fails(
-    "[3] Forwarding a relationship variable - requires matching by relationship variable",
-    () => {
-      const graph = createTckGraph();
-      executeTckQuery(graph, "CREATE (:A)-[:T1]->(:X)");
-      executeTckQuery(graph, "CREATE (:A)-[:T2]->(:X)");
-      const results = executeTckQuery(
-        graph,
-        "MATCH ()-[r1]->(:X) WITH r1 AS r2 MATCH ()-[r2]->() RETURN r2 AS rel",
-      );
-      expect(results).toHaveLength(2);
-    },
-  );
+  test.fails("[3] Forwarding a relationship variable - requires matching by relationship variable", () => {
+    const graph = createTckGraph();
+    executeTckQuery(graph, "CREATE (:A)-[:T1]->(:X)");
+    executeTckQuery(graph, "CREATE (:A)-[:T2]->(:X)");
+    const results = executeTckQuery(
+      graph,
+      "MATCH ()-[r1]->(:X) WITH r1 AS r2 MATCH ()-[r2]->() RETURN r2 AS rel",
+    );
+    expect(results).toHaveLength(2);
+  });
 
   test("[4] Forwarding a path variable - unlabeled node (by design)", () => {
     const graph = createTckGraph();
@@ -127,15 +107,9 @@ describe("With1 - Forward single variable", () => {
     const graph = createTckGraph();
     executeTckQuery(graph, "CREATE (:A {name: 'a'})-[:REL]->(:B {name: 'b'})");
 
-    const results = executeTckQuery(
-      graph,
-      "MATCH (a:A)-[r:REL]->(b:B) WITH a, r, b RETURN a, b",
-    );
+    const results = executeTckQuery(graph, "MATCH (a:A)-[r:REL]->(b:B) WITH a, r, b RETURN a, b");
     expect(results.length).toBe(1);
-    const [nodeA, nodeB] = results[0] as [
-      Record<string, unknown>,
-      Record<string, unknown>,
-    ];
+    const [nodeA, nodeB] = results[0] as [Record<string, unknown>, Record<string, unknown>];
     expect(getLabel(nodeA)).toBe("A");
     expect(getLabel(nodeB)).toBe("B");
   });

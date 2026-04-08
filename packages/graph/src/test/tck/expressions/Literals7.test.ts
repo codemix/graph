@@ -54,24 +54,18 @@ describe("Literals7 - List", () => {
     expect(results[0]).toEqual([372036854]);
   });
 
-  test.fails(
-    "[7] Return a list containing a float - grammar requires integer part",
-    () => {
-      // Query: RETURN [-.1e-5] AS literal
-      // Expected: [-0.000001]
-      const graph = createTckGraph();
-      const results = executeTckQuery(graph, "RETURN [-.1e-5] AS literal");
-      expect(results).toHaveLength(1);
-      expect(results[0]).toEqual([-0.000001]);
-    },
-  );
+  test.fails("[7] Return a list containing a float - grammar requires integer part", () => {
+    // Query: RETURN [-.1e-5] AS literal
+    // Expected: [-0.000001]
+    const graph = createTckGraph();
+    const results = executeTckQuery(graph, "RETURN [-.1e-5] AS literal");
+    expect(results).toHaveLength(1);
+    expect(results[0]).toEqual([-0.000001]);
+  });
 
   test("[8] Return a list containing a string", () => {
     const graph = createTckGraph();
-    const results = executeTckQuery(
-      graph,
-      "RETURN ['abc, as#?lßdj '] AS literal",
-    );
+    const results = executeTckQuery(graph, "RETURN ['abc, as#?lßdj '] AS literal");
     expect(results).toHaveLength(1);
     expect(results[0]).toEqual(["abc, as#?lßdj "]);
   });
@@ -98,10 +92,7 @@ describe("Literals7 - List", () => {
 
   test("[14] Return a list containing multiple integers", () => {
     const graph = createTckGraph();
-    const results = executeTckQuery(
-      graph,
-      "RETURN [1, -2, 0o77, 0xA4C, 71034856] AS literal",
-    );
+    const results = executeTckQuery(graph, "RETURN [1, -2, 0o77, 0xA4C, 71034856] AS literal");
     expect(results).toHaveLength(1);
     expect(results[0]).toEqual([1, -2, 63, 2636, 71034856]);
   });
@@ -138,10 +129,7 @@ describe("Literals7 - List", () => {
   test("[custom-2] UNWIND list with integers", () => {
     const graph = createTckGraph();
 
-    const results = executeTckQuery(
-      graph,
-      "UNWIND [1, 2, 3] AS num RETURN num",
-    );
+    const results = executeTckQuery(graph, "UNWIND [1, 2, 3] AS num RETURN num");
 
     expect(results).toHaveLength(3);
     expect(results[0]).toEqual([1]);
@@ -152,10 +140,7 @@ describe("Literals7 - List", () => {
   test("[custom-3] UNWIND list with strings", () => {
     const graph = createTckGraph();
 
-    const results = executeTckQuery(
-      graph,
-      "UNWIND ['a', 'b', 'c'] AS letter RETURN letter",
-    );
+    const results = executeTckQuery(graph, "UNWIND ['a', 'b', 'c'] AS letter RETURN letter");
 
     expect(results).toHaveLength(3);
     expect(results[0]).toEqual(["a"]);
@@ -166,10 +151,7 @@ describe("Literals7 - List", () => {
   test("[custom-4] UNWIND list with booleans", () => {
     const graph = createTckGraph();
 
-    const results = executeTckQuery(
-      graph,
-      "UNWIND [true, false, true] AS val RETURN val",
-    );
+    const results = executeTckQuery(graph, "UNWIND [true, false, true] AS val RETURN val");
 
     expect(results).toHaveLength(3);
     expect(results[0]).toEqual([true]);
@@ -180,10 +162,7 @@ describe("Literals7 - List", () => {
   test("[custom-5] UNWIND list with mixed types", () => {
     const graph = createTckGraph();
 
-    const results = executeTckQuery(
-      graph,
-      "UNWIND [1, 'two', true] AS item RETURN item",
-    );
+    const results = executeTckQuery(graph, "UNWIND [1, 'two', true] AS item RETURN item");
 
     expect(results).toHaveLength(3);
     expect(results[0]).toEqual([1]);
@@ -194,10 +173,7 @@ describe("Literals7 - List", () => {
   test("[custom-6] UNWIND list with hexadecimal values", () => {
     const graph = createTckGraph();
 
-    const results = executeTckQuery(
-      graph,
-      "UNWIND [0x1, 0xA, 0xFF] AS num RETURN num",
-    );
+    const results = executeTckQuery(graph, "UNWIND [0x1, 0xA, 0xFF] AS num RETURN num");
 
     expect(results).toHaveLength(3);
     expect(results[0]).toEqual([1]);
@@ -208,10 +184,7 @@ describe("Literals7 - List", () => {
   test("[custom-7] UNWIND list with octal values", () => {
     const graph = createTckGraph();
 
-    const results = executeTckQuery(
-      graph,
-      "UNWIND [0o1, 0o10, 0o77] AS num RETURN num",
-    );
+    const results = executeTckQuery(graph, "UNWIND [0o1, 0o10, 0o77] AS num RETURN num");
 
     expect(results).toHaveLength(3);
     expect(results[0]).toEqual([1]);
@@ -222,10 +195,7 @@ describe("Literals7 - List", () => {
   test("[custom-8] UNWIND list with float values", () => {
     const graph = createTckGraph();
 
-    const results = executeTckQuery(
-      graph,
-      "UNWIND [1.0, 2.5, 3.14] AS num RETURN num",
-    );
+    const results = executeTckQuery(graph, "UNWIND [1.0, 2.5, 3.14] AS num RETURN num");
 
     expect(results).toHaveLength(3);
     expect(results[0]).toEqual([1.0]);
@@ -236,10 +206,7 @@ describe("Literals7 - List", () => {
   test("[custom-9] UNWIND list with negative values", () => {
     const graph = createTckGraph();
 
-    const results = executeTckQuery(
-      graph,
-      "UNWIND [-1, -2, -3] AS num RETURN num",
-    );
+    const results = executeTckQuery(graph, "UNWIND [-1, -2, -3] AS num RETURN num");
 
     expect(results).toHaveLength(3);
     expect(results[0]).toEqual([-1]);
@@ -288,10 +255,7 @@ describe("Literals7 - List", () => {
       "CREATE (:A {name: 'a', num: 1}), (:A {name: 'b', num: 2}), (:A {name: 'c', num: 3})",
     );
 
-    const results = executeTckQuery(
-      graph,
-      "MATCH (a:A) WHERE NOT a.num IN [1, 3] RETURN a.name",
-    );
+    const results = executeTckQuery(graph, "MATCH (a:A) WHERE NOT a.num IN [1, 3] RETURN a.name");
 
     expect(results).toHaveLength(1);
     expect(results[0]).toBe("b");
@@ -309,10 +273,7 @@ describe("Literals7 - List", () => {
   test("[custom-14] UNWIND preserves duplicate values", () => {
     const graph = createTckGraph();
 
-    const results = executeTckQuery(
-      graph,
-      "UNWIND [1, 1, 2, 2, 3] AS num RETURN num",
-    );
+    const results = executeTckQuery(graph, "UNWIND [1, 1, 2, 2, 3] AS num RETURN num");
 
     expect(results).toHaveLength(5);
     expect(results[0]).toEqual([1]);

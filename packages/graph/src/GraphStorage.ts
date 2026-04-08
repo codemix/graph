@@ -1,8 +1,4 @@
-import {
-  EdgeNotFoundError,
-  ElementNotFoundError,
-  VertexNotFoundError,
-} from "./Exceptions.js";
+import { EdgeNotFoundError, ElementNotFoundError, VertexNotFoundError } from "./Exceptions.js";
 
 export type ElementId<TLabel extends string = string> = `${TLabel}:${string}`;
 
@@ -26,9 +22,7 @@ export function parseElementId<TLabel extends string = string>(
  * @param id The element id.
  * @returns The label.
  */
-export function getLabelFromElementId<const TLabel extends string>(
-  id: ElementId<TLabel>,
-): TLabel {
+export function getLabelFromElementId<const TLabel extends string>(id: ElementId<TLabel>): TLabel {
   for (let i = 0; i < id.length; i++) {
     if (id.charAt(i) === ":") {
       return id.slice(0, i) as TLabel;
@@ -186,8 +180,7 @@ export class InMemoryGraphStorage implements GraphStorage {
       const vertex = this.#vertices.get(key);
       if (
         vertex !== undefined &&
-        (labels.length === 0 ||
-          labels.includes(getLabelFromElementId(vertex.id)))
+        (labels.length === 0 || labels.includes(getLabelFromElementId(vertex.id)))
       ) {
         yield vertex;
       }

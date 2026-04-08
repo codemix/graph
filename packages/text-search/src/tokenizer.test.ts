@@ -40,14 +40,7 @@ test("Tokenizer tokenize should preserve stopwords when configured", () => {
   const tokens = tokenize("The cat is in the hat", {
     removeStopwords: false,
   });
-  expect(tokens.map((t) => t.original)).toEqual([
-    "the",
-    "cat",
-    "is",
-    "in",
-    "the",
-    "hat",
-  ]);
+  expect(tokens.map((t) => t.original)).toEqual(["the", "cat", "is", "in", "the", "hat"]);
 });
 
 test("Tokenizer tokenize should disable stemming when configured", () => {
@@ -63,12 +56,7 @@ test("Tokenizer tokenize should filter by minimum length", () => {
 test("Tokenizer tokenize should handle punctuation", () => {
   // "are" is a stopword, but "you" is not
   const tokens = tokenize("Hello, world! How are you?");
-  expect(tokens.map((t) => t.original)).toEqual([
-    "hello",
-    "world",
-    "how",
-    "you",
-  ]);
+  expect(tokens.map((t) => t.original)).toEqual(["hello", "world", "how", "you"]);
 });
 
 test("Tokenizer tokenize should handle mixed case", () => {
@@ -193,9 +181,7 @@ test("Tokenizer STOPWORDS should not contain content words", () => {
 });
 
 test("Tokenizer real-world text processing should tokenize a technical sentence", () => {
-  const tokens = tokenize(
-    "The database connection is experiencing timeout errors",
-  );
+  const tokens = tokenize("The database connection is experiencing timeout errors");
   expect(tokens.map((t) => t.stemmed)).toEqual([
     "databas",
     "connect",
@@ -206,36 +192,16 @@ test("Tokenizer real-world text processing should tokenize a technical sentence"
 });
 
 test("Tokenizer real-world text processing should tokenize a programming description", () => {
-  const tokens = tokenize(
-    "Implementing a caching layer for improved performance",
-  );
-  expect(tokens.map((t) => t.stemmed)).toEqual([
-    "implement",
-    "cach",
-    "layer",
-    "improv",
-    "perform",
-  ]);
+  const tokens = tokenize("Implementing a caching layer for improved performance");
+  expect(tokens.map((t) => t.stemmed)).toEqual(["implement", "cach", "layer", "improv", "perform"]);
 });
 
 test("Tokenizer real-world text processing should handle code-like text", () => {
   const tokens = tokenize("getUserById returns a User object");
-  expect(tokens.map((t) => t.original)).toEqual([
-    "getuserbyid",
-    "returns",
-    "user",
-    "object",
-  ]);
+  expect(tokens.map((t) => t.original)).toEqual(["getuserbyid", "returns", "user", "object"]);
 });
 
 test("Tokenizer real-world text processing should handle mixed content", () => {
   const tokens = tokenize("Error 404: Page not found at /users/123");
-  expect(tokens.map((t) => t.original)).toEqual([
-    "error",
-    "404",
-    "page",
-    "found",
-    "users",
-    "123",
-  ]);
+  expect(tokens.map((t) => t.original)).toEqual(["error", "404", "page", "found", "users", "123"]);
 });

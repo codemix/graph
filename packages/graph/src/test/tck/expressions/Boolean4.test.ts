@@ -70,31 +70,20 @@ describe("Boolean4 - NOT logical operations", () => {
     expect(getLabel(node)).toBe("A");
   });
 
-  test.fails(
-    "[4] Fail when using NOT on a non-boolean literal - error validation not implemented",
-    () => {
-      const graph = createTckGraph();
-      expect(() => executeTckQuery(graph, "RETURN NOT 0")).toThrow();
-    },
-  );
+  test.fails("[4] Fail when using NOT on a non-boolean literal - error validation not implemented", () => {
+    const graph = createTckGraph();
+    expect(() => executeTckQuery(graph, "RETURN NOT 0")).toThrow();
+  });
 
   // Custom tests demonstrating NOT behavior in WHERE clause
   test("[custom-1] NOT in WHERE clause - negating equality", () => {
     const graph = createTckGraph();
-    executeTckQuery(
-      graph,
-      "CREATE (:A {name: 'Alice'}), (:A {name: 'Bob'}), (:A {name: 'Carol'})",
-    );
+    executeTckQuery(graph, "CREATE (:A {name: 'Alice'}), (:A {name: 'Bob'}), (:A {name: 'Carol'})");
 
-    const results = executeTckQuery(
-      graph,
-      "MATCH (n:A) WHERE NOT n.name = 'Alice' RETURN n.name",
-    );
+    const results = executeTckQuery(graph, "MATCH (n:A) WHERE NOT n.name = 'Alice' RETURN n.name");
 
     expect(results).toHaveLength(2);
-    const names = results
-      .map((r) => (Array.isArray(r) ? r[0] : r) as string)
-      .sort();
+    const names = results.map((r) => (Array.isArray(r) ? r[0] : r) as string).sort();
     expect(names).toEqual(["Bob", "Carol"]);
   });
 
@@ -124,10 +113,7 @@ describe("Boolean4 - NOT logical operations", () => {
     executeTckQuery(graph, "CREATE (:A {flag: true}), (:A {flag: false})");
 
     // NOT NOT (flag = true) should match flag = true
-    const results = executeTckQuery(
-      graph,
-      "MATCH (n:A) WHERE NOT NOT n.flag = true RETURN n.flag",
-    );
+    const results = executeTckQuery(graph, "MATCH (n:A) WHERE NOT NOT n.flag = true RETURN n.flag");
 
     expect(results).toHaveLength(1);
     // Single RETURN item may be returned directly or wrapped
@@ -137,10 +123,7 @@ describe("Boolean4 - NOT logical operations", () => {
 
   test("[custom-5] NOT with OR", () => {
     const graph = createTckGraph();
-    executeTckQuery(
-      graph,
-      "CREATE (:A {num: 1}), (:A {num: 2}), (:A {num: 3}), (:A {num: 4})",
-    );
+    executeTckQuery(graph, "CREATE (:A {num: 1}), (:A {num: 2}), (:A {num: 3}), (:A {num: 4})");
 
     // NOT (num=1 OR num=2) should match 3 and 4
     const results = executeTckQuery(
@@ -157,16 +140,10 @@ describe("Boolean4 - NOT logical operations", () => {
 
   test("[custom-6] NOT with comparison operators", () => {
     const graph = createTckGraph();
-    executeTckQuery(
-      graph,
-      "CREATE (:A {num: 1}), (:A {num: 5}), (:A {num: 10})",
-    );
+    executeTckQuery(graph, "CREATE (:A {num: 1}), (:A {num: 5}), (:A {num: 10})");
 
     // NOT (num > 3) should match num <= 3
-    const results = executeTckQuery(
-      graph,
-      "MATCH (n:A) WHERE NOT n.num > 3 RETURN n.num",
-    );
+    const results = executeTckQuery(graph, "MATCH (n:A) WHERE NOT n.num > 3 RETURN n.num");
 
     expect(results).toHaveLength(1);
     // Single RETURN item may be returned directly or wrapped

@@ -6,21 +6,18 @@ import { describe, test, expect } from "vitest";
 import { createTckGraph, executeTckQuery } from "../tckHelpers.js";
 
 describe("Merge2 - Merge node - on create", () => {
-  test.fails(
-    "[1] Merge node with label add label on create - dynamic label SET and multi-label not supported",
-    () => {
-      // Query: MERGE (a:TheLabel) ON CREATE SET a:Foo RETURN labels(a)
-      // Limitation: Adding labels dynamically (SET a:Foo) not supported - design limitation
-      // Note: labels() function IS working now
-      const graph = createTckGraph();
-      const results = executeTckQuery(
-        graph,
-        "MERGE (a:TheLabel) ON CREATE SET a:Foo RETURN labels(a)",
-      );
-      expect(results).toHaveLength(1);
-      expect(results[0]).toContain("Foo");
-    },
-  );
+  test.fails("[1] Merge node with label add label on create - dynamic label SET and multi-label not supported", () => {
+    // Query: MERGE (a:TheLabel) ON CREATE SET a:Foo RETURN labels(a)
+    // Limitation: Adding labels dynamically (SET a:Foo) not supported - design limitation
+    // Note: labels() function IS working now
+    const graph = createTckGraph();
+    const results = executeTckQuery(
+      graph,
+      "MERGE (a:TheLabel) ON CREATE SET a:Foo RETURN labels(a)",
+    );
+    expect(results).toHaveLength(1);
+    expect(results[0]).toContain("Foo");
+  });
 
   test("[2] ON CREATE on created nodes - unlabeled nodes not supported", () => {
     // Query: MERGE (b) ON CREATE SET b.created = 1
@@ -89,28 +86,16 @@ describe("Merge2 - Merge node - on create", () => {
     const graph = createTckGraph();
 
     // First MERGE creates node, ON CREATE sets property
-    executeTckQuery(
-      graph,
-      "MERGE (a:A {name: 'test'}) ON CREATE SET a.created = true",
-    );
+    executeTckQuery(graph, "MERGE (a:A {name: 'test'}) ON CREATE SET a.created = true");
 
-    const results1 = executeTckQuery(
-      graph,
-      "MATCH (n:A {name: 'test'}) RETURN n.created",
-    );
+    const results1 = executeTckQuery(graph, "MATCH (n:A {name: 'test'}) RETURN n.created");
     expect(results1).toHaveLength(1);
     expect(results1[0]).toBe(true);
 
     // Second MERGE matches existing, ON CREATE should NOT trigger
-    executeTckQuery(
-      graph,
-      "MERGE (a:A {name: 'test'}) ON CREATE SET a.created = false",
-    );
+    executeTckQuery(graph, "MERGE (a:A {name: 'test'}) ON CREATE SET a.created = false");
 
-    const results2 = executeTckQuery(
-      graph,
-      "MATCH (n:A {name: 'test'}) RETURN n.created",
-    );
+    const results2 = executeTckQuery(graph, "MATCH (n:A {name: 'test'}) RETURN n.created");
     expect(results2).toHaveLength(1);
     // Should still be true since ON CREATE didn't trigger
     expect(results2[0]).toBe(true);
@@ -119,15 +104,9 @@ describe("Merge2 - Merge node - on create", () => {
   test("[custom] ON CREATE can set multiple properties", () => {
     const graph = createTckGraph();
 
-    executeTckQuery(
-      graph,
-      "MERGE (a:A {name: 'multi'}) ON CREATE SET a.x = 1, a.y = 2",
-    );
+    executeTckQuery(graph, "MERGE (a:A {name: 'multi'}) ON CREATE SET a.x = 1, a.y = 2");
 
-    const results = executeTckQuery(
-      graph,
-      "MATCH (n:A {name: 'multi'}) RETURN n.x, n.y",
-    );
+    const results = executeTckQuery(graph, "MATCH (n:A {name: 'multi'}) RETURN n.x, n.y");
     expect(results).toHaveLength(1);
     const [x, y] = results[0] as [number, number];
     expect(x).toBe(1);

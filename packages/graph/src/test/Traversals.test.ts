@@ -40,14 +40,7 @@ test("TraversalPathNode", () => {
 });
 
 test("VertexTraversal", () => {
-  const q = g
-    .V()
-    .as("origin")
-    .outE("knows")
-    .outV()
-    .as("friend")
-    .outE("knows")
-    .outV();
+  const q = g.V().as("origin").outE("knows").outV().as("friend").outE("knows").outV();
 
   const paths = Array.from(q);
   expect(paths.length).toBeGreaterThan(0);
@@ -152,10 +145,7 @@ test("Union", () => {
 });
 
 test("Intersect", () => {
-  const q = g.intersect(
-    g.V(alice.id).hasLabel("Person"),
-    g.V(alice.id).hasLabel("Person"),
-  );
+  const q = g.intersect(g.V(alice.id).hasLabel("Person"), g.V(alice.id).hasLabel("Person"));
 
   const paths = Array.from(q);
   expect(paths).toHaveLength(1);

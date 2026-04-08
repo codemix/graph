@@ -240,8 +240,7 @@ describe("AsyncGraph cloning with various property types", () => {
     const originalVertex = storageVertices.get("TestVertex:1");
     if (originalVertex) {
       originalVertex.properties.name = "Modified";
-      (originalVertex.properties.metadata as Record<string, string>).key =
-        "modified";
+      (originalVertex.properties.metadata as Record<string, string>).key = "modified";
     }
 
     // Verify the cloned result was not affected (it has its own copy via AsyncGraphStorage)

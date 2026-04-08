@@ -31,18 +31,15 @@ describe("Quantifier10 - Single quantifier invariants", () => {
     expect(results).toEqual([false]);
   });
 
-  test.fails(
-    "[3] Single quantifier is always true if the predicate is statically true and the list has exactly one non-null element - complex WITH not supported",
-    () => {
-      // Original uses: WITH clause, UNWIND
-      const graph = createTckGraph();
-      const results = executeTckQuery(
-        graph,
-        "UNWIND [[1], [null, 2], [null, null, 3]] AS list RETURN single(x IN list WHERE true) AS result",
-      );
-      expect(results).toEqual([true, true, true]);
-    },
-  );
+  test.fails("[3] Single quantifier is always true if the predicate is statically true and the list has exactly one non-null element - complex WITH not supported", () => {
+    // Original uses: WITH clause, UNWIND
+    const graph = createTckGraph();
+    const results = executeTckQuery(
+      graph,
+      "UNWIND [[1], [null, 2], [null, null, 3]] AS list RETURN single(x IN list WHERE true) AS result",
+    );
+    expect(results).toEqual([true, true, true]);
+  });
 
   test("[4] Single quantifier is always equal whether the size of the list filtered with same the predicate is one - complex WITH not supported", () => {
     // Original: single(x IN list WHERE predicate) = (size([x IN list WHERE predicate | x]) = 1)

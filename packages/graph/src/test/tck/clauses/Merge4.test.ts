@@ -6,21 +6,15 @@ import { describe, test, expect } from "vitest";
 import { createTckGraph, executeTckQuery } from "../tckHelpers.js";
 
 describe("Merge4 - Merge node - on match and on create", () => {
-  test.fails(
-    "[1] Merge should be able to set labels on match and on create - unlabeled nodes and dynamic labels not supported",
-    () => {
-      // Query: CREATE (), () ... MATCH () MERGE (a:L) ON MATCH SET a:M1 ON CREATE SET a:M2
-      // Uses unlabeled nodes, MATCH...MERGE chaining, and dynamic label setting
-      const graph = createTckGraph();
-      executeTckQuery(graph, "CREATE (), ()");
-      executeTckQuery(
-        graph,
-        "MATCH () MERGE (a:L) ON MATCH SET a:M1 ON CREATE SET a:M2",
-      );
-      const results = executeTckQuery(graph, "MATCH (a:L) RETURN labels(a)");
-      expect(results).toHaveLength(1);
-    },
-  );
+  test.fails("[1] Merge should be able to set labels on match and on create - unlabeled nodes and dynamic labels not supported", () => {
+    // Query: CREATE (), () ... MATCH () MERGE (a:L) ON MATCH SET a:M1 ON CREATE SET a:M2
+    // Uses unlabeled nodes, MATCH...MERGE chaining, and dynamic label setting
+    const graph = createTckGraph();
+    executeTckQuery(graph, "CREATE (), ()");
+    executeTckQuery(graph, "MATCH () MERGE (a:L) ON MATCH SET a:M1 ON CREATE SET a:M2");
+    const results = executeTckQuery(graph, "MATCH (a:L) RETURN labels(a)");
+    expect(results).toHaveLength(1);
+  });
 
   test("[2] Merge should be able to use properties of bound node in ON MATCH and ON CREATE - MATCH...MERGE chaining not supported", () => {
     // Query requires MATCH (person:Person) MERGE (city:City) ON MATCH/CREATE SET city.name = person.bornIn
@@ -46,10 +40,7 @@ describe("Merge4 - Merge node - on match and on create", () => {
       "MERGE (a:A {name: 'combo'}) ON CREATE SET a.action = 'created' ON MATCH SET a.action = 'matched'",
     );
 
-    const results1 = executeTckQuery(
-      graph,
-      "MATCH (n:A {name: 'combo'}) RETURN n.action",
-    );
+    const results1 = executeTckQuery(graph, "MATCH (n:A {name: 'combo'}) RETURN n.action");
     expect(results1).toHaveLength(1);
     expect(results1[0]).toBe("created");
 
@@ -59,10 +50,7 @@ describe("Merge4 - Merge node - on match and on create", () => {
       "MERGE (a:A {name: 'combo'}) ON CREATE SET a.action = 'created' ON MATCH SET a.action = 'matched'",
     );
 
-    const results2 = executeTckQuery(
-      graph,
-      "MATCH (n:A {name: 'combo'}) RETURN n.action",
-    );
+    const results2 = executeTckQuery(graph, "MATCH (n:A {name: 'combo'}) RETURN n.action");
     expect(results2).toHaveLength(1);
     expect(results2[0]).toBe("matched");
   });
@@ -110,10 +98,7 @@ describe("Merge4 - Merge node - on match and on create", () => {
       "MERGE (a:A {name: 'multi'}) ON CREATE SET a.x = 1, a.y = 2 ON MATCH SET a.x = 10, a.y = 20",
     );
 
-    const results1 = executeTckQuery(
-      graph,
-      "MATCH (n:A {name: 'multi'}) RETURN n.x, n.y",
-    );
+    const results1 = executeTckQuery(graph, "MATCH (n:A {name: 'multi'}) RETURN n.x, n.y");
     expect(results1).toHaveLength(1);
     const [x1, y1] = results1[0] as [number, number];
     expect(x1).toBe(1);
@@ -125,10 +110,7 @@ describe("Merge4 - Merge node - on match and on create", () => {
       "MERGE (a:A {name: 'multi'}) ON CREATE SET a.x = 1, a.y = 2 ON MATCH SET a.x = 10, a.y = 20",
     );
 
-    const results2 = executeTckQuery(
-      graph,
-      "MATCH (n:A {name: 'multi'}) RETURN n.x, n.y",
-    );
+    const results2 = executeTckQuery(graph, "MATCH (n:A {name: 'multi'}) RETURN n.x, n.y");
     expect(results2).toHaveLength(1);
     const [x2, y2] = results2[0] as [number, number];
     expect(x2).toBe(10);

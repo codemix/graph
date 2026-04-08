@@ -19,10 +19,7 @@ describe("List6 - List size", () => {
     const graph = createTckGraph();
     executeTckQuery(graph, "CREATE (:A)");
     executeTckQuery(graph, "MATCH (n:A) SET n.numbers = [1, 2, 3]");
-    const results = executeTckQuery(
-      graph,
-      "MATCH (n:A) RETURN size(n.numbers)",
-    );
+    const results = executeTckQuery(graph, "MATCH (n:A) RETURN size(n.numbers)");
     expect(results).toHaveLength(1);
     expect(results[0]).toBe(3);
   });
@@ -51,9 +48,7 @@ describe("List6 - List size", () => {
     const graph = createTckGraph();
     executeTckQuery(graph, "CREATE (:A)-[:REL]->(:B)");
     // Should throw SyntaxError for named path syntax
-    expect(() =>
-      executeTckQuery(graph, "MATCH p = (a:A)-[*]->(b) RETURN size(p)"),
-    ).toThrow();
+    expect(() => executeTckQuery(graph, "MATCH p = (a:A)-[*]->(b) RETURN size(p)")).toThrow();
   });
 
   test("[6] Fail for size() on pattern predicates - pattern predicates not supported", () => {
@@ -67,36 +62,30 @@ describe("List6 - List size", () => {
     executeTckQuery(graph, "CREATE (:A), (:B), (:C)");
     // Should throw SyntaxError for pattern predicate in size()
     expect(() =>
-      executeTckQuery(
-        graph,
-        "MATCH (a:A), (b:B), (c:C) RETURN size((a)-->(b))",
-      ),
+      executeTckQuery(graph, "MATCH (a:A), (b:B), (c:C) RETURN size((a)-->(b))"),
     ).toThrow();
   });
 
-  test.fails(
-    "[7] Using size of pattern comprehension to test existence - pattern comprehension not supported",
-    () => {
-      // Original TCK:
-      // CREATE (a:X {num: 42}), (:X {num: 43})
-      // CREATE (a)-[:T]->()
-      // MATCH (n:X)
-      // RETURN n, size([(n)--() | 1]) > 0 AS b
-      // Expected: true for num=42, false for num=43
-      //
-      // Grammar limitation: Pattern comprehension [(n)--() | 1] not supported
-      const graph = createTckGraph();
-      executeTckQuery(graph, "CREATE (a:X {num: 42}), (:X {num: 43})");
-      executeTckQuery(graph, "MATCH (a:X {num: 42}) CREATE (a)-[:T]->(:Y)");
-      const results = executeTckQuery(
-        graph,
-        "MATCH (n:X) RETURN n.num, size([(n)--() | 1]) > 0 AS b ORDER BY n.num",
-      );
-      expect(results).toHaveLength(2);
-      expect(results[0]).toEqual([42, true]);
-      expect(results[1]).toEqual([43, false]);
-    },
-  );
+  test.fails("[7] Using size of pattern comprehension to test existence - pattern comprehension not supported", () => {
+    // Original TCK:
+    // CREATE (a:X {num: 42}), (:X {num: 43})
+    // CREATE (a)-[:T]->()
+    // MATCH (n:X)
+    // RETURN n, size([(n)--() | 1]) > 0 AS b
+    // Expected: true for num=42, false for num=43
+    //
+    // Grammar limitation: Pattern comprehension [(n)--() | 1] not supported
+    const graph = createTckGraph();
+    executeTckQuery(graph, "CREATE (a:X {num: 42}), (:X {num: 43})");
+    executeTckQuery(graph, "MATCH (a:X {num: 42}) CREATE (a)-[:T]->(:Y)");
+    const results = executeTckQuery(
+      graph,
+      "MATCH (n:X) RETURN n.num, size([(n)--() | 1]) > 0 AS b ORDER BY n.num",
+    );
+    expect(results).toHaveLength(2);
+    expect(results[0]).toEqual([42, true]);
+    expect(results[1]).toEqual([43, false]);
+  });
 
   test("[8] Get node degree via size of pattern comprehension - pattern comprehension not supported", () => {
     // Original TCK:
@@ -107,14 +96,8 @@ describe("List6 - List size", () => {
     //
     // Grammar limitation: Pattern comprehension not supported
     const graph = createTckGraph();
-    executeTckQuery(
-      graph,
-      "CREATE (x:X)-[:T]->(:Y), (x)-[:T]->(:Y), (x)-[:T]->(:Y)",
-    );
-    const results = executeTckQuery(
-      graph,
-      "MATCH (a:X) RETURN size([(a)-->() | 1]) AS length",
-    );
+    executeTckQuery(graph, "CREATE (x:X)-[:T]->(:Y), (x)-[:T]->(:Y), (x)-[:T]->(:Y)");
+    const results = executeTckQuery(graph, "MATCH (a:X) RETURN size([(a)-->() | 1]) AS length");
     expect(results).toHaveLength(1);
     expect(results[0]).toBe(3);
   });
@@ -132,10 +115,7 @@ describe("List6 - List size", () => {
       graph,
       "CREATE (x:X)-[:T]->(:Y), (x)-[:T]->(:Y), (x)-[:T]->(:Y), (x)-[:OTHER]->(:Y)",
     );
-    const results = executeTckQuery(
-      graph,
-      "MATCH (a:X) RETURN size([(a)-[:T]->() | 1]) AS length",
-    );
+    const results = executeTckQuery(graph, "MATCH (a:X) RETURN size([(a)-[:T]->() | 1]) AS length");
     expect(results).toHaveLength(1);
     expect(results[0]).toBe(3);
   });
@@ -165,20 +145,14 @@ describe("List6 - List size", () => {
   test("[Custom 1] Store and verify list length via UNWIND count", () => {
     const graph = createTckGraph();
     executeTckQuery(graph, "CREATE (:A {items: [1, 2, 3, 4, 5]})");
-    const results = executeTckQuery(
-      graph,
-      "MATCH (n:A) UNWIND n.items AS item RETURN count(item)",
-    );
+    const results = executeTckQuery(graph, "MATCH (n:A) UNWIND n.items AS item RETURN count(item)");
     expect(results).toHaveLength(1);
     expect(results[0]).toBe(5);
   });
 
   test("[Custom 2] Count nodes as alternative to size()", () => {
     const graph = createTckGraph();
-    executeTckQuery(
-      graph,
-      `CREATE (:A {num: 1}), (:A {num: 2}), (:A {num: 3})`,
-    );
+    executeTckQuery(graph, `CREATE (:A {num: 1}), (:A {num: 2}), (:A {num: 3})`);
 
     const results = executeTckQuery(graph, "MATCH (n:A) RETURN count(n)");
 

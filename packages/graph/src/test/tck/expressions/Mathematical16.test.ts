@@ -9,20 +9,17 @@ import { describe, test, expect } from "vitest";
 import { createTckGraph, executeTckQuery } from "../tckHelpers.js";
 
 describe("Mathematical16 - Trigonometric functions", () => {
-  test.fails(
-    "[placeholder] No scenarios in original TCK feature file - sin(), cos(), tan() not implemented",
-    () => {
-      // The Mathematical16.feature file only contains the feature header:
-      // Feature: Mathematical16 - Trigonometric functions
-      // No actual Scenario blocks are defined.
-      //
-      // This would typically include tests for:
-      // - sin(0) returning 0
-      // - cos(0) returning 1
-      // - tan(0) returning 0
-      throw new Error("sin(), cos(), tan() functions not implemented");
-    },
-  );
+  test.fails("[placeholder] No scenarios in original TCK feature file - sin(), cos(), tan() not implemented", () => {
+    // The Mathematical16.feature file only contains the feature header:
+    // Feature: Mathematical16 - Trigonometric functions
+    // No actual Scenario blocks are defined.
+    //
+    // This would typically include tests for:
+    // - sin(0) returning 0
+    // - cos(0) returning 1
+    // - tan(0) returning 0
+    throw new Error("sin(), cos(), tan() functions not implemented");
+  });
 
   // Custom tests demonstrating trigonometric concepts
   test("[custom-1] Common trig values as properties", () => {

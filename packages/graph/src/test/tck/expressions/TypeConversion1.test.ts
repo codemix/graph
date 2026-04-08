@@ -8,10 +8,7 @@ import { createTckGraph, executeTckQuery } from "../tckHelpers.js";
 describe("TypeConversion1 - To Boolean", () => {
   test("[1] toBoolean() on booleans", () => {
     const graph = createTckGraph();
-    const results = executeTckQuery(
-      graph,
-      "UNWIND [true, false] AS b RETURN toBoolean(b) AS b",
-    );
+    const results = executeTckQuery(graph, "UNWIND [true, false] AS b RETURN toBoolean(b) AS b");
     expect(results).toEqual([true, false]);
   });
 
@@ -155,10 +152,7 @@ describe("TypeConversion1 - To Boolean", () => {
     const graph = createTckGraph();
     executeTckQuery(graph, `CREATE (:A {flag: true}), (:A {flag: false})`);
 
-    const results = executeTckQuery(
-      graph,
-      `MATCH (n:A) WHERE n.flag = true RETURN n.flag`,
-    );
+    const results = executeTckQuery(graph, `MATCH (n:A) WHERE n.flag = true RETURN n.flag`);
 
     expect(results).toHaveLength(1);
     expect(results[0]).toBe(true);
@@ -166,16 +160,10 @@ describe("TypeConversion1 - To Boolean", () => {
 
   test("[Custom 2] Boolean strings can be compared directly", () => {
     const graph = createTckGraph();
-    executeTckQuery(
-      graph,
-      `CREATE (:A {str: 'true'}), (:A {str: 'false'}), (:A {str: 'invalid'})`,
-    );
+    executeTckQuery(graph, `CREATE (:A {str: 'true'}), (:A {str: 'false'}), (:A {str: 'invalid'})`);
 
     // Filter for nodes with string 'true'
-    const results = executeTckQuery(
-      graph,
-      `MATCH (n:A) WHERE n.str = 'true' RETURN n.str`,
-    );
+    const results = executeTckQuery(graph, `MATCH (n:A) WHERE n.str = 'true' RETURN n.str`);
 
     expect(results).toHaveLength(1);
     expect(results[0]).toBe("true");
@@ -188,10 +176,7 @@ describe("TypeConversion1 - To Boolean", () => {
       `CREATE (:A {name: 'Alice', active: true}), (:A {name: 'Bob', active: false}), (:A {name: 'Charlie', active: true})`,
     );
 
-    const results = executeTckQuery(
-      graph,
-      `MATCH (n:A) WHERE n.active = true RETURN n.name`,
-    );
+    const results = executeTckQuery(graph, `MATCH (n:A) WHERE n.active = true RETURN n.name`);
 
     expect(results).toHaveLength(2);
     expect(results).toContain("Alice");
@@ -205,10 +190,7 @@ describe("TypeConversion1 - To Boolean", () => {
       `CREATE (:A {a: true, b: true}), (:A {a: true, b: false}), (:A {a: false, b: true})`,
     );
 
-    const results = executeTckQuery(
-      graph,
-      `MATCH (n:A) WHERE n.a = true AND n.b = true RETURN n`,
-    );
+    const results = executeTckQuery(graph, `MATCH (n:A) WHERE n.a = true AND n.b = true RETURN n`);
 
     expect(results).toHaveLength(1);
   });
@@ -220,10 +202,7 @@ describe("TypeConversion1 - To Boolean", () => {
       `CREATE (:A {a: true, b: false}), (:A {a: false, b: true}), (:A {a: false, b: false})`,
     );
 
-    const results = executeTckQuery(
-      graph,
-      `MATCH (n:A) WHERE n.a = true OR n.b = true RETURN n`,
-    );
+    const results = executeTckQuery(graph, `MATCH (n:A) WHERE n.a = true OR n.b = true RETURN n`);
 
     expect(results).toHaveLength(2);
   });
@@ -231,20 +210,14 @@ describe("TypeConversion1 - To Boolean", () => {
   // toBooleanOrNull tests
   test("[Custom 6] toBooleanOrNull() returns true for 'true' string", () => {
     const graph = createTckGraph();
-    const results = executeTckQuery(
-      graph,
-      "RETURN toBooleanOrNull('true') AS b",
-    );
+    const results = executeTckQuery(graph, "RETURN toBooleanOrNull('true') AS b");
     expect(results).toHaveLength(1);
     expect(results[0]).toBe(true);
   });
 
   test("[Custom 7] toBooleanOrNull() returns null for invalid string", () => {
     const graph = createTckGraph();
-    const results = executeTckQuery(
-      graph,
-      "RETURN toBooleanOrNull('invalid') AS b",
-    );
+    const results = executeTckQuery(graph, "RETURN toBooleanOrNull('invalid') AS b");
     expect(results).toHaveLength(1);
     expect(results[0]).toBe(null);
   });

@@ -34,12 +34,8 @@ describe("Standalone CREATE (without MATCH)", () => {
 
       expect(ast.matches).toHaveLength(0);
       expect(ast.create!.patterns).toHaveLength(2);
-      expect((ast.create!.patterns[0] as CreateNodePattern).labels).toEqual([
-        "User",
-      ]);
-      expect((ast.create!.patterns[1] as CreateNodePattern).labels).toEqual([
-        "Post",
-      ]);
+      expect((ast.create!.patterns[0] as CreateNodePattern).labels).toEqual(["User"]);
+      expect((ast.create!.patterns[1] as CreateNodePattern).labels).toEqual(["Post"]);
     });
 
     test("parses standalone CREATE with multiple properties", () => {
@@ -103,10 +99,7 @@ describe("Standalone CREATE (without MATCH)", () => {
       // Verify graph is empty
       expect([...graph.getVertices("User")]).toHaveLength(0);
 
-      const results = executeQuery(
-        graph,
-        "CREATE (u:User {name: 'Alice', age: 25}) RETURN u",
-      );
+      const results = executeQuery(graph, "CREATE (u:User {name: 'Alice', age: 25}) RETURN u");
 
       expect(results).toHaveLength(1);
       const created = (results[0] as any[])[0] as any;
@@ -173,10 +166,7 @@ describe("Standalone CREATE (without MATCH)", () => {
     test("vertex ID is accessible after creation", () => {
       const graph = createFlexibleGraph();
 
-      const results = executeQuery(
-        graph,
-        "CREATE (u:User {name: 'Alice'}) RETURN u",
-      );
+      const results = executeQuery(graph, "CREATE (u:User {name: 'Alice'}) RETURN u");
 
       const created = (results[0] as any[])[0] as any;
       expect(created.id).toBeDefined();
@@ -254,10 +244,7 @@ describe("Standalone MERGE (without MATCH)", () => {
 
       expect([...graph.getVertices("User")]).toHaveLength(0);
 
-      const results = executeQuery(
-        graph,
-        "MERGE (u:User {name: 'Alice'}) RETURN u",
-      );
+      const results = executeQuery(graph, "MERGE (u:User {name: 'Alice'}) RETURN u");
 
       expect(results).toHaveLength(1);
       const created = (results[0] as any[])[0] as any;
@@ -272,10 +259,7 @@ describe("Standalone MERGE (without MATCH)", () => {
       // Pre-create a user
       const existing = graph.addVertex("User", { name: "Alice", age: 25 });
 
-      const results = executeQuery(
-        graph,
-        "MERGE (u:User {name: 'Alice'}) RETURN u",
-      );
+      const results = executeQuery(graph, "MERGE (u:User {name: 'Alice'}) RETURN u");
 
       expect(results).toHaveLength(1);
       const found = (results[0] as any[])[0] as any;
@@ -465,12 +449,7 @@ describe("Combined standalone mutations", () => {
     expect(ast.mutations).toHaveLength(4);
     // Verify order: CREATE, MERGE, CREATE, MERGE
     const types = ast.mutations!.map((m) => m.type);
-    expect(types).toEqual([
-      "CreateClause",
-      "MergeClause",
-      "CreateClause",
-      "MergeClause",
-    ]);
+    expect(types).toEqual(["CreateClause", "MergeClause", "CreateClause", "MergeClause"]);
   });
 
   test("multiple alternating CREATE and MERGE clauses", () => {
@@ -511,9 +490,7 @@ describe("Invalid standalone mutations", () => {
     const graph = createFlexibleGraph();
 
     // SET without MATCH/CREATE/MERGE means 'u' is not bound
-    expect(() =>
-      executeQuery(graph, "SET u.name = 'Alice' RETURN u"),
-    ).toThrow();
+    expect(() => executeQuery(graph, "SET u.name = 'Alice' RETURN u")).toThrow();
   });
 
   test("standalone REMOVE fails - unbound variable", () => {
@@ -533,10 +510,7 @@ describe("Edge cases", () => {
     const graph = createFlexibleGraph();
 
     // Even with LIMIT 1, CREATE should still create the vertex
-    const results = executeQuery(
-      graph,
-      "CREATE (u:User {name: 'Alice'}) RETURN u LIMIT 1",
-    );
+    const results = executeQuery(graph, "CREATE (u:User {name: 'Alice'}) RETURN u LIMIT 1");
 
     expect(results).toHaveLength(1);
     expect([...graph.getVertices("User")]).toHaveLength(1);
@@ -574,10 +548,7 @@ describe("Edge cases", () => {
 
     // This tests that CREATE works even when we only care about side effects
     // Note: In our implementation RETURN is required by grammar, so we return the created node
-    const results = executeQuery(
-      graph,
-      "CREATE (u:User {name: 'SideEffectUser'}) RETURN u",
-    );
+    const results = executeQuery(graph, "CREATE (u:User {name: 'SideEffectUser'}) RETURN u");
 
     expect(results).toHaveLength(1);
 
@@ -598,10 +569,7 @@ describe("Edge cases", () => {
     });
 
     // MERGE on just name should find the existing user
-    const results = executeQuery(
-      graph,
-      "MERGE (u:User {name: 'Alice'}) RETURN u",
-    );
+    const results = executeQuery(graph, "MERGE (u:User {name: 'Alice'}) RETURN u");
 
     expect(results).toHaveLength(1);
     const found = (results[0] as any[])[0] as any;

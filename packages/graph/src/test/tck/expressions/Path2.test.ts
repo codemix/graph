@@ -9,10 +9,7 @@ describe("Path2 - Relationships of a path", () => {
   test("[1] Return relationships by fetching them from the path", () => {
     // Named paths and relationships() ARE working
     const graph = createTckGraph();
-    executeTckQuery(
-      graph,
-      "CREATE (s:Start)-[:REL {num: 1}]->(b:B)-[:REL {num: 2}]->(c:C)",
-    );
+    executeTckQuery(graph, "CREATE (s:Start)-[:REL {num: 1}]->(b:B)-[:REL {num: 2}]->(c:C)");
     // Use fixed length pattern since *2..2 is equivalent to matching exactly 2 hops
     const results = executeTckQuery(
       graph,
@@ -26,10 +23,7 @@ describe("Path2 - Relationships of a path", () => {
   test("[2] Return relationships by fetching them from the path - starting from the end", () => {
     // Named paths and relationships() ARE working
     const graph = createTckGraph();
-    executeTckQuery(
-      graph,
-      "CREATE (a:A)-[:REL {num: 1}]->(b:B)-[:REL {num: 2}]->(e:End)",
-    );
+    executeTckQuery(graph, "CREATE (a:A)-[:REL {num: 1}]->(b:B)-[:REL {num: 2}]->(e:End)");
     // Use fixed length pattern with labels
     const results = executeTckQuery(
       graph,
@@ -83,15 +77,9 @@ describe("Path2 - Relationships of a path", () => {
 
   test("[Custom 2] Return relationship property directly", () => {
     const graph = createTckGraph();
-    executeTckQuery(
-      graph,
-      `CREATE (:A {name: 'a'})-[:T {prop: 'value1'}]->(:B {name: 'b'})`,
-    );
+    executeTckQuery(graph, `CREATE (:A {name: 'a'})-[:T {prop: 'value1'}]->(:B {name: 'b'})`);
 
-    const results = executeTckQuery(
-      graph,
-      `MATCH (a:A)-[r:T]->(b:B) RETURN r.prop`,
-    );
+    const results = executeTckQuery(graph, `MATCH (a:A)-[r:T]->(b:B) RETURN r.prop`);
 
     expect(results).toHaveLength(1);
     expect(results[0]).toBe("value1");
@@ -118,14 +106,8 @@ describe("Path2 - Relationships of a path", () => {
 
   test("[Custom 4] Filter paths by relationship properties", () => {
     const graph = createTckGraph();
-    executeTckQuery(
-      graph,
-      `CREATE (:A {name: 'a1'})-[:REL {weight: 10}]->(:B {name: 'b1'})`,
-    );
-    executeTckQuery(
-      graph,
-      `CREATE (:A {name: 'a2'})-[:REL {weight: 20}]->(:B {name: 'b2'})`,
-    );
+    executeTckQuery(graph, `CREATE (:A {name: 'a1'})-[:REL {weight: 10}]->(:B {name: 'b1'})`);
+    executeTckQuery(graph, `CREATE (:A {name: 'a2'})-[:REL {weight: 20}]->(:B {name: 'b2'})`);
 
     const results = executeTckQuery(
       graph,

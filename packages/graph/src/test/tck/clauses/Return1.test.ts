@@ -3,12 +3,7 @@
  * Translated from tmp/tck/features/clauses/return/Return1.feature
  */
 import { describe, test, expect } from "vitest";
-import {
-  createTckGraph,
-  executeTckQuery,
-  getLabel,
-  getProperty,
-} from "../tckHelpers.js";
+import { createTckGraph, executeTckQuery, getLabel, getProperty } from "../tckHelpers.js";
 
 describe("Return1 - Return single variable", () => {
   test("[1] Returning a list property - unlabeled nodes not supported", () => {
@@ -20,13 +15,10 @@ describe("Return1 - Return single variable", () => {
     expect(getProperty(n, "numbers")).toEqual([1, 2, 3]);
   });
 
-  test.fails(
-    "[2] Fail when returning an undefined variable - unlabeled nodes not supported",
-    () => {
-      const graph = createTckGraph();
-      expect(() => executeTckQuery(graph, "MATCH () RETURN foo")).toThrow();
-    },
-  );
+  test.fails("[2] Fail when returning an undefined variable - unlabeled nodes not supported", () => {
+    const graph = createTckGraph();
+    expect(() => executeTckQuery(graph, "MATCH () RETURN foo")).toThrow();
+  });
 
   // Custom test with labeled nodes
   test("[custom] Returning a node with labeled node", () => {

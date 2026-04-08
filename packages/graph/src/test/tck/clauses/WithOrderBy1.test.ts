@@ -89,29 +89,23 @@ describe("WithOrderBy1 - Order by a single variable", () => {
     expect(results).toEqual([["one"], [".*"]]);
   });
 
-  test.fails(
-    "[9] Sort lists in ascending order - list comparison not supported",
-    () => {
-      const graph = createTckGraph();
-      const results = executeTckQuery(
-        graph,
-        "UNWIND [[1], [1, 2], [], [1, 2, 3]] AS lists WITH lists ORDER BY lists LIMIT 4 RETURN lists",
-      );
-      expect(results).toEqual([[[], [1], [1, 2], [1, 2, 3]]]);
-    },
-  );
+  test.fails("[9] Sort lists in ascending order - list comparison not supported", () => {
+    const graph = createTckGraph();
+    const results = executeTckQuery(
+      graph,
+      "UNWIND [[1], [1, 2], [], [1, 2, 3]] AS lists WITH lists ORDER BY lists LIMIT 4 RETURN lists",
+    );
+    expect(results).toEqual([[[], [1], [1, 2], [1, 2, 3]]]);
+  });
 
-  test.fails(
-    "[10] Sort lists in descending order - list comparison not supported",
-    () => {
-      const graph = createTckGraph();
-      const results = executeTckQuery(
-        graph,
-        "UNWIND [[1], [1, 2], [], [1, 2, 3]] AS lists WITH lists ORDER BY lists DESC LIMIT 4 RETURN lists",
-      );
-      expect(results).toEqual([[[1, 2, 3], [1, 2], [1], []]]);
-    },
-  );
+  test.fails("[10] Sort lists in descending order - list comparison not supported", () => {
+    const graph = createTckGraph();
+    const results = executeTckQuery(
+      graph,
+      "UNWIND [[1], [1, 2], [], [1, 2, 3]] AS lists WITH lists ORDER BY lists DESC LIMIT 4 RETURN lists",
+    );
+    expect(results).toEqual([[[1, 2, 3], [1, 2], [1], []]]);
+  });
 
   // Tests [11]-[20] use temporal types - temporal functions ARE implemented
   test("[11] Sort dates in ascending order", () => {
@@ -201,12 +195,8 @@ describe("WithOrderBy1 - Order by a single variable", () => {
        RETURN dts`,
     );
     expect(results).toHaveLength(2);
-    expect((results[0] as LocalDateTimeValue).toString()).toMatch(
-      /^1984-10-11/,
-    );
-    expect((results[1] as LocalDateTimeValue).toString()).toMatch(
-      /^1984-12-25/,
-    );
+    expect((results[0] as LocalDateTimeValue).toString()).toMatch(/^1984-10-11/);
+    expect((results[1] as LocalDateTimeValue).toString()).toMatch(/^1984-12-25/);
   });
 
   test("[18] Sort local date times in descending order", () => {
@@ -218,12 +208,8 @@ describe("WithOrderBy1 - Order by a single variable", () => {
        RETURN dts`,
     );
     expect(results).toHaveLength(2);
-    expect((results[0] as LocalDateTimeValue).toString()).toMatch(
-      /^1985-01-01/,
-    );
-    expect((results[1] as LocalDateTimeValue).toString()).toMatch(
-      /^1984-12-25/,
-    );
+    expect((results[0] as LocalDateTimeValue).toString()).toMatch(/^1985-01-01/);
+    expect((results[1] as LocalDateTimeValue).toString()).toMatch(/^1984-12-25/);
   });
 
   test("[19] Sort date times in ascending order", () => {
@@ -277,10 +263,7 @@ describe("WithOrderBy1 - Order by a single variable", () => {
   // [23] Sort by a boolean variable projected from a node property in ascending order
   test("[23] Sort by bool ASC", () => {
     const graph = createTckGraph();
-    executeTckQuery(
-      graph,
-      "CREATE (:A {bool: true}), (:A {bool: false}), (:A {bool: true})",
-    );
+    executeTckQuery(graph, "CREATE (:A {bool: true}), (:A {bool: false}), (:A {bool: true})");
     const results = executeTckQuery(
       graph,
       "MATCH (a:A) WITH a, a.bool AS bool WITH a, bool ORDER BY bool LIMIT 3 RETURN a, bool",
@@ -291,10 +274,7 @@ describe("WithOrderBy1 - Order by a single variable", () => {
   // [24] Sort by a boolean variable projected from a node property in descending order
   test("[24] Sort by bool DESC", () => {
     const graph = createTckGraph();
-    executeTckQuery(
-      graph,
-      "CREATE (:A {bool: true}), (:A {bool: false}), (:A {bool: true})",
-    );
+    executeTckQuery(graph, "CREATE (:A {bool: true}), (:A {bool: false}), (:A {bool: true})");
     const results = executeTckQuery(
       graph,
       "MATCH (a:A) WITH a, a.bool AS bool WITH a, bool ORDER BY bool DESC LIMIT 2 RETURN a, bool",
@@ -305,10 +285,7 @@ describe("WithOrderBy1 - Order by a single variable", () => {
   // [25] Sort by an integer variable projected from a node property in ascending order
   test("[25] Sort by num ASC", () => {
     const graph = createTckGraph();
-    executeTckQuery(
-      graph,
-      "CREATE (:A {num: 3}), (:A {num: 1}), (:A {num: 2})",
-    );
+    executeTckQuery(graph, "CREATE (:A {num: 3}), (:A {num: 1}), (:A {num: 2})");
     const results = executeTckQuery(
       graph,
       "MATCH (a:A) WITH a, a.num AS num WITH a, num ORDER BY num LIMIT 3 RETURN a, num",
@@ -319,10 +296,7 @@ describe("WithOrderBy1 - Order by a single variable", () => {
   // [26] Sort by an integer variable projected from a node property in descending order
   test("[26] Sort by num DESC", () => {
     const graph = createTckGraph();
-    executeTckQuery(
-      graph,
-      "CREATE (:A {num: 3}), (:A {num: 1}), (:A {num: 2})",
-    );
+    executeTckQuery(graph, "CREATE (:A {num: 3}), (:A {num: 1}), (:A {num: 2})");
     const results = executeTckQuery(
       graph,
       "MATCH (a:A) WITH a, a.num AS num WITH a, num ORDER BY num DESC LIMIT 3 RETURN a, num",
@@ -333,10 +307,7 @@ describe("WithOrderBy1 - Order by a single variable", () => {
   // [27] Sort by a float variable projected from a node property in ascending order
   test("[27] Sort by float num ASC", () => {
     const graph = createTckGraph();
-    executeTckQuery(
-      graph,
-      "CREATE (:A {num: 3.5}), (:A {num: 1.5}), (:A {num: 2.5})",
-    );
+    executeTckQuery(graph, "CREATE (:A {num: 3.5}), (:A {num: 1.5}), (:A {num: 2.5})");
     const results = executeTckQuery(
       graph,
       "MATCH (a:A) WITH a, a.num AS num WITH a, num ORDER BY num LIMIT 3 RETURN a, num",
@@ -347,10 +318,7 @@ describe("WithOrderBy1 - Order by a single variable", () => {
   // [28] Sort by a float variable projected from a node property in descending order
   test("[28] Sort by float num DESC", () => {
     const graph = createTckGraph();
-    executeTckQuery(
-      graph,
-      "CREATE (:A {num: 3.5}), (:A {num: 1.5}), (:A {num: 2.5})",
-    );
+    executeTckQuery(graph, "CREATE (:A {num: 3.5}), (:A {num: 1.5}), (:A {num: 2.5})");
     const results = executeTckQuery(
       graph,
       "MATCH (a:A) WITH a, a.num AS num WITH a, num ORDER BY num DESC LIMIT 3 RETURN a, num",
@@ -389,10 +357,7 @@ describe("WithOrderBy1 - Order by a single variable", () => {
   // [31]-[32] list sorting - list properties might work but list sorting is complex
   test("[31] Sort by a list variable in ascending order", () => {
     const graph = createTckGraph();
-    executeTckQuery(
-      graph,
-      "CREATE (:A {list: [1, 2]}), (:A {list: [1]}), (:A {list: [1, 2, 3]})",
-    );
+    executeTckQuery(graph, "CREATE (:A {list: [1, 2]}), (:A {list: [1]}), (:A {list: [1, 2, 3]})");
     const results = executeTckQuery(
       graph,
       "MATCH (a:A) WITH a, a.list AS list WITH a, list ORDER BY list LIMIT 3 RETURN a, list",
@@ -402,10 +367,7 @@ describe("WithOrderBy1 - Order by a single variable", () => {
 
   test("[32] Sort by a list variable in descending order", () => {
     const graph = createTckGraph();
-    executeTckQuery(
-      graph,
-      "CREATE (:A {list: [1, 2]}), (:A {list: [1]}), (:A {list: [1, 2, 3]})",
-    );
+    executeTckQuery(graph, "CREATE (:A {list: [1, 2]}), (:A {list: [1]}), (:A {list: [1, 2, 3]})");
     const results = executeTckQuery(
       graph,
       "MATCH (a:A) WITH a, a.list AS list WITH a, list ORDER BY list DESC LIMIT 3 RETURN a, list",
@@ -414,69 +376,57 @@ describe("WithOrderBy1 - Order by a single variable", () => {
   });
 
   // [33]-[42] use temporal types in node properties - date({year: ...}) map syntax not supported
-  test.fails(
-    "[33] Sort by a date variable from node property ASC - date() not supported",
-    () => {
-      const graph = createTckGraph();
-      executeTckQuery(
-        graph,
-        "CREATE (:A {d: date({year: 2020, month: 1, day: 1})}), (:A {d: date({year: 2019, month: 1, day: 1})})",
-      );
-      const results = executeTckQuery(
-        graph,
-        "MATCH (a:A) WITH a, a.d AS d WITH a, d ORDER BY d LIMIT 2 RETURN a, d",
-      );
-      expect(results).toHaveLength(2);
-    },
-  );
+  test.fails("[33] Sort by a date variable from node property ASC - date() not supported", () => {
+    const graph = createTckGraph();
+    executeTckQuery(
+      graph,
+      "CREATE (:A {d: date({year: 2020, month: 1, day: 1})}), (:A {d: date({year: 2019, month: 1, day: 1})})",
+    );
+    const results = executeTckQuery(
+      graph,
+      "MATCH (a:A) WITH a, a.d AS d WITH a, d ORDER BY d LIMIT 2 RETURN a, d",
+    );
+    expect(results).toHaveLength(2);
+  });
 
-  test.fails(
-    "[34] Sort by a date variable from node property DESC - date() not supported",
-    () => {
-      const graph = createTckGraph();
-      executeTckQuery(
-        graph,
-        "CREATE (:A {d: date({year: 2020, month: 1, day: 1})}), (:A {d: date({year: 2019, month: 1, day: 1})})",
-      );
-      const results = executeTckQuery(
-        graph,
-        "MATCH (a:A) WITH a, a.d AS d WITH a, d ORDER BY d DESC LIMIT 2 RETURN a, d",
-      );
-      expect(results).toHaveLength(2);
-    },
-  );
+  test.fails("[34] Sort by a date variable from node property DESC - date() not supported", () => {
+    const graph = createTckGraph();
+    executeTckQuery(
+      graph,
+      "CREATE (:A {d: date({year: 2020, month: 1, day: 1})}), (:A {d: date({year: 2019, month: 1, day: 1})})",
+    );
+    const results = executeTckQuery(
+      graph,
+      "MATCH (a:A) WITH a, a.d AS d WITH a, d ORDER BY d DESC LIMIT 2 RETURN a, d",
+    );
+    expect(results).toHaveLength(2);
+  });
 
-  test.fails(
-    "[35] Sort by local time variable ASC - localtime() not supported",
-    () => {
-      const graph = createTckGraph();
-      executeTckQuery(
-        graph,
-        "CREATE (:A {t: localtime({hour: 14, minute: 30})}), (:A {t: localtime({hour: 10, minute: 0})})",
-      );
-      const results = executeTckQuery(
-        graph,
-        "MATCH (a:A) WITH a, a.t AS t WITH a, t ORDER BY t LIMIT 2 RETURN a, t",
-      );
-      expect(results).toHaveLength(2);
-    },
-  );
+  test.fails("[35] Sort by local time variable ASC - localtime() not supported", () => {
+    const graph = createTckGraph();
+    executeTckQuery(
+      graph,
+      "CREATE (:A {t: localtime({hour: 14, minute: 30})}), (:A {t: localtime({hour: 10, minute: 0})})",
+    );
+    const results = executeTckQuery(
+      graph,
+      "MATCH (a:A) WITH a, a.t AS t WITH a, t ORDER BY t LIMIT 2 RETURN a, t",
+    );
+    expect(results).toHaveLength(2);
+  });
 
-  test.fails(
-    "[36] Sort by local time variable DESC - localtime() not supported",
-    () => {
-      const graph = createTckGraph();
-      executeTckQuery(
-        graph,
-        "CREATE (:A {t: localtime({hour: 14, minute: 30})}), (:A {t: localtime({hour: 10, minute: 0})})",
-      );
-      const results = executeTckQuery(
-        graph,
-        "MATCH (a:A) WITH a, a.t AS t WITH a, t ORDER BY t DESC LIMIT 2 RETURN a, t",
-      );
-      expect(results).toHaveLength(2);
-    },
-  );
+  test.fails("[36] Sort by local time variable DESC - localtime() not supported", () => {
+    const graph = createTckGraph();
+    executeTckQuery(
+      graph,
+      "CREATE (:A {t: localtime({hour: 14, minute: 30})}), (:A {t: localtime({hour: 10, minute: 0})})",
+    );
+    const results = executeTckQuery(
+      graph,
+      "MATCH (a:A) WITH a, a.t AS t WITH a, t ORDER BY t DESC LIMIT 2 RETURN a, t",
+    );
+    expect(results).toHaveLength(2);
+  });
 
   test.fails("[37] Sort by time variable ASC - time() not supported", () => {
     const graph = createTckGraph();
@@ -504,69 +454,57 @@ describe("WithOrderBy1 - Order by a single variable", () => {
     expect(results).toHaveLength(2);
   });
 
-  test.fails(
-    "[39] Sort by local datetime variable ASC - localdatetime() not supported",
-    () => {
-      const graph = createTckGraph();
-      executeTckQuery(
-        graph,
-        "CREATE (:A {dt: localdatetime({year: 2020, month: 1, day: 1, hour: 12})}), (:A {dt: localdatetime({year: 2019, month: 1, day: 1, hour: 12})})",
-      );
-      const results = executeTckQuery(
-        graph,
-        "MATCH (a:A) WITH a, a.dt AS dt WITH a, dt ORDER BY dt LIMIT 2 RETURN a, dt",
-      );
-      expect(results).toHaveLength(2);
-    },
-  );
+  test.fails("[39] Sort by local datetime variable ASC - localdatetime() not supported", () => {
+    const graph = createTckGraph();
+    executeTckQuery(
+      graph,
+      "CREATE (:A {dt: localdatetime({year: 2020, month: 1, day: 1, hour: 12})}), (:A {dt: localdatetime({year: 2019, month: 1, day: 1, hour: 12})})",
+    );
+    const results = executeTckQuery(
+      graph,
+      "MATCH (a:A) WITH a, a.dt AS dt WITH a, dt ORDER BY dt LIMIT 2 RETURN a, dt",
+    );
+    expect(results).toHaveLength(2);
+  });
 
-  test.fails(
-    "[40] Sort by local datetime variable DESC - localdatetime() not supported",
-    () => {
-      const graph = createTckGraph();
-      executeTckQuery(
-        graph,
-        "CREATE (:A {dt: localdatetime({year: 2020, month: 1, day: 1, hour: 12})}), (:A {dt: localdatetime({year: 2019, month: 1, day: 1, hour: 12})})",
-      );
-      const results = executeTckQuery(
-        graph,
-        "MATCH (a:A) WITH a, a.dt AS dt WITH a, dt ORDER BY dt DESC LIMIT 2 RETURN a, dt",
-      );
-      expect(results).toHaveLength(2);
-    },
-  );
+  test.fails("[40] Sort by local datetime variable DESC - localdatetime() not supported", () => {
+    const graph = createTckGraph();
+    executeTckQuery(
+      graph,
+      "CREATE (:A {dt: localdatetime({year: 2020, month: 1, day: 1, hour: 12})}), (:A {dt: localdatetime({year: 2019, month: 1, day: 1, hour: 12})})",
+    );
+    const results = executeTckQuery(
+      graph,
+      "MATCH (a:A) WITH a, a.dt AS dt WITH a, dt ORDER BY dt DESC LIMIT 2 RETURN a, dt",
+    );
+    expect(results).toHaveLength(2);
+  });
 
-  test.fails(
-    "[41] Sort by datetime variable ASC - datetime() not supported",
-    () => {
-      const graph = createTckGraph();
-      executeTckQuery(
-        graph,
-        "CREATE (:A {dt: datetime({year: 2020, month: 1, day: 1, hour: 12, timezone: '+01:00'})}), (:A {dt: datetime({year: 2019, month: 1, day: 1, hour: 12, timezone: '+01:00'})})",
-      );
-      const results = executeTckQuery(
-        graph,
-        "MATCH (a:A) WITH a, a.dt AS dt WITH a, dt ORDER BY dt LIMIT 2 RETURN a, dt",
-      );
-      expect(results).toHaveLength(2);
-    },
-  );
+  test.fails("[41] Sort by datetime variable ASC - datetime() not supported", () => {
+    const graph = createTckGraph();
+    executeTckQuery(
+      graph,
+      "CREATE (:A {dt: datetime({year: 2020, month: 1, day: 1, hour: 12, timezone: '+01:00'})}), (:A {dt: datetime({year: 2019, month: 1, day: 1, hour: 12, timezone: '+01:00'})})",
+    );
+    const results = executeTckQuery(
+      graph,
+      "MATCH (a:A) WITH a, a.dt AS dt WITH a, dt ORDER BY dt LIMIT 2 RETURN a, dt",
+    );
+    expect(results).toHaveLength(2);
+  });
 
-  test.fails(
-    "[42] Sort by datetime variable DESC - datetime() not supported",
-    () => {
-      const graph = createTckGraph();
-      executeTckQuery(
-        graph,
-        "CREATE (:A {dt: datetime({year: 2020, month: 1, day: 1, hour: 12, timezone: '+01:00'})}), (:A {dt: datetime({year: 2019, month: 1, day: 1, hour: 12, timezone: '+01:00'})})",
-      );
-      const results = executeTckQuery(
-        graph,
-        "MATCH (a:A) WITH a, a.dt AS dt WITH a, dt ORDER BY dt DESC LIMIT 2 RETURN a, dt",
-      );
-      expect(results).toHaveLength(2);
-    },
-  );
+  test.fails("[42] Sort by datetime variable DESC - datetime() not supported", () => {
+    const graph = createTckGraph();
+    executeTckQuery(
+      graph,
+      "CREATE (:A {dt: datetime({year: 2020, month: 1, day: 1, hour: 12, timezone: '+01:00'})}), (:A {dt: datetime({year: 2019, month: 1, day: 1, hour: 12, timezone: '+01:00'})})",
+    );
+    const results = executeTckQuery(
+      graph,
+      "MATCH (a:A) WITH a, a.dt AS dt WITH a, dt ORDER BY dt DESC LIMIT 2 RETURN a, dt",
+    );
+    expect(results).toHaveLength(2);
+  });
 
   test("[43] Sort partially orderable variable", () => {
     const graph = createTckGraph();
@@ -597,41 +535,26 @@ describe("WithOrderBy1 - Order by a single variable", () => {
   });
 
   // [46] Fail on sorting by an undefined variable - semantic validation not implemented
-  test.fails(
-    "[46] Fail on sorting by undefined variable - semantic validation not implemented",
-    () => {
-      const graph = createTckGraph();
-      expect(() => {
-        executeTckQuery(
-          graph,
-          "MATCH (a:A) WITH a ORDER BY undefined RETURN a",
-        );
-      }).toThrow();
-    },
-  );
+  test.fails("[46] Fail on sorting by undefined variable - semantic validation not implemented", () => {
+    const graph = createTckGraph();
+    expect(() => {
+      executeTckQuery(graph, "MATCH (a:A) WITH a ORDER BY undefined RETURN a");
+    }).toThrow();
+  });
 
   // Custom tests for supported patterns
   test("[custom-1] WITH ORDER BY property expression", () => {
     const graph = createTckGraph();
-    executeTckQuery(
-      graph,
-      `CREATE (:A {num: 3}), (:A {num: 1}), (:A {num: 2})`,
-    );
+    executeTckQuery(graph, `CREATE (:A {num: 3}), (:A {num: 1}), (:A {num: 2})`);
 
-    const results = executeTckQuery(
-      graph,
-      `MATCH (a:A) WITH a ORDER BY a.num RETURN a.num AS num`,
-    );
+    const results = executeTckQuery(graph, `MATCH (a:A) WITH a ORDER BY a.num RETURN a.num AS num`);
     expect(results.length).toBe(3);
     expect(results).toEqual([1, 2, 3]);
   });
 
   test("[custom-2] WITH ORDER BY property expression DESC", () => {
     const graph = createTckGraph();
-    executeTckQuery(
-      graph,
-      `CREATE (:A {num: 3}), (:A {num: 1}), (:A {num: 2})`,
-    );
+    executeTckQuery(graph, `CREATE (:A {num: 3}), (:A {num: 1}), (:A {num: 2})`);
 
     const results = executeTckQuery(
       graph,
@@ -658,15 +581,9 @@ describe("WithOrderBy1 - Order by a single variable", () => {
 
   test("[custom-4] WITH chained ORDER BY then RETURN", () => {
     const graph = createTckGraph();
-    executeTckQuery(
-      graph,
-      `CREATE (:A {num: 3}), (:A {num: 1}), (:A {num: 2})`,
-    );
+    executeTckQuery(graph, `CREATE (:A {num: 3}), (:A {num: 1}), (:A {num: 2})`);
 
-    const results = executeTckQuery(
-      graph,
-      `MATCH (a:A) WITH a ORDER BY a.num RETURN a.num AS x`,
-    );
+    const results = executeTckQuery(graph, `MATCH (a:A) WITH a ORDER BY a.num RETURN a.num AS x`);
     expect(results.length).toBe(3);
     expect(results).toEqual([1, 2, 3]);
   });

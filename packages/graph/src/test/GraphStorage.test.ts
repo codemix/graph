@@ -7,34 +7,22 @@ import {
   type StoredEdge,
   type ElementId,
 } from "../GraphStorage.js";
-import {
-  EdgeNotFoundError,
-  ElementNotFoundError,
-  VertexNotFoundError,
-} from "../Exceptions.js";
+import { EdgeNotFoundError, ElementNotFoundError, VertexNotFoundError } from "../Exceptions.js";
 
 test("GraphStorage - parseElementId() - should parse valid element ids", () => {
   expect(parseElementId("Person:123")).toEqual(["Person", "123"]);
   expect(parseElementId("Edge:abc-def")).toEqual(["Edge", "abc-def"]);
-  expect(parseElementId("Test:uuid-with-dashes")).toEqual([
-    "Test",
-    "uuid-with-dashes",
-  ]);
+  expect(parseElementId("Test:uuid-with-dashes")).toEqual(["Test", "uuid-with-dashes"]);
 });
 
 test("GraphStorage - parseElementId() - should throw error for invalid element ids", () => {
-  expect(() => parseElementId("invalid" as ElementId)).toThrow(
-    "Invalid element id: invalid",
-  );
+  expect(() => parseElementId("invalid" as ElementId)).toThrow("Invalid element id: invalid");
   expect(() => parseElementId("" as ElementId)).toThrow("Invalid element id: ");
 });
 
 test("GraphStorage - parseElementId() - should handle ids with multiple colons", () => {
   // split with limit 2 means it splits into exactly 2 parts
-  expect(parseElementId("Label:uuid:extra" as ElementId)).toEqual([
-    "Label",
-    "uuid",
-  ]);
+  expect(parseElementId("Label:uuid:extra" as ElementId)).toEqual(["Label", "uuid"]);
 });
 
 test("GraphStorage - getLabelFromElementId() - should extract label from valid element ids", () => {
@@ -50,9 +38,7 @@ test("GraphStorage - getLabelFromElementId() - should throw error for invalid el
 });
 
 test("GraphStorage - getLabelFromElementId() - should handle empty string", () => {
-  expect(() => getLabelFromElementId("" as ElementId)).toThrow(
-    "Invalid element id: ",
-  );
+  expect(() => getLabelFromElementId("" as ElementId)).toThrow("Invalid element id: ");
 });
 
 test("GraphStorage - InMemoryGraphStorage - constructor - should create empty storage", () => {
@@ -114,9 +100,7 @@ test("GraphStorage - InMemoryGraphStorage - addVertex() - should throw error whe
 
   storage.addVertex(vertex);
 
-  expect(() => storage.addVertex(vertex)).toThrow(
-    "Vertex with id Person:1 already exists",
-  );
+  expect(() => storage.addVertex(vertex)).toThrow("Vertex with id Person:1 already exists");
 });
 
 test("GraphStorage - InMemoryGraphStorage - getVertexById() - should return vertex by id", () => {
@@ -361,9 +345,7 @@ test("GraphStorage - InMemoryGraphStorage - addEdge() - should throw error when 
 
   storage.addEdge(edge);
 
-  expect(() => storage.addEdge(edge)).toThrow(
-    "Edge with id knows:1 already exists",
-  );
+  expect(() => storage.addEdge(edge)).toThrow("Edge with id knows:1 already exists");
 });
 
 test("GraphStorage - InMemoryGraphStorage - addEdge() - should update incoming edges index", () => {
@@ -918,7 +900,5 @@ test("GraphStorage - InMemoryGraphStorage - updateProperty() - should throw Elem
     outV: "Person:2",
   });
 
-  expect(() => storage.updateProperty("Person:999", "name", "Test")).toThrow(
-    ElementNotFoundError,
-  );
+  expect(() => storage.updateProperty("Person:999", "name", "Test")).toThrow(ElementNotFoundError);
 });

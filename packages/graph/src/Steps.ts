@@ -1,28 +1,12 @@
 import { compare } from "./Comparator.js";
-import {
-  MaxIterationsExceededError,
-  MemoryLimitExceededError,
-} from "./Exceptions.js";
-import {
-  evaluateFunction,
-  functionRegistry,
-  isAggregateFunction,
-} from "./FunctionRegistry.js";
+import { MaxIterationsExceededError, MemoryLimitExceededError } from "./Exceptions.js";
+import { evaluateFunction, functionRegistry, isAggregateFunction } from "./FunctionRegistry.js";
 import { Edge, GraphSource, Vertex, $StoredElement } from "./Graph.js";
 import { GraphSchema } from "./GraphSchema.js";
 import { ElementId } from "./GraphStorage.js";
 import { procedureRegistry } from "./ProcedureRegistry.js";
-import {
-  QueryContext,
-  QueryParams,
-  QueryContextOptions,
-} from "./QueryContext.js";
-import {
-  isTemporalValue,
-  DurationValue,
-  addDuration,
-  subtractDuration,
-} from "./TemporalTypes.js";
+import { QueryContext, QueryParams, QueryContextOptions } from "./QueryContext.js";
+import { isTemporalValue, DurationValue, addDuration, subtractDuration } from "./TemporalTypes.js";
 import { TraversalPath } from "./Traversals.js";
 import {
   analyzeCondition,
@@ -123,8 +107,7 @@ export class Traverser {
     context?: QueryContext<TSchema>,
   ): IterableIterator<unknown> {
     // Create context if not provided (backward compatibility)
-    const effectiveContext =
-      context ?? new QueryContext(source, getQueryParams());
+    const effectiveContext = context ?? new QueryContext(source, getQueryParams());
 
     // Set the current graph source for nested pattern comprehension evaluation
     // This maintains backward compatibility with code that uses getCurrentGraphSource()
@@ -282,9 +265,7 @@ function stringTokensToLines(
         segments.push(
           colorizers.keyword("as"),
           " ",
-          token.value
-            .map((alias) => colorizers.aliases(alias))
-            .join(colorizers.punctuation(", ")),
+          token.value.map((alias) => colorizers.aliases(alias)).join(colorizers.punctuation(", ")),
           " ",
         );
         break;
@@ -333,13 +314,9 @@ function stringifyStepConfig(
       continue;
     }
     if (typeof value === "function") {
-      elements.push(
-        `${colorizers.label(key)}: ${colorizers.value(value.toString())}`,
-      );
+      elements.push(`${colorizers.label(key)}: ${colorizers.value(value.toString())}`);
     } else {
-      elements.push(
-        `${colorizers.label(key)}: ${colorizers.value(JSON.stringify(value))}`,
-      );
+      elements.push(`${colorizers.label(key)}: ${colorizers.value(JSON.stringify(value))}`);
     }
   }
   return elements.join(colorizers.punctuation(", "));
@@ -479,9 +456,7 @@ export abstract class Step<const TConfig extends StepConfig> {
         typeof sourceElement === "object" &&
         typedValue.property in sourceElement
       ) {
-        return (sourceElement as Record<string, unknown>)[
-          typedValue.property as string
-        ];
+        return (sourceElement as Record<string, unknown>)[typedValue.property as string];
       }
       return null;
     }
@@ -609,8 +584,7 @@ export class StartStep extends Step<StartStepConfig> {
   public override clone(partial?: Partial<StartStepConfig>) {
     return new StartStep({
       stepLabels:
-        partial?.stepLabels ??
-        (this.config.stepLabels ? [...this.config.stepLabels] : undefined),
+        partial?.stepLabels ?? (this.config.stepLabels ? [...this.config.stepLabels] : undefined),
     });
   }
 }
@@ -648,8 +622,7 @@ export class DrainStep extends Step<DrainStepConfig> {
   public override clone(partial?: Partial<DrainStepConfig>) {
     return new DrainStep({
       stepLabels:
-        partial?.stepLabels ??
-        (this.config.stepLabels ? [...this.config.stepLabels] : undefined),
+        partial?.stepLabels ?? (this.config.stepLabels ? [...this.config.stepLabels] : undefined),
     });
   }
 }
@@ -707,13 +680,9 @@ export class FetchEdgesStep extends Step<FetchEdgesStepConfig> {
   public override clone(partial?: Partial<FetchEdgesStepConfig>) {
     const { config } = this;
     return new FetchEdgesStep({
-      edgeLabels:
-        partial?.edgeLabels ??
-        (config.edgeLabels ? [...config.edgeLabels] : undefined),
+      edgeLabels: partial?.edgeLabels ?? (config.edgeLabels ? [...config.edgeLabels] : undefined),
       ids: partial?.ids ?? (config.ids ? [...config.ids] : undefined),
-      stepLabels:
-        partial?.stepLabels ??
-        (config.stepLabels ? [...config.stepLabels] : undefined),
+      stepLabels: partial?.stepLabels ?? (config.stepLabels ? [...config.stepLabels] : undefined),
     });
   }
 }
@@ -771,12 +740,9 @@ export class FetchVerticesStep extends Step<FetchVerticesStepConfig> {
     const { config } = this;
     return new FetchVerticesStep({
       vertexLabels:
-        partial?.vertexLabels ??
-        (config.vertexLabels ? [...config.vertexLabels] : undefined),
+        partial?.vertexLabels ?? (config.vertexLabels ? [...config.vertexLabels] : undefined),
       ids: partial?.ids ?? (config.ids ? [...config.ids] : undefined),
-      stepLabels:
-        partial?.stepLabels ??
-        (config.stepLabels ? [...config.stepLabels] : undefined),
+      stepLabels: partial?.stepLabels ?? (config.stepLabels ? [...config.stepLabels] : undefined),
     });
   }
 }
@@ -826,11 +792,7 @@ export class CartesianFetchStep extends Step<CartesianFetchStepConfig> {
     const matchingVertices = condition
       ? allVertices.filter((vertex) => {
           // Create a temporary path to evaluate the condition
-          const tempPath = new TraversalPath(
-            undefined,
-            vertex,
-            stepLabels ?? [],
-          );
+          const tempPath = new TraversalPath(undefined, vertex, stepLabels ?? []);
           return evaluateCondition(tempPath, condition, context);
         })
       : allVertices;
@@ -862,12 +824,9 @@ export class CartesianFetchStep extends Step<CartesianFetchStepConfig> {
     const { config } = this;
     return new CartesianFetchStep({
       vertexLabels:
-        partial?.vertexLabels ??
-        (config.vertexLabels ? [...config.vertexLabels] : undefined),
+        partial?.vertexLabels ?? (config.vertexLabels ? [...config.vertexLabels] : undefined),
       condition: partial?.condition ?? config.condition,
-      stepLabels:
-        partial?.stepLabels ??
-        (config.stepLabels ? [...config.stepLabels] : undefined),
+      stepLabels: partial?.stepLabels ?? (config.stepLabels ? [...config.stepLabels] : undefined),
     });
   }
 }
@@ -1030,25 +989,14 @@ export type MapProjectionSelectorValue =
   | { type: "literalEntry"; key: string; value: ConditionValue }
   | { type: "allProperties" }
   | { type: "variable"; variable: string };
-export type ConditionValue =
-  | string
-  | number
-  | boolean
-  | null
-  | undefined
-  | ConditionValueRef;
+export type ConditionValue = string | number | boolean | null | undefined | ConditionValueRef;
 export type BinaryCondition = readonly [BinaryOperator, string, ConditionValue];
 export type LogicalOperator = "and" | "or" | "xor";
 export type LogicalCondition = readonly [LogicalOperator, ...Condition[]];
 export type NotCondition = readonly ["not", Condition];
 export type InCondition = readonly ["in", string, readonly any[]];
 // Expression condition: ["expr", operator, leftExpr, rightExpr]
-export type ExpressionCondition = readonly [
-  "expr",
-  BinaryOperator,
-  ConditionValue,
-  ConditionValue,
-];
+export type ExpressionCondition = readonly ["expr", BinaryOperator, ConditionValue, ConditionValue];
 // Label wildcard condition: matches any element with a non-empty label
 export type LabelWildcardCondition = readonly ["labelWildcard"];
 // IS LABELED condition: checks if a variable has a specific label
@@ -1122,11 +1070,7 @@ function evaluateCondition(
         return true;
       }
       const value =
-        key === "@id"
-          ? element.id
-          : key === "@label"
-            ? element.label
-            : element.get(key);
+        key === "@id" ? element.id : key === "@label" ? element.label : element.get(key);
       return value === undefined || value === null;
     }
     case "isNotNull": {
@@ -1136,11 +1080,7 @@ function evaluateCondition(
         return false;
       }
       const value =
-        key === "@id"
-          ? element.id
-          : key === "@label"
-            ? element.label
-            : element.get(key);
+        key === "@id" ? element.id : key === "@label" ? element.label : element.get(key);
       return value !== undefined && value !== null;
     }
     case "in": {
@@ -1151,11 +1091,7 @@ function evaluateCondition(
         return false;
       }
       const actual =
-        key === "@id"
-          ? element.id
-          : key === "@label"
-            ? element.label
-            : element.get(key);
+        key === "@id" ? element.id : key === "@label" ? element.label : element.get(key);
       return values.includes(actual);
     }
     case "expr": {
@@ -1199,32 +1135,20 @@ function evaluateCondition(
 
       // Create a temporary path with the element as the current value
       // so we can evaluate the label condition against it
-      const tempPath = new TraversalPath(
-        undefined,
-        elementToCheck,
-        [] as const,
-      );
+      const tempPath = new TraversalPath(undefined, elementToCheck, [] as const);
 
       // Evaluate the label condition against the element
       return evaluateCondition(tempPath, labelCondition, context);
     }
     default:
-      return evaluateBinaryCondition(
-        path,
-        condition as BinaryCondition,
-        context,
-      );
+      return evaluateBinaryCondition(path, condition as BinaryCondition, context);
   }
 }
 
 /**
  * Evaluate an arithmetic operation.
  */
-function evaluateArithmeticOp(
-  operator: ArithmeticOperator,
-  left: number,
-  right: number,
-): number {
+function evaluateArithmeticOp(operator: ArithmeticOperator, left: number, right: number): number {
   switch (operator) {
     case "+":
       return left + right;
@@ -1313,8 +1237,7 @@ function resolveConditionValue(
       if (
         element &&
         typeof element === "object" &&
-        (element.label === "ForeachElement" ||
-          element.label === "ComprehensionElement")
+        (element.label === "ForeachElement" || element.label === "ComprehensionElement")
       ) {
         return element.value;
       }
@@ -1335,8 +1258,7 @@ function resolveConditionValue(
       if (
         element &&
         typeof element === "object" &&
-        (element.label === "ForeachElement" ||
-          element.label === "ComprehensionElement")
+        (element.label === "ForeachElement" || element.label === "ComprehensionElement")
       ) {
         element = element.value;
       }
@@ -1362,11 +1284,7 @@ function resolveConditionValue(
       const rightVal = resolveConditionValue(path, value.right, context);
 
       // Handle list concatenation with +
-      if (
-        value.operator === "+" &&
-        Array.isArray(leftVal) &&
-        Array.isArray(rightVal)
-      ) {
+      if (value.operator === "+" && Array.isArray(leftVal) && Array.isArray(rightVal)) {
         return [...leftVal, ...rightVal];
       }
 
@@ -1381,36 +1299,21 @@ function resolveConditionValue(
       }
 
       // Handle string concatenation with +
-      if (
-        value.operator === "+" &&
-        (typeof leftVal === "string" || typeof rightVal === "string")
-      ) {
+      if (value.operator === "+" && (typeof leftVal === "string" || typeof rightVal === "string")) {
         return String(leftVal ?? "") + String(rightVal ?? "");
       }
 
       // Handle temporal + duration arithmetic
-      if (
-        value.operator === "+" &&
-        isTemporalValue(leftVal) &&
-        rightVal instanceof DurationValue
-      ) {
+      if (value.operator === "+" && isTemporalValue(leftVal) && rightVal instanceof DurationValue) {
         return addDuration(leftVal, rightVal);
       }
-      if (
-        value.operator === "+" &&
-        leftVal instanceof DurationValue &&
-        isTemporalValue(rightVal)
-      ) {
+      if (value.operator === "+" && leftVal instanceof DurationValue && isTemporalValue(rightVal)) {
         // duration + temporal is the same as temporal + duration
         return addDuration(rightVal, leftVal);
       }
 
       // Handle temporal - duration arithmetic
-      if (
-        value.operator === "-" &&
-        isTemporalValue(leftVal) &&
-        rightVal instanceof DurationValue
-      ) {
+      if (value.operator === "-" && isTemporalValue(leftVal) && rightVal instanceof DurationValue) {
         return subtractDuration(leftVal, rightVal);
       }
 
@@ -1590,9 +1493,7 @@ function resolveConditionValue(
         return null;
       }
       // Resolve arguments
-      const resolvedArgs = value.args.map((arg) =>
-        resolveConditionValue(path, arg, context),
-      );
+      const resolvedArgs = value.args.map((arg) => resolveConditionValue(path, arg, context));
       // Call the function
       return evaluateFunction(value.name, resolvedArgs, path, value.distinct);
     } else if (value.type === "simpleCaseExpression") {
@@ -1642,11 +1543,7 @@ function resolveConditionValue(
       }
 
       // Handle map access: map[stringKey]
-      if (
-        typeof listVal === "object" &&
-        !Array.isArray(listVal) &&
-        typeof indexVal === "string"
-      ) {
+      if (typeof listVal === "object" && !Array.isArray(listVal) && typeof indexVal === "string") {
         const map = listVal as Record<string, unknown>;
         return map[indexVal] ?? null;
       }
@@ -1764,9 +1661,7 @@ function resolveConditionValue(
         };
 
         // Create a new path with the comprehension variable bound
-        const boundPath = new TraversalPath(path, comprehensionBinding as any, [
-          value.variable,
-        ]);
+        const boundPath = new TraversalPath(path, comprehensionBinding as any, [value.variable]);
 
         // Apply filter condition if present
         if (value.filterCondition) {
@@ -1778,11 +1673,7 @@ function resolveConditionValue(
         // Apply projection if present, otherwise use the element itself
         let resultValue: any;
         if (value.projection) {
-          resultValue = resolveConditionValue(
-            boundPath,
-            value.projection,
-            context,
-          );
+          resultValue = resolveConditionValue(boundPath, value.projection, context);
         } else {
           resultValue = element;
         }
@@ -1939,11 +1830,7 @@ function resolveConditionValue(
 
       // Execute the pattern traversal starting from the current path
       // The pattern steps will generate all matching paths
-      for (const matchedPathUntyped of traverser.traverse(
-        graphSource,
-        [path],
-        context,
-      )) {
+      for (const matchedPathUntyped of traverser.traverse(graphSource, [path], context)) {
         // Cast to correct type - traverser yields TraversalPath<any, any, any>
         const matchedPath = matchedPathUntyped as TraversalPath<any, any, any>;
         // Build a combined path that includes both outer scope and pattern bindings
@@ -1965,17 +1852,11 @@ function resolveConditionValue(
             label: "PatternPath",
             value: matchedPath,
           };
-          evalPath = new TraversalPath(matchedPath, pathBinding as any, [
-            value.pathVariable,
-          ]);
+          evalPath = new TraversalPath(matchedPath, pathBinding as any, [value.pathVariable]);
         }
 
         // Evaluate the projection expression
-        const resultValue = resolveConditionValue(
-          evalPath,
-          value.projection,
-          context,
-        );
+        const resultValue = resolveConditionValue(evalPath, value.projection, context);
         results.push(resultValue);
       }
 
@@ -1995,8 +1876,7 @@ function resolveConditionValue(
       if (
         element &&
         typeof element === "object" &&
-        (element.label === "ForeachElement" ||
-          element.label === "ComprehensionElement")
+        (element.label === "ForeachElement" || element.label === "ComprehensionElement")
       ) {
         element = element.value;
       }
@@ -2044,11 +1924,7 @@ function resolveConditionValue(
           result[selector.property] = propValue;
         } else if (selector.type === "literalEntry") {
           // key: expr - include an expression with a given key
-          const exprValue = resolveConditionValue(
-            path,
-            selector.value,
-            context,
-          );
+          const exprValue = resolveConditionValue(path, selector.value, context);
           result[selector.key] = exprValue;
         } else if (selector.type === "variable") {
           // variable - include another variable's value
@@ -2059,8 +1935,7 @@ function resolveConditionValue(
             if (
               varValue &&
               typeof varValue === "object" &&
-              (varValue.label === "ForeachElement" ||
-                varValue.label === "ComprehensionElement")
+              (varValue.label === "ForeachElement" || varValue.label === "ComprehensionElement")
             ) {
               varValue = varValue.value;
             }
@@ -2090,11 +1965,7 @@ function resolveConditionValue(
 
       // Execute the pattern traversal starting from the current path
       // Return true as soon as we find one match
-      for (const matchedPathUntyped of traverser.traverse(
-        graphSource,
-        [path],
-        context,
-      )) {
+      for (const matchedPathUntyped of traverser.traverse(graphSource, [path], context)) {
         // Cast to correct type - traverser yields TraversalPath<any, any, any>
         const matchedPath = matchedPathUntyped as TraversalPath<any, any, any>;
 
@@ -2141,16 +2012,10 @@ function evaluateQuantifier(
     };
 
     // Create a new path with the quantifier variable bound
-    const boundPath = new TraversalPath(path, quantifierBinding as any, [
-      quantifier.variable,
-    ]);
+    const boundPath = new TraversalPath(path, quantifierBinding as any, [quantifier.variable]);
 
     // Evaluate the condition for this element
-    const satisfies = evaluateCondition(
-      boundPath,
-      quantifier.condition,
-      context,
-    );
+    const satisfies = evaluateCondition(boundPath, quantifier.condition, context);
 
     if (satisfies) {
       satisfyCount++;
@@ -2222,18 +2087,14 @@ function evaluateReduce(
       label: "ComprehensionElement",
       value: accumulator,
     };
-    const pathWithAcc = new TraversalPath(path, accumulatorBinding as any, [
-      reduce.accumulator,
-    ]);
+    const pathWithAcc = new TraversalPath(path, accumulatorBinding as any, [reduce.accumulator]);
 
     // Then, create a binding for the iteration variable
     const iterationBinding = {
       label: "ComprehensionElement",
       value: element,
     };
-    const boundPath = new TraversalPath(pathWithAcc, iterationBinding as any, [
-      reduce.variable,
-    ]);
+    const boundPath = new TraversalPath(pathWithAcc, iterationBinding as any, [reduce.variable]);
 
     // Evaluate the expression to get the new accumulator value
     accumulator = resolveConditionValue(boundPath, reduce.expression, context);
@@ -2246,11 +2107,7 @@ function evaluateReduce(
  * Compare two values using the given operator.
  * Returns true if the comparison holds.
  */
-function compareValues(
-  left: any,
-  operator: BinaryOperator,
-  right: any,
-): boolean {
+function compareValues(left: any, operator: BinaryOperator, right: any): boolean {
   switch (operator) {
     case "=": {
       if (left == null) {
@@ -2316,12 +2173,7 @@ function evaluateBinaryCondition(
   // Resolve the condition value (handles variable/property references)
   const value = resolveConditionValue(path, conditionValue, context);
 
-  const actual =
-    key === "@id"
-      ? element.id
-      : key === "@label"
-        ? element.label
-        : element.get(key);
+  const actual = key === "@id" ? element.id : key === "@label" ? element.label : element.get(key);
   switch (operator) {
     case "=": {
       if (value == null) {
@@ -2413,9 +2265,7 @@ function stringifyCondition(
         (condition as LogicalCondition).slice(1) as Condition[]
       )
         .map((c) => stringifyCondition(c, colorizers))
-        .join(
-          ` ${colorizers.keyword(condition[0])} `,
-        )}${colorizers.punctuation(")")}`;
+        .join(` ${colorizers.keyword(condition[0])} `)}${colorizers.punctuation(")")}`;
     case "not":
       return `${colorizers.keyword("not")} ${stringifyCondition(condition[1] as Condition, colorizers)}`;
     case "exists":
@@ -2444,9 +2294,9 @@ export interface FilterElementsStepConfig<
   condition: Condition;
 }
 
-export class FilterElementsStep<
-  const TPath extends TraversalPath<any, any, any>,
-> extends Step<FilterElementsStepConfig<TPath>> {
+export class FilterElementsStep<const TPath extends TraversalPath<any, any, any>> extends Step<
+  FilterElementsStepConfig<TPath>
+> {
   public get name() {
     return "FilterElements";
   }
@@ -2468,12 +2318,7 @@ export class FilterElementsStep<
       const hints = analyzeCondition(condition);
       if (hints.length > 0) {
         // Try to find a usable index
-        const indexResult = this.#tryIndexLookup(
-          source,
-          inputArray,
-          hints,
-          context,
-        );
+        const indexResult = this.#tryIndexLookup(source, inputArray, hints, context);
         if (indexResult !== null) {
           yield* indexResult;
           return;
@@ -2554,11 +2399,7 @@ export class FilterElementsStep<
     }
 
     // Perform the index lookup
-    const candidateIds = this.#performIndexLookup(
-      indexManager,
-      elementLabel,
-      bestHint,
-    );
+    const candidateIds = this.#performIndexLookup(indexManager, elementLabel, bestHint);
 
     if (!candidateIds) {
       return null;
@@ -2583,10 +2424,7 @@ export class FilterElementsStep<
       }
 
       // Apply remaining condition if any
-      if (
-        remainingCondition &&
-        !evaluateCondition(path, remainingCondition, context)
-      ) {
+      if (remainingCondition && !evaluateCondition(path, remainingCondition, context)) {
         continue;
       }
 
@@ -2646,10 +2484,7 @@ export class FilterElementsStep<
       }
 
       case "fulltext": {
-        const fulltextIndex = indexManager.getFullTextIndex(
-          label,
-          hint.property,
-        );
+        const fulltextIndex = indexManager.getFullTextIndex(label, hint.property);
         if (!fulltextIndex) return undefined;
 
         const value = hint.value as string;
@@ -2683,9 +2518,7 @@ export class FilterElementsStep<
     const { config } = this;
     return new FilterElementsStep({
       condition: partial?.condition ?? config.condition,
-      stepLabels:
-        partial?.stepLabels ??
-        (config.stepLabels ? [...config.stepLabels] : undefined),
+      stepLabels: partial?.stepLabels ?? (config.stepLabels ? [...config.stepLabels] : undefined),
     });
   }
 
@@ -2757,9 +2590,7 @@ export class RangeStep extends Step<RangeStepConfig> {
     return new RangeStep({
       start: partial?.start ?? config.start,
       end: partial?.end ?? config.end,
-      stepLabels:
-        partial?.stepLabels ??
-        (config.stepLabels ? [...config.stepLabels] : undefined),
+      stepLabels: partial?.stepLabels ?? (config.stepLabels ? [...config.stepLabels] : undefined),
     });
   }
 }
@@ -2787,9 +2618,7 @@ export class CountStep extends Step<CountStepConfig> {
   public override clone(partial?: Partial<CountStepConfig>) {
     const { config } = this;
     return new CountStep({
-      stepLabels:
-        partial?.stepLabels ??
-        (config.stepLabels ? [...config.stepLabels] : undefined),
+      stepLabels: partial?.stepLabels ?? (config.stepLabels ? [...config.stepLabels] : undefined),
     });
   }
 }
@@ -2837,9 +2666,7 @@ export class SumStep extends Step<AggregateStepConfig> {
     return new SumStep({
       property: partial?.property ?? config.property,
       variable: partial?.variable ?? config.variable,
-      stepLabels:
-        partial?.stepLabels ??
-        (config.stepLabels ? [...config.stepLabels] : undefined),
+      stepLabels: partial?.stepLabels ?? (config.stepLabels ? [...config.stepLabels] : undefined),
     });
   }
 }
@@ -2877,9 +2704,7 @@ export class AvgStep extends Step<AggregateStepConfig> {
     return new AvgStep({
       property: partial?.property ?? config.property,
       variable: partial?.variable ?? config.variable,
-      stepLabels:
-        partial?.stepLabels ??
-        (config.stepLabels ? [...config.stepLabels] : undefined),
+      stepLabels: partial?.stepLabels ?? (config.stepLabels ? [...config.stepLabels] : undefined),
     });
   }
 }
@@ -2922,9 +2747,7 @@ export class MinStep extends Step<AggregateStepConfig> {
     return new MinStep({
       property: partial?.property ?? config.property,
       variable: partial?.variable ?? config.variable,
-      stepLabels:
-        partial?.stepLabels ??
-        (config.stepLabels ? [...config.stepLabels] : undefined),
+      stepLabels: partial?.stepLabels ?? (config.stepLabels ? [...config.stepLabels] : undefined),
     });
   }
 }
@@ -2967,9 +2790,7 @@ export class MaxStep extends Step<AggregateStepConfig> {
     return new MaxStep({
       property: partial?.property ?? config.property,
       variable: partial?.variable ?? config.variable,
-      stepLabels:
-        partial?.stepLabels ??
-        (config.stepLabels ? [...config.stepLabels] : undefined),
+      stepLabels: partial?.stepLabels ?? (config.stepLabels ? [...config.stepLabels] : undefined),
     });
   }
 }
@@ -2991,8 +2812,7 @@ export class CollectStep extends Step<CollectStepConfig> {
     input: Iterable<unknown>,
     _context?: QueryContext,
   ): IterableIterator<unknown[]> {
-    const maxCollectionSize =
-      _context?.options.maxCollectionSize ?? DEFAULT_MAX_COLLECTION_SIZE;
+    const maxCollectionSize = _context?.options.maxCollectionSize ?? DEFAULT_MAX_COLLECTION_SIZE;
     const collected: unknown[] = [];
     for (const path of input) {
       this.traversed++;
@@ -3013,9 +2833,7 @@ export class CollectStep extends Step<CollectStepConfig> {
     const { config } = this;
     return new CollectStep({
       variable: partial?.variable ?? config.variable,
-      stepLabels:
-        partial?.stepLabels ??
-        (config.stepLabels ? [...config.stepLabels] : undefined),
+      stepLabels: partial?.stepLabels ?? (config.stepLabels ? [...config.stepLabels] : undefined),
     });
   }
 }
@@ -3027,9 +2845,7 @@ export interface MapElementsStepConfig<TInput> extends StepConfig {
   mapper: (value: TInput) => any;
 }
 
-export class MapElementsStep<TInput> extends Step<
-  MapElementsStepConfig<TInput>
-> {
+export class MapElementsStep<TInput> extends Step<MapElementsStepConfig<TInput>> {
   public get name() {
     return "MapElements";
   }
@@ -3051,9 +2867,7 @@ export class MapElementsStep<TInput> extends Step<
     const { config } = this;
     return new MapElementsStep({
       mapper: partial?.mapper ?? config.mapper,
-      stepLabels:
-        partial?.stepLabels ??
-        (config.stepLabels ? [...config.stepLabels] : undefined),
+      stepLabels: partial?.stepLabels ?? (config.stepLabels ? [...config.stepLabels] : undefined),
     });
   }
 
@@ -3155,9 +2969,7 @@ export class GroupByStep extends Step<GroupByStepConfig> {
               returnItem.percentile !== undefined
             ) {
               const funcName =
-                returnItem.aggregate === "PERCENTILEDISC"
-                  ? "percentileDisc"
-                  : "percentileCont";
+                returnItem.aggregate === "PERCENTILEDISC" ? "percentileDisc" : "percentileCont";
               alias = `${funcName}(${argPart}, ${returnItem.percentile})`;
             } else {
               // Use lowercase function names for stDev/stDevP
@@ -3200,11 +3012,7 @@ export class GroupByStep extends Step<GroupByStepConfig> {
           result[alias] = labels ? labels[0] : undefined;
         } else if (returnItem.property) {
           // Get property value from first path in group
-          result[alias] = this.#extractProperty(
-            paths[0],
-            returnItem.variable,
-            returnItem.property,
-          );
+          result[alias] = this.#extractProperty(paths[0], returnItem.variable, returnItem.property);
         } else {
           // Return the value from first path
           result[alias] = this.#extractValue(paths[0], returnItem.variable);
@@ -3215,10 +3023,7 @@ export class GroupByStep extends Step<GroupByStepConfig> {
     }
   }
 
-  #computeGroupKey(
-    item: unknown,
-    groupByItems: GroupByStepConfig["groupByItems"],
-  ): string {
+  #computeGroupKey(item: unknown, groupByItems: GroupByStepConfig["groupByItems"]): string {
     const keyParts: string[] = [];
 
     for (const groupBy of groupByItems) {
@@ -3227,11 +3032,7 @@ export class GroupByStep extends Step<GroupByStepConfig> {
         const labels = this.#extractLabels(item, groupBy.variable);
         keyParts.push(this.#safeStringify(labels ?? []));
       } else if (groupBy.property) {
-        const value = this.#extractProperty(
-          item,
-          groupBy.variable,
-          groupBy.property,
-        );
+        const value = this.#extractProperty(item, groupBy.variable, groupBy.property);
         keyParts.push(this.#safeStringify(this.#normalizeValue(value)));
       } else {
         // Group by vertex/edge id
@@ -3444,8 +3245,7 @@ export class GroupByStep extends Step<GroupByStepConfig> {
       }
 
       case "COLLECT": {
-        const maxSize =
-          context?.options.maxCollectionSize ?? DEFAULT_MAX_COLLECTION_SIZE;
+        const maxSize = context?.options.maxCollectionSize ?? DEFAULT_MAX_COLLECTION_SIZE;
         const collected: unknown[] = [];
         const seen = distinct ? new Set<string>() : null;
         for (const path of paths) {
@@ -3481,8 +3281,7 @@ export class GroupByStep extends Step<GroupByStepConfig> {
         if (values.length < 2) return 0;
         const mean = values.reduce((a, b) => a + b, 0) / values.length;
         const squaredDiffs = values.map((v) => (v - mean) ** 2);
-        const variance =
-          squaredDiffs.reduce((a, b) => a + b, 0) / (values.length - 1);
+        const variance = squaredDiffs.reduce((a, b) => a + b, 0) / (values.length - 1);
         return Math.sqrt(variance);
       }
 
@@ -3500,8 +3299,7 @@ export class GroupByStep extends Step<GroupByStepConfig> {
         if (values.length === 0) return 0;
         const mean = values.reduce((a, b) => a + b, 0) / values.length;
         const squaredDiffs = values.map((v) => (v - mean) ** 2);
-        const variance =
-          squaredDiffs.reduce((a, b) => a + b, 0) / values.length;
+        const variance = squaredDiffs.reduce((a, b) => a + b, 0) / values.length;
         return Math.sqrt(variance);
       }
 
@@ -3563,9 +3361,7 @@ export class GroupByStep extends Step<GroupByStepConfig> {
     return new GroupByStep({
       groupByItems: partial?.groupByItems ?? [...config.groupByItems],
       returnItems: partial?.returnItems ?? [...config.returnItems],
-      stepLabels:
-        partial?.stepLabels ??
-        (config.stepLabels ? [...config.stepLabels] : undefined),
+      stepLabels: partial?.stepLabels ?? (config.stepLabels ? [...config.stepLabels] : undefined),
     });
   }
 }
@@ -3686,9 +3482,7 @@ export class VertexStep extends Step<VertexStepConfig> {
     return new VertexStep({
       direction: partial?.direction ?? config.direction,
       edgeLabels: partial?.edgeLabels ?? [...config.edgeLabels],
-      stepLabels:
-        partial?.stepLabels ??
-        (config.stepLabels ? [...config.stepLabels] : undefined),
+      stepLabels: partial?.stepLabels ?? (config.stepLabels ? [...config.stepLabels] : undefined),
     });
   }
 }
@@ -3757,9 +3551,7 @@ export class EdgeStep extends Step<EdgeStepConfig> {
     return new EdgeStep({
       direction: partial?.direction ?? config.direction,
       edgeLabels: partial?.edgeLabels ?? [...config.edgeLabels],
-      stepLabels:
-        partial?.stepLabels ??
-        (config.stepLabels ? [...config.stepLabels] : undefined),
+      stepLabels: partial?.stepLabels ?? (config.stepLabels ? [...config.stepLabels] : undefined),
     });
   }
 }
@@ -3806,9 +3598,10 @@ const DEFAULT_MAX_REPEATS = 1000;
  */
 const DEFAULT_MAX_COLLECTION_SIZE = 100000;
 
-export class RepeatStep<
-  TSteps extends readonly Step<any>[],
-> extends ContainerStep<TSteps, RepeatStepConfig> {
+export class RepeatStep<TSteps extends readonly Step<any>[]> extends ContainerStep<
+  TSteps,
+  RepeatStepConfig
+> {
   #repeatTraverser: Traverser | undefined;
   #untilTraverser: Traverser | undefined;
 
@@ -3893,8 +3686,7 @@ export class RepeatStep<
     // emitStart defaults to 1 (start emitting from first iteration)
     const effectiveEmitStart = emitStart ?? 1;
     // Get maxIterations from context options, falling back to default
-    const maxIterations =
-      _context?.options.maxIterations ?? DEFAULT_MAX_REPEATS;
+    const maxIterations = _context?.options.maxIterations ?? DEFAULT_MAX_REPEATS;
 
     while (counter < maxIterations) {
       counter++;
@@ -3973,12 +3765,8 @@ export class RepeatStep<
         times: partial?.times ?? config.times,
         untilSteps:
           partial?.untilSteps ??
-          (config.untilSteps !== undefined
-            ? [...config.untilSteps]
-            : undefined),
-        stepLabels:
-          partial?.stepLabels ??
-          (config.stepLabels ? [...config.stepLabels] : undefined),
+          (config.untilSteps !== undefined ? [...config.untilSteps] : undefined),
+        stepLabels: partial?.stepLabels ?? (config.stepLabels ? [...config.stepLabels] : undefined),
         emit: partial?.emit ?? config.emit,
         emitStart: partial?.emitStart ?? config.emitStart,
         emitInput: partial?.emitInput ?? config.emitInput,
@@ -4074,17 +3862,11 @@ export class DedupStep extends Step<DedupStepConfig> {
         return "\0[]";
       }
       // Check if all elements are primitives (string, number, boolean, null, undefined)
-      const allPrimitives = value.every(
-        (el) => el === null || typeof el !== "object",
-      );
+      const allPrimitives = value.every((el) => el === null || typeof el !== "object");
       if (allPrimitives) {
         // Use type-prefixed join for primitives to avoid collisions
         // e.g., [1, "1"] vs ["1", 1] should have different keys
-        return (
-          "\0[" +
-          value.map((el) => typeof el + ":" + String(el)).join("\0") +
-          "]"
-        );
+        return "\0[" + value.map((el) => typeof el + ":" + String(el)).join("\0") + "]";
       }
     }
 
@@ -4095,8 +3877,7 @@ export class DedupStep extends Step<DedupStepConfig> {
   public override clone(partial?: Partial<DedupStepConfig>) {
     return new DedupStep({
       stepLabels:
-        partial?.stepLabels ??
-        (this.config.stepLabels ? [...this.config.stepLabels] : undefined),
+        partial?.stepLabels ?? (this.config.stepLabels ? [...this.config.stepLabels] : undefined),
     });
   }
 }
@@ -4132,10 +3913,8 @@ export class OrderStep extends Step<OrderStepConfig> {
         // then fall back to property access (for expressions like ORDER BY n.name)
         const aNode = a.get(key);
         const bNode = b.get(key);
-        const aValue =
-          aNode !== undefined ? aNode.value : a.property(key as never);
-        const bValue =
-          bNode !== undefined ? bNode.value : b.property(key as never);
+        const aValue = aNode !== undefined ? aNode.value : a.property(key as never);
+        const bValue = bNode !== undefined ? bNode.value : b.property(key as never);
 
         // Handle null values according to nulls ordering
         const aIsNull = aValue === null || aValue === undefined;
@@ -4148,8 +3927,7 @@ export class OrderStep extends Step<OrderStepConfig> {
         if (aIsNull || bIsNull) {
           // Determine default nulls ordering based on direction if not specified
           // Default: NULLS LAST for ASC, NULLS FIRST for DESC (matches PostgreSQL behavior)
-          const effectiveNulls =
-            nulls ?? (direction === "asc" ? "last" : "first");
+          const effectiveNulls = nulls ?? (direction === "asc" ? "last" : "first");
 
           if (aIsNull) {
             return effectiveNulls === "first" ? -1 : 1;
@@ -4172,17 +3950,17 @@ export class OrderStep extends Step<OrderStepConfig> {
     return new OrderStep({
       directions: partial?.directions ?? [...this.config.directions],
       stepLabels:
-        partial?.stepLabels ??
-        (this.config.stepLabels ? [...this.config.stepLabels] : undefined),
+        partial?.stepLabels ?? (this.config.stepLabels ? [...this.config.stepLabels] : undefined),
     });
   }
 }
 
 export interface UnionStepConfig extends StepConfig {}
 
-export class UnionStep<
-  const TSteps extends readonly Step<any>[],
-> extends ContainerStep<TSteps, UnionStepConfig> {
+export class UnionStep<const TSteps extends readonly Step<any>[]> extends ContainerStep<
+  TSteps,
+  UnionStepConfig
+> {
   #unionTraverser: Traverser | undefined;
 
   public get name() {
@@ -4217,9 +3995,7 @@ export class UnionStep<
     const { config, steps } = this;
     return new UnionStep(
       {
-        stepLabels:
-          partial?.stepLabels ??
-          (config.stepLabels ? [...config.stepLabels] : undefined),
+        stepLabels: partial?.stepLabels ?? (config.stepLabels ? [...config.stepLabels] : undefined),
       },
       steps.map((step) => step.clone()),
     );
@@ -4250,10 +4026,7 @@ export class QueryUnionStep extends Step<QueryUnionStepConfig> {
   #branches: readonly Step<any>[][];
   #traversers: Traverser[] | undefined;
 
-  public constructor(
-    config: QueryUnionStepConfig,
-    branches: readonly Step<any>[][],
-  ) {
+  public constructor(config: QueryUnionStepConfig, branches: readonly Step<any>[][]) {
     super(config);
     this.#branches = branches;
   }
@@ -4343,9 +4116,7 @@ export class QueryUnionStep extends Step<QueryUnionStepConfig> {
       return value.map((v) => this.serializeValue(v));
     }
     if (value && typeof value === "object") {
-      return Object.fromEntries(
-        Object.entries(value).map(([k, v]) => [k, this.serializeValue(v)]),
-      );
+      return Object.fromEntries(Object.entries(value).map(([k, v]) => [k, this.serializeValue(v)]));
     }
     return value;
   }
@@ -4380,9 +4151,7 @@ export class QueryUnionStep extends Step<QueryUnionStepConfig> {
     return new QueryUnionStep(
       {
         all: partial?.all ?? config.all,
-        stepLabels:
-          partial?.stepLabels ??
-          (config.stepLabels ? [...config.stepLabels] : undefined),
+        stepLabels: partial?.stepLabels ?? (config.stepLabels ? [...config.stepLabels] : undefined),
       },
       this.#branches.map((branch) => branch.map((step) => step.clone())),
     );
@@ -4412,10 +4181,7 @@ export class MultiQueryStep extends Step<MultiQueryStepConfig> {
   #statements: readonly Step<any>[][];
   #traversers: Traverser[] | undefined;
 
-  public constructor(
-    config: MultiQueryStepConfig,
-    statements: readonly Step<any>[][],
-  ) {
+  public constructor(config: MultiQueryStepConfig, statements: readonly Step<any>[][]) {
     super(config);
     this.#statements = statements;
   }
@@ -4430,9 +4196,7 @@ export class MultiQueryStep extends Step<MultiQueryStepConfig> {
 
   protected get traversers(): Traverser[] {
     if (this.#traversers === undefined) {
-      this.#traversers = this.#statements.map((steps) =>
-        createTraverser(steps),
-      );
+      this.#traversers = this.#statements.map((steps) => createTraverser(steps));
     }
     return this.#traversers;
   }
@@ -4462,10 +4226,7 @@ export class MultiQueryStep extends Step<MultiQueryStepConfig> {
   }
 
   public override toStringTokens(): StepStringToken[] {
-    const tokens: StepStringToken[] = [
-      { kind: "start" },
-      { kind: "name", value: this.name },
-    ];
+    const tokens: StepStringToken[] = [{ kind: "start" }, { kind: "name", value: this.name }];
 
     // Add tokens for each statement
     for (let i = 0; i < this.#statements.length; i++) {
@@ -4489,21 +4250,19 @@ export class MultiQueryStep extends Step<MultiQueryStepConfig> {
     return new MultiQueryStep(
       {
         stepLabels:
-          partial?.stepLabels ??
-          (this.config.stepLabels ? [...this.config.stepLabels] : undefined),
+          partial?.stepLabels ?? (this.config.stepLabels ? [...this.config.stepLabels] : undefined),
       },
-      this.#statements.map((statement) =>
-        statement.map((step) => step.clone()),
-      ),
+      this.#statements.map((statement) => statement.map((step) => step.clone())),
     );
   }
 }
 
 export interface IntersectStepConfig extends StepConfig {}
 
-export class IntersectStep<
-  const TSteps extends readonly Step<any>[],
-> extends ContainerStep<TSteps, IntersectStepConfig> {
+export class IntersectStep<const TSteps extends readonly Step<any>[]> extends ContainerStep<
+  TSteps,
+  IntersectStepConfig
+> {
   #intersectTraverser: Traverser | undefined;
 
   public get name() {
@@ -4558,9 +4317,7 @@ export class IntersectStep<
     const { config, steps } = this;
     return new IntersectStep(
       {
-        stepLabels:
-          partial?.stepLabels ??
-          (config.stepLabels ? [...config.stepLabels] : undefined),
+        stepLabels: partial?.stepLabels ?? (config.stepLabels ? [...config.stepLabels] : undefined),
       },
       steps.map((step) => step.clone()),
     );
@@ -4580,9 +4337,10 @@ export interface OptionalMatchStepConfig extends StepConfig {
  * If no results are found, the input path is yielded with null values bound
  * to the pattern variables.
  */
-export class OptionalMatchStep<
-  const TSteps extends readonly Step<any>[],
-> extends ContainerStep<TSteps, OptionalMatchStepConfig> {
+export class OptionalMatchStep<const TSteps extends readonly Step<any>[]> extends ContainerStep<
+  TSteps,
+  OptionalMatchStepConfig
+> {
   #matchTraverser: Traverser | undefined;
 
   public get name() {
@@ -4607,9 +4365,11 @@ export class OptionalMatchStep<
       this.traversed++;
 
       // Run the nested match steps against this single input path
-      const matchResults = [
-        ...this.matchTraverser.traverse(source, [inputPath]),
-      ] as TraversalPath<any, any, any>[];
+      const matchResults = [...this.matchTraverser.traverse(source, [inputPath])] as TraversalPath<
+        any,
+        any,
+        any
+      >[];
 
       if (matchResults.length > 0) {
         // Match found - yield all match results
@@ -4633,9 +4393,7 @@ export class OptionalMatchStep<
     const { config, steps } = this;
     return new OptionalMatchStep(
       {
-        stepLabels:
-          partial?.stepLabels ??
-          (config.stepLabels ? [...config.stepLabels] : undefined),
+        stepLabels: partial?.stepLabels ?? (config.stepLabels ? [...config.stepLabels] : undefined),
         variables: partial?.variables ?? [...config.variables],
       },
       steps.map((step) => step.clone()),
@@ -4660,11 +4418,7 @@ export class SelectStep extends Step<SelectStepConfig> {
     input: Iterable<unknown>,
     _context?: QueryContext,
   ): IterableIterator<
-    readonly (
-      | undefined
-      | TraversalPath<any, any, any>
-      | readonly TraversalPath<any, any, any>[]
-    )[]
+    readonly (undefined | TraversalPath<any, any, any> | readonly TraversalPath<any, any, any>[])[]
   > {
     const { pathLabels } = this.config;
     for (const path of input) {
@@ -4701,9 +4455,7 @@ export class SelectStep extends Step<SelectStepConfig> {
     const { config } = this;
     return new SelectStep({
       pathLabels: partial?.pathLabels ?? [...config.pathLabels],
-      stepLabels:
-        partial?.stepLabels ??
-        (config.stepLabels ? [...config.stepLabels] : undefined),
+      stepLabels: partial?.stepLabels ?? (config.stepLabels ? [...config.stepLabels] : undefined),
     });
   }
 }
@@ -4737,8 +4489,7 @@ export class UnfoldStep extends Step<UnfoldStepConfig> {
   public override clone(partial?: Partial<UnfoldStepConfig>) {
     return new UnfoldStep({
       stepLabels:
-        partial?.stepLabels ??
-        (this.config.stepLabels ? [...this.config.stepLabels] : undefined),
+        partial?.stepLabels ?? (this.config.stepLabels ? [...this.config.stepLabels] : undefined),
     });
   }
 }
@@ -4766,8 +4517,7 @@ export class ValuesStep extends Step<ValuesStepConfig> {
   public override clone(partial?: Partial<ValuesStepConfig>) {
     return new ValuesStep({
       stepLabels:
-        partial?.stepLabels ??
-        (this.config.stepLabels ? [...this.config.stepLabels] : undefined),
+        partial?.stepLabels ?? (this.config.stepLabels ? [...this.config.stepLabels] : undefined),
     });
   }
 }
@@ -4877,8 +4627,7 @@ export class PropertyValuesStep extends Step<PropertyValuesStepConfig> {
     return new PropertyValuesStep({
       items: partial?.items ?? [...this.config.items],
       stepLabels:
-        partial?.stepLabels ??
-        (this.config.stepLabels ? [...this.config.stepLabels] : undefined),
+        partial?.stepLabels ?? (this.config.stepLabels ? [...this.config.stepLabels] : undefined),
     });
   }
 }
@@ -4946,14 +4695,11 @@ export class ExpressionReturnStep extends Step<ExpressionReturnStepConfig> {
     }
   }
 
-  public override clone(
-    partial?: Partial<ExpressionReturnStepConfig>,
-  ): ExpressionReturnStep {
+  public override clone(partial?: Partial<ExpressionReturnStepConfig>): ExpressionReturnStep {
     return new ExpressionReturnStep({
       items: partial?.items ?? [...this.config.items],
       stepLabels:
-        partial?.stepLabels ??
-        (this.config.stepLabels ? [...this.config.stepLabels] : undefined),
+        partial?.stepLabels ?? (this.config.stepLabels ? [...this.config.stepLabels] : undefined),
     });
   }
 }
@@ -5034,8 +4780,7 @@ export class LabelsStep extends Step<LabelsStepConfig> {
   public override clone(partial?: Partial<LabelsStepConfig>) {
     return new LabelsStep({
       stepLabels:
-        partial?.stepLabels ??
-        (this.config.stepLabels ? [...this.config.stepLabels] : undefined),
+        partial?.stepLabels ?? (this.config.stepLabels ? [...this.config.stepLabels] : undefined),
       returnAsString: partial?.returnAsString ?? this.config.returnAsString,
     });
   }
@@ -5081,8 +4826,7 @@ export class BindPathStep extends Step<BindPathStepConfig> {
     return new BindPathStep({
       pathVariable: partial?.pathVariable ?? this.config.pathVariable,
       stepLabels:
-        partial?.stepLabels ??
-        (this.config.stepLabels ? [...this.config.stepLabels] : undefined),
+        partial?.stepLabels ?? (this.config.stepLabels ? [...this.config.stepLabels] : undefined),
     });
   }
 }
@@ -5193,10 +4937,7 @@ class MinHeap<T> {
       if (this.compareFn(this.heap[index]!, this.heap[parentIndex]!) >= 0) {
         break;
       }
-      [this.heap[index], this.heap[parentIndex]] = [
-        this.heap[parentIndex]!,
-        this.heap[index]!,
-      ];
+      [this.heap[index], this.heap[parentIndex]] = [this.heap[parentIndex]!, this.heap[index]!];
       index = parentIndex;
     }
   }
@@ -5223,10 +4964,7 @@ class MinHeap<T> {
 
       if (minIndex === index) break;
 
-      [this.heap[index], this.heap[minIndex]] = [
-        this.heap[minIndex]!,
-        this.heap[index]!,
-      ];
+      [this.heap[index], this.heap[minIndex]] = [this.heap[minIndex]!, this.heap[index]!];
       index = minIndex;
     }
   }
@@ -5288,15 +5026,7 @@ export class ShortestPathStep extends Step<ShortestPathStepConfig> {
             maxDepth,
             weightProperty,
           )
-        : this.bfs(
-            source,
-            startVertex,
-            targetId,
-            targetCondition,
-            direction,
-            edgeLabels,
-            maxDepth,
-          );
+        : this.bfs(source, startVertex, targetId, targetCondition, direction, edgeLabels, maxDepth);
 
       if (result) {
         // Build a TraversalPath from the result
@@ -5339,10 +5069,9 @@ export class ShortestPathStep extends Step<ShortestPathStepConfig> {
 
     // BFS data structures with parent pointers for efficient path reconstruction
     const visited = new Set<ElementId>([startVertex.id]);
-    const previous = new Map<
-      ElementId,
-      { vertex: Vertex<any, any>; edge: Edge<any, any> } | null
-    >([[startVertex.id, null]]);
+    const previous = new Map<ElementId, { vertex: Vertex<any, any>; edge: Edge<any, any> } | null>([
+      [startVertex.id, null],
+    ]);
     const queue: Vertex<any, any>[] = [startVertex];
 
     let depth = 0;
@@ -5355,12 +5084,7 @@ export class ShortestPathStep extends Step<ShortestPathStepConfig> {
         const current = queue.shift()!;
 
         // Get adjacent vertices based on direction
-        const neighbors = this.getNeighbors(
-          source,
-          current,
-          direction,
-          edgeLabels,
-        );
+        const neighbors = this.getNeighbors(source, current, direction, edgeLabels);
 
         for (const { vertex: neighbor, edge } of neighbors) {
           if (visited.has(neighbor.id)) {
@@ -5404,10 +5128,9 @@ export class ShortestPathStep extends Step<ShortestPathStepConfig> {
 
     // Dijkstra data structures
     const distances = new Map<ElementId, number>([[startVertex.id, 0]]);
-    const previous = new Map<
-      ElementId,
-      { vertex: Vertex<any, any>; edge: Edge<any, any> } | null
-    >([[startVertex.id, null]]);
+    const previous = new Map<ElementId, { vertex: Vertex<any, any>; edge: Edge<any, any> } | null>([
+      [startVertex.id, null],
+    ]);
 
     // Priority queue using binary min-heap for O(log V) operations
     const pq = new MinHeap<{ vertex: Vertex<any, any>; distance: number }>(
@@ -5441,12 +5164,7 @@ export class ShortestPathStep extends Step<ShortestPathStepConfig> {
       }
 
       // Get neighbors
-      const neighbors = this.getNeighbors(
-        source,
-        currentVertex,
-        direction,
-        edgeLabels,
-      );
+      const neighbors = this.getNeighbors(source, currentVertex, direction, edgeLabels);
 
       for (const { vertex: neighbor, edge } of neighbors) {
         // Get edge weight (default to 1 if not found)
@@ -5480,10 +5198,7 @@ export class ShortestPathStep extends Step<ShortestPathStepConfig> {
    */
   private reconstructPath(
     target: Vertex<any, any>,
-    previous: Map<
-      ElementId,
-      { vertex: Vertex<any, any>; edge: Edge<any, any> } | null
-    >,
+    previous: Map<ElementId, { vertex: Vertex<any, any>; edge: Edge<any, any> } | null>,
     totalWeight?: number,
   ): ShortestPathResult {
     const vertices: Vertex<any, any>[] = [];
@@ -5523,8 +5238,7 @@ export class ShortestPathStep extends Step<ShortestPathStepConfig> {
     direction: Direction,
     edgeLabels: readonly string[],
   ): Array<{ vertex: Vertex<any, any>; edge: Edge<any, any> }> {
-    const results: Array<{ vertex: Vertex<any, any>; edge: Edge<any, any> }> =
-      [];
+    const results: Array<{ vertex: Vertex<any, any>; edge: Edge<any, any> }> = [];
 
     if (direction === "out" || direction === "both") {
       // Outgoing edges: vertex is the source (outV), return target (inV)
@@ -5577,9 +5291,7 @@ export class ShortestPathStep extends Step<ShortestPathStepConfig> {
       edgeLabels: partial?.edgeLabels ?? config.edgeLabels,
       maxDepth: partial?.maxDepth ?? config.maxDepth,
       weightProperty: partial?.weightProperty ?? config.weightProperty,
-      stepLabels:
-        partial?.stepLabels ??
-        (config.stepLabels ? [...config.stepLabels] : undefined),
+      stepLabels: partial?.stepLabels ?? (config.stepLabels ? [...config.stepLabels] : undefined),
     });
   }
 
@@ -5659,9 +5371,10 @@ export interface ForeachStepConfig extends StepConfig {
  * For each element in the list, the inner steps (typically SET operations) are executed,
  * with the element bound to the iteration variable.
  */
-export class ForeachStep<
-  const TSteps extends readonly Step<any>[],
-> extends ContainerStep<TSteps, ForeachStepConfig> {
+export class ForeachStep<const TSteps extends readonly Step<any>[]> extends ContainerStep<
+  TSteps,
+  ForeachStepConfig
+> {
   #foreachTraverser: Traverser | undefined;
 
   public get name() {
@@ -5818,8 +5531,7 @@ export class ForeachStep<
         // If so, we need to handle scope injection specially
         const firstStep = this.steps[0];
         const hasMatchOperation =
-          firstStep instanceof FetchVerticesStep ||
-          firstStep instanceof FetchEdgesStep;
+          firstStep instanceof FetchVerticesStep || firstStep instanceof FetchEdgesStep;
 
         if (hasMatchOperation) {
           // Split steps into fetch, filter, and mutation steps
@@ -5827,20 +5539,16 @@ export class ForeachStep<
           const { fetchSteps, filterSteps, mutationSteps } = this.splitSteps();
 
           // Create traversers for each phase
-          const fetchTraverser =
-            fetchSteps.length > 0 ? createTraverser(fetchSteps) : undefined;
-          const filterTraverser =
-            filterSteps.length > 0 ? createTraverser(filterSteps) : undefined;
+          const fetchTraverser = fetchSteps.length > 0 ? createTraverser(fetchSteps) : undefined;
+          const filterTraverser = filterSteps.length > 0 ? createTraverser(filterSteps) : undefined;
           const mutationTraverser =
-            mutationSteps.length > 0
-              ? createTraverser(mutationSteps)
-              : undefined;
+            mutationSteps.length > 0 ? createTraverser(mutationSteps) : undefined;
 
           if (fetchTraverser) {
             // Phase 1: Execute fetch steps to get vertices/edges from graph
-            for (const fetchedPath of fetchTraverser.traverse(source, [
-              elementPath,
-            ]) as Iterable<TraversalPath<any, any, any>>) {
+            for (const fetchedPath of fetchTraverser.traverse(source, [elementPath]) as Iterable<
+              TraversalPath<any, any, any>
+            >) {
               // Phase 2: Inject the iteration variable scope into the fetched path
               // This allows filter conditions to access the FOREACH iteration variable
               const scopedPath = injectScopeIntoPath(fetchedPath, elementPath);
@@ -5859,10 +5567,7 @@ export class ForeachStep<
               // Phase 4: Execute mutation steps (SET) on filtered paths
               if (mutationTraverser) {
                 for (const path of filteredPaths) {
-                  for (const _mutationResult of mutationTraverser.traverse(
-                    source,
-                    [path],
-                  )) {
+                  for (const _mutationResult of mutationTraverser.traverse(source, [path])) {
                     // Consume for side effects
                   }
                 }
@@ -5871,9 +5576,7 @@ export class ForeachStep<
           }
         } else {
           // No MATCH operation - execute inner steps directly (original behavior)
-          for (const _result of this.foreachTraverser.traverse(source, [
-            elementPath,
-          ])) {
+          for (const _result of this.foreachTraverser.traverse(source, [elementPath])) {
             // Just consume - the inner steps handle mutations
           }
         }
@@ -5942,9 +5645,7 @@ export class ForeachStep<
       {
         variable: partial?.variable ?? config.variable,
         listExpression: partial?.listExpression ?? config.listExpression,
-        stepLabels:
-          partial?.stepLabels ??
-          (config.stepLabels ? [...config.stepLabels] : undefined),
+        stepLabels: partial?.stepLabels ?? (config.stepLabels ? [...config.stepLabels] : undefined),
       },
       steps.map((step) => step.clone()),
     );
@@ -5974,11 +5675,7 @@ function injectScopeIntoPath(
   // Rebuild the chain with scopePath as the base
   let rebuiltPath: TraversalPath<any, any, any> = scopePath;
   for (const { value, labels } of chain) {
-    rebuiltPath = new TraversalPath(
-      rebuiltPath,
-      value,
-      labels as readonly string[],
-    );
+    rebuiltPath = new TraversalPath(rebuiltPath, value, labels as readonly string[]);
   }
 
   return rebuiltPath;
@@ -6072,11 +5769,7 @@ export class SetStep extends Step<SetStepConfig> {
 
           let element = elementPath.value;
           // Handle FOREACH element wrappers
-          if (
-            element &&
-            typeof element === "object" &&
-            element.label === "ForeachElement"
-          ) {
+          if (element && typeof element === "object" && element.label === "ForeachElement") {
             element = element.value;
           }
           if (!(element instanceof Vertex || element instanceof Edge)) {
@@ -6095,18 +5788,14 @@ export class SetStep extends Step<SetStepConfig> {
           ) {
             // Parameter reference
             const params = context?.params ?? getQueryParams();
-            const paramName = (
-              properties as { type: "parameter"; name: string }
-            ).name;
+            const paramName = (properties as { type: "parameter"; name: string }).name;
             resolvedProps = params[paramName] as Record<string, unknown>;
             if (
               resolvedProps === undefined ||
               resolvedProps === null ||
               typeof resolvedProps !== "object"
             ) {
-              throw new Error(
-                `SET: Parameter '${paramName}' must be an object/map`,
-              );
+              throw new Error(`SET: Parameter '${paramName}' must be an object/map`);
             }
           } else {
             // Direct property map
@@ -6144,11 +5833,7 @@ export class SetStep extends Step<SetStepConfig> {
 
           let element = elementPath.value;
           // Handle FOREACH element wrappers
-          if (
-            element &&
-            typeof element === "object" &&
-            element.label === "ForeachElement"
-          ) {
+          if (element && typeof element === "object" && element.label === "ForeachElement") {
             element = element.value;
           }
           if (!(element instanceof Vertex || element instanceof Edge)) {
@@ -6177,22 +5862,14 @@ export class SetStep extends Step<SetStepConfig> {
             ) {
               sourceElement = sourceElement.value;
             }
-            if (
-              !(
-                sourceElement instanceof Vertex || sourceElement instanceof Edge
-              )
-            ) {
-              throw new Error(
-                `SET: Source variable '${value.variable}' is not a vertex or edge`,
-              );
+            if (!(sourceElement instanceof Vertex || sourceElement instanceof Edge)) {
+              throw new Error(`SET: Source variable '${value.variable}' is not a vertex or edge`);
             }
             resolvedValue = sourceElement.get(value.property as never);
           } else if (value.type === "variable") {
             const sourcePath = path.get(value.variable);
             if (!sourcePath) {
-              throw new Error(
-                `SET: Source variable '${value.variable}' not found`,
-              );
+              throw new Error(`SET: Source variable '${value.variable}' not found`);
             }
             resolvedValue = sourcePath.value;
             // Handle FOREACH element wrappers - extract the actual value
@@ -6224,8 +5901,7 @@ export class SetStep extends Step<SetStepConfig> {
     return new SetStep({
       assignments: partial?.assignments ?? [...this.config.assignments],
       stepLabels:
-        partial?.stepLabels ??
-        (this.config.stepLabels ? [...this.config.stepLabels] : undefined),
+        partial?.stepLabels ?? (this.config.stepLabels ? [...this.config.stepLabels] : undefined),
     });
   }
 }
@@ -6309,15 +5985,11 @@ export class CreateStep extends Step<CreateStepConfig> {
           // Get the start vertex from the path
           const startPath = currentPath.get(eConfig.startVariable);
           if (!startPath) {
-            throw new Error(
-              `CREATE: Start variable '${eConfig.startVariable}' not found in path`,
-            );
+            throw new Error(`CREATE: Start variable '${eConfig.startVariable}' not found in path`);
           }
           const startVertex = startPath.value;
           if (!(startVertex instanceof Vertex)) {
-            throw new Error(
-              `CREATE: Start variable '${eConfig.startVariable}' is not a vertex`,
-            );
+            throw new Error(`CREATE: Start variable '${eConfig.startVariable}' is not a vertex`);
           }
 
           // Get or create the end vertex
@@ -6326,15 +5998,11 @@ export class CreateStep extends Step<CreateStepConfig> {
             // Reference to existing vertex in path
             const endPath = currentPath.get(eConfig.endVariable);
             if (!endPath) {
-              throw new Error(
-                `CREATE: End variable '${eConfig.endVariable}' not found in path`,
-              );
+              throw new Error(`CREATE: End variable '${eConfig.endVariable}' not found in path`);
             }
             endVertex = endPath.value as Vertex<any, any>;
             if (!(endVertex instanceof Vertex)) {
-              throw new Error(
-                `CREATE: End variable '${eConfig.endVariable}' is not a vertex`,
-              );
+              throw new Error(`CREATE: End variable '${eConfig.endVariable}' is not a vertex`);
             }
           } else if (eConfig.endVertexConfig) {
             // Create new vertex
@@ -6343,14 +6011,9 @@ export class CreateStep extends Step<CreateStepConfig> {
               context,
               currentPath,
             );
-            endVertex = graph.addVertex(
-              eConfig.endVertexConfig.label,
-              resolvedEndProperties,
-            );
+            endVertex = graph.addVertex(eConfig.endVertexConfig.label, resolvedEndProperties);
             if (eConfig.endVertexConfig.variable) {
-              currentPath = currentPath.with(endVertex, [
-                eConfig.endVertexConfig.variable,
-              ]);
+              currentPath = currentPath.with(endVertex, [eConfig.endVertexConfig.variable]);
             }
           } else {
             throw new Error(
@@ -6360,9 +6023,7 @@ export class CreateStep extends Step<CreateStepConfig> {
 
           // Determine in/out vertices based on direction
           const [inV, outV] =
-            eConfig.direction === "out"
-              ? [startVertex, endVertex]
-              : [endVertex, startVertex];
+            eConfig.direction === "out" ? [startVertex, endVertex] : [endVertex, startVertex];
 
           // Create the edge
           const resolvedEdgeProps = this.resolveProperties(
@@ -6370,12 +6031,7 @@ export class CreateStep extends Step<CreateStepConfig> {
             context,
             currentPath,
           );
-          const edge = graph.addEdge(
-            inV,
-            eConfig.label,
-            outV,
-            resolvedEdgeProps,
-          );
+          const edge = graph.addEdge(inV, eConfig.label, outV, resolvedEdgeProps);
 
           // Add edge to path with its variable as the label
           if (eConfig.variable) {
@@ -6392,12 +6048,9 @@ export class CreateStep extends Step<CreateStepConfig> {
   public override clone(partial?: Partial<CreateStepConfig>) {
     return new CreateStep({
       vertices: partial?.vertices ?? [...this.config.vertices],
-      edges:
-        partial?.edges ??
-        (this.config.edges ? [...this.config.edges] : undefined),
+      edges: partial?.edges ?? (this.config.edges ? [...this.config.edges] : undefined),
       stepLabels:
-        partial?.stepLabels ??
-        (this.config.stepLabels ? [...this.config.stepLabels] : undefined),
+        partial?.stepLabels ?? (this.config.stepLabels ? [...this.config.stepLabels] : undefined),
     });
   }
 }
@@ -6438,14 +6091,11 @@ export class DeleteStep extends Step<DeleteStepConfig> {
   ): IterableIterator<TraversalPath<any, any, any>> {
     const graph = source as any;
     if (typeof graph.deleteVertex !== "function") {
-      throw new Error(
-        "DELETE requires a Graph instance with deleteVertex method",
-      );
+      throw new Error("DELETE requires a Graph instance with deleteVertex method");
     }
 
     const { variables, detach } = this.config;
-    const maxCollectionSize =
-      _context?.options.maxCollectionSize ?? DEFAULT_MAX_COLLECTION_SIZE;
+    const maxCollectionSize = _context?.options.maxCollectionSize ?? DEFAULT_MAX_COLLECTION_SIZE;
 
     // Collect all elements to delete first (avoid mutation during iteration)
     const toDelete: Array<{
@@ -6523,8 +6173,7 @@ export class DeleteStep extends Step<DeleteStepConfig> {
       variables: partial?.variables ?? [...this.config.variables],
       detach: partial?.detach ?? this.config.detach,
       stepLabels:
-        partial?.stepLabels ??
-        (this.config.stepLabels ? [...this.config.stepLabels] : undefined),
+        partial?.stepLabels ?? (this.config.stepLabels ? [...this.config.stepLabels] : undefined),
     });
   }
 }
@@ -6577,18 +6226,14 @@ export class RemoveStep extends Step<RemoveStepConfig> {
         if (item.type === "property") {
           const elementPath = path.get(item.variable);
           if (!elementPath) {
-            throw new Error(
-              `REMOVE: Variable '${item.variable}' not found in path`,
-            );
+            throw new Error(`REMOVE: Variable '${item.variable}' not found in path`);
           }
           const element = elementPath.value;
           if (element instanceof Vertex || element instanceof Edge) {
             // Set property to undefined to remove it
             element.set(item.property as never, undefined as never);
           } else {
-            throw new Error(
-              `REMOVE: Variable '${item.variable}' is not a vertex or edge`,
-            );
+            throw new Error(`REMOVE: Variable '${item.variable}' is not a vertex or edge`);
           }
         } else if (item.type === "label") {
           // Label removal validated in astToSteps, but keep runtime check as fallback
@@ -6608,8 +6253,7 @@ export class RemoveStep extends Step<RemoveStepConfig> {
     return new RemoveStep({
       items: partial?.items ?? [...this.config.items],
       stepLabels:
-        partial?.stepLabels ??
-        (this.config.stepLabels ? [...this.config.stepLabels] : undefined),
+        partial?.stepLabels ?? (this.config.stepLabels ? [...this.config.stepLabels] : undefined),
     });
   }
 }
@@ -6689,11 +6333,7 @@ export class MergeStep extends Step<MergeStepConfig> {
         let found: Vertex<any, any> | undefined;
 
         const label = pattern.labels[0] || "Node";
-        const resolvedProperties = this.resolveProperties(
-          pattern.properties,
-          context,
-          path,
-        );
+        const resolvedProperties = this.resolveProperties(pattern.properties, context, path);
 
         // First, try to find via unique index (much faster for large datasets)
         const indexManager = source.indexManager;
@@ -6711,11 +6351,7 @@ export class MergeStep extends Step<MergeStepConfig> {
             const existingVertex = graph.getVertexById(existingId);
             if (
               existingVertex &&
-              this.matchesProperties(
-                existingVertex,
-                pattern.properties,
-                context,
-              )
+              this.matchesProperties(existingVertex, pattern.properties, context)
             ) {
               found = existingVertex;
             }
@@ -6725,9 +6361,7 @@ export class MergeStep extends Step<MergeStepConfig> {
         // If not found via unique index, fall back to linear scan
         if (!found) {
           const vertices =
-            pattern.labels.length > 0
-              ? graph.getVertices(...pattern.labels)
-              : graph.getVertices();
+            pattern.labels.length > 0 ? graph.getVertices(...pattern.labels) : graph.getVertices();
 
           for (const vertex of vertices) {
             if (this.matchesProperties(vertex, pattern.properties, context)) {
@@ -6752,14 +6386,10 @@ export class MergeStep extends Step<MergeStepConfig> {
         const endPath = currentPath.get(pattern.endVariable);
 
         if (!startPath) {
-          throw new Error(
-            `MERGE: Start variable '${pattern.startVariable}' not found`,
-          );
+          throw new Error(`MERGE: Start variable '${pattern.startVariable}' not found`);
         }
         if (!endPath) {
-          throw new Error(
-            `MERGE: End variable '${pattern.endVariable}' not found`,
-          );
+          throw new Error(`MERGE: End variable '${pattern.endVariable}' not found`);
         }
 
         const startVertex = startPath.value as Vertex<any, any>;
@@ -6771,9 +6401,7 @@ export class MergeStep extends Step<MergeStepConfig> {
         // direction="in" means start <-[edge]- end, so end is source, start is target
         let found: Edge<any, any> | undefined;
         const [sourceVertex, targetVertex] =
-          pattern.direction === "out"
-            ? [startVertex, endVertex]
-            : [endVertex, startVertex];
+          pattern.direction === "out" ? [startVertex, endVertex] : [endVertex, startVertex];
 
         const resolvedEdgeProperties = this.resolveProperties(
           pattern.properties,
@@ -6821,12 +6449,7 @@ export class MergeStep extends Step<MergeStepConfig> {
 
         if (!found) {
           // Create new edge: addEdge(source, label, target, properties)
-          found = graph.addEdge(
-            sourceVertex,
-            pattern.label,
-            targetVertex,
-            resolvedEdgeProperties,
-          );
+          found = graph.addEdge(sourceVertex, pattern.label, targetVertex, resolvedEdgeProperties);
           created = true;
         }
 
@@ -6841,17 +6464,11 @@ export class MergeStep extends Step<MergeStepConfig> {
         for (const assignment of assignments) {
           const elementPath = currentPath.get(assignment.variable);
           if (!elementPath) {
-            throw new Error(
-              `MERGE: Variable '${assignment.variable}' not found for assignment`,
-            );
+            throw new Error(`MERGE: Variable '${assignment.variable}' not found for assignment`);
           }
           const element = elementPath.value;
           if (element instanceof Vertex || element instanceof Edge) {
-            const resolvedValue = this.resolveValue(
-              currentPath,
-              assignment.value,
-              context,
-            );
+            const resolvedValue = this.resolveValue(currentPath, assignment.value, context);
             element.set(assignment.property as never, resolvedValue);
           }
         }
@@ -6893,9 +6510,7 @@ export class MergeStep extends Step<MergeStepConfig> {
       if (sourceElement instanceof Vertex || sourceElement instanceof Edge) {
         return sourceElement.get(value.property as never);
       }
-      throw new Error(
-        `MERGE: Source variable '${value.variable}' is not a vertex or edge`,
-      );
+      throw new Error(`MERGE: Source variable '${value.variable}' is not a vertex or edge`);
     } else if (value.type === "variable") {
       const sourcePath = path.get(value.variable);
       if (!sourcePath) {
@@ -6914,15 +6529,10 @@ export class MergeStep extends Step<MergeStepConfig> {
   public override clone(partial?: Partial<MergeStepConfig>) {
     return new MergeStep({
       pattern: partial?.pattern ?? { ...this.config.pattern },
-      onCreate:
-        partial?.onCreate ??
-        (this.config.onCreate ? [...this.config.onCreate] : undefined),
-      onMatch:
-        partial?.onMatch ??
-        (this.config.onMatch ? [...this.config.onMatch] : undefined),
+      onCreate: partial?.onCreate ?? (this.config.onCreate ? [...this.config.onCreate] : undefined),
+      onMatch: partial?.onMatch ?? (this.config.onMatch ? [...this.config.onMatch] : undefined),
       stepLabels:
-        partial?.stepLabels ??
-        (this.config.stepLabels ? [...this.config.stepLabels] : undefined),
+        partial?.stepLabels ?? (this.config.stepLabels ? [...this.config.stepLabels] : undefined),
     });
   }
 }
@@ -7010,8 +6620,7 @@ export class WithStep extends Step<WithStepConfig> {
     input: Iterable<TraversalPath<any, any, any>>,
     context?: QueryContext,
   ): IterableIterator<TraversalPath<any, any, any>> {
-    const { distinct, items, orderBy, skip, limit, whereCondition } =
-      this.config;
+    const { distinct, items, orderBy, skip, limit, whereCondition } = this.config;
 
     // Collect all input paths for potential aggregation
     const paths = [...input];
@@ -7052,12 +6661,7 @@ export class WithStep extends Step<WithStepConfig> {
                 const resolvedArgs = item.args.map((arg) =>
                   resolveConditionValue(path, arg, context),
                 );
-                value = evaluateFunction(
-                  item.functionName,
-                  resolvedArgs,
-                  path,
-                  item.distinct,
-                );
+                value = evaluateFunction(item.functionName, resolvedArgs, path, item.distinct);
                 break;
               }
             }
@@ -7078,11 +6682,7 @@ export class WithStep extends Step<WithStepConfig> {
         // Compute aggregates for each group
         results = [];
         for (const [_groupKey, groupPaths] of groups) {
-          const aggregateResult = this.computeAggregates(
-            groupPaths,
-            items,
-            context,
-          );
+          const aggregateResult = this.computeAggregates(groupPaths, items, context);
           let newPath: TraversalPath<any, any, any> = new TraversalPath(
             undefined,
             aggregateResult.firstValue,
@@ -7120,9 +6720,7 @@ export class WithStep extends Step<WithStepConfig> {
 
     // Apply WHERE filtering if present
     if (whereCondition) {
-      results = results.filter((path) =>
-        evaluateCondition(path, whereCondition, context),
-      );
+      results = results.filter((path) => evaluateCondition(path, whereCondition, context));
     }
 
     // Apply DISTINCT if requested
@@ -7144,10 +6742,8 @@ export class WithStep extends Step<WithStepConfig> {
           // then fall back to property access (for expressions like `ORDER BY a.num`)
           const aNode = a.get(key);
           const bNode = b.get(key);
-          const aValue =
-            aNode !== undefined ? aNode.value : a.property(key as never);
-          const bValue =
-            bNode !== undefined ? bNode.value : b.property(key as never);
+          const aValue = aNode !== undefined ? aNode.value : a.property(key as never);
+          const bValue = bNode !== undefined ? bNode.value : b.property(key as never);
 
           const aIsNull = aValue === null || aValue === undefined;
           const bIsNull = bValue === null || bValue === undefined;
@@ -7155,8 +6751,7 @@ export class WithStep extends Step<WithStepConfig> {
           if (aIsNull && bIsNull) continue;
 
           if (aIsNull || bIsNull) {
-            const effectiveNulls =
-              nulls ?? (direction === "asc" ? "last" : "first");
+            const effectiveNulls = nulls ?? (direction === "asc" ? "last" : "first");
             if (aIsNull) return effectiveNulls === "first" ? -1 : 1;
             return effectiveNulls === "first" ? 1 : -1;
           }
@@ -7210,15 +6805,8 @@ export class WithStep extends Step<WithStepConfig> {
           continue;
         case "functionCall": {
           // Evaluate function call
-          const resolvedArgs = item.args.map((arg) =>
-            resolveConditionValue(path, arg, context),
-          );
-          value = evaluateFunction(
-            item.functionName,
-            resolvedArgs,
-            path,
-            item.distinct,
-          );
+          const resolvedArgs = item.args.map((arg) => resolveConditionValue(path, arg, context));
+          value = evaluateFunction(item.functionName, resolvedArgs, path, item.distinct);
           break;
         }
         case "expression": {
@@ -7273,12 +6861,7 @@ export class WithStep extends Step<WithStepConfig> {
             const resolvedArgs = item.args.map((arg) =>
               resolveConditionValue(firstPath, arg, context),
             );
-            value = evaluateFunction(
-              item.functionName,
-              resolvedArgs,
-              firstPath,
-              item.distinct,
-            );
+            value = evaluateFunction(item.functionName, resolvedArgs, firstPath, item.distinct);
           } else {
             value = null;
           }
@@ -7287,9 +6870,7 @@ export class WithStep extends Step<WithStepConfig> {
         case "expression": {
           // Evaluate arbitrary expression using first path
           const firstPath = paths[0];
-          value = firstPath
-            ? resolveConditionValue(firstPath, item.value, context)
-            : null;
+          value = firstPath ? resolveConditionValue(firstPath, item.value, context) : null;
           break;
         }
       }
@@ -7413,23 +6994,17 @@ export class WithStep extends Step<WithStepConfig> {
     return new WithStep({
       distinct: partial?.distinct ?? this.config.distinct,
       items: partial?.items ?? [...this.config.items],
-      orderBy:
-        partial?.orderBy ??
-        (this.config.orderBy ? [...this.config.orderBy] : undefined),
+      orderBy: partial?.orderBy ?? (this.config.orderBy ? [...this.config.orderBy] : undefined),
       skip: partial?.skip ?? this.config.skip,
       limit: partial?.limit ?? this.config.limit,
       whereCondition: partial?.whereCondition ?? this.config.whereCondition,
       stepLabels:
-        partial?.stepLabels ??
-        (this.config.stepLabels ? [...this.config.stepLabels] : undefined),
+        partial?.stepLabels ?? (this.config.stepLabels ? [...this.config.stepLabels] : undefined),
     });
   }
 
   public override toStringTokens(): StepStringToken[] {
-    const tokens: StepStringToken[] = [
-      { kind: "start" },
-      { kind: "name", value: this.name },
-    ];
+    const tokens: StepStringToken[] = [{ kind: "start" }, { kind: "name", value: this.name }];
 
     if (this.config.distinct) {
       tokens.push({ kind: "keyword", value: "DISTINCT" });
@@ -7581,12 +7156,7 @@ export class UnwindStep extends Step<UnwindStepConfig> {
         const resolvedArgs = expression.args.map((arg) =>
           resolveConditionValue(path, arg, context),
         );
-        return evaluateFunction(
-          expression.name,
-          resolvedArgs,
-          path,
-          expression.distinct,
-        );
+        return evaluateFunction(expression.name, resolvedArgs, path, expression.distinct);
       }
 
       case "expression":
@@ -7603,16 +7173,12 @@ export class UnwindStep extends Step<UnwindStepConfig> {
       expression: partial?.expression ?? this.config.expression,
       alias: partial?.alias ?? this.config.alias,
       stepLabels:
-        partial?.stepLabels ??
-        (this.config.stepLabels ? [...this.config.stepLabels] : undefined),
+        partial?.stepLabels ?? (this.config.stepLabels ? [...this.config.stepLabels] : undefined),
     });
   }
 
   public override toStringTokens(): StepStringToken[] {
-    const tokens: StepStringToken[] = [
-      { kind: "start" },
-      { kind: "name", value: this.name },
-    ];
+    const tokens: StepStringToken[] = [{ kind: "start" }, { kind: "name", value: this.name }];
 
     let exprStr: string;
     switch (this.config.expression.type) {
@@ -7706,11 +7272,7 @@ export class CallStep extends Step<CallStepConfig> {
       };
 
       // Invoke the procedure
-      const results = procedureRegistry.invoke(
-        procedureName,
-        resolvedArgs,
-        context,
-      );
+      const results = procedureRegistry.invoke(procedureName, resolvedArgs, context);
 
       for (const record of results) {
         // If no YIELD specified, bind all columns from the result
@@ -7740,33 +7302,24 @@ export class CallStep extends Step<CallStepConfig> {
       procedureName: partial?.procedureName ?? this.config.procedureName,
       arguments: partial?.arguments ?? [...this.config.arguments],
       yieldItems:
-        partial?.yieldItems ??
-        (this.config.yieldItems ? [...this.config.yieldItems] : undefined),
+        partial?.yieldItems ?? (this.config.yieldItems ? [...this.config.yieldItems] : undefined),
       stepLabels:
-        partial?.stepLabels ??
-        (this.config.stepLabels ? [...this.config.stepLabels] : undefined),
+        partial?.stepLabels ?? (this.config.stepLabels ? [...this.config.stepLabels] : undefined),
     });
   }
 
   public override toStringTokens(): StepStringToken[] {
-    const tokens: StepStringToken[] = [
-      { kind: "start" },
-      { kind: "name", value: this.name },
-    ];
+    const tokens: StepStringToken[] = [{ kind: "start" }, { kind: "name", value: this.name }];
 
     // Build procedure call string
     let callStr = `${this.config.procedureName}(`;
-    callStr += this.config.arguments
-      .map((arg) => stringifyConditionValueRef(arg))
-      .join(", ");
+    callStr += this.config.arguments.map((arg) => stringifyConditionValueRef(arg)).join(", ");
     callStr += ")";
 
     if (this.config.yieldItems && this.config.yieldItems.length > 0) {
       callStr += " YIELD ";
       callStr += this.config.yieldItems
-        .map((item) =>
-          item.alias ? `${item.name} AS ${item.alias}` : item.name,
-        )
+        .map((item) => (item.alias ? `${item.name} AS ${item.alias}` : item.name))
         .join(", ");
     }
 
@@ -7847,13 +7400,9 @@ export type KnownSteps =
 
 export type StepJSON = [string, StepConfig, any[]?];
 
-export function createStepsFromJSON(
-  input: readonly StepJSON[],
-): readonly Step<any>[] {
+export function createStepsFromJSON(input: readonly StepJSON[]): readonly Step<any>[] {
   return input.map(([name, config, steps]) => {
-    const StepClass = KnownSteps[
-      name as keyof typeof KnownSteps
-    ] as unknown as new (
+    const StepClass = KnownSteps[name as keyof typeof KnownSteps] as unknown as new (
       config: StepConfig,
       steps?: readonly Step<any>[],
     ) => Step<any>;

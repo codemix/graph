@@ -9,27 +9,21 @@ describe("Delete4 - Delete clause interoperation with other clauses", () => {
   test("[1] Undirected expand followed by delete and count - unlabeled nodes and count(*) not supported", () => {
     const graph = createTckGraph();
     executeTckQuery(graph, "CREATE ()-[:R]->()");
-    const results = executeTckQuery(
-      graph,
-      "MATCH (a)-[r]-(b) DELETE r, a, b RETURN count(*) AS c",
-    );
+    const results = executeTckQuery(graph, "MATCH (a)-[r]-(b) DELETE r, a, b RETURN count(*) AS c");
     expect(results).toHaveLength(1);
     expect(results[0]).toBe(2);
   });
 
-  test.fails(
-    "[2] Undirected variable length expand followed by delete and count - unlabeled nodes, variable length, count(*) not supported",
-    () => {
-      const graph = createTckGraph();
-      executeTckQuery(graph, "CREATE (n1), (n2), (n3)");
-      executeTckQuery(graph, "CREATE (n1)-[:R]->(n2)-[:R]->(n3)");
-      const results = executeTckQuery(
-        graph,
-        "MATCH (a)-[*]-(b) DETACH DELETE a, b RETURN count(*) AS c",
-      );
-      expect(results).toHaveLength(1);
-    },
-  );
+  test.fails("[2] Undirected variable length expand followed by delete and count - unlabeled nodes, variable length, count(*) not supported", () => {
+    const graph = createTckGraph();
+    executeTckQuery(graph, "CREATE (n1), (n2), (n3)");
+    executeTckQuery(graph, "CREATE (n1)-[:R]->(n2)-[:R]->(n3)");
+    const results = executeTckQuery(
+      graph,
+      "MATCH (a)-[*]-(b) DETACH DELETE a, b RETURN count(*) AS c",
+    );
+    expect(results).toHaveLength(1);
+  });
 
   test("[3] Create and delete in same query - unlabeled nodes not supported", () => {
     const graph = createTckGraph();
@@ -44,10 +38,7 @@ describe("Delete4 - Delete clause interoperation with other clauses", () => {
     const graph = createTckGraph();
     executeTckQuery(graph, "CREATE (:A), (:A)");
 
-    const results = executeTckQuery(
-      graph,
-      "MATCH (n:A) DELETE n RETURN 42 AS value",
-    );
+    const results = executeTckQuery(graph, "MATCH (n:A) DELETE n RETURN 42 AS value");
 
     expect(results).toHaveLength(2);
     expect(results[0]).toBe(42);
@@ -93,14 +84,8 @@ describe("Delete4 - Delete clause interoperation with other clauses", () => {
 
   test("[custom] Delete with ORDER BY alias - ORDER BY alias not supported", () => {
     const graph = createTckGraph();
-    executeTckQuery(
-      graph,
-      "CREATE (:A {num: 3}), (:A {num: 1}), (:A {num: 2})",
-    );
-    const results = executeTckQuery(
-      graph,
-      "MATCH (n:A) DELETE n RETURN n.num AS num ORDER BY num",
-    );
+    executeTckQuery(graph, "CREATE (:A {num: 3}), (:A {num: 1}), (:A {num: 2})");
+    const results = executeTckQuery(graph, "MATCH (n:A) DELETE n RETURN n.num AS num ORDER BY num");
     expect(results).toEqual([1, 2, 3]);
   });
 
@@ -112,10 +97,7 @@ describe("Delete4 - Delete clause interoperation with other clauses", () => {
 
     // Note: LIMIT applies to RETURN, but DELETE happens for all matched
     // This is a deviation from TCK spec - our implementation applies LIMIT before DELETE
-    const results = executeTckQuery(
-      graph,
-      "MATCH (n:A) DELETE n RETURN n.num AS num LIMIT 2",
-    );
+    const results = executeTckQuery(graph, "MATCH (n:A) DELETE n RETURN n.num AS num LIMIT 2");
     // The exact behavior depends on implementation details
     expect(results.length).toBeLessThanOrEqual(3);
   });

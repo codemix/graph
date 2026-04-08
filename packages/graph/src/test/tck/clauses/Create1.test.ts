@@ -3,12 +3,7 @@
  * Translated from tmp/tck/features/clauses/create/Create1.feature
  */
 import { describe, test, expect } from "vitest";
-import {
-  createTckGraph,
-  executeTckQuery,
-  getLabel,
-  getProperty,
-} from "../tckHelpers.js";
+import { createTckGraph, executeTckQuery, getLabel, getProperty } from "../tckHelpers.js";
 
 describe("Create1 - Creating nodes", () => {
   test("[1] Create a single node - unlabeled nodes not supported", () => {
@@ -79,10 +74,7 @@ describe("Create1 - Creating nodes", () => {
   test("[7] Create a single node with a property - unlabeled nodes not supported", () => {
     const graph = createTckGraph();
     executeTckQuery(graph, "CREATE ({created: true})");
-    const results = executeTckQuery(
-      graph,
-      "MATCH (n {created: true}) RETURN n",
-    );
+    const results = executeTckQuery(graph, "MATCH (n {created: true}) RETURN n");
     expect(results).toHaveLength(1);
     // Node should have the property - single return items are wrapped in arrays
     const [n] = results[0] as [Record<string, unknown>];
@@ -91,10 +83,7 @@ describe("Create1 - Creating nodes", () => {
 
   test("[8] Create a single node with a property and return it - unlabeled nodes not supported", () => {
     const graph = createTckGraph();
-    const results = executeTckQuery(
-      graph,
-      "CREATE (n {name: 'foo'}) RETURN n.name AS p",
-    );
+    const results = executeTckQuery(graph, "CREATE (n {name: 'foo'}) RETURN n.name AS p");
     expect(results).toHaveLength(1);
     expect(results[0]).toBe("foo");
   });
@@ -129,102 +118,58 @@ describe("Create1 - Creating nodes", () => {
 
   test("[12] CREATE does not lose precision on large integers - JavaScript number precision limits", () => {
     const graph = createTckGraph();
-    const results = executeTckQuery(
-      graph,
-      "CREATE (n:A {num: 4611686018427387905}) RETURN n.num",
-    );
+    const results = executeTckQuery(graph, "CREATE (n:A {num: 4611686018427387905}) RETURN n.num");
     expect(results).toHaveLength(1);
     // eslint-disable-next-line no-loss-of-precision
     expect(results[0]).toBe(4611686018427387905);
   });
 
-  test.fails(
-    "[13] Fail when creating a node that is already bound - semantic validation not implemented",
-    () => {
-      const graph = createTckGraph();
-      executeTckQuery(graph, "CREATE (:A)");
-      expect(() => executeTckQuery(graph, "MATCH (a:A) CREATE (a)")).toThrow();
-    },
-  );
+  test.fails("[13] Fail when creating a node that is already bound - semantic validation not implemented", () => {
+    const graph = createTckGraph();
+    executeTckQuery(graph, "CREATE (:A)");
+    expect(() => executeTckQuery(graph, "MATCH (a:A) CREATE (a)")).toThrow();
+  });
 
-  test.fails(
-    "[14] Fail when creating a node with properties that is already bound - semantic validation not implemented",
-    () => {
-      const graph = createTckGraph();
-      executeTckQuery(graph, "CREATE (:A)");
-      expect(() =>
-        executeTckQuery(graph, "MATCH (a:A) CREATE (a {name: 'foo'}) RETURN a"),
-      ).toThrow();
-    },
-  );
+  test.fails("[14] Fail when creating a node with properties that is already bound - semantic validation not implemented", () => {
+    const graph = createTckGraph();
+    executeTckQuery(graph, "CREATE (:A)");
+    expect(() => executeTckQuery(graph, "MATCH (a:A) CREATE (a {name: 'foo'}) RETURN a")).toThrow();
+  });
 
-  test.fails(
-    "[15] Fail when adding a new label predicate on a node that is already bound 1 - unlabeled nodes not supported",
-    () => {
-      const graph = createTckGraph();
-      expect(() =>
-        executeTckQuery(graph, "CREATE (n:Foo)-[:T1]->(), (n:Bar)-[:T2]->()"),
-      ).toThrow();
-    },
-  );
+  test.fails("[15] Fail when adding a new label predicate on a node that is already bound 1 - unlabeled nodes not supported", () => {
+    const graph = createTckGraph();
+    expect(() => executeTckQuery(graph, "CREATE (n:Foo)-[:T1]->(), (n:Bar)-[:T2]->()")).toThrow();
+  });
 
-  test.fails(
-    "[16] Fail when adding new label predicate on a node that is already bound 2 - unlabeled nodes not supported",
-    () => {
-      const graph = createTckGraph();
-      expect(() =>
-        executeTckQuery(graph, "CREATE ()<-[:T2]-(n:Foo), (n:Bar)<-[:T1]-()"),
-      ).toThrow();
-    },
-  );
+  test.fails("[16] Fail when adding new label predicate on a node that is already bound 2 - unlabeled nodes not supported", () => {
+    const graph = createTckGraph();
+    expect(() => executeTckQuery(graph, "CREATE ()<-[:T2]-(n:Foo), (n:Bar)<-[:T1]-()")).toThrow();
+  });
 
-  test.fails(
-    "[17] Fail when adding new label predicate on a node that is already bound 3",
-    () => {
-      const graph = createTckGraph();
-      expect(() =>
-        executeTckQuery(graph, "CREATE (n:Foo) CREATE (n:Bar)-[:OWNS]->(:Dog)"),
-      ).toThrow();
-    },
-  );
+  test.fails("[17] Fail when adding new label predicate on a node that is already bound 3", () => {
+    const graph = createTckGraph();
+    expect(() => executeTckQuery(graph, "CREATE (n:Foo) CREATE (n:Bar)-[:OWNS]->(:Dog)")).toThrow();
+  });
 
-  test.fails(
-    "[18] Fail when adding new label predicate on a node that is already bound 4 - unlabeled nodes not supported",
-    () => {
-      const graph = createTckGraph();
-      expect(() =>
-        executeTckQuery(graph, "CREATE (n {}) CREATE (n:Bar)-[:OWNS]->(:Dog)"),
-      ).toThrow();
-    },
-  );
+  test.fails("[18] Fail when adding new label predicate on a node that is already bound 4 - unlabeled nodes not supported", () => {
+    const graph = createTckGraph();
+    expect(() => executeTckQuery(graph, "CREATE (n {}) CREATE (n:Bar)-[:OWNS]->(:Dog)")).toThrow();
+  });
 
-  test.fails(
-    "[19] Fail when adding new label predicate on a node that is already bound 5",
-    () => {
-      const graph = createTckGraph();
-      expect(() =>
-        executeTckQuery(graph, "CREATE (n:Foo) CREATE (n {})-[:OWNS]->(:Dog)"),
-      ).toThrow();
-    },
-  );
+  test.fails("[19] Fail when adding new label predicate on a node that is already bound 5", () => {
+    const graph = createTckGraph();
+    expect(() => executeTckQuery(graph, "CREATE (n:Foo) CREATE (n {})-[:OWNS]->(:Dog)")).toThrow();
+  });
 
-  test.fails(
-    "[20] Fail when creating a node using undefined variable in pattern - unlabeled nodes not supported",
-    () => {
-      const graph = createTckGraph();
-      expect(() =>
-        executeTckQuery(graph, "CREATE (b {name: missing}) RETURN b"),
-      ).toThrow();
-    },
-  );
+  test.fails("[20] Fail when creating a node using undefined variable in pattern - unlabeled nodes not supported", () => {
+    const graph = createTckGraph();
+    expect(() => executeTckQuery(graph, "CREATE (b {name: missing}) RETURN b")).toThrow();
+  });
 
   // Additional test with labeled nodes (custom test)
   test("[custom] Create a single node with label and property", () => {
     const graph = createTckGraph();
-    const results = executeTckQuery(
-      graph,
-      "CREATE (n:A {name: 'foo'}) RETURN n.name AS p",
-    );
+    const results = executeTckQuery(graph, "CREATE (n:A {name: 'foo'}) RETURN n.name AS p");
 
     expect(results).toHaveLength(1);
     // Single return values come back as the value directly, not wrapped in array

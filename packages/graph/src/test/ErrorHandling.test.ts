@@ -1,9 +1,6 @@
 import { expect, test } from "vitest";
 import { createDemoGraph } from "../getDemoGraph.js";
-import {
-  MaxIterationsExceededError,
-  MemoryLimitExceededError,
-} from "../Exceptions.js";
+import { MaxIterationsExceededError, MemoryLimitExceededError } from "../Exceptions.js";
 import { GraphTraversal } from "../Traversals.js";
 import { Graph } from "../Graph.js";
 import { InMemoryGraphStorage } from "../GraphStorage.js";
@@ -28,12 +25,7 @@ test("Empty traversal errors - Empty traversal returns empty results", () => {
 
 test("Empty traversal errors - Empty union returns empty results", () => {
   const results = Array.from(
-    g
-      .union(
-        g.V().has("name", "NonExistent1"),
-        g.V().has("name", "NonExistent2"),
-      )
-      .values(),
+    g.union(g.V().has("name", "NonExistent1"), g.V().has("name", "NonExistent2")).values(),
   );
   expect(results).toHaveLength(0);
 });
@@ -89,18 +81,14 @@ test("Label and selection errors - select with all: on non-existent label", () =
     results.every(
       (r) =>
         (Array.isArray(r) && r.length < 1) ||
-        (Array.isArray(r) &&
-          r.every(
-            (item) => Array.isArray(item) && (item.length as number) < 1,
-          )),
+        (Array.isArray(r) && r.every((item) => Array.isArray(item) && (item.length as number) < 1)),
     ),
   ).toBe(true);
 });
 
 test("Repeat step errors - Repeat with maxIterations exceeded throws MaxIterationsExceededError", async () => {
   // Import the required modules
-  const { createTraverser, RepeatStep, VertexStep } =
-    await import("../Steps.js");
+  const { createTraverser, RepeatStep, VertexStep } = await import("../Steps.js");
 
   // Create a long chain of vertices
   const chainGraph = new Graph({
@@ -175,8 +163,7 @@ test("Repeat step errors - Repeat with until() that never satisfies terminates v
 });
 
 test("Repeat step errors - Custom maxIterations via QueryContext", async () => {
-  const { createTraverser, RepeatStep, VertexStep, QueryContext } =
-    await import("../Steps.js");
+  const { createTraverser, RepeatStep, VertexStep, QueryContext } = await import("../Steps.js");
 
   // Create a linear chain with enough vertices to test the limit
   const chainGraph = new Graph({
@@ -200,11 +187,7 @@ test("Repeat step errors - Custom maxIterations via QueryContext", async () => {
   const traverser = createTraverser([repeatStep]);
 
   // With custom maxIterations=5, should throw when iterations exceed it
-  const contextWithLowLimit = new QueryContext(
-    chainGraph,
-    {},
-    { maxIterations: 5 },
-  );
+  const contextWithLowLimit = new QueryContext(chainGraph, {}, { maxIterations: 5 });
 
   const g2 = new GraphTraversal(chainGraph);
   const inputPaths = Array.from(g2.V(vertices[0]!.id));
@@ -214,22 +197,14 @@ test("Repeat step errors - Custom maxIterations via QueryContext", async () => {
   }).toThrow(MaxIterationsExceededError);
 
   // With higher maxIterations, the chain terminates naturally (only 10 edges)
-  const contextWithHighLimit = new QueryContext(
-    chainGraph,
-    {},
-    { maxIterations: 1000 },
-  );
-  const results = Array.from(
-    traverser.traverse(chainGraph, inputPaths, contextWithHighLimit),
-  );
+  const contextWithHighLimit = new QueryContext(chainGraph, {}, { maxIterations: 1000 });
+  const results = Array.from(traverser.traverse(chainGraph, inputPaths, contextWithHighLimit));
   // Should complete successfully
   expect(Array.isArray(results)).toBe(true);
 });
 
 test("Invalid filter conditions - Filter with non-existent property returns empty", () => {
-  const results = Array.from(
-    g.V().has("name", "=", "NonExistentValue").values(),
-  );
+  const results = Array.from(g.V().has("name", "=", "NonExistentValue").values());
   expect(results).toHaveLength(0);
 });
 
@@ -237,9 +212,7 @@ test("Invalid filter conditions - Filter with invalid comparison operator", () =
   // Type system should prevent this, but test runtime behavior
   const results = Array.from(g.V().has("age", ">", 25).values());
   expect(results.length).toBeGreaterThan(0);
-  expect(results.every((v) => v.hasProperty("age") && v.get("age") > 25)).toBe(
-    true,
-  );
+  expect(results.every((v) => v.hasProperty("age") && v.get("age") > 25)).toBe(true);
 });
 
 test("Invalid filter conditions - hasLabel with non-existent label returns empty", () => {
@@ -258,9 +231,7 @@ test("Edge cases in traversal operations - Union requires at least two traversal
 
 test("Edge cases in traversal operations - Intersect works with matching vertices", () => {
   // Intersect requires at least 2 traversals
-  const results = Array.from(
-    g.intersect(g.V(alice.id), g.V(alice.id)).values(),
-  );
+  const results = Array.from(g.intersect(g.V(alice.id), g.V(alice.id)).values());
   expect(results.length).toBeGreaterThan(0);
 });
 
@@ -392,16 +363,12 @@ test("Order and comparison edge cases - order() by property with mixed types", (
 });
 
 test("Order and comparison edge cases - order() with desc on numeric property", () => {
-  const results = Array.from(
-    g.V().hasLabel("Person").order().by("age", "desc").values(),
-  );
+  const results = Array.from(g.V().hasLabel("Person").order().by("age", "desc").values());
 
   // Verify descending order
   for (let i = 1; i < results.length; i++) {
     if (results[i - 1]!.hasProperty("age") && results[i]!.hasProperty("age")) {
-      expect(results[i - 1]!.get("age")).toBeGreaterThanOrEqual(
-        results[i]!.get("age"),
-      );
+      expect(results[i - 1]!.get("age")).toBeGreaterThanOrEqual(results[i]!.get("age"));
     }
   }
 });
@@ -420,14 +387,7 @@ test("Complex pattern edge cases - Nested repeat with empty inner traversal", ()
 
 test("Complex pattern edge cases - Select after dedup", () => {
   const results = Array.from(
-    g
-      .V()
-      .as("v")
-      .out("knows")
-      .as("friend")
-      .dedup()
-      .select("v", "friend")
-      .values(),
+    g.V().as("v").out("knows").as("friend").dedup().select("v", "friend").values(),
   );
   expect(results.length).toBeGreaterThan(0);
 });
@@ -481,9 +441,7 @@ test("Type coercion edge cases - Equality comparison with null/undefined", () =>
 });
 
 test("Memory and performance edge cases - Large union of many traversals", () => {
-  const traversals = Array.from({ length: 50 }, (_, i) =>
-    g.V().has("age", ">", i),
-  );
+  const traversals = Array.from({ length: 50 }, (_, i) => g.V().has("age", ">", i));
   const results = Array.from(
     g
       .union(...traversals)
@@ -547,11 +505,7 @@ test("CollectStep - throws MemoryLimitExceededError when exceeding maxCollection
   const traverser = createTraverser(steps);
 
   // With a low maxCollectionSize, should throw when collecting too many items
-  const contextWithLowLimit = new QueryContext(
-    testGraph,
-    {},
-    { maxCollectionSize: 5 },
-  );
+  const contextWithLowLimit = new QueryContext(testGraph, {}, { maxCollectionSize: 5 });
 
   expect(() => {
     Array.from(traverser.traverse(testGraph, [], contextWithLowLimit));
@@ -578,15 +532,9 @@ test("CollectStep - succeeds when collection size is within limit", async () => 
   const traverser = createTraverser(steps);
 
   // With a high maxCollectionSize, should succeed
-  const contextWithHighLimit = new QueryContext(
-    testGraph,
-    {},
-    { maxCollectionSize: 100 },
-  );
+  const contextWithHighLimit = new QueryContext(testGraph, {}, { maxCollectionSize: 100 });
 
-  const results = Array.from(
-    traverser.traverse(testGraph, [], contextWithHighLimit),
-  );
+  const results = Array.from(traverser.traverse(testGraph, [], contextWithHighLimit));
   expect(results).toHaveLength(1); // COLLECT yields one result containing the array
   expect(Array.isArray(results[0])).toBe(true);
   expect((results[0] as unknown[]).length).toBe(10);
@@ -613,11 +561,7 @@ test("DeleteStep - throws MemoryLimitExceededError when exceeding maxCollectionS
   const traverser = createTraverser(steps);
 
   // With a low maxCollectionSize, should throw
-  const contextWithLowLimit = new QueryContext(
-    testGraph,
-    {},
-    { maxCollectionSize: 5 },
-  );
+  const contextWithLowLimit = new QueryContext(testGraph, {}, { maxCollectionSize: 5 });
 
   expect(() => {
     Array.from(traverser.traverse(testGraph, [], contextWithLowLimit));
@@ -644,15 +588,9 @@ test("DeleteStep - succeeds when deletion count is within limit", async () => {
   const traverser = createTraverser(steps);
 
   // With a high limit, should succeed
-  const contextWithHighLimit = new QueryContext(
-    testGraph,
-    {},
-    { maxCollectionSize: 100 },
-  );
+  const contextWithHighLimit = new QueryContext(testGraph, {}, { maxCollectionSize: 100 });
 
-  const results = Array.from(
-    traverser.traverse(testGraph, [], contextWithHighLimit),
-  );
+  const results = Array.from(traverser.traverse(testGraph, [], contextWithHighLimit));
   expect(results).toHaveLength(5);
 
   // Verify vertices were deleted
@@ -679,11 +617,7 @@ test("Custom maxCollectionSize via QueryContext overrides default", async () => 
   const traverser = createTraverser(steps);
 
   // With limit=10, should throw (we have 50 vertices)
-  const lowLimitContext = new QueryContext(
-    testGraph,
-    {},
-    { maxCollectionSize: 10 },
-  );
+  const lowLimitContext = new QueryContext(testGraph, {}, { maxCollectionSize: 10 });
   expect(() => {
     Array.from(traverser.traverse(testGraph, [], lowLimitContext));
   }).toThrow(MemoryLimitExceededError);
@@ -696,14 +630,8 @@ test("Custom maxCollectionSize via QueryContext overrides default", async () => 
   for (let i = 0; i < 50; i++) {
     testGraph2.addVertex("Person", { name: `V${i}`, age: i });
   }
-  const highLimitContext = new QueryContext(
-    testGraph2,
-    {},
-    { maxCollectionSize: 100 },
-  );
-  const results = Array.from(
-    traverser.traverse(testGraph2, [], highLimitContext),
-  );
+  const highLimitContext = new QueryContext(testGraph2, {}, { maxCollectionSize: 100 });
+  const results = Array.from(traverser.traverse(testGraph2, [], highLimitContext));
   expect(results).toHaveLength(1);
   expect(Array.isArray(results[0])).toBe(true);
   expect((results[0] as unknown[]).length).toBe(50);

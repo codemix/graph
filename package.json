@@ -1,7 +1,10 @@
 {
   "name": "@codemix/graph-monorepo",
   "version": "1.0.0",
+  "private": true,
   "description": "The codemix graph database monorepo",
+  "keywords": [],
+  "license": "MIT",
   "workspaces": [
     "packages/*"
   ],
@@ -12,16 +15,13 @@
     "test:coverage": "vitest run --coverage",
     "lint": "oxlint --ignore-pattern '**/grammar.js' .",
     "lint:fix": "pnpm run lint --fix",
-    "format": "prettier --write .",
-    "format:check": "prettier --check ."
+    "format": "oxfmt --write .",
+    "format:check": "oxfmt --check ."
   },
-  "keywords": [],
-  "license": "MIT",
-  "private": true,
   "devDependencies": {
     "@vitest/coverage-istanbul": "catalog:",
-    "oxlint": "^1.59.0",
     "oxfmt": "^0.44.0",
+    "oxlint": "^1.59.0",
     "typescript": "catalog:",
     "vitest": "catalog:"
   }

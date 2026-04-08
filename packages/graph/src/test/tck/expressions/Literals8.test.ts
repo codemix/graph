@@ -12,10 +12,7 @@ describe("Literals8 - Maps", () => {
   test("[1] Return an empty map", () => {
     // Original TCK: RETURN {} AS literal
     const graph = createTckGraph();
-    const results = executeTckQuery(
-      graph,
-      `UNWIND [1] AS x RETURN {} AS literal`,
-    );
+    const results = executeTckQuery(graph, `UNWIND [1] AS x RETURN {} AS literal`);
 
     expect(results).toHaveLength(1);
     expect(results[0]).toEqual({});
@@ -24,10 +21,7 @@ describe("Literals8 - Maps", () => {
   test("[2] Return a map containing one value with alphabetic lower case key", () => {
     // Original TCK: RETURN {abc: 1} AS literal
     const graph = createTckGraph();
-    const results = executeTckQuery(
-      graph,
-      `UNWIND [1] AS x RETURN {abc: 1} AS literal`,
-    );
+    const results = executeTckQuery(graph, `UNWIND [1] AS x RETURN {abc: 1} AS literal`);
 
     expect(results).toHaveLength(1);
     expect(results[0]).toEqual({ abc: 1 });
@@ -36,10 +30,7 @@ describe("Literals8 - Maps", () => {
   test("[3] Return a map containing one value with alphabetic upper case key", () => {
     // Original TCK: RETURN {ABC: 1} AS literal
     const graph = createTckGraph();
-    const results = executeTckQuery(
-      graph,
-      `UNWIND [1] AS x RETURN {ABC: 1} AS literal`,
-    );
+    const results = executeTckQuery(graph, `UNWIND [1] AS x RETURN {ABC: 1} AS literal`);
 
     expect(results).toHaveLength(1);
     expect(results[0]).toEqual({ ABC: 1 });
@@ -48,10 +39,7 @@ describe("Literals8 - Maps", () => {
   test("[4] Return a map containing one value with alphabetic mixed case key", () => {
     // Original TCK: RETURN {aBCdeF: 1} AS literal
     const graph = createTckGraph();
-    const results = executeTckQuery(
-      graph,
-      `UNWIND [1] AS x RETURN {aBCdeF: 1} AS literal`,
-    );
+    const results = executeTckQuery(graph, `UNWIND [1] AS x RETURN {aBCdeF: 1} AS literal`);
 
     expect(results).toHaveLength(1);
     expect(results[0]).toEqual({ aBCdeF: 1 });
@@ -60,10 +48,7 @@ describe("Literals8 - Maps", () => {
   test("[5] Return a map containing one value with alphanumeric mixed case key", () => {
     // Original TCK: RETURN {a1B2c3e67: 1} AS literal
     const graph = createTckGraph();
-    const results = executeTckQuery(
-      graph,
-      `UNWIND [1] AS x RETURN {a1B2c3e67: 1} AS literal`,
-    );
+    const results = executeTckQuery(graph, `UNWIND [1] AS x RETURN {a1B2c3e67: 1} AS literal`);
 
     expect(results).toHaveLength(1);
     expect(results[0]).toEqual({ a1B2c3e67: 1 });
@@ -71,10 +56,7 @@ describe("Literals8 - Maps", () => {
 
   test("[6] Return a map containing a boolean value", () => {
     const graph = createTckGraph();
-    const results = executeTckQuery(
-      graph,
-      `UNWIND [1] AS x RETURN {key: true} AS literal`,
-    );
+    const results = executeTckQuery(graph, `UNWIND [1] AS x RETURN {key: true} AS literal`);
 
     expect(results).toHaveLength(1);
     expect(results[0]).toEqual({ key: true });
@@ -82,10 +64,7 @@ describe("Literals8 - Maps", () => {
 
   test("[7] Return a map containing an integer value", () => {
     const graph = createTckGraph();
-    const results = executeTckQuery(
-      graph,
-      `UNWIND [1] AS x RETURN {key: 42} AS literal`,
-    );
+    const results = executeTckQuery(graph, `UNWIND [1] AS x RETURN {key: 42} AS literal`);
 
     expect(results).toHaveLength(1);
     expect(results[0]).toEqual({ key: 42 });
@@ -93,10 +72,7 @@ describe("Literals8 - Maps", () => {
 
   test("[8] Return a map containing a float value", () => {
     const graph = createTckGraph();
-    const results = executeTckQuery(
-      graph,
-      `UNWIND [1] AS x RETURN {key: 3.14} AS literal`,
-    );
+    const results = executeTckQuery(graph, `UNWIND [1] AS x RETURN {key: 3.14} AS literal`);
 
     expect(results).toHaveLength(1);
     expect(results[0]).toEqual({ key: 3.14 });
@@ -104,10 +80,7 @@ describe("Literals8 - Maps", () => {
 
   test("[9] Return a map containing a string value", () => {
     const graph = createTckGraph();
-    const results = executeTckQuery(
-      graph,
-      `UNWIND [1] AS x RETURN {key: 'hello'} AS literal`,
-    );
+    const results = executeTckQuery(graph, `UNWIND [1] AS x RETURN {key: 'hello'} AS literal`);
 
     expect(results).toHaveLength(1);
     expect(results[0]).toEqual({ key: "hello" });
@@ -115,10 +88,7 @@ describe("Literals8 - Maps", () => {
 
   test("[10] Return a map containing a null value", () => {
     const graph = createTckGraph();
-    const results = executeTckQuery(
-      graph,
-      `UNWIND [1] AS x RETURN {key: null} AS literal`,
-    );
+    const results = executeTckQuery(graph, `UNWIND [1] AS x RETURN {key: null} AS literal`);
 
     expect(results).toHaveLength(1);
     expect(results[0]).toEqual({ key: null });
@@ -126,10 +96,7 @@ describe("Literals8 - Maps", () => {
 
   test("[11] Return a map containing a list value", () => {
     const graph = createTckGraph();
-    const results = executeTckQuery(
-      graph,
-      `UNWIND [1] AS x RETURN {key: [1, 2, 3]} AS literal`,
-    );
+    const results = executeTckQuery(graph, `UNWIND [1] AS x RETURN {key: [1, 2, 3]} AS literal`);
 
     expect(results).toHaveLength(1);
     expect(results[0]).toEqual({ key: [1, 2, 3] });
@@ -148,10 +115,7 @@ describe("Literals8 - Maps", () => {
 
   test("[13] Return a nested map", () => {
     const graph = createTckGraph();
-    const results = executeTckQuery(
-      graph,
-      `UNWIND [1] AS x RETURN {outer: {inner: 1}} AS literal`,
-    );
+    const results = executeTckQuery(graph, `UNWIND [1] AS x RETURN {outer: {inner: 1}} AS literal`);
 
     expect(results).toHaveLength(1);
     expect(results[0]).toEqual({ outer: { inner: 1 } });
@@ -232,10 +196,7 @@ describe("Literals8 - Maps", () => {
     expect(results).toHaveLength(1);
     // Single RETURN of a node may be wrapped in array
     const result = results[0];
-    const node = (Array.isArray(result) ? result[0] : result) as Record<
-      string,
-      unknown
-    >;
+    const node = (Array.isArray(result) ? result[0] : result) as Record<string, unknown>;
     expect(getProperty(node, "name")).toBe("test");
     expect(getProperty(node, "num")).toBe(42);
     expect(getProperty(node, "flag")).toBe(true);
@@ -245,10 +206,7 @@ describe("Literals8 - Maps", () => {
     const graph = createTckGraph();
     executeTckQuery(graph, "CREATE (:A {name: 'test', value: 'found'})");
 
-    const results = executeTckQuery(
-      graph,
-      "MATCH (a:A) WHERE a.value = 'found' RETURN a.name",
-    );
+    const results = executeTckQuery(graph, "MATCH (a:A) WHERE a.value = 'found' RETURN a.name");
 
     expect(results).toHaveLength(1);
     expect(results[0]).toBe("test");
@@ -258,10 +216,7 @@ describe("Literals8 - Maps", () => {
     const graph = createTckGraph();
     executeTckQuery(graph, "CREATE (:A {abc: 1})");
 
-    const results = executeTckQuery(
-      graph,
-      "MATCH (a:A) WHERE a.abc = 1 RETURN a.abc",
-    );
+    const results = executeTckQuery(graph, "MATCH (a:A) WHERE a.abc = 1 RETURN a.abc");
 
     expect(results).toHaveLength(1);
     expect(results[0]).toBe(1);
@@ -271,10 +226,7 @@ describe("Literals8 - Maps", () => {
     const graph = createTckGraph();
     executeTckQuery(graph, "CREATE (:A {aBCdeF: 1})");
 
-    const results = executeTckQuery(
-      graph,
-      "MATCH (a:A) WHERE a.aBCdeF = 1 RETURN a.aBCdeF",
-    );
+    const results = executeTckQuery(graph, "MATCH (a:A) WHERE a.aBCdeF = 1 RETURN a.aBCdeF");
 
     expect(results).toHaveLength(1);
     expect(results[0]).toBe(1);
@@ -284,10 +236,7 @@ describe("Literals8 - Maps", () => {
     const graph = createTckGraph();
     executeTckQuery(graph, "CREATE (:A {active: true}), (:A {active: false})");
 
-    const results = executeTckQuery(
-      graph,
-      "MATCH (a:A) WHERE a.active = true RETURN a.active",
-    );
+    const results = executeTckQuery(graph, "MATCH (a:A) WHERE a.active = true RETURN a.active");
 
     expect(results).toHaveLength(1);
     expect(results[0]).toBe(true);
@@ -297,10 +246,7 @@ describe("Literals8 - Maps", () => {
     const graph = createTckGraph();
     executeTckQuery(graph, "CREATE (:A {name: 'test', value: null})");
 
-    const results = executeTckQuery(
-      graph,
-      "MATCH (a:A) WHERE a.value IS NULL RETURN a.name",
-    );
+    const results = executeTckQuery(graph, "MATCH (a:A) WHERE a.value IS NULL RETURN a.name");
 
     expect(results).toHaveLength(1);
     expect(results[0]).toBe("test");
@@ -311,10 +257,7 @@ describe("Literals8 - Maps", () => {
     // 'count' is a reserved word, use 'amount' instead
     executeTckQuery(graph, "CREATE (:A {amount: 42})");
 
-    const results = executeTckQuery(
-      graph,
-      "MATCH (a:A) WHERE a.amount = 42 RETURN a.amount",
-    );
+    const results = executeTckQuery(graph, "MATCH (a:A) WHERE a.amount = 42 RETURN a.amount");
 
     expect(results).toHaveLength(1);
     expect(results[0]).toBe(42);
@@ -324,10 +267,7 @@ describe("Literals8 - Maps", () => {
     const graph = createTckGraph();
     executeTckQuery(graph, "CREATE (:A {price: 19.99})");
 
-    const results = executeTckQuery(
-      graph,
-      "MATCH (a:A) WHERE a.price > 15 RETURN a.price",
-    );
+    const results = executeTckQuery(graph, "MATCH (a:A) WHERE a.price > 15 RETURN a.price");
 
     expect(results).toHaveLength(1);
     expect(results[0]).toBe(19.99);
@@ -383,17 +323,11 @@ describe("Literals8 - Maps", () => {
     executeTckQuery(graph, "CREATE (:A {Name: 'upper', name: 'lower'})");
 
     // Property keys are case-sensitive
-    const resultsUpper = executeTckQuery(
-      graph,
-      "MATCH (a:A) WHERE a.Name = 'upper' RETURN a.Name",
-    );
+    const resultsUpper = executeTckQuery(graph, "MATCH (a:A) WHERE a.Name = 'upper' RETURN a.Name");
     expect(resultsUpper).toHaveLength(1);
     expect(resultsUpper[0]).toBe("upper");
 
-    const resultsLower = executeTckQuery(
-      graph,
-      "MATCH (a:A) WHERE a.name = 'lower' RETURN a.name",
-    );
+    const resultsLower = executeTckQuery(graph, "MATCH (a:A) WHERE a.name = 'lower' RETURN a.name");
     expect(resultsLower).toHaveLength(1);
     expect(resultsLower[0]).toBe("lower");
   });
@@ -402,10 +336,7 @@ describe("Literals8 - Maps", () => {
     const graph = createTckGraph();
     executeTckQuery(graph, "CREATE (:A {name: 'test'})");
 
-    const results = executeTckQuery(
-      graph,
-      "MATCH (a:A) WHERE a.missingProp IS NULL RETURN a.name",
-    );
+    const results = executeTckQuery(graph, "MATCH (a:A) WHERE a.missingProp IS NULL RETURN a.name");
 
     expect(results).toHaveLength(1);
     expect(results[0]).toBe("test");
@@ -415,10 +346,7 @@ describe("Literals8 - Maps", () => {
     const graph = createTckGraph();
     executeTckQuery(graph, "CREATE (:A {balance: -100})");
 
-    const results = executeTckQuery(
-      graph,
-      "MATCH (a:A) WHERE a.balance = -100 RETURN a.balance",
-    );
+    const results = executeTckQuery(graph, "MATCH (a:A) WHERE a.balance = -100 RETURN a.balance");
 
     expect(results).toHaveLength(1);
     expect(results[0]).toBe(-100);

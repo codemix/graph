@@ -1,12 +1,7 @@
 import { expect, test, describe, beforeEach, afterEach } from "vitest";
 import { parse } from "../grammar.js";
 import { astToSteps } from "../astToSteps.js";
-import {
-  createTraverser,
-  setQueryParams,
-  clearQueryParams,
-  getQueryParams,
-} from "../Steps.js";
+import { createTraverser, setQueryParams, clearQueryParams, getQueryParams } from "../Steps.js";
 import { createDemoGraph } from "../getDemoGraph.js";
 import type { Query, ParameterRef } from "../AST.js";
 
@@ -42,8 +37,7 @@ describe("Parameter syntax ($param) grammar parsing", () => {
   });
 
   test("parses multiple parameters", () => {
-    const query =
-      "MATCH (u:Person) WHERE u.name = $name AND u.age > $minAge RETURN u";
+    const query = "MATCH (u:Person) WHERE u.name = $name AND u.age > $minAge RETURN u";
     const ast = parse(query) as Query;
 
     const condition = ast.matches[0]!.where!.condition;
@@ -198,8 +192,7 @@ describe("Parameter execution", () => {
   });
 
   test("multiple parameters in same query", () => {
-    const query =
-      "MATCH (u:Person) WHERE u.name = $name AND u.age = $age RETURN u";
+    const query = "MATCH (u:Person) WHERE u.name = $name AND u.age = $age RETURN u";
     const ast = parse(query) as Query;
     const steps = astToSteps(ast);
     const traverser = createTraverser(steps);
@@ -247,8 +240,7 @@ describe("Parameter in SET clause execution", () => {
     // Create a fresh graph for mutation testing
     const { graph: testGraph, alice: testAlice } = createDemoGraph();
 
-    const query =
-      "MATCH (u:Person) WHERE u.name = 'Alice' SET u.age = $newAge RETURN u";
+    const query = "MATCH (u:Person) WHERE u.name = 'Alice' SET u.age = $newAge RETURN u";
     const ast = parse(query) as Query;
     const steps = astToSteps(ast);
     const traverser = createTraverser(steps);
@@ -264,8 +256,7 @@ describe("Parameter in SET clause execution", () => {
   test("SET with string parameter", () => {
     const { graph: testGraph, alice: testAlice } = createDemoGraph();
 
-    const query =
-      "MATCH (u:Person) WHERE u.name = 'Alice' SET u.nickname = $nick RETURN u";
+    const query = "MATCH (u:Person) WHERE u.name = 'Alice' SET u.nickname = $nick RETURN u";
     const ast = parse(query) as Query;
     const steps = astToSteps(ast);
     const traverser = createTraverser(steps);

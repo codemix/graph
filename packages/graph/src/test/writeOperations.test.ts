@@ -3,11 +3,7 @@ import { parse } from "../grammar.js";
 import { astToSteps } from "../astToSteps.js";
 import { DeleteStep, RemoveStep, MergeStep, CreateStep } from "../Steps.js";
 import type { Query } from "../AST.js";
-import {
-  executeQuery,
-  createFlexibleGraph,
-  createComprehensiveGraph,
-} from "./testHelpers.js";
+import { executeQuery, createFlexibleGraph, createComprehensiveGraph } from "./testHelpers.js";
 import { Edge } from "../Graph.js";
 
 // ============================================================================
@@ -23,9 +19,7 @@ describe("DELETE clause", () => {
   });
 
   test("Grammar - parses DELETE with multiple variables", () => {
-    const ast = parse(
-      "MATCH (u:User)-[r:follows]->(f) DELETE r, u RETURN f",
-    ) as Query;
+    const ast = parse("MATCH (u:User)-[r:follows]->(f) DELETE r, u RETURN f") as Query;
     expect(ast.delete!.variables).toEqual(["r", "u"]);
   });
 
@@ -53,10 +47,7 @@ describe("DELETE clause", () => {
     // Verify edge exists
     expect([...graph.getOutgoingEdges(alice.id)]).toHaveLength(1);
 
-    executeQuery(
-      graph,
-      `MATCH (u:User {name: "Alice"})-[r:follows]->(f) DELETE r RETURN f`,
-    );
+    executeQuery(graph, `MATCH (u:User {name: "Alice"})-[r:follows]->(f) DELETE r RETURN f`);
 
     // Verify edge is deleted
     expect([...graph.getOutgoingEdges(alice.id)]).toHaveLength(0);
@@ -74,16 +65,11 @@ describe("DELETE clause", () => {
     expect([...graph.getVertices("User")]).toHaveLength(3);
 
     // Use a unique property to target exactly one vertex
-    executeQuery(
-      graph,
-      `MATCH (u:User) WHERE u.deleteme = true DETACH DELETE u RETURN u`,
-    );
+    executeQuery(graph, `MATCH (u:User) WHERE u.deleteme = true DETACH DELETE u RETURN u`);
 
     // Verify only Alice and her edges are deleted
     expect([...graph.getVertices("User")]).toHaveLength(2);
-    const remainingNames = [...graph.getVertices("User")].map((v) =>
-      v.get("name"),
-    );
+    const remainingNames = [...graph.getVertices("User")].map((v) => v.get("name"));
     expect(remainingNames).toContain("Bob");
     expect(remainingNames).toContain("Charlie");
     expect(remainingNames).not.toContain("Alice");
@@ -95,9 +81,9 @@ describe("DELETE clause", () => {
     const bob = graph.addVertex("User", { name: "Bob" });
     graph.addEdge(alice, "follows", bob, {});
 
-    expect(() =>
-      executeQuery(graph, `MATCH (u:User {name: "Alice"}) DELETE u RETURN u`),
-    ).toThrow(/connected edges/);
+    expect(() => executeQuery(graph, `MATCH (u:User {name: "Alice"}) DELETE u RETURN u`)).toThrow(
+      /connected edges/,
+    );
   });
 });
 
@@ -140,9 +126,7 @@ describe("REMOVE clause", () => {
 
     executeQuery(graph, `MATCH (u:User {name: "Alice"}) REMOVE u.age RETURN u`);
 
-    const alice = [...graph.getVertices("User")].find(
-      (v) => v.get("name") === "Alice",
-    );
+    const alice = [...graph.getVertices("User")].find((v) => v.get("name") === "Alice");
     expect(alice!.get("age")).toBeUndefined();
     expect(alice!.get("email")).toBe("alice@test.com");
   });
@@ -187,9 +171,7 @@ describe("MERGE clause", () => {
   });
 
   test("Grammar - parses MERGE relationship pattern", () => {
-    const ast = parse(
-      `MATCH (u:User) MATCH (p:Post) MERGE (u)-[r:viewed]->(p) RETURN r`,
-    ) as Query;
+    const ast = parse(`MATCH (u:User) MATCH (p:Post) MERGE (u)-[r:viewed]->(p) RETURN r`) as Query;
     expect(ast.merge?.[0]!.pattern.type).toBe("MergeRelationshipPattern");
   });
 
@@ -208,10 +190,7 @@ describe("MERGE clause", () => {
 
     const initialCount = [...graph.getVertices("User")].length;
 
-    executeQuery(
-      graph,
-      `MATCH (x:User) MERGE (u:User {email: 'new@example.com'}) RETURN u`,
-    );
+    executeQuery(graph, `MATCH (x:User) MERGE (u:User {email: 'new@example.com'}) RETURN u`);
 
     const finalCount = [...graph.getVertices("User")].length;
     expect(finalCount).toBe(initialCount + 1);
@@ -228,10 +207,7 @@ describe("MERGE clause", () => {
 
     const initialCount = [...graph.getVertices("User")].length;
 
-    executeQuery(
-      graph,
-      `MATCH (x:User) MERGE (u:User {email: 'existing@example.com'}) RETURN u`,
-    );
+    executeQuery(graph, `MATCH (x:User) MERGE (u:User {email: 'existing@example.com'}) RETURN u`);
 
     const finalCount = [...graph.getVertices("User")].length;
     expect(finalCount).toBe(initialCount); // No new node created
@@ -279,9 +255,7 @@ describe("MERGE clause", () => {
       `MATCH (u:User {name: 'Alice'})-[t:temp]->(p:Post) MERGE (u)-[r:viewed]->(p) DELETE t RETURN r`,
     );
 
-    const edges = [...graph.getOutgoingEdges(alice.id)].filter(
-      (e) => e.label !== "temp",
-    );
+    const edges = [...graph.getOutgoingEdges(alice.id)].filter((e) => e.label !== "temp");
     expect(edges).toHaveLength(1);
     expect(edges[0]!.label).toBe("viewed");
   });
@@ -361,9 +335,7 @@ describe("CREATE edge syntax", () => {
     expect(edge.label).toBe("authored");
 
     // Verify edge is in graph (excluding temp edge)
-    const edges = [...graph.getOutgoingEdges(alice.id)].filter(
-      (e) => e.label !== "temp",
-    );
+    const edges = [...graph.getOutgoingEdges(alice.id)].filter((e) => e.label !== "temp");
     expect(edges).toHaveLength(1);
   });
 
@@ -398,9 +370,7 @@ describe("CREATE edge syntax", () => {
       `MATCH (u:User {name: 'Alice'})-[t:temp]->(p:Post) CREATE (u)-[r:authored {timestamp: 1234567890}]->(p) DELETE t RETURN r`,
     );
 
-    const edges = [...graph.getOutgoingEdges(alice.id)].filter(
-      (e) => e.label !== "temp",
-    );
+    const edges = [...graph.getOutgoingEdges(alice.id)].filter((e) => e.label !== "temp");
     expect(edges[0]!.get("timestamp")).toBe(1234567890);
   });
 });
@@ -420,14 +390,10 @@ describe("Write operation ordering", () => {
       `MATCH (x:User) MERGE (u:User {name: 'Alice'}) CREATE (p:Post {author: 'Alice'}) RETURN u, p`,
     );
 
-    const alice = [...graph.getVertices("User")].find(
-      (v) => v.get("name") === "Alice",
-    );
+    const alice = [...graph.getVertices("User")].find((v) => v.get("name") === "Alice");
     expect(alice).toBeDefined();
 
-    const post = [...graph.getVertices("Post")].find(
-      (v) => v.get("author") === "Alice",
-    );
+    const post = [...graph.getVertices("Post")].find((v) => v.get("author") === "Alice");
     expect(post).toBeDefined();
   });
 
@@ -457,9 +423,7 @@ describe("Write operation ordering", () => {
       `MATCH (u:User {name: 'Alice'}) SET u.newProp = 'added' REMOVE u.temp RETURN u`,
     );
 
-    const alice = [...graph.getVertices("User")].find(
-      (v) => v.get("name") === "Alice",
-    );
+    const alice = [...graph.getVertices("User")].find((v) => v.get("name") === "Alice");
     expect(alice!.get("newProp")).toBe("added");
     expect(alice!.get("temp")).toBeUndefined();
     expect(alice!.get("data")).toBe("preserved");
@@ -501,10 +465,7 @@ describe("Edge Cases", () => {
     expect([...graph.getVertices("User")]).toHaveLength(2);
 
     // Delete only Bob using unique property
-    executeQuery(
-      graph,
-      `MATCH (u:User) WHERE u.keep = false DELETE u RETURN u`,
-    );
+    executeQuery(graph, `MATCH (u:User) WHERE u.keep = false DELETE u RETURN u`);
 
     const remaining = [...graph.getVertices("User")];
     expect(remaining).toHaveLength(1);
@@ -516,27 +477,18 @@ describe("Edge Cases", () => {
     // Need a MATCH first because grammar requires MATCH before MERGE
     graph.addVertex("User", { name: "Existing" });
 
-    executeQuery(
-      graph,
-      `MATCH (x:User) MERGE (u:User {name: 'NewUser'}) RETURN u`,
-    );
+    executeQuery(graph, `MATCH (x:User) MERGE (u:User {name: 'NewUser'}) RETURN u`);
 
     const users = [...graph.getVertices("User")];
     expect(users).toHaveLength(2);
-    expect(users.map((u) => u.get("name")).sort()).toEqual([
-      "Existing",
-      "NewUser",
-    ]);
+    expect(users.map((u) => u.get("name")).sort()).toEqual(["Existing", "NewUser"]);
   });
 
   test("MERGE finds existing vertex when properties match", () => {
     const graph = createFlexibleGraph();
     graph.addVertex("User", { name: "Alice" });
 
-    executeQuery(
-      graph,
-      `MATCH (x:User) MERGE (u:User {name: 'Alice'}) RETURN u`,
-    );
+    executeQuery(graph, `MATCH (x:User) MERGE (u:User {name: 'Alice'}) RETURN u`);
 
     // Should not create duplicate
     const users = [...graph.getVertices("User")];
@@ -549,10 +501,7 @@ describe("Edge Cases", () => {
     graph.addVertex("User", { name: "Alice", age: 25 });
 
     // MERGE on name only - should find one of them, not create new
-    executeQuery(
-      graph,
-      `MATCH (x:User) MERGE (u:User {name: 'Alice'}) RETURN u`,
-    );
+    executeQuery(graph, `MATCH (x:User) MERGE (u:User {name: 'Alice'}) RETURN u`);
 
     const users = [...graph.getVertices("User")];
     expect(users).toHaveLength(2); // No new vertex created
@@ -576,9 +525,7 @@ describe("Edge Cases", () => {
       `MATCH (u:User {name: 'Alice'})-[:temp]->(p:User {name: 'Bob'}) CREATE (u)-[:follows]->(p) RETURN u`,
     );
 
-    const followsEdges = [...graph.getOutgoingEdges(alice.id)].filter(
-      (e) => e.label === "follows",
-    );
+    const followsEdges = [...graph.getOutgoingEdges(alice.id)].filter((e) => e.label === "follows");
     expect(followsEdges).toHaveLength(2); // Duplicate edges allowed
   });
 
@@ -590,10 +537,7 @@ describe("Edge Cases", () => {
 
     // Match the edge with a single variable and delete it
     // The deletedIds set prevents double deletion if same edge appears in multiple paths
-    executeQuery(
-      graph,
-      `MATCH (u:User {name: 'Alice'})-[r:follows]->(p:User) DELETE r RETURN u`,
-    );
+    executeQuery(graph, `MATCH (u:User {name: 'Alice'})-[r:follows]->(p:User) DELETE r RETURN u`);
 
     const edges = [...graph.getOutgoingEdges(alice.id)];
     expect(edges).toHaveLength(0);
@@ -609,10 +553,7 @@ describe("Edge Cases", () => {
     graph.addEdge(bob, "follows", alice, {}); // Incoming edge
 
     // Use a unique marker to only match Alice
-    executeQuery(
-      graph,
-      `MATCH (u:User) WHERE u.marker = 'delete' DETACH DELETE u RETURN u`,
-    );
+    executeQuery(graph, `MATCH (u:User) WHERE u.marker = 'delete' DETACH DELETE u RETURN u`);
 
     // Alice should be deleted
     const users = [...graph.getVertices("User")];
@@ -629,10 +570,7 @@ describe("Edge Cases", () => {
     graph.addVertex("User", { name: "Alice" });
 
     // Should not throw when removing property that doesn't exist
-    executeQuery(
-      graph,
-      `MATCH (u:User {name: 'Alice'}) REMOVE u.nonExistentProp RETURN u`,
-    );
+    executeQuery(graph, `MATCH (u:User {name: 'Alice'}) REMOVE u.nonExistentProp RETURN u`);
 
     const alice = [...graph.getVertices("User")][0];
     expect(alice!.get("name")).toBe("Alice");

@@ -75,10 +75,7 @@ describe("Precedence3 - On list values", () => {
   test.fails("[6] IN takes precedence over comparison operator", () => {
     // Complex list expressions in RETURN now supported
     const graph = createTckGraph();
-    const results = executeTckQuery(
-      graph,
-      `RETURN [1, 2] = [3, 4] IN [[3, 4], false] AS a`,
-    );
+    const results = executeTckQuery(graph, `RETURN [1, 2] = [3, 4] IN [[3, 4], false] AS a`);
     expect(results).toHaveLength(1);
     // [1, 2] = ([3, 4] IN [[3, 4], false]) = [1, 2] = true = false
     expect(results[0]).toBe(false);
@@ -88,10 +85,7 @@ describe("Precedence3 - On list values", () => {
 
   test("[custom-1] IN operator evaluates correctly with literal list", () => {
     const graph = createTckGraph();
-    executeTckQuery(
-      graph,
-      "CREATE (:A {val: 1}), (:A {val: 2}), (:A {val: 3}), (:A {val: 4})",
-    );
+    executeTckQuery(graph, "CREATE (:A {val: 1}), (:A {val: 2}), (:A {val: 3}), (:A {val: 4})");
 
     const results = executeTckQuery(
       graph,
@@ -102,10 +96,7 @@ describe("Precedence3 - On list values", () => {
 
   test("[custom-2] NOT IN evaluates correctly", () => {
     const graph = createTckGraph();
-    executeTckQuery(
-      graph,
-      "CREATE (:A {val: 1}), (:A {val: 2}), (:A {val: 3}), (:A {val: 4})",
-    );
+    executeTckQuery(graph, "CREATE (:A {val: 1}), (:A {val: 2}), (:A {val: 3}), (:A {val: 4})");
 
     // NOT val IN [1, 3] should be NOT (val IN [1, 3])
     const results = executeTckQuery(
@@ -136,10 +127,7 @@ describe("Precedence3 - On list values", () => {
 
   test("[custom-4] IN combined with OR has correct precedence", () => {
     const graph = createTckGraph();
-    executeTckQuery(
-      graph,
-      "CREATE (:A {val: 1}), (:A {val: 2}), (:A {val: 5}), (:A {val: 6})",
-    );
+    executeTckQuery(graph, "CREATE (:A {val: 1}), (:A {val: 2}), (:A {val: 5}), (:A {val: 6})");
 
     // val IN [1, 2] OR val = 5
     // Should match val = 1, 2, or 5
@@ -183,10 +171,7 @@ describe("Precedence3 - On list values", () => {
     const graph = createTckGraph();
     executeTckQuery(graph, "CREATE (:A {val: 1}), (:A {val: 2})");
 
-    const results = executeTckQuery(
-      graph,
-      "MATCH (n:A) WHERE n.val IN [] RETURN n.val",
-    );
+    const results = executeTckQuery(graph, "MATCH (n:A) WHERE n.val IN [] RETURN n.val");
     expect(results).toHaveLength(0);
   });
 
@@ -203,10 +188,7 @@ describe("Precedence3 - On list values", () => {
 
   test("[custom-9] IN with mixed type list", () => {
     const graph = createTckGraph();
-    executeTckQuery(
-      graph,
-      "CREATE (:A {val: 1}), (:A {val: 2}), (:A {val: 3})",
-    );
+    executeTckQuery(graph, "CREATE (:A {val: 1}), (:A {val: 2}), (:A {val: 3})");
 
     // Check if integer matches in list with integers
     const results = executeTckQuery(

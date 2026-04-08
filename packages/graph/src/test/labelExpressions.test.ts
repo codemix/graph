@@ -279,9 +279,7 @@ test("Execution - NOT wildcard :!%", () => {
 });
 
 test("Execution - label expression with edge pattern", () => {
-  const ast = parse(
-    "MATCH (a:Person)-[:knows]->(b:!Person) RETURN a.name, b.name",
-  ) as Query;
+  const ast = parse("MATCH (a:Person)-[:knows]->(b:!Person) RETURN a.name, b.name") as Query;
   const steps = astToSteps(ast);
   const traverser = createTraverser(steps);
   const results = Array.from(traverser.traverse(g, [undefined]));

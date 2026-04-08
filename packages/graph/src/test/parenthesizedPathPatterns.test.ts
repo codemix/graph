@@ -339,10 +339,7 @@ describe("Parenthesized Path Patterns", () => {
 
     describe("Edge Cases", () => {
       test("handles empty graph", () => {
-        const results = executeQuery(
-          graph,
-          "MATCH (a:Person) (((b)-[r:KNOWS]->(c)))+ RETURN c",
-        );
+        const results = executeQuery(graph, "MATCH (a:Person) (((b)-[r:KNOWS]->(c)))+ RETURN c");
 
         expect(results).toHaveLength(0);
       });
@@ -352,10 +349,7 @@ describe("Parenthesized Path Patterns", () => {
         graph.addVertex("Person", { name: "Bob" });
         // No edges
 
-        const results = executeQuery(
-          graph,
-          "MATCH (a:Person) (((b)-[r:KNOWS]->(c)))+ RETURN c",
-        );
+        const results = executeQuery(graph, "MATCH (a:Person) (((b)-[r:KNOWS]->(c)))+ RETURN c");
 
         expect(results).toHaveLength(0);
       });

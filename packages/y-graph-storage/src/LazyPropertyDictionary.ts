@@ -16,10 +16,7 @@ export function createLazyPropertyDictionary<TSchema extends ElementSchema>(
 
   const base = { [$YMap]: map };
 
-  return Object.defineProperties(
-    base,
-    descriptors,
-  ) as unknown as PropertiesFromSchema<TSchema>;
+  return Object.defineProperties(base, descriptors) as unknown as PropertiesFromSchema<TSchema>;
 }
 
 type DescriptorShape = {
@@ -28,9 +25,7 @@ type DescriptorShape = {
 
 const descriptorCache = new WeakMap<object, PropertyDescriptorMap>();
 
-function createLazyPropertyDescriptors(
-  schema: ElementSchema,
-): PropertyDescriptorMap {
+function createLazyPropertyDescriptors(schema: ElementSchema): PropertyDescriptorMap {
   if (descriptorCache.has(schema)) {
     return descriptorCache.get(schema)!;
   }

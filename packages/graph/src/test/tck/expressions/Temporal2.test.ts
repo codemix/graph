@@ -27,44 +27,35 @@ describe("Temporal2 - Create Temporal Values from a String", () => {
     expect((d as DateValue).toString()).toBe("1984-10-11");
   });
 
-  test.fails(
-    "[2] Should parse date from week notation - week date parsing not implemented",
-    () => {
-      // Original TCK: RETURN date('2015-W30-2') AS d
-      // Expected: '2015-07-21'
-      // Reason: Week date parsing not implemented
-      const graph = createTckGraph();
-      const result = executeTckQuery(graph, "RETURN date('2015-W30-2')");
-      expect(result).toHaveLength(1);
-      const d = result[0];
-      expect(d).toBeInstanceOf(DateValue);
-      expect((d as DateValue).toString()).toBe("2015-07-21");
-    },
-  );
+  test.fails("[2] Should parse date from week notation - week date parsing not implemented", () => {
+    // Original TCK: RETURN date('2015-W30-2') AS d
+    // Expected: '2015-07-21'
+    // Reason: Week date parsing not implemented
+    const graph = createTckGraph();
+    const result = executeTckQuery(graph, "RETURN date('2015-W30-2')");
+    expect(result).toHaveLength(1);
+    const d = result[0];
+    expect(d).toBeInstanceOf(DateValue);
+    expect((d as DateValue).toString()).toBe("2015-07-21");
+  });
 
-  test.fails(
-    "[3] Should parse date from ordinal day notation - ordinal day parsing not implemented",
-    () => {
-      // Original TCK: RETURN date('2015-202') AS d
-      // Expected: '2015-07-21'
-      // Reason: Ordinal day parsing not implemented
-      const graph = createTckGraph();
-      const result = executeTckQuery(graph, "RETURN date('2015-202')");
-      expect(result).toHaveLength(1);
-      const d = result[0];
-      expect(d).toBeInstanceOf(DateValue);
-      expect((d as DateValue).toString()).toBe("2015-07-21");
-    },
-  );
+  test.fails("[3] Should parse date from ordinal day notation - ordinal day parsing not implemented", () => {
+    // Original TCK: RETURN date('2015-202') AS d
+    // Expected: '2015-07-21'
+    // Reason: Ordinal day parsing not implemented
+    const graph = createTckGraph();
+    const result = executeTckQuery(graph, "RETURN date('2015-202')");
+    expect(result).toHaveLength(1);
+    const d = result[0];
+    expect(d).toBeInstanceOf(DateValue);
+    expect((d as DateValue).toString()).toBe("2015-07-21");
+  });
 
   test("[4] Should parse localtime from string", () => {
     // Original TCK: RETURN localtime('12:31:14.645876123') AS t
     // Expected: '12:31:14.645876123'
     const graph = createTckGraph();
-    const result = executeTckQuery(
-      graph,
-      "RETURN localtime('12:31:14.645876123')",
-    );
+    const result = executeTckQuery(graph, "RETURN localtime('12:31:14.645876123')");
     expect(result).toHaveLength(1);
     const t = result[0];
     expect(t).toBeInstanceOf(LocalTimeValue);
@@ -75,10 +66,7 @@ describe("Temporal2 - Create Temporal Values from a String", () => {
     // Original TCK: RETURN time('12:31:14.645876123+01:00') AS t
     // Expected: '12:31:14.645876123+01:00'
     const graph = createTckGraph();
-    const result = executeTckQuery(
-      graph,
-      "RETURN time('12:31:14.645876123+01:00')",
-    );
+    const result = executeTckQuery(graph, "RETURN time('12:31:14.645876123+01:00')");
     expect(result).toHaveLength(1);
     const t = result[0];
     expect(t).toBeInstanceOf(TimeValue);
@@ -89,32 +77,22 @@ describe("Temporal2 - Create Temporal Values from a String", () => {
     // Original TCK: RETURN localdatetime('1984-10-11T12:31:14.645876123') AS dt
     // Expected: '1984-10-11T12:31:14.645876123'
     const graph = createTckGraph();
-    const result = executeTckQuery(
-      graph,
-      "RETURN localdatetime('1984-10-11T12:31:14.645876123')",
-    );
+    const result = executeTckQuery(graph, "RETURN localdatetime('1984-10-11T12:31:14.645876123')");
     expect(result).toHaveLength(1);
     const dt = result[0];
     expect(dt).toBeInstanceOf(LocalDateTimeValue);
-    expect((dt as LocalDateTimeValue).toString()).toBe(
-      "1984-10-11T12:31:14.645876123",
-    );
+    expect((dt as LocalDateTimeValue).toString()).toBe("1984-10-11T12:31:14.645876123");
   });
 
   test("[7] Should parse datetime from string with timezone", () => {
     // Original TCK: RETURN datetime('1984-10-11T12:31:14.645876123+01:00') AS dt
     // Expected: '1984-10-11T12:31:14.645876123+01:00'
     const graph = createTckGraph();
-    const result = executeTckQuery(
-      graph,
-      "RETURN datetime('1984-10-11T12:31:14.645876123+01:00')",
-    );
+    const result = executeTckQuery(graph, "RETURN datetime('1984-10-11T12:31:14.645876123+01:00')");
     expect(result).toHaveLength(1);
     const dt = result[0];
     expect(dt).toBeInstanceOf(DateTimeValue);
-    expect((dt as DateTimeValue).toString()).toBe(
-      "1984-10-11T12:31:14.645876123+01:00",
-    );
+    expect((dt as DateTimeValue).toString()).toBe("1984-10-11T12:31:14.645876123+01:00");
   });
 
   test("[8] Should parse datetime with named timezone", () => {
@@ -138,10 +116,7 @@ describe("Temporal2 - Create Temporal Values from a String", () => {
 
   test("[9] Should parse duration from ISO 8601 string", () => {
     const graph = createTckGraph();
-    const results = executeTckQuery(
-      graph,
-      "RETURN duration('P1Y2M14DT12H31M14.645876123S') AS d",
-    );
+    const results = executeTckQuery(graph, "RETURN duration('P1Y2M14DT12H31M14.645876123S') AS d");
     expect(results).toHaveLength(1);
     // Check that duration was parsed correctly
     const d = results[0] as any;

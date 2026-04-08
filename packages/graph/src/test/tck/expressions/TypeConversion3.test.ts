@@ -46,20 +46,17 @@ describe("TypeConversion3 - To Float", () => {
     expect(results[0]).toBe(null);
   });
 
-  test.fails(
-    "[2] toFloat() returning null on non-numerical string - WITH multiple vars not supported",
-    () => {
-      // Original: WITH 'foo' AS foo_string, '' AS empty_string
-      //           RETURN toFloat(foo_string) AS foo, toFloat(empty_string) AS empty
-      const graph = createTckGraph();
-      const results = executeTckQuery(
-        graph,
-        "WITH 'foo' AS foo_string, '' AS empty_string RETURN toFloat(foo_string) AS foo, toFloat(empty_string) AS empty",
-      );
-      expect(results).toHaveLength(1);
-      expect(results[0]).toEqual({ foo: null, empty: null });
-    },
-  );
+  test.fails("[2] toFloat() returning null on non-numerical string - WITH multiple vars not supported", () => {
+    // Original: WITH 'foo' AS foo_string, '' AS empty_string
+    //           RETURN toFloat(foo_string) AS foo, toFloat(empty_string) AS empty
+    const graph = createTckGraph();
+    const results = executeTckQuery(
+      graph,
+      "WITH 'foo' AS foo_string, '' AS empty_string RETURN toFloat(foo_string) AS foo, toFloat(empty_string) AS empty",
+    );
+    expect(results).toHaveLength(1);
+    expect(results[0]).toEqual({ foo: null, empty: null });
+  });
 
   test("[3] toFloat() handling Any type", () => {
     const graph = createTckGraph();
@@ -186,16 +183,10 @@ describe("TypeConversion3 - To Float", () => {
 
   test("[Custom 2] toFloat() converts integer to float in WHERE", () => {
     const graph = createTckGraph();
-    executeTckQuery(
-      graph,
-      `CREATE (:A {num: 5, name: 'a'}), (:A {num: 10, name: 'b'})`,
-    );
+    executeTckQuery(graph, `CREATE (:A {num: 5, name: 'a'}), (:A {num: 10, name: 'b'})`);
 
     // toFloat() on integer returns float value
-    const results = executeTckQuery(
-      graph,
-      `MATCH (n:A) WHERE toFloat(n.num) = 5.0 RETURN n.name`,
-    );
+    const results = executeTckQuery(graph, `MATCH (n:A) WHERE toFloat(n.num) = 5.0 RETURN n.name`);
 
     expect(results).toHaveLength(1);
     expect(results[0]).toBe("a");
@@ -209,10 +200,7 @@ describe("TypeConversion3 - To Float", () => {
     );
 
     // Non-numeric string returns null, which won't match > 0
-    const results = executeTckQuery(
-      graph,
-      `MATCH (n:A) WHERE toFloat(n.val) > 0 RETURN n.name`,
-    );
+    const results = executeTckQuery(graph, `MATCH (n:A) WHERE toFloat(n.val) > 0 RETURN n.name`);
 
     expect(results).toHaveLength(1);
     expect(results[0]).toBe("valid");
@@ -220,15 +208,9 @@ describe("TypeConversion3 - To Float", () => {
 
   test("[Custom 4] toFloat() on float returns same value", () => {
     const graph = createTckGraph();
-    executeTckQuery(
-      graph,
-      `CREATE (:A {num: 3.14, name: 'pi'}), (:A {num: 2.71, name: 'e'})`,
-    );
+    executeTckQuery(graph, `CREATE (:A {num: 3.14, name: 'pi'}), (:A {num: 2.71, name: 'e'})`);
 
-    const results = executeTckQuery(
-      graph,
-      `MATCH (n:A) WHERE toFloat(n.num) > 3.0 RETURN n.name`,
-    );
+    const results = executeTckQuery(graph, `MATCH (n:A) WHERE toFloat(n.num) > 3.0 RETURN n.name`);
 
     expect(results).toHaveLength(1);
     expect(results[0]).toBe("pi");
@@ -241,10 +223,7 @@ describe("TypeConversion3 - To Float", () => {
       `CREATE (:A {numStr: '-3.5', name: 'neg'}), (:A {numStr: '3.5', name: 'pos'})`,
     );
 
-    const results = executeTckQuery(
-      graph,
-      `MATCH (n:A) WHERE toFloat(n.numStr) < 0 RETURN n.name`,
-    );
+    const results = executeTckQuery(graph, `MATCH (n:A) WHERE toFloat(n.numStr) < 0 RETURN n.name`);
 
     expect(results).toHaveLength(1);
     expect(results[0]).toBe("neg");
@@ -257,10 +236,7 @@ describe("TypeConversion3 - To Float", () => {
       `CREATE (:A {numStr: '1e3', name: 'thousand'}), (:A {numStr: '1e-3', name: 'milli'})`,
     );
 
-    const results = executeTckQuery(
-      graph,
-      `MATCH (n:A) WHERE toFloat(n.numStr) > 1 RETURN n.name`,
-    );
+    const results = executeTckQuery(graph, `MATCH (n:A) WHERE toFloat(n.numStr) > 1 RETURN n.name`);
 
     expect(results).toHaveLength(1);
     expect(results[0]).toBe("thousand");

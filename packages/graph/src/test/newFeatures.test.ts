@@ -39,16 +39,13 @@ test("New Grammar Features - Edge Properties Parsing - should parse edge pattern
   const query = "MATCH (u:User)-[:follows {weight: 10}]->(f) RETURN f";
   const ast = parse(query) as Query;
 
-  expect((ast.matches[0]!.pattern as Pattern).elements[1]!.type).toBe(
-    "EdgePattern",
-  );
+  expect((ast.matches[0]!.pattern as Pattern).elements[1]!.type).toBe("EdgePattern");
   const edgePattern = (ast.matches[0]!.pattern as Pattern).elements[1] as any;
   expect(edgePattern.properties).toEqual({ weight: 10 });
 });
 
 test("New Grammar Features - Edge Properties Parsing - should parse edge pattern with multiple properties", () => {
-  const query =
-    "MATCH (u:User)-[:follows {weight: 10, active: true}]->(f) RETURN f";
+  const query = "MATCH (u:User)-[:follows {weight: 10, active: true}]->(f) RETURN f";
   const ast = parse(query) as Query;
 
   const edgePattern = (ast.matches[0]!.pattern as Pattern).elements[1] as any;
@@ -64,8 +61,7 @@ test("New Grammar Features - Edge Properties Parsing - should parse edge pattern
 });
 
 test("New Grammar Features - IN Operator Parsing - should parse IN with string list", () => {
-  const query =
-    'MATCH (u:User) WHERE u.status IN ["active", "pending"] RETURN u';
+  const query = 'MATCH (u:User) WHERE u.status IN ["active", "pending"] RETURN u';
   const ast = parse(query) as Query;
 
   expect(ast.matches[0]!.where).toBeDefined();
@@ -144,8 +140,7 @@ test("New Grammar Features - NOT Operator Parsing - should parse NOT with EXISTS
 });
 
 test("New Grammar Features - NOT Operator Parsing - should parse NOT with IN", () => {
-  const query =
-    'MATCH (u:User) WHERE NOT u.status IN ["banned", "suspended"] RETURN u';
+  const query = 'MATCH (u:User) WHERE NOT u.status IN ["banned", "suspended"] RETURN u';
   const ast = parse(query) as Query;
 
   const condition = ast.matches[0]!.where!.condition as any;
@@ -154,8 +149,7 @@ test("New Grammar Features - NOT Operator Parsing - should parse NOT with IN", (
 });
 
 test("New Grammar Features - Combined Conditions - should parse complex condition with AND and IN", () => {
-  const query =
-    'MATCH (u:User) WHERE u.age > 18 AND u.status IN ["active", "verified"] RETURN u';
+  const query = 'MATCH (u:User) WHERE u.age > 18 AND u.status IN ["active", "verified"] RETURN u';
   const ast = parse(query) as Query;
 
   const condition = ast.matches[0]!.where!.condition as any;
@@ -165,8 +159,7 @@ test("New Grammar Features - Combined Conditions - should parse complex conditio
 });
 
 test("New Grammar Features - Combined Conditions - should parse complex condition with OR and IS NULL", () => {
-  const query =
-    "MATCH (u:User) WHERE u.email IS NULL OR u.verified = false RETURN u";
+  const query = "MATCH (u:User) WHERE u.email IS NULL OR u.verified = false RETURN u";
   const ast = parse(query) as Query;
 
   const condition = ast.matches[0]!.where!.condition as any;
@@ -464,10 +457,7 @@ test("Query Execution with New Features - IS NULL Execution - should filter user
     since: "2022",
   });
 
-  const results = executeQuery(
-    graph,
-    "MATCH (u:User) WHERE u.email IS NULL RETURN u",
-  );
+  const results = executeQuery(graph, "MATCH (u:User) WHERE u.email IS NULL RETURN u");
   expect(results).toHaveLength(2); // Bob and David have null email
 });
 
@@ -538,10 +528,7 @@ test("Query Execution with New Features - IS NULL Execution - should filter user
     since: "2022",
   });
 
-  const results = executeQuery(
-    graph,
-    "MATCH (u:User) WHERE u.email IS NOT NULL RETURN u",
-  );
+  const results = executeQuery(graph, "MATCH (u:User) WHERE u.email IS NOT NULL RETURN u");
   expect(results).toHaveLength(2); // Alice and Charlie have email
 });
 
@@ -612,10 +599,7 @@ test("Query Execution with New Features - NOT Operator Execution - should negate
     since: "2022",
   });
 
-  const results = executeQuery(
-    graph,
-    'MATCH (u:User) WHERE NOT u.status = "active" RETURN u',
-  );
+  const results = executeQuery(graph, 'MATCH (u:User) WHERE NOT u.status = "active" RETURN u');
   expect(results).toHaveLength(2); // Bob (pending) and Charlie (banned)
 });
 
@@ -760,10 +744,7 @@ test("Query Execution with New Features - NOT Operator Execution - should negate
     since: "2022",
   });
 
-  const results = executeQuery(
-    graph,
-    "MATCH (u:User) WHERE NOT u.email IS NULL RETURN u",
-  );
+  const results = executeQuery(graph, "MATCH (u:User) WHERE NOT u.email IS NULL RETURN u");
   expect(results).toHaveLength(2); // Alice and Charlie
 });
 
@@ -982,10 +963,7 @@ test("Query Execution with New Features - Edge Properties Execution - should ret
     since: "2022",
   });
 
-  const results = executeQuery(
-    graph,
-    "MATCH (u:User)-[:follows {weight: 100}]->(f) RETURN f",
-  );
+  const results = executeQuery(graph, "MATCH (u:User)-[:follows {weight: 100}]->(f) RETURN f");
   expect(results).toHaveLength(0);
 });
 
@@ -1257,9 +1235,7 @@ test("Fluent API New Features - hasIn method - should filter vertices with prope
   graph.addEdge(alice.id, "follows", bob.id, { weight: 10 });
   graph.addEdge(alice.id, "follows", charlie.id, { weight: 5 });
 
-  const results = Array.from(
-    g.V().hasLabel("User").hasIn("status", ["active", "pending"]),
-  );
+  const results = Array.from(g.V().hasLabel("User").hasIn("status", ["active", "pending"]));
   expect(results).toHaveLength(2);
 });
 
@@ -1309,9 +1285,7 @@ test("Fluent API New Features - hasIn method - should return empty for values no
   graph.addEdge(alice.id, "follows", bob.id, { weight: 10 });
   graph.addEdge(alice.id, "follows", charlie.id, { weight: 5 });
 
-  const results = Array.from(
-    g.V().hasLabel("User").hasIn("status", ["deleted"]),
-  );
+  const results = Array.from(g.V().hasLabel("User").hasIn("status", ["deleted"]));
   expect(results).toHaveLength(0);
 });
 
@@ -1461,9 +1435,7 @@ test("Fluent API New Features - not method - should negate a has condition", () 
   graph.addEdge(alice.id, "follows", bob.id, { weight: 10 });
   graph.addEdge(alice.id, "follows", charlie.id, { weight: 5 });
 
-  const results = Array.from(
-    g.V().hasLabel("User").has("status", "active").not(),
-  );
+  const results = Array.from(g.V().hasLabel("User").has("status", "active").not());
   expect(results).toHaveLength(2); // Bob and Charlie
 });
 
@@ -1614,9 +1586,7 @@ test("Fluent API New Features - EdgeTraversal new methods - should filter edges 
   graph.addEdge(alice.id, "follows", bob.id, { weight: 10 });
   graph.addEdge(alice.id, "follows", charlie.id, { weight: 5 });
 
-  const results = Array.from(
-    g.V().hasLabel("User").outE("follows").hasIn("weight", [10, 8]),
-  );
+  const results = Array.from(g.V().hasLabel("User").outE("follows").hasIn("weight", [10, 8]));
   expect(results).toHaveLength(1); // Only the edge with weight 10
 });
 
@@ -1666,8 +1636,6 @@ test("Fluent API New Features - EdgeTraversal new methods - should negate edge f
   graph.addEdge(alice.id, "follows", bob.id, { weight: 10 });
   graph.addEdge(alice.id, "follows", charlie.id, { weight: 5 });
 
-  const results = Array.from(
-    g.V().hasLabel("User").outE("follows").has("weight", 10).not(),
-  );
+  const results = Array.from(g.V().hasLabel("User").outE("follows").has("weight", 10).not());
   expect(results).toHaveLength(1); // Only the edge with weight 5
 });

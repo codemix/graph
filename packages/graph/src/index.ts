@@ -81,12 +81,7 @@ export type {
   CallClause,
   YieldItem,
 } from "./AST.js";
-export {
-  astToSteps,
-  unionAstToSteps,
-  anyAstToSteps,
-  multiStatementToSteps,
-} from "./astToSteps.js";
+export { astToSteps, unionAstToSteps, anyAstToSteps, multiStatementToSteps } from "./astToSteps.js";
 export { parse } from "./grammar.js";
 export * from "./generateSchemaGuide.js";
 export {
@@ -102,11 +97,7 @@ export type {
   FunctionCallContext,
   FunctionArgSpec,
 } from "./FunctionRegistry.js";
-export {
-  ProcedureRegistry,
-  procedureRegistry,
-  isBuiltinProcedure,
-} from "./ProcedureRegistry.js";
+export { ProcedureRegistry, procedureRegistry, isBuiltinProcedure } from "./ProcedureRegistry.js";
 export type {
   ProcedureDefinition,
   ProcedureParamSpec,
@@ -117,14 +108,7 @@ export type {
 /**
  * Mutation step names that modify the graph.
  */
-const MUTATION_STEP_NAMES = new Set([
-  "Create",
-  "Set",
-  "Delete",
-  "Remove",
-  "Merge",
-  "Foreach",
-]);
+const MUTATION_STEP_NAMES = new Set(["Create", "Set", "Delete", "Remove", "Merge", "Foreach"]);
 
 /**
  * Validates that a step array contains no mutation steps.
@@ -217,10 +201,7 @@ function createPostprocessor(
 
   // Build a map of output key -> list of {index, property}
   // This groups properties that should be merged under the same key
-  const keyMapping = new Map<
-    string,
-    Array<{ index: number; property: string | undefined }>
-  >();
+  const keyMapping = new Map<string, Array<{ index: number; property: string | undefined }>>();
 
   for (let i = 0; i < items.length; i++) {
     const item = items[i]!;

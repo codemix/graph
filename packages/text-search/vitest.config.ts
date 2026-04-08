@@ -11,13 +11,7 @@ export default defineConfig({
       reporter: ["text", "json-summary", "json"],
       reportOnFailure: true,
       include: ["src/**/*.ts"],
-      exclude: [
-        "node_modules/**",
-        "dist/**",
-        "**/*.test.ts",
-        "**/*.spec.ts",
-        "**/test/**",
-      ],
+      exclude: ["node_modules/**", "dist/**", "**/*.test.ts", "**/*.spec.ts", "**/test/**"],
     },
   },
 });

@@ -8,10 +8,7 @@ import { createTckGraph, executeTckQuery, getProperty } from "../tckHelpers.js";
 describe("ReturnSkipLimit2 - Limit", () => {
   test("[1] Limit to two hits", () => {
     const graph = createTckGraph();
-    const results = executeTckQuery(
-      graph,
-      "UNWIND [1, 1, 1, 1, 1] AS i RETURN i LIMIT 2",
-    );
+    const results = executeTckQuery(graph, "UNWIND [1, 1, 1, 1, 1] AS i RETURN i LIMIT 2");
     expect(results).toEqual([[1], [1]]);
   });
 
@@ -23,10 +20,7 @@ describe("ReturnSkipLimit2 - Limit", () => {
     executeTckQuery(graph, "CREATE (:A {name: 'D'})");
     executeTckQuery(graph, "CREATE (:A {name: 'E'})");
 
-    const results = executeTckQuery(
-      graph,
-      "MATCH (n:A) RETURN n ORDER BY n.name ASC LIMIT 2",
-    );
+    const results = executeTckQuery(graph, "MATCH (n:A) RETURN n ORDER BY n.name ASC LIMIT 2");
     expect(results.length).toBe(2);
     // Single RETURN item is wrapped in array
     const names = results.map((r) => {
@@ -75,18 +69,15 @@ describe("ReturnSkipLimit2 - Limit", () => {
     expect(results).toEqual([]);
   });
 
-  test.fails(
-    "[6] LIMIT with an expression that does not depend on variables",
-    () => {
-      const graph = createTckGraph();
-      executeTckQuery(graph, "UNWIND range(1, 3) AS i CREATE ({nr: i})");
-      const results = executeTckQuery(
-        graph,
-        "MATCH (n) WITH n LIMIT toInteger(ceil(1.7)) RETURN count(*) AS count",
-      );
-      expect(results).toEqual([2]);
-    },
-  );
+  test.fails("[6] LIMIT with an expression that does not depend on variables", () => {
+    const graph = createTckGraph();
+    executeTckQuery(graph, "UNWIND range(1, 3) AS i CREATE ({nr: i})");
+    const results = executeTckQuery(
+      graph,
+      "MATCH (n) WITH n LIMIT toInteger(ceil(1.7)) RETURN count(*) AS count",
+    );
+    expect(results).toEqual([2]);
+  });
 
   test("[7] Limit to more rows than actual results 1 - unlabeled nodes not supported", () => {
     const graph = createTckGraph();
@@ -114,10 +105,7 @@ describe("ReturnSkipLimit2 - Limit", () => {
 
   test.fails("[8] Limit to more rows than actual results 2", () => {
     const graph = createTckGraph();
-    executeTckQuery(
-      graph,
-      "CREATE (a:A), (n1 {num: 1}), (n2 {num: 2}), (m1), (m2)",
-    );
+    executeTckQuery(graph, "CREATE (a:A), (n1 {num: 1}), (n2 {num: 2}), (m1), (m2)");
     executeTckQuery(
       graph,
       "MATCH (a:A), (n1 {num: 1}), (n2 {num: 2}), (m1), (m2) CREATE (a)-[:T]->(n1), (n1)-[:T]->(m1), (a)-[:T]->(n2), (n2)-[:T]->(m2)",
@@ -134,54 +122,37 @@ describe("ReturnSkipLimit2 - Limit", () => {
 
   test("[9] Fail when using non-constants in LIMIT - semantic validation not implemented", () => {
     const graph = createTckGraph();
-    expect(() =>
-      executeTckQuery(graph, "MATCH (n) RETURN n LIMIT n.count"),
-    ).toThrow();
+    expect(() => executeTckQuery(graph, "MATCH (n) RETURN n LIMIT n.count")).toThrow();
   });
 
   test("[10] Negative parameter for LIMIT should fail - SKIP/LIMIT only accept literals", () => {
     const graph = createTckGraph();
-    executeTckQuery(
-      graph,
-      "CREATE (s:Person {name: 'Steven'}), (c:Person {name: 'Craig'})",
-    );
+    executeTckQuery(graph, "CREATE (s:Person {name: 'Steven'}), (c:Person {name: 'Craig'})");
     expect(() =>
-      executeTckQuery(
-        graph,
-        "MATCH (p:Person) RETURN p.name AS name LIMIT $_limit",
-        { _limit: -1 },
-      ),
+      executeTckQuery(graph, "MATCH (p:Person) RETURN p.name AS name LIMIT $_limit", {
+        _limit: -1,
+      }),
     ).toThrow();
   });
 
   test("[11] Negative parameter for LIMIT with ORDER BY should fail - SKIP/LIMIT only accept literals", () => {
     const graph = createTckGraph();
-    executeTckQuery(
-      graph,
-      "CREATE (s:Person {name: 'Steven'}), (c:Person {name: 'Craig'})",
-    );
+    executeTckQuery(graph, "CREATE (s:Person {name: 'Steven'}), (c:Person {name: 'Craig'})");
     expect(() =>
-      executeTckQuery(
-        graph,
-        "MATCH (p:Person) RETURN p.name AS name ORDER BY name LIMIT $_limit",
-        { _limit: -1 },
-      ),
+      executeTckQuery(graph, "MATCH (p:Person) RETURN p.name AS name ORDER BY name LIMIT $_limit", {
+        _limit: -1,
+      }),
     ).toThrow();
   });
 
   test.fails("[12] Fail when using negative value in LIMIT 1", () => {
     const graph = createTckGraph();
-    expect(() =>
-      executeTckQuery(graph, "MATCH (n) RETURN n LIMIT -1"),
-    ).toThrow();
+    expect(() => executeTckQuery(graph, "MATCH (n) RETURN n LIMIT -1")).toThrow();
   });
 
   test.fails("[13] Fail when using negative value in LIMIT 2", () => {
     const graph = createTckGraph();
-    executeTckQuery(
-      graph,
-      "CREATE (s:Person {name: 'Steven'}), (c:Person {name: 'Craig'})",
-    );
+    executeTckQuery(graph, "CREATE (s:Person {name: 'Steven'}), (c:Person {name: 'Craig'})");
     expect(() =>
       executeTckQuery(graph, "MATCH (p:Person) RETURN p.name AS name LIMIT -1"),
     ).toThrow();
@@ -189,52 +160,34 @@ describe("ReturnSkipLimit2 - Limit", () => {
 
   test("[14] Floating point parameter for LIMIT should fail - SKIP/LIMIT only accept literals", () => {
     const graph = createTckGraph();
-    executeTckQuery(
-      graph,
-      "CREATE (s:Person {name: 'Steven'}), (c:Person {name: 'Craig'})",
-    );
+    executeTckQuery(graph, "CREATE (s:Person {name: 'Steven'}), (c:Person {name: 'Craig'})");
     expect(() =>
-      executeTckQuery(
-        graph,
-        "MATCH (p:Person) RETURN p.name AS name LIMIT $_limit",
-        { _limit: 1.5 },
-      ),
+      executeTckQuery(graph, "MATCH (p:Person) RETURN p.name AS name LIMIT $_limit", {
+        _limit: 1.5,
+      }),
     ).toThrow();
   });
 
   test("[15] Floating point parameter for LIMIT with ORDER BY should fail - SKIP/LIMIT only accept literals", () => {
     const graph = createTckGraph();
-    executeTckQuery(
-      graph,
-      "CREATE (s:Person {name: 'Steven'}), (c:Person {name: 'Craig'})",
-    );
+    executeTckQuery(graph, "CREATE (s:Person {name: 'Steven'}), (c:Person {name: 'Craig'})");
     expect(() =>
-      executeTckQuery(
-        graph,
-        "MATCH (p:Person) RETURN p.name AS name ORDER BY name LIMIT $_limit",
-        { _limit: 1.5 },
-      ),
+      executeTckQuery(graph, "MATCH (p:Person) RETURN p.name AS name ORDER BY name LIMIT $_limit", {
+        _limit: 1.5,
+      }),
     ).toThrow();
   });
 
   test("[16] Fail when using floating point in LIMIT 1 - grammar enforces integer", () => {
     const graph = createTckGraph();
-    expect(() =>
-      executeTckQuery(graph, "MATCH (n) RETURN n LIMIT 1.7"),
-    ).toThrow();
+    expect(() => executeTckQuery(graph, "MATCH (n) RETURN n LIMIT 1.7")).toThrow();
   });
 
   test("[17] Fail when using floating point in LIMIT 2 - grammar enforces integer", () => {
     const graph = createTckGraph();
-    executeTckQuery(
-      graph,
-      "CREATE (s:Person {name: 'Steven'}), (c:Person {name: 'Craig'})",
-    );
+    executeTckQuery(graph, "CREATE (s:Person {name: 'Steven'}), (c:Person {name: 'Craig'})");
     expect(() =>
-      executeTckQuery(
-        graph,
-        "MATCH (p:Person) RETURN p.name AS name LIMIT 1.5",
-      ),
+      executeTckQuery(graph, "MATCH (p:Person) RETURN p.name AS name LIMIT 1.5"),
     ).toThrow();
   });
 
@@ -247,10 +200,7 @@ describe("ReturnSkipLimit2 - Limit", () => {
     executeTckQuery(graph, "CREATE (:A {num: 4})");
     executeTckQuery(graph, "CREATE (:A {num: 5})");
 
-    const results = executeTckQuery(
-      graph,
-      "MATCH (n:A) RETURN n.num ORDER BY n.num DESC LIMIT 3",
-    );
+    const results = executeTckQuery(graph, "MATCH (n:A) RETURN n.num ORDER BY n.num DESC LIMIT 3");
     expect(results).toEqual([5, 4, 3]);
   });
 
@@ -270,10 +220,7 @@ describe("ReturnSkipLimit2 - Limit", () => {
     executeTckQuery(graph, "CREATE (:A {name: 'second'})");
     executeTckQuery(graph, "CREATE (:A {name: 'third'})");
 
-    const results = executeTckQuery(
-      graph,
-      "MATCH (n:A) RETURN n.name ORDER BY n.name LIMIT 1",
-    );
+    const results = executeTckQuery(graph, "MATCH (n:A) RETURN n.name ORDER BY n.name LIMIT 1");
     expect(results).toEqual(["first"]);
   });
 });

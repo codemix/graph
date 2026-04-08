@@ -18,15 +18,9 @@ describe("Conditional1 - Coalesce expression", () => {
     // Grammar limitations:
     // 1. Unlabeled nodes not supported (all nodes require labels)
     const graph = createTckGraph();
-    executeTckQuery(
-      graph,
-      "CREATE ({name: 'Emil Eifrem', title: 'CEO'}), ({name: 'Nobody'})",
-    );
+    executeTckQuery(graph, "CREATE ({name: 'Emil Eifrem', title: 'CEO'}), ({name: 'Nobody'})");
 
-    const results = executeTckQuery(
-      graph,
-      "MATCH (a) RETURN coalesce(a.title, a.name)",
-    );
+    const results = executeTckQuery(graph, "MATCH (a) RETURN coalesce(a.title, a.name)");
 
     expect(results).toHaveLength(2);
     expect(results).toContain("CEO");
@@ -54,10 +48,7 @@ describe("Conditional1 - Coalesce expression", () => {
 
   test("[custom-2] coalesce returns second value when first is null", () => {
     const graph = createTckGraph();
-    executeTckQuery(
-      graph,
-      "CREATE (:A {name: 'Alice', title: 'Engineer'}), (:A {name: 'Bob'})",
-    );
+    executeTckQuery(graph, "CREATE (:A {name: 'Alice', title: 'Engineer'}), (:A {name: 'Bob'})");
 
     // Nodes without title should have coalesce return their name
     const results = executeTckQuery(
@@ -143,14 +134,8 @@ describe("Conditional1 - Coalesce expression", () => {
 
   test("[custom-7] coalesce with property access on multiple nodes", () => {
     const graph = createTckGraph();
-    executeTckQuery(
-      graph,
-      "CREATE (:A {name: 'a1'})-[:T]->(:B {title: 'Boss'})",
-    );
-    executeTckQuery(
-      graph,
-      "CREATE (:A {name: 'a2', title: 'Manager'})-[:T]->(:B {name: 'b2'})",
-    );
+    executeTckQuery(graph, "CREATE (:A {name: 'a1'})-[:T]->(:B {title: 'Boss'})");
+    executeTckQuery(graph, "CREATE (:A {name: 'a2', title: 'Manager'})-[:T]->(:B {name: 'b2'})");
 
     // Use coalesce across different property names
     const results = executeTckQuery(

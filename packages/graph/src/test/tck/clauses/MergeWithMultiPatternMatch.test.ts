@@ -42,10 +42,7 @@ describe("MERGE with WITH and multi-pattern MATCH", () => {
       const graph = createTckGraph();
 
       // Setup: create target nodes
-      executeTckQuery(
-        graph,
-        "CREATE (:Target1 {name: 'T1'}), (:Target2 {name: 'T2'})",
-      );
+      executeTckQuery(graph, "CREATE (:Target1 {name: 'T1'}), (:Target2 {name: 'T2'})");
 
       // MERGE node, WITH to preserve, multi-pattern MATCH, then MERGE relationships
       executeTckQuery(
@@ -95,10 +92,7 @@ describe("MERGE with WITH and multi-pattern MATCH", () => {
       );
 
       // Both nodes should link to the type
-      const results = executeTckQuery(
-        graph,
-        "MATCH (:Node)-[r:HAS_TYPE]->(:Type) RETURN count(r)",
-      );
+      const results = executeTckQuery(graph, "MATCH (:Node)-[r:HAS_TYPE]->(:Type) RETURN count(r)");
       expect(results).toHaveLength(1);
       expect(results[0]).toBe(2);
     });
@@ -109,10 +103,7 @@ describe("MERGE with WITH and multi-pattern MATCH", () => {
       const graph = createTckGraph();
 
       // Setup data types
-      executeTckQuery(
-        graph,
-        "CREATE (:DataType {name: 'String'}), (:DataType {name: 'Integer'})",
-      );
+      executeTckQuery(graph, "CREATE (:DataType {name: 'String'}), (:DataType {name: 'Integer'})");
 
       // CREATE single node, WITH, multi-pattern MATCH, multiple MERGE
       executeTckQuery(
@@ -195,10 +186,7 @@ describe("MERGE with WITH and multi-pattern MATCH", () => {
     test("Three patterns in MATCH after WITH", () => {
       const graph = createTckGraph();
 
-      executeTckQuery(
-        graph,
-        "CREATE (:X {name: 'x'}), (:Y {name: 'y'}), (:Z {name: 'z'})",
-      );
+      executeTckQuery(graph, "CREATE (:X {name: 'x'}), (:Y {name: 'y'}), (:Z {name: 'z'})");
 
       executeTckQuery(
         graph,
@@ -212,20 +200,14 @@ describe("MERGE with WITH and multi-pattern MATCH", () => {
         `,
       );
 
-      const count = executeTckQuery(
-        graph,
-        "MATCH (:Node)-[r]->() RETURN count(r)",
-      );
+      const count = executeTckQuery(graph, "MATCH (:Node)-[r]->() RETURN count(r)");
       expect(count[0]).toBe(3);
     });
 
     test("Four patterns in MATCH after WITH", () => {
       const graph = createTckGraph();
 
-      executeTckQuery(
-        graph,
-        "CREATE (:A {id: 1}), (:B {id: 2}), (:C {id: 3}), (:D {id: 4})",
-      );
+      executeTckQuery(graph, "CREATE (:A {id: 1}), (:B {id: 2}), (:C {id: 3}), (:D {id: 4})");
 
       executeTckQuery(
         graph,
@@ -240,10 +222,7 @@ describe("MERGE with WITH and multi-pattern MATCH", () => {
         `,
       );
 
-      const count = executeTckQuery(
-        graph,
-        "MATCH (:Hub)-[r:CONNECT]->() RETURN count(r)",
-      );
+      const count = executeTckQuery(graph, "MATCH (:Hub)-[r:CONNECT]->() RETURN count(r)");
       expect(count[0]).toBe(4);
     });
   });
@@ -264,10 +243,7 @@ describe("MERGE with WITH and multi-pattern MATCH", () => {
         `,
       );
 
-      const results = executeTckQuery(
-        graph,
-        "MATCH (:Source)-[r:REFS]->(:Target) RETURN count(r)",
-      );
+      const results = executeTckQuery(graph, "MATCH (:Source)-[r:REFS]->(:Target) RETURN count(r)");
       expect(results[0]).toBe(1);
     });
 
@@ -288,10 +264,7 @@ describe("MERGE with WITH and multi-pattern MATCH", () => {
         `,
       );
 
-      const results = executeTckQuery(
-        graph,
-        "MATCH (:Node)-[r:IS]->(:Type) RETURN count(r)",
-      );
+      const results = executeTckQuery(graph, "MATCH (:Node)-[r:IS]->(:Type) RETURN count(r)");
       expect(results[0]).toBe(2);
     });
   });
@@ -302,10 +275,7 @@ describe("MERGE with WITH and multi-pattern MATCH", () => {
       const graph = createTckGraph();
 
       // Create data types first
-      executeTckQuery(
-        graph,
-        "CREATE (:DataType {name: 'UUID'}), (:DataType {name: 'String'})",
-      );
+      executeTckQuery(graph, "CREATE (:DataType {name: 'UUID'}), (:DataType {name: 'String'})");
 
       // Execute simplified query - single property
       const query = `
@@ -351,10 +321,7 @@ describe("MERGE with WITH and multi-pattern MATCH", () => {
       executeTckQuery(graph, "CREATE (:DataType {name: 'UUID'})");
 
       // Create the concept
-      executeTckQuery(
-        graph,
-        "MERGE (c:Concept {name: 'User'}) SET c.description = 'User account'",
-      );
+      executeTckQuery(graph, "MERGE (c:Concept {name: 'User'}) SET c.description = 'User account'");
 
       // Add single property (using MERGE to find existing concept)
       executeTckQuery(
@@ -439,10 +406,7 @@ describe("MERGE with WITH and multi-pattern MATCH", () => {
       const source = executeTckQuery(graph, "MATCH (s:Source) RETURN count(s)");
       expect(source[0]).toBe(1);
 
-      const rels = executeTckQuery(
-        graph,
-        "MATCH ()-[r:LINK]->() RETURN count(r)",
-      );
+      const rels = executeTckQuery(graph, "MATCH ()-[r:LINK]->() RETURN count(r)");
       expect(rels[0]).toBe(0);
     });
 
@@ -463,10 +427,7 @@ describe("MERGE with WITH and multi-pattern MATCH", () => {
       executeTckQuery(graph, query);
 
       // Should still have only one relationship (MERGE is idempotent)
-      const rels = executeTckQuery(
-        graph,
-        "MATCH (:Source)-[r:LINK]->(:Target) RETURN count(r)",
-      );
+      const rels = executeTckQuery(graph, "MATCH (:Source)-[r:LINK]->(:Target) RETURN count(r)");
       expect(rels[0]).toBe(1);
     });
 
@@ -540,10 +501,7 @@ describe("MERGE with WITH and multi-pattern MATCH", () => {
         `,
       );
 
-      const results = executeTckQuery(
-        graph,
-        "MATCH (s)-[:POINTS_TO]->(:Target) RETURN count(s)",
-      );
+      const results = executeTckQuery(graph, "MATCH (s)-[:POINTS_TO]->(:Target) RETURN count(s)");
       expect(results[0]).toBe(2);
     });
   });
@@ -567,10 +525,7 @@ describe("MERGE with WITH and multi-pattern MATCH", () => {
         `,
       );
 
-      const results = executeTckQuery(
-        graph,
-        "MATCH (:Node)-[r:TYPED]->(:Type) RETURN count(r)",
-      );
+      const results = executeTckQuery(graph, "MATCH (:Node)-[r:TYPED]->(:Type) RETURN count(r)");
       expect(results[0]).toBe(2);
     });
 
@@ -591,16 +546,10 @@ describe("MERGE with WITH and multi-pattern MATCH", () => {
         `,
       );
 
-      const toX = executeTckQuery(
-        graph,
-        "MATCH (:Node)-[r:TO_X]->(:X) RETURN count(r)",
-      );
+      const toX = executeTckQuery(graph, "MATCH (:Node)-[r:TO_X]->(:X) RETURN count(r)");
       expect(toX[0]).toBe(1);
 
-      const toY = executeTckQuery(
-        graph,
-        "MATCH (:Node)-[r:TO_Y]->(:Y) RETURN count(r)",
-      );
+      const toY = executeTckQuery(graph, "MATCH (:Node)-[r:TO_Y]->(:Y) RETURN count(r)");
       expect(toY[0]).toBe(1);
     });
   });
@@ -643,20 +592,14 @@ describe("MERGE with WITH and multi-pattern MATCH", () => {
         `,
       );
 
-      const results = executeTckQuery(
-        graph,
-        "MATCH (:A)-[r:LINKS]->(:B) RETURN count(r)",
-      );
+      const results = executeTckQuery(graph, "MATCH (:A)-[r:LINKS]->(:B) RETURN count(r)");
       expect(results[0]).toBe(1);
     });
 
     test("Complex mix: MERGE uses both WITH vars and MATCH vars", () => {
       const graph = createTckGraph();
 
-      executeTckQuery(
-        graph,
-        "CREATE (:Category {name: 'C1'}), (:Category {name: 'C2'})",
-      );
+      executeTckQuery(graph, "CREATE (:Category {name: 'C1'}), (:Category {name: 'C2'})");
 
       executeTckQuery(
         graph,
@@ -673,17 +616,11 @@ describe("MERGE with WITH and multi-pattern MATCH", () => {
       );
 
       // Item to Category relationships
-      const itemCat = executeTckQuery(
-        graph,
-        "MATCH (:Item)-[r:IN]->(:Category) RETURN count(r)",
-      );
+      const itemCat = executeTckQuery(graph, "MATCH (:Item)-[r:IN]->(:Category) RETURN count(r)");
       expect(itemCat[0]).toBe(2);
 
       // Item to Item relationship
-      const itemItem = executeTckQuery(
-        graph,
-        "MATCH (:Item)-[r:RELATED]->(:Item) RETURN count(r)",
-      );
+      const itemItem = executeTckQuery(graph, "MATCH (:Item)-[r:RELATED]->(:Item) RETURN count(r)");
       expect(itemItem[0]).toBe(1);
 
       // Category to Category relationship
@@ -711,10 +648,7 @@ describe("MERGE with WITH and multi-pattern MATCH", () => {
         `,
       );
 
-      const results = executeTckQuery(
-        graph,
-        "MATCH (n:Node)-[:HAS_TYPE]->(:Type) RETURN n.status",
-      );
+      const results = executeTckQuery(graph, "MATCH (n:Node)-[:HAS_TYPE]->(:Type) RETURN n.status");
       expect(results).toHaveLength(1);
       expect(results[0]).toBe("active");
     });
@@ -734,10 +668,7 @@ describe("MERGE with WITH and multi-pattern MATCH", () => {
         `,
       );
 
-      const results = executeTckQuery(
-        graph,
-        "MATCH ()-[r:LINK]->() RETURN r.created",
-      );
+      const results = executeTckQuery(graph, "MATCH ()-[r:LINK]->() RETURN r.created");
       expect(results).toHaveLength(1);
       expect(results[0]).toBe(true);
     });

@@ -47,24 +47,21 @@ describe("WithSkipLimit2 - Limit", () => {
 
   // [3] Connected components succeeding WITH with LIMIT
   // Uses RETURN * and multi-pattern MATCH
-  test.fails(
-    "[3] Connected components succeeding WITH with LIMIT - RETURN * and multi-pattern MATCH not supported",
-    () => {
-      const graph = createTckGraph();
-      executeTckQuery(graph, "CREATE (:A)-[:REL]->(:X)");
-      executeTckQuery(graph, "CREATE (:B)");
+  test.fails("[3] Connected components succeeding WITH with LIMIT - RETURN * and multi-pattern MATCH not supported", () => {
+    const graph = createTckGraph();
+    executeTckQuery(graph, "CREATE (:A)-[:REL]->(:X)");
+    executeTckQuery(graph, "CREATE (:B)");
 
-      const results = executeTckQuery(
-        graph,
-        `MATCH (n:A)
+    const results = executeTckQuery(
+      graph,
+      `MATCH (n:A)
        WITH n
        LIMIT 1
        MATCH (m:B), (n)-->(x:X)
        RETURN *`,
-      );
-      expect(results).toHaveLength(1);
-    },
-  );
+    );
+    expect(results).toHaveLength(1);
+  });
 
   // [4] Ordering and limiting on aggregate
   // Uses unlabeled nodes and ORDER BY alias (c)

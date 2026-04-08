@@ -16,9 +16,7 @@ const { graph } = createDemoGraph();
 describe("UNION clause support", () => {
   describe("Grammar parsing", () => {
     test("parses UNION between two queries", () => {
-      const result = parse(
-        "MATCH (a:Person) RETURN a.name UNION MATCH (b:Thing) RETURN b.name",
-      );
+      const result = parse("MATCH (a:Person) RETURN a.name UNION MATCH (b:Thing) RETURN b.name");
 
       expect(result).toMatchObject({
         type: "UnionQuery",
@@ -113,9 +111,7 @@ describe("UNION clause support", () => {
 
   describe("Step conversion", () => {
     test("converts UNION query to QueryUnionStep", () => {
-      const ast = parse(
-        "MATCH (a:Person) RETURN a UNION MATCH (b:Thing) RETURN b",
-      ) as UnionQuery;
+      const ast = parse("MATCH (a:Person) RETURN a UNION MATCH (b:Thing) RETURN b") as UnionQuery;
 
       const steps = anyAstToSteps(ast);
 

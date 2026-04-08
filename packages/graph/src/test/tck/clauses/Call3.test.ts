@@ -21,10 +21,7 @@ describe("Call3 - Assignable-type arguments", () => {
   // [2] In-query call to procedure with argument of type NUMBER accepts value of type INTEGER
   test.fails("[2] In-query call: NUMBER param accepts INTEGER", () => {
     const graph = createTckGraph();
-    const results = executeTckQuery(
-      graph,
-      "CALL test.my.proc(42) YIELD out RETURN out",
-    );
+    const results = executeTckQuery(graph, "CALL test.my.proc(42) YIELD out RETURN out");
     expect(results).toEqual([["wisdom"]]);
   });
 
@@ -38,10 +35,7 @@ describe("Call3 - Assignable-type arguments", () => {
   // [4] In-query call to procedure with argument of type NUMBER accepts value of type FLOAT
   test.fails("[4] In-query call: NUMBER param accepts FLOAT", () => {
     const graph = createTckGraph();
-    const results = executeTckQuery(
-      graph,
-      "CALL test.my.proc(42.3) YIELD out RETURN out",
-    );
+    const results = executeTckQuery(graph, "CALL test.my.proc(42.3) YIELD out RETURN out");
     expect(results).toEqual([["about right"]]);
   });
 
@@ -55,10 +49,7 @@ describe("Call3 - Assignable-type arguments", () => {
   // [6] In-query call to procedure with argument of type FLOAT accepts value of type INTEGER
   test.fails("[6] In-query call: FLOAT param accepts INTEGER", () => {
     const graph = createTckGraph();
-    const results = executeTckQuery(
-      graph,
-      "CALL test.my.proc(42) YIELD out RETURN out",
-    );
+    const results = executeTckQuery(graph, "CALL test.my.proc(42) YIELD out RETURN out");
     expect(results).toEqual([["close enough"]]);
   });
 });

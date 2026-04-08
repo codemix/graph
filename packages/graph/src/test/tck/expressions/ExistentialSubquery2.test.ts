@@ -12,63 +12,57 @@ import { createTckGraph, executeTckQuery } from "../tckHelpers.js";
 describe("ExistentialSubquery2 - Full existential subquery", () => {
   // Original TCK scenarios - all use full subquery syntax which is not supported
 
-  test.fails(
-    "[1] Full existential subquery - full subquery syntax not supported",
-    () => {
-      // Original TCK:
-      // CREATE (a:A {prop: 1})-[:R]->(b:B {prop: 1}), (a)-[:R]->(:C {prop: 2}), (a)-[:R]->(:D {prop: 3})
-      // MATCH (n) WHERE exists { MATCH (n)-->() RETURN true } RETURN n
-      // Expected: (:A {prop:1})
-      //
-      // Full subquery syntax EXISTS { MATCH ... RETURN ... } is not supported
-      // Grammar only supports EXISTS { pattern [WHERE condition] }
-      const graph = createTckGraph();
-      executeTckQuery(
-        graph,
-        "CREATE (a:A {prop: 1})-[:R]->(b:B {prop: 1}), (a)-[:R]->(:C {prop: 2}), (a)-[:R]->(:D {prop: 3})",
-      );
+  test.fails("[1] Full existential subquery - full subquery syntax not supported", () => {
+    // Original TCK:
+    // CREATE (a:A {prop: 1})-[:R]->(b:B {prop: 1}), (a)-[:R]->(:C {prop: 2}), (a)-[:R]->(:D {prop: 3})
+    // MATCH (n) WHERE exists { MATCH (n)-->() RETURN true } RETURN n
+    // Expected: (:A {prop:1})
+    //
+    // Full subquery syntax EXISTS { MATCH ... RETURN ... } is not supported
+    // Grammar only supports EXISTS { pattern [WHERE condition] }
+    const graph = createTckGraph();
+    executeTckQuery(
+      graph,
+      "CREATE (a:A {prop: 1})-[:R]->(b:B {prop: 1}), (a)-[:R]->(:C {prop: 2}), (a)-[:R]->(:D {prop: 3})",
+    );
 
-      const results = executeTckQuery(
-        graph,
-        "MATCH (n) WHERE exists { MATCH (n)-->() RETURN true } RETURN n",
-      );
+    const results = executeTckQuery(
+      graph,
+      "MATCH (n) WHERE exists { MATCH (n)-->() RETURN true } RETURN n",
+    );
 
-      expect(results).toHaveLength(1);
-    },
-  );
+    expect(results).toHaveLength(1);
+  });
 
-  test.fails(
-    "[2] Full existential subquery with aggregation - full subquery syntax not supported",
-    () => {
-      // Original TCK:
-      // MATCH (n) WHERE exists {
-      //   MATCH (n)-->(m)
-      //   WITH n, count(*) AS numConnections
-      //   WHERE numConnections = 3
-      //   RETURN true
-      // } RETURN n
-      // Expected: (:A {prop:1})
-      //
-      // Full subquery syntax with aggregation is not supported
-      const graph = createTckGraph();
-      executeTckQuery(
-        graph,
-        "CREATE (a:A {prop: 1})-[:R]->(b:B {prop: 1}), (a)-[:R]->(:C {prop: 2}), (a)-[:R]->(:D {prop: 3})",
-      );
+  test.fails("[2] Full existential subquery with aggregation - full subquery syntax not supported", () => {
+    // Original TCK:
+    // MATCH (n) WHERE exists {
+    //   MATCH (n)-->(m)
+    //   WITH n, count(*) AS numConnections
+    //   WHERE numConnections = 3
+    //   RETURN true
+    // } RETURN n
+    // Expected: (:A {prop:1})
+    //
+    // Full subquery syntax with aggregation is not supported
+    const graph = createTckGraph();
+    executeTckQuery(
+      graph,
+      "CREATE (a:A {prop: 1})-[:R]->(b:B {prop: 1}), (a)-[:R]->(:C {prop: 2}), (a)-[:R]->(:D {prop: 3})",
+    );
 
-      const results = executeTckQuery(
-        graph,
-        `MATCH (n) WHERE exists {
+    const results = executeTckQuery(
+      graph,
+      `MATCH (n) WHERE exists {
         MATCH (n)-->(m)
         WITH n, count(*) AS numConnections
         WHERE numConnections = 3
         RETURN true
       } RETURN n`,
-      );
+    );
 
-      expect(results).toHaveLength(1);
-    },
-  );
+    expect(results).toHaveLength(1);
+  });
 
   test("[3] Full existential subquery with update clause should fail - semantic validation not implemented", () => {
     // Original TCK:
@@ -92,10 +86,7 @@ describe("ExistentialSubquery2 - Full existential subquery", () => {
 
   test("[C1] EXISTS pattern matches nodes with outgoing relationships", () => {
     const graph = createTckGraph();
-    executeTckQuery(
-      graph,
-      `CREATE (:A {prop: 1})-[:R]->(:B {prop: 1}), (:C {prop: 2})`,
-    );
+    executeTckQuery(graph, `CREATE (:A {prop: 1})-[:R]->(:B {prop: 1}), (:C {prop: 2})`);
 
     // Equivalent to: WHERE exists { MATCH (n)-->() ... }
     // Using supported pattern syntax
@@ -118,10 +109,7 @@ describe("ExistentialSubquery2 - Full existential subquery", () => {
               (a)-[:R]->(:D {name: 'd1'})`,
     );
     // Node E has only 1 outgoing relationship
-    executeTckQuery(
-      graph,
-      `CREATE (:E {name: 'spoke'})-[:R]->(:B {name: 'b2'})`,
-    );
+    executeTckQuery(graph, `CREATE (:E {name: 'spoke'})-[:R]->(:B {name: 'b2'})`);
 
     // We can't count with EXISTS pattern, but we can verify existence
     const results = executeTckQuery(
@@ -178,14 +166,8 @@ describe("ExistentialSubquery2 - Full existential subquery", () => {
     // hasT: only has T relationship
     // hasBoth: has both R and T relationships
     // hasNone: has no relationships
-    executeTckQuery(
-      graph,
-      `CREATE (:A {name: 'hasR'})-[:R]->(:B {name: 'r-target'})`,
-    );
-    executeTckQuery(
-      graph,
-      `CREATE (:A {name: 'hasT'})-[:T]->(:C {name: 't-target'})`,
-    );
+    executeTckQuery(graph, `CREATE (:A {name: 'hasR'})-[:R]->(:B {name: 'r-target'})`);
+    executeTckQuery(graph, `CREATE (:A {name: 'hasT'})-[:T]->(:C {name: 't-target'})`);
     executeTckQuery(
       graph,
       `CREATE (x:A {name: 'hasBoth'})-[:R]->(:B {name: 'both-r-target'}), (x)-[:T]->(:C {name: 'both-t-target'})`,
@@ -213,10 +195,7 @@ describe("ExistentialSubquery2 - Full existential subquery", () => {
     // hasT: only has T relationship
     executeTckQuery(graph, `CREATE (:A {name: 'hasT'})-[:T]->(:C)`);
     // hasBoth: has both R and T relationships (created in single CREATE)
-    executeTckQuery(
-      graph,
-      `CREATE (x:A {name: 'hasBoth'})-[:R]->(:B), (x)-[:T]->(:C)`,
-    );
+    executeTckQuery(graph, `CREATE (x:A {name: 'hasBoth'})-[:R]->(:B), (x)-[:T]->(:C)`);
 
     // Nodes with both R and T relationships
     const results = executeTckQuery(

@@ -29,28 +29,19 @@ describe("TypeConversion4 - To String", () => {
     expect(results[0]).toBe("false");
   });
 
-  test.fails(
-    "[3] toString() handling inlined boolean - RETURN-only query not supported",
-    () => {
-      // Original: RETURN toString(1 < 0) AS bool
-      // Boolean expressions in RETURN not supported
-      const graph = createTckGraph();
-      const results = executeTckQuery(graph, "RETURN toString(1 < 0) AS bool");
-      expect(results).toHaveLength(1);
-      expect(results[0]).toBe("false");
-    },
-  );
+  test.fails("[3] toString() handling inlined boolean - RETURN-only query not supported", () => {
+    // Original: RETURN toString(1 < 0) AS bool
+    // Boolean expressions in RETURN not supported
+    const graph = createTckGraph();
+    const results = executeTckQuery(graph, "RETURN toString(1 < 0) AS bool");
+    expect(results).toHaveLength(1);
+    expect(results[0]).toBe("false");
+  });
 
   test("[4] toString() handling boolean properties", () => {
     const graph = createTckGraph();
-    executeTckQuery(
-      graph,
-      "CREATE (:A {watched: true}), (:A {watched: false})",
-    );
-    const results = executeTckQuery(
-      graph,
-      "MATCH (n:A) RETURN toString(n.watched) AS str",
-    );
+    executeTckQuery(graph, "CREATE (:A {watched: true}), (:A {watched: false})");
+    const results = executeTckQuery(graph, "MATCH (n:A) RETURN toString(n.watched) AS str");
     expect(results).toHaveLength(2);
     expect(results).toContain("true");
     expect(results).toContain("false");
@@ -173,10 +164,7 @@ describe("TypeConversion4 - To String", () => {
 
   test("[Custom 1] toString() works in WHERE clause on integer property", () => {
     const graph = createTckGraph();
-    executeTckQuery(
-      graph,
-      `CREATE (:A {num: 42, name: 'answer'}), (:A {num: 7, name: 'lucky'})`,
-    );
+    executeTckQuery(graph, `CREATE (:A {num: 42, name: 'answer'}), (:A {num: 7, name: 'lucky'})`);
 
     // Use toString() to compare integer as string
     const results = executeTckQuery(
@@ -190,10 +178,7 @@ describe("TypeConversion4 - To String", () => {
 
   test("[Custom 2] toString() works with boolean property in WHERE", () => {
     const graph = createTckGraph();
-    executeTckQuery(
-      graph,
-      `CREATE (:A {flag: true, name: 'yes'}), (:A {flag: false, name: 'no'})`,
-    );
+    executeTckQuery(graph, `CREATE (:A {flag: true, name: 'yes'}), (:A {flag: false, name: 'no'})`);
 
     // toString(true) = 'true', toString(false) = 'false'
     const results = executeTckQuery(
@@ -207,10 +192,7 @@ describe("TypeConversion4 - To String", () => {
 
   test("[Custom 3] toString() on float property", () => {
     const graph = createTckGraph();
-    executeTckQuery(
-      graph,
-      `CREATE (:A {num: 3.14, name: 'pi'}), (:A {num: 2.71, name: 'e'})`,
-    );
+    executeTckQuery(graph, `CREATE (:A {num: 3.14, name: 'pi'}), (:A {num: 2.71, name: 'e'})`);
 
     // Check that toString converts float correctly using equality comparison
     const results = executeTckQuery(
@@ -224,10 +206,7 @@ describe("TypeConversion4 - To String", () => {
 
   test("[Custom 4] toString() on string returns same value", () => {
     const graph = createTckGraph();
-    executeTckQuery(
-      graph,
-      `CREATE (:A {str: 'hello', name: 'a'}), (:A {str: 'world', name: 'b'})`,
-    );
+    executeTckQuery(graph, `CREATE (:A {str: 'hello', name: 'a'}), (:A {str: 'world', name: 'b'})`);
 
     const results = executeTckQuery(
       graph,
@@ -240,10 +219,7 @@ describe("TypeConversion4 - To String", () => {
 
   test("[Custom 5] toString() comparison with explicit string value", () => {
     const graph = createTckGraph();
-    executeTckQuery(
-      graph,
-      `CREATE (:A {num: 123, name: 'has2'}), (:A {num: 456, name: 'no2'})`,
-    );
+    executeTckQuery(graph, `CREATE (:A {num: 123, name: 'has2'}), (:A {num: 456, name: 'no2'})`);
 
     // Check if toString matches expected value
     const results = executeTckQuery(
@@ -257,10 +233,7 @@ describe("TypeConversion4 - To String", () => {
 
   test("[Custom 6] toString() handles negative numbers", () => {
     const graph = createTckGraph();
-    executeTckQuery(
-      graph,
-      `CREATE (:A {num: -42, name: 'neg'}), (:A {num: 42, name: 'pos'})`,
-    );
+    executeTckQuery(graph, `CREATE (:A {num: -42, name: 'neg'}), (:A {num: 42, name: 'pos'})`);
 
     // toString() on negative number includes the minus sign
     const results = executeTckQuery(

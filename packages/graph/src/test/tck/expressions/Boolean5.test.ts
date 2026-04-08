@@ -29,23 +29,20 @@ describe("Boolean5 - Interop of logical operations", () => {
     }
   });
 
-  test.fails(
-    "[2] Disjunction is distributive over conjunction on null - complex expressions with null not supported",
-    () => {
-      const graph = createTckGraph();
-      const results = executeTckQuery(
-        graph,
-        `UNWIND [true, false, null] AS a
+  test.fails("[2] Disjunction is distributive over conjunction on null - complex expressions with null not supported", () => {
+    const graph = createTckGraph();
+    const results = executeTckQuery(
+      graph,
+      `UNWIND [true, false, null] AS a
        UNWIND [true, false, null] AS b
        UNWIND [true, false, null] AS c
        WITH a, b, c WHERE a IS NULL OR b IS NULL OR c IS NULL
        RETURN (a OR (b AND c)) IS NULL = ((a OR b) AND (a OR c)) IS NULL AS result`,
-      );
-      for (const r of results) {
-        expect(r).toBe(true);
-      }
-    },
-  );
+    );
+    for (const r of results) {
+      expect(r).toBe(true);
+    }
+  });
 
   test("[3] Conjunction is distributive over disjunction on non-null", () => {
     // Original TCK:
@@ -69,23 +66,20 @@ describe("Boolean5 - Interop of logical operations", () => {
     }
   });
 
-  test.fails(
-    "[4] Conjunction is distributive over disjunction on null - complex expressions with null not supported",
-    () => {
-      const graph = createTckGraph();
-      const results = executeTckQuery(
-        graph,
-        `UNWIND [true, false, null] AS a
+  test.fails("[4] Conjunction is distributive over disjunction on null - complex expressions with null not supported", () => {
+    const graph = createTckGraph();
+    const results = executeTckQuery(
+      graph,
+      `UNWIND [true, false, null] AS a
        UNWIND [true, false, null] AS b
        UNWIND [true, false, null] AS c
        WITH a, b, c WHERE a IS NULL OR b IS NULL OR c IS NULL
        RETURN (a AND (b OR c)) IS NULL = ((a AND b) OR (a AND c)) IS NULL AS result`,
-      );
-      for (const r of results) {
-        expect(r).toBe(true);
-      }
-    },
-  );
+    );
+    for (const r of results) {
+      expect(r).toBe(true);
+    }
+  });
 
   test("[5] Conjunction is distributive over exclusive disjunction on non-null", () => {
     // Original TCK:
@@ -109,21 +103,18 @@ describe("Boolean5 - Interop of logical operations", () => {
     }
   });
 
-  test.fails(
-    "[6] Conjunction is not distributive over exclusive disjunction on null - complex expressions with null not supported",
-    () => {
-      const graph = createTckGraph();
-      // For (null, true, true), (a AND (b XOR c)) IS NULL != ((a AND b) XOR (a AND c)) IS NULL
-      const results = executeTckQuery(
-        graph,
-        `UNWIND [null] AS a
+  test.fails("[6] Conjunction is not distributive over exclusive disjunction on null - complex expressions with null not supported", () => {
+    const graph = createTckGraph();
+    // For (null, true, true), (a AND (b XOR c)) IS NULL != ((a AND b) XOR (a AND c)) IS NULL
+    const results = executeTckQuery(
+      graph,
+      `UNWIND [null] AS a
        UNWIND [true] AS b
        UNWIND [true] AS c
        RETURN (a AND (b XOR c)) IS NULL = ((a AND b) XOR (a AND c)) IS NULL AS result`,
-      );
-      expect(results[0]).toBe(false);
-    },
-  );
+    );
+    expect(results[0]).toBe(false);
+  });
 
   test("[7] De Morgan's law on non-null: negation of disjunction is conjunction of negations", () => {
     // Original TCK:
@@ -232,12 +223,8 @@ describe("Boolean5 - Interop of logical operations", () => {
     // Both should have same length
     expect(resultsLeft).toHaveLength(resultsRight.length);
 
-    const leftIds = resultsLeft
-      .map((r) => (Array.isArray(r) ? r[0] : r) as string)
-      .sort();
-    const rightIds = resultsRight
-      .map((r) => (Array.isArray(r) ? r[0] : r) as string)
-      .sort();
+    const leftIds = resultsLeft.map((r) => (Array.isArray(r) ? r[0] : r) as string).sort();
+    const rightIds = resultsRight.map((r) => (Array.isArray(r) ? r[0] : r) as string).sort();
     expect(leftIds).toEqual(rightIds);
   });
 
@@ -262,12 +249,8 @@ describe("Boolean5 - Interop of logical operations", () => {
 
     expect(resultsLeft).toHaveLength(1);
     expect(resultsRight).toHaveLength(1);
-    const leftId = Array.isArray(resultsLeft[0])
-      ? resultsLeft[0][0]
-      : resultsLeft[0];
-    const rightId = Array.isArray(resultsRight[0])
-      ? resultsRight[0][0]
-      : resultsRight[0];
+    const leftId = Array.isArray(resultsLeft[0]) ? resultsLeft[0][0] : resultsLeft[0];
+    const rightId = Array.isArray(resultsRight[0]) ? resultsRight[0][0] : resultsRight[0];
     expect(leftId).toBe("FF");
     expect(rightId).toBe("FF");
   });
@@ -294,12 +277,8 @@ describe("Boolean5 - Interop of logical operations", () => {
     expect(resultsLeft).toHaveLength(3);
     expect(resultsRight).toHaveLength(3);
 
-    const leftIds = resultsLeft
-      .map((r) => (Array.isArray(r) ? r[0] : r) as string)
-      .sort();
-    const rightIds = resultsRight
-      .map((r) => (Array.isArray(r) ? r[0] : r) as string)
-      .sort();
+    const leftIds = resultsLeft.map((r) => (Array.isArray(r) ? r[0] : r) as string).sort();
+    const rightIds = resultsRight.map((r) => (Array.isArray(r) ? r[0] : r) as string).sort();
     expect(leftIds).toEqual(rightIds);
     expect(leftIds).toContain("FF");
     expect(leftIds).toContain("FT");

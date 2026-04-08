@@ -3,24 +3,13 @@
  * Translated from tmp/tck/features/clauses/with-where/WithWhere5.feature
  */
 import { describe, test, expect } from "vitest";
-import {
-  createTckGraph,
-  executeTckQuery,
-  getLabel,
-  getProperty,
-} from "../tckHelpers.js";
+import { createTckGraph, executeTckQuery, getLabel, getProperty } from "../tckHelpers.js";
 
 describe("WithWhere5 - Filter on predicate resulting in null", () => {
   test("[1] Filter out on null", () => {
     const graph = createTckGraph();
-    executeTckQuery(
-      graph,
-      "CREATE (:Root {name: 'x'})-[:T]->(:TextNode {var: 'text'})",
-    );
-    executeTckQuery(
-      graph,
-      "CREATE (:Root {name: 'x'})-[:T]->(:IntNode {var: 0})",
-    );
+    executeTckQuery(graph, "CREATE (:Root {name: 'x'})-[:T]->(:TextNode {var: 'text'})");
+    executeTckQuery(graph, "CREATE (:Root {name: 'x'})-[:T]->(:IntNode {var: 0})");
 
     // Match only TextNode, filter by string comparison
     const results = executeTckQuery(
@@ -33,43 +22,28 @@ describe("WithWhere5 - Filter on predicate resulting in null", () => {
     expect(getProperty(node as Record<string, unknown>, "var")).toBe("text");
   });
 
-  test.fails(
-    "[2] Filter out on null if the AND'd predicate evaluates to false - label predicate in WHERE not supported",
-    () => {
-      // Original test uses label predicate: WHERE i.var > 'te' AND i:TextNode
-      // Label predicates in WHERE (i:TextNode) not supported in our grammar
-      const graph = createTckGraph();
-      executeTckQuery(
-        graph,
-        "CREATE (:Root {name: 'x'})-[:T]->(:TextNode {var: 'text'})",
-      );
-      executeTckQuery(
-        graph,
-        "CREATE (:Root {name: 'x'})-[:T]->(:IntNode {var: 0})",
-      );
+  test.fails("[2] Filter out on null if the AND'd predicate evaluates to false - label predicate in WHERE not supported", () => {
+    // Original test uses label predicate: WHERE i.var > 'te' AND i:TextNode
+    // Label predicates in WHERE (i:TextNode) not supported in our grammar
+    const graph = createTckGraph();
+    executeTckQuery(graph, "CREATE (:Root {name: 'x'})-[:T]->(:TextNode {var: 'text'})");
+    executeTckQuery(graph, "CREATE (:Root {name: 'x'})-[:T]->(:IntNode {var: 0})");
 
-      const results = executeTckQuery(
-        graph,
-        "MATCH (:Root {name: 'x'})-[:T]->(i) WITH i WHERE i.var > 'te' AND i:TextNode RETURN i",
-      );
-      expect(results.length).toBe(1);
-      const node = Array.isArray(results[0]) ? results[0][0] : results[0];
-      expect(getLabel(node as Record<string, unknown>)).toBe("TextNode");
-    },
-  );
+    const results = executeTckQuery(
+      graph,
+      "MATCH (:Root {name: 'x'})-[:T]->(i) WITH i WHERE i.var > 'te' AND i:TextNode RETURN i",
+    );
+    expect(results.length).toBe(1);
+    const node = Array.isArray(results[0]) ? results[0][0] : results[0];
+    expect(getLabel(node as Record<string, unknown>)).toBe("TextNode");
+  });
 
   test("[3] Filter out on null if the AND'd predicate evaluates to true - IS NOT NULL not supported", () => {
     // Original test uses: WHERE i.var > 'te' AND i.var IS NOT NULL
     // IS NOT NULL in WITH WHERE may not be fully supported
     const graph = createTckGraph();
-    executeTckQuery(
-      graph,
-      "CREATE (:Root {name: 'x'})-[:T]->(:TextNode {var: 'text'})",
-    );
-    executeTckQuery(
-      graph,
-      "CREATE (:Root {name: 'x'})-[:T]->(:IntNode {var: 0})",
-    );
+    executeTckQuery(graph, "CREATE (:Root {name: 'x'})-[:T]->(:TextNode {var: 'text'})");
+    executeTckQuery(graph, "CREATE (:Root {name: 'x'})-[:T]->(:IntNode {var: 0})");
 
     const results = executeTckQuery(
       graph,
@@ -84,14 +58,8 @@ describe("WithWhere5 - Filter on predicate resulting in null", () => {
     // Original test: MATCH (:Root {name: 'x'})-->(i) - unlabeled edge pattern
     // Also uses IS NOT NULL in WHERE
     const graph = createTckGraph();
-    executeTckQuery(
-      graph,
-      "CREATE (:Root {name: 'x'})-[:T]->(:TextNode {var: 'text'})",
-    );
-    executeTckQuery(
-      graph,
-      "CREATE (:Root {name: 'x'})-[:T]->(:IntNode {var: 0})",
-    );
+    executeTckQuery(graph, "CREATE (:Root {name: 'x'})-[:T]->(:TextNode {var: 'text'})");
+    executeTckQuery(graph, "CREATE (:Root {name: 'x'})-[:T]->(:IntNode {var: 0})");
 
     const results = executeTckQuery(
       graph,
@@ -107,10 +75,7 @@ describe("WithWhere5 - Filter on predicate resulting in null", () => {
     executeTckQuery(graph, "CREATE (:A {val: 'banana'})");
     executeTckQuery(graph, "CREATE (:A {val: 'cherry'})");
 
-    const results = executeTckQuery(
-      graph,
-      "MATCH (a:A) WITH a WHERE a.val > 'b' RETURN a.val",
-    );
+    const results = executeTckQuery(graph, "MATCH (a:A) WITH a WHERE a.val > 'b' RETURN a.val");
     // 'banana' and 'cherry' > 'b'
     expect(results.length).toBe(2);
     const values = results.map((r) => (Array.isArray(r) ? r[0] : r));
@@ -124,10 +89,7 @@ describe("WithWhere5 - Filter on predicate resulting in null", () => {
     executeTckQuery(graph, "CREATE (:A {num: 10})");
     executeTckQuery(graph, "CREATE (:A {num: 15})");
 
-    const results = executeTckQuery(
-      graph,
-      "MATCH (a:A) WITH a WHERE a.num >= 10 RETURN a.num",
-    );
+    const results = executeTckQuery(graph, "MATCH (a:A) WITH a WHERE a.num >= 10 RETURN a.num");
     expect(results.length).toBe(2);
     const values = results.map((r) => (Array.isArray(r) ? r[0] : r));
     expect(values).toContain(10);

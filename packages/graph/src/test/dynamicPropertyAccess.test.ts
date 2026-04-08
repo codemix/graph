@@ -4,11 +4,7 @@ import { astToSteps } from "../astToSteps.js";
 import { Graph } from "../Graph.js";
 import { InMemoryGraphStorage } from "../GraphStorage.js";
 import { createTraverser, setQueryParams, clearQueryParams } from "../Steps.js";
-import type {
-  Query,
-  DynamicPropertyAccess,
-  ExpressionCondition,
-} from "../AST.js";
+import type { Query, DynamicPropertyAccess, ExpressionCondition } from "../AST.js";
 import type { GraphSchema } from "../GraphSchema.js";
 import { StandardSchemaV1 } from "@standard-schema/spec";
 
@@ -50,9 +46,7 @@ describe("Dynamic Property Access", () => {
       const condition = ast.matches[0]!.where!.condition;
       expect(condition.type).toBe("ExpressionCondition");
       if (condition.type === "ExpressionCondition") {
-        expect((condition.left as DynamicPropertyAccess).type).toBe(
-          "DynamicPropertyAccess",
-        );
+        expect((condition.left as DynamicPropertyAccess).type).toBe("DynamicPropertyAccess");
         const dynamicAccess = condition.left as DynamicPropertyAccess;
         expect((dynamicAccess.object as any).type).toBe("VariableRef");
         expect((dynamicAccess.object as any).variable).toBe("n");
@@ -186,9 +180,7 @@ describe("Dynamic Property Access", () => {
       const steps = astToSteps(ast);
       const traverser = createTraverser(steps);
 
-      const results = Array.from(
-        traverser.traverse(graph, [undefined]),
-      ) as string[];
+      const results = Array.from(traverser.traverse(graph, [undefined])) as string[];
       expect(results).toHaveLength(2);
       expect(results.sort()).toEqual(["Alice", "Charlie"]);
     });
@@ -234,9 +226,7 @@ describe("Dynamic Property Access", () => {
       const steps = astToSteps(ast);
       const traverser = createTraverser(steps);
 
-      const results = Array.from(
-        traverser.traverse(graph, [undefined]),
-      ) as string[];
+      const results = Array.from(traverser.traverse(graph, [undefined])) as string[];
       expect(results).toHaveLength(2);
       expect(results.sort()).toEqual(["Alice", "Bob"]);
     });
@@ -286,15 +276,13 @@ describe("Dynamic Property Access", () => {
       // Numeric index -> list indexing
       const listQuery = `MATCH (n:Person) WHERE n.items[0] = 'first' RETURN n`;
       const listAst = parse(listQuery) as Query;
-      const listCondition = listAst.matches[0]!.where!
-        .condition as ExpressionCondition;
+      const listCondition = listAst.matches[0]!.where!.condition as ExpressionCondition;
       expect((listCondition.left as any).type).toBe("ListIndexExpression");
 
       // String key -> dynamic property access
       const propQuery = `MATCH (n:Person) WHERE n['items'] = 'value' RETURN n`;
       const propAst = parse(propQuery) as Query;
-      const propCondition = propAst.matches[0]!.where!
-        .condition as ExpressionCondition;
+      const propCondition = propAst.matches[0]!.where!.condition as ExpressionCondition;
       expect((propCondition.left as any).type).toBe("DynamicPropertyAccess");
     });
   });

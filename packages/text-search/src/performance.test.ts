@@ -398,11 +398,9 @@ test("Performance and Large Document Tests large document handling should correc
 
 test("Performance and Large Document Tests large document handling should maintain accuracy with long documents", () => {
   // Create documents with varying relevance using controlled content
-  const highRelevance =
-    "software engineering ".repeat(100) + generateDocument(800, 1);
+  const highRelevance = "software engineering ".repeat(100) + generateDocument(800, 1);
 
-  const mediumRelevance =
-    "software engineering ".repeat(30) + generateDocument(940, 2);
+  const mediumRelevance = "software engineering ".repeat(30) + generateDocument(940, 2);
 
   const lowRelevance = generateDocument(1000, 3);
 
@@ -413,10 +411,8 @@ test("Performance and Large Document Tests large document handling should mainta
   ]);
 
   // High and medium relevance should score higher than low
-  const highScore =
-    results.find((r) => r.document === highRelevance)?.score ?? 0;
-  const mediumScore =
-    results.find((r) => r.document === mediumRelevance)?.score ?? 0;
+  const highScore = results.find((r) => r.document === highRelevance)?.score ?? 0;
+  const mediumScore = results.find((r) => r.document === mediumRelevance)?.score ?? 0;
   const lowScore = results.find((r) => r.document === lowRelevance)?.score ?? 0;
 
   // Documents with keywords should score higher than random
@@ -465,10 +461,7 @@ test("Performance and Large Document Tests performance benchmarks should rank 10
   }
 
   const start = performance.now();
-  const results = rankDocuments(
-    "database connection pooling optimization",
-    documents,
-  );
+  const results = rankDocuments("database connection pooling optimization", documents);
   const elapsed = performance.now() - start;
 
   expect(results.length).toBe(100);
@@ -497,9 +490,7 @@ test("Performance and Large Document Tests performance benchmarks should handle 
   // Should complete in under 1000ms
   expect(elapsed).toBeLessThan(1000);
 
-  console.log(
-    `500 scoring operations (50 docs x 10 passes) in ${elapsed.toFixed(2)}ms`,
-  );
+  console.log(`500 scoring operations (50 docs x 10 passes) in ${elapsed.toFixed(2)}ms`);
 });
 
 test("Performance and Large Document Tests object-based ranking with large datasets should rank 100 article objects efficiently", () => {
@@ -572,9 +563,7 @@ test("Performance and Large Document Tests edge cases with long documents should
 
 test("Performance and Large Document Tests edge cases with long documents should handle documents with special characters", () => {
   const docWithSpecials =
-    generateDocument(500) +
-    " !@#$%^&*()_+-=[]{}|;':\",./<>? " +
-    generateDocument(500, 1);
+    generateDocument(500) + " !@#$%^&*()_+-=[]{}|;':\",./<>? " + generateDocument(500, 1);
 
   const matcher = createMatcher("database configuration");
   const score = matcher(docWithSpecials);

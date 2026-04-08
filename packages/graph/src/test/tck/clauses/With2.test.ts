@@ -35,10 +35,7 @@ describe("With2 - Forward single expression", () => {
     const graph = createTckGraph();
     executeTckQuery(graph, "CREATE (:A {num: 42})");
 
-    const results = executeTckQuery(
-      graph,
-      "MATCH (a:A) WITH a.num AS num RETURN num",
-    );
+    const results = executeTckQuery(graph, "MATCH (a:A) WITH a.num AS num RETURN num");
     expect(results.length).toBe(1);
     // Single RETURN item with WITH may be wrapped
     const val = Array.isArray(results[0]) ? results[0][0] : results[0];

@@ -16,9 +16,7 @@ describe("Named path patterns (p = pattern)", () => {
     });
 
     test("MATCH path = (x:User)-[:KNOWS]->(y:User) parses correctly", () => {
-      const ast = parse(
-        "MATCH path = (x:User)-[:KNOWS]->(y:User) RETURN path",
-      ) as Query;
+      const ast = parse("MATCH path = (x:User)-[:KNOWS]->(y:User) RETURN path") as Query;
       const pattern = ast.matches![0]!.pattern as Pattern;
       expect(pattern.pathVariable).toBe("path");
     });
@@ -39,14 +37,8 @@ describe("Named path patterns (p = pattern)", () => {
   describe("Query execution - path binding", () => {
     test("Named path can be returned", () => {
       const graph = createTckGraph();
-      executeTckQuery(
-        graph,
-        "CREATE (a:A {name: 'A'})-[:KNOWS]->(b:B {name: 'B'})",
-      );
-      const results = executeTckQuery(
-        graph,
-        "MATCH p = (a:A)-[:KNOWS]->(b:B) RETURN p",
-      );
+      executeTckQuery(graph, "CREATE (a:A {name: 'A'})-[:KNOWS]->(b:B {name: 'B'})");
+      const results = executeTckQuery(graph, "MATCH p = (a:A)-[:KNOWS]->(b:B) RETURN p");
       expect(results).toHaveLength(1);
       // Path should be returned (as a TraversalPath)
       expect(results[0]).toBeDefined();
@@ -54,14 +46,8 @@ describe("Named path patterns (p = pattern)", () => {
 
     test("nodes(p) returns list of nodes in path", () => {
       const graph = createTckGraph();
-      executeTckQuery(
-        graph,
-        "CREATE (a:A {name: 'A'})-[:KNOWS]->(b:B {name: 'B'})",
-      );
-      const results = executeTckQuery(
-        graph,
-        "MATCH p = (a:A)-[:KNOWS]->(b:B) RETURN nodes(p)",
-      );
+      executeTckQuery(graph, "CREATE (a:A {name: 'A'})-[:KNOWS]->(b:B {name: 'B'})");
+      const results = executeTckQuery(graph, "MATCH p = (a:A)-[:KNOWS]->(b:B) RETURN nodes(p)");
       expect(results).toHaveLength(1);
       const nodes = results[0] as unknown[];
       expect(nodes).toHaveLength(2);
@@ -69,10 +55,7 @@ describe("Named path patterns (p = pattern)", () => {
 
     test("relationships(p) returns list of relationships in path", () => {
       const graph = createTckGraph();
-      executeTckQuery(
-        graph,
-        "CREATE (a:A {name: 'A'})-[:KNOWS]->(b:B {name: 'B'})",
-      );
+      executeTckQuery(graph, "CREATE (a:A {name: 'A'})-[:KNOWS]->(b:B {name: 'B'})");
       const results = executeTckQuery(
         graph,
         "MATCH p = (a:A)-[:KNOWS]->(b:B) RETURN relationships(p)",
@@ -84,24 +67,15 @@ describe("Named path patterns (p = pattern)", () => {
 
     test("length(p) returns number of relationships in path", () => {
       const graph = createTckGraph();
-      executeTckQuery(
-        graph,
-        "CREATE (a:A {name: 'A'})-[:KNOWS]->(b:B {name: 'B'})",
-      );
-      const results = executeTckQuery(
-        graph,
-        "MATCH p = (a:A)-[:KNOWS]->(b:B) RETURN length(p)",
-      );
+      executeTckQuery(graph, "CREATE (a:A {name: 'A'})-[:KNOWS]->(b:B {name: 'B'})");
+      const results = executeTckQuery(graph, "MATCH p = (a:A)-[:KNOWS]->(b:B) RETURN length(p)");
       expect(results).toEqual([1]);
     });
 
     test("Path through multiple hops", () => {
       const graph = createTckGraph();
       executeTckQuery(graph, "CREATE (a:A)-[:R]->(b:B)-[:R]->(c:C)");
-      const results = executeTckQuery(
-        graph,
-        "MATCH p = (a:A)-[:R*]->(c:C) RETURN length(p)",
-      );
+      const results = executeTckQuery(graph, "MATCH p = (a:A)-[:R*]->(c:C) RETURN length(p)");
       // Should match both 1-hop (A->B->C) but need to check actual behavior
       // At minimum, the direct 2-hop path should match
       expect(results.length).toBeGreaterThanOrEqual(1);
@@ -133,10 +107,7 @@ describe("Named path patterns (p = pattern)", () => {
 
     test("Combine path functions with node variables", () => {
       const graph = createTckGraph();
-      executeTckQuery(
-        graph,
-        "CREATE (a:A {name: 'Alice'})-[:KNOWS]->(b:B {name: 'Bob'})",
-      );
+      executeTckQuery(graph, "CREATE (a:A {name: 'Alice'})-[:KNOWS]->(b:B {name: 'Bob'})");
       const results = executeTckQuery(
         graph,
         "MATCH p = (a:A)-[:KNOWS]->(b:B) RETURN a.name, length(p), b.name",

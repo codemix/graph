@@ -3,12 +3,7 @@
  * Translated from tmp/tck/features/clauses/match-where/MatchWhere5.feature
  */
 import { describe, test, expect } from "vitest";
-import {
-  createTckGraph,
-  executeTckQuery,
-  getLabel,
-  getProperty,
-} from "../tckHelpers.js";
+import { createTckGraph, executeTckQuery, getLabel, getProperty } from "../tckHelpers.js";
 
 describe("MatchWhere5 - Filter on predicate resulting in null", () => {
   test("[1] Filter out on null", () => {
@@ -34,27 +29,24 @@ describe("MatchWhere5 - Filter on predicate resulting in null", () => {
     expect(getProperty(i, "var")).toBe("text");
   });
 
-  test.fails(
-    "[2] Filter out on null if the AND'd predicate evaluates to false - WHERE i:TextNode label syntax not supported",
-    () => {
-      const graph = createTckGraph();
-      executeTckQuery(
-        graph,
-        `CREATE (root:Root {name: 'x'}),
+  test.fails("[2] Filter out on null if the AND'd predicate evaluates to false - WHERE i:TextNode label syntax not supported", () => {
+    const graph = createTckGraph();
+    executeTckQuery(
+      graph,
+      `CREATE (root:Root {name: 'x'}),
              (child1:TextNode {var: 'text'}),
              (child2:IntNode {var: 0})
        CREATE (root)-[:T]->(child1),
              (root)-[:T]->(child2)`,
-      );
-      const results = executeTckQuery(
-        graph,
-        `MATCH (:Root {name: 'x'})-->(i)
+    );
+    const results = executeTckQuery(
+      graph,
+      `MATCH (:Root {name: 'x'})-->(i)
        WHERE i.var > 'te' AND i:IntNode
        RETURN i`,
-      );
-      expect(results).toHaveLength(0);
-    },
-  );
+    );
+    expect(results).toHaveLength(0);
+  });
 
   test("[3] Filter out on null if the AND'd predicate evaluates to true", () => {
     const graph = createTckGraph();

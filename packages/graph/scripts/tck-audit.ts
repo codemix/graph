@@ -119,22 +119,16 @@ function extractSkippedTests(filePath: string): SkippedTest[] {
       const fullTestName = match[1];
       // Extract reason after the last " - "
       const lastDashIndex = fullTestName.lastIndexOf(" - ");
-      const skipReason =
-        lastDashIndex > 0 ? fullTestName.slice(lastDashIndex + 3) : "";
-      const testName =
-        lastDashIndex > 0 ? fullTestName.slice(0, lastDashIndex) : fullTestName;
+      const skipReason = lastDashIndex > 0 ? fullTestName.slice(lastDashIndex + 3) : "";
+      const testName = lastDashIndex > 0 ? fullTestName.slice(0, lastDashIndex) : fullTestName;
 
       // Categorize
       let category: "design" | "now_working" | "unknown" = "unknown";
 
       const reasonLower = skipReason.toLowerCase();
-      if (
-        DESIGN_EXCLUSIONS.some((d) => reasonLower.includes(d.toLowerCase()))
-      ) {
+      if (DESIGN_EXCLUSIONS.some((d) => reasonLower.includes(d.toLowerCase()))) {
         category = "design";
-      } else if (
-        NOW_WORKING_PATTERNS.some((p) => reasonLower.includes(p.toLowerCase()))
-      ) {
+      } else if (NOW_WORKING_PATTERNS.some((p) => reasonLower.includes(p.toLowerCase()))) {
         category = "now_working";
       }
 
@@ -180,10 +174,7 @@ function tryRunTest(test: SkippedTest): TestResult {
   try {
     // Run just this test file with a filter for this specific test
     const testPattern = test.testName.replace(/[[\]()]/g, "\\$&");
-    const relativePath = path.relative(
-      path.join(import.meta.dirname, ".."),
-      test.file,
-    );
+    const relativePath = path.relative(path.join(import.meta.dirname, ".."), test.file);
 
     const result = spawnSync(
       "npx",
@@ -250,10 +241,7 @@ function applyUnskips(results: TestResult[]): void {
 /**
  * Generate markdown report
  */
-function generateReport(
-  skippedTests: SkippedTest[],
-  results: TestResult[],
-): string {
+function generateReport(skippedTests: SkippedTest[], results: TestResult[]): string {
   const lines: string[] = [];
 
   lines.push("# TCK Audit Results");
@@ -292,9 +280,7 @@ function generateReport(
   // Design exclusions
   lines.push("## Design Exclusions (Will Not Be Fixed)");
   lines.push("");
-  lines.push(
-    "These tests require features that conflict with design decisions:",
-  );
+  lines.push("These tests require features that conflict with design decisions:");
   lines.push("");
   for (const test of design.slice(0, 20)) {
     const relPath = path.relative(TCK_DIR, test.file);
@@ -308,9 +294,7 @@ function generateReport(
   // Now working candidates
   lines.push('## Candidates: Citing "Now Working" Features');
   lines.push("");
-  lines.push(
-    "These tests cite features that are now implemented. They should be verified:",
-  );
+  lines.push("These tests cite features that are now implemented. They should be verified:");
   lines.push("");
   for (const test of nowWorking.slice(0, 30)) {
     const relPath = path.relative(TCK_DIR, test.file);
@@ -327,9 +311,7 @@ function generateReport(
     lines.push("");
     for (const result of passed) {
       const relPath = path.relative(TCK_DIR, result.test.file);
-      lines.push(
-        `- \`${relPath}:${result.test.lineNumber}\`: ${result.test.testName}`,
-      );
+      lines.push(`- \`${relPath}:${result.test.lineNumber}\`: ${result.test.testName}`);
     }
     lines.push("");
   }
@@ -382,15 +364,11 @@ async function main(): Promise<void> {
     allSkipped.push(...extractSkippedTests(file));
   }
   console.log(`Found ${allSkipped.length} skipped tests`);
-  console.log(
-    `  - Design exclusions: ${allSkipped.filter((t) => t.category === "design").length}`,
-  );
+  console.log(`  - Design exclusions: ${allSkipped.filter((t) => t.category === "design").length}`);
   console.log(
     `  - Now working candidates: ${allSkipped.filter((t) => t.category === "now_working").length}`,
   );
-  console.log(
-    `  - Unknown: ${allSkipped.filter((t) => t.category === "unknown").length}`,
-  );
+  console.log(`  - Unknown: ${allSkipped.filter((t) => t.category === "unknown").length}`);
   console.log("");
 
   let results: TestResult[] = [];

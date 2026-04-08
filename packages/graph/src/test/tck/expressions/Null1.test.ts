@@ -9,10 +9,7 @@ describe("Null1 - IS NULL validation", () => {
   test("[1] Property null check on non-null node", () => {
     const graph = createTckGraph();
     executeTckQuery(graph, "CREATE ({exists: 42})");
-    const results = executeTckQuery(
-      graph,
-      "MATCH (n) RETURN n.missing IS NULL, n.exists IS NULL",
-    );
+    const results = executeTckQuery(graph, "MATCH (n) RETURN n.missing IS NULL, n.exists IS NULL");
     expect(results).toHaveLength(1);
     expect(results[0]).toEqual([true, false]);
   });
@@ -30,10 +27,7 @@ describe("Null1 - IS NULL validation", () => {
 
   test("[3] Property null check on null node", () => {
     const graph = createTckGraph();
-    const results = executeTckQuery(
-      graph,
-      "OPTIONAL MATCH (n) RETURN n.missing IS NULL",
-    );
+    const results = executeTckQuery(graph, "OPTIONAL MATCH (n) RETURN n.missing IS NULL");
     expect(results).toHaveLength(1);
     expect(results[0]).toBe(true);
   });
@@ -67,17 +61,11 @@ describe("Null1 - IS NULL validation", () => {
     executeTckQuery(graph, "CREATE (:X {prop: 42}), (:X {name: 'noProp'})");
 
     // Test IS NULL with various casings in WHERE clause
-    const resultsLower = executeTckQuery(
-      graph,
-      "MATCH (n:X) WHERE n.prop is null RETURN n.name",
-    );
+    const resultsLower = executeTckQuery(graph, "MATCH (n:X) WHERE n.prop is null RETURN n.name");
     expect(resultsLower).toHaveLength(1);
     expect(resultsLower[0]).toBe("noProp");
 
-    const resultsMixed = executeTckQuery(
-      graph,
-      "MATCH (n:X) WHERE n.prop IS NULL RETURN n.name",
-    );
+    const resultsMixed = executeTckQuery(graph, "MATCH (n:X) WHERE n.prop IS NULL RETURN n.name");
     expect(resultsMixed).toHaveLength(1);
     expect(resultsMixed[0]).toBe("noProp");
   });
@@ -85,15 +73,9 @@ describe("Null1 - IS NULL validation", () => {
   // Custom tests demonstrating IS NULL behavior in WHERE clause
   test("[custom-1] IS NULL for missing property", () => {
     const graph = createTckGraph();
-    executeTckQuery(
-      graph,
-      "CREATE (:A {name: 'has-num', num: 42}), (:A {name: 'no-num'})",
-    );
+    executeTckQuery(graph, "CREATE (:A {name: 'has-num', num: 42}), (:A {name: 'no-num'})");
 
-    const results = executeTckQuery(
-      graph,
-      "MATCH (n:A) WHERE n.num IS NULL RETURN n.name",
-    );
+    const results = executeTckQuery(graph, "MATCH (n:A) WHERE n.num IS NULL RETURN n.name");
 
     expect(results).toHaveLength(1);
     expect(results[0]).toBe("no-num");
@@ -106,10 +88,7 @@ describe("Null1 - IS NULL validation", () => {
       "CREATE (:A {name: 'explicit-null', value: null}), (:A {name: 'has-value', value: 42})",
     );
 
-    const results = executeTckQuery(
-      graph,
-      "MATCH (n:A) WHERE n.value IS NULL RETURN n.name",
-    );
+    const results = executeTckQuery(graph, "MATCH (n:A) WHERE n.value IS NULL RETURN n.name");
 
     // Should match node with null value and node with missing property
     expect(results).toHaveLength(1);
@@ -150,24 +129,21 @@ describe("Null1 - IS NULL validation", () => {
     expect(results).toEqual(["a", "b"]);
   });
 
-  test.fails(
-    "[custom-5] IS NULL on relationship property - relationship property null check not fully supported",
-    () => {
-      const graph = createTckGraph();
-      executeTckQuery(
-        graph,
-        "CREATE (:A {name: 'a'})-[:T {num: 1}]->(:B {name: 'b1'}), (:A {name: 'a2'})-[:T]->(:B {name: 'b2'})",
-      );
+  test.fails("[custom-5] IS NULL on relationship property - relationship property null check not fully supported", () => {
+    const graph = createTckGraph();
+    executeTckQuery(
+      graph,
+      "CREATE (:A {name: 'a'})-[:T {num: 1}]->(:B {name: 'b1'}), (:A {name: 'a2'})-[:T]->(:B {name: 'b2'})",
+    );
 
-      const results = executeTckQuery(
-        graph,
-        "MATCH (a:A)-[r:T]->(b:B) WHERE r.num IS NULL RETURN b.name",
-      );
+    const results = executeTckQuery(
+      graph,
+      "MATCH (a:A)-[r:T]->(b:B) WHERE r.num IS NULL RETURN b.name",
+    );
 
-      expect(results).toHaveLength(1);
-      expect(results[0]).toBe("b2");
-    },
-  );
+    expect(results).toHaveLength(1);
+    expect(results[0]).toBe("b2");
+  });
 
   test("[custom-6] IS NULL with multiple matching nodes", () => {
     const graph = createTckGraph();

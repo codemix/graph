@@ -22,10 +22,7 @@ describe("Mathematical6 - Modulo division", () => {
     // Create nodes with values that represent modulo results
     executeTckQuery(graph, "CREATE (:A {num: 1})"); // 10 % 3 = 1 computed externally
 
-    const results = executeTckQuery(
-      graph,
-      "MATCH (n:A) WHERE n.num = 1 RETURN n.num",
-    );
+    const results = executeTckQuery(graph, "MATCH (n:A) WHERE n.num = 1 RETURN n.num");
 
     expect(results).toHaveLength(1);
     expect(results[0]).toBe(1);

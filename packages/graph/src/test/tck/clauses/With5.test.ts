@@ -6,22 +6,16 @@ import { describe, test, expect } from "vitest";
 import { createTckGraph, executeTckQuery } from "../tckHelpers.js";
 
 describe("With5 - Implicit grouping with DISTINCT", () => {
-  test.fails(
-    "[1] DISTINCT on an expression - unlabeled nodes not supported",
-    () => {
-      const graph = createTckGraph();
-      executeTckQuery(
-        graph,
-        "CREATE ({name: 'A'}), ({name: 'A'}), ({name: 'B'})",
-      );
-      const results = executeTckQuery(
-        graph,
-        "MATCH (a) WITH DISTINCT a.name AS name RETURN name ORDER BY name",
-      );
-      expect(results).toHaveLength(2);
-      expect(results).toEqual(["A", "B"]);
-    },
-  );
+  test.fails("[1] DISTINCT on an expression - unlabeled nodes not supported", () => {
+    const graph = createTckGraph();
+    executeTckQuery(graph, "CREATE ({name: 'A'}), ({name: 'A'}), ({name: 'B'})");
+    const results = executeTckQuery(
+      graph,
+      "MATCH (a) WITH DISTINCT a.name AS name RETURN name ORDER BY name",
+    );
+    expect(results).toHaveLength(2);
+    expect(results).toEqual(["A", "B"]);
+  });
 
   test("[1-custom] DISTINCT on an expression", () => {
     const graph = createTckGraph();
@@ -30,10 +24,7 @@ describe("With5 - Implicit grouping with DISTINCT", () => {
     executeTckQuery(graph, "CREATE (:A {name: 'B'})");
 
     // Cannot use ORDER BY alias name
-    const results = executeTckQuery(
-      graph,
-      "MATCH (a:A) WITH DISTINCT a.name AS name RETURN name",
-    );
+    const results = executeTckQuery(graph, "MATCH (a:A) WITH DISTINCT a.name AS name RETURN name");
     expect(results.length).toBe(2);
     // Extract values and sort
     const names = results.map((r) => (Array.isArray(r) ? r[0] : r)).sort();
@@ -58,10 +49,7 @@ describe("With5 - Implicit grouping with DISTINCT", () => {
     executeTckQuery(graph, "CREATE (:A {num: 1})-[:REL]->(:B)");
 
     // Without DISTINCT would return 2 rows
-    const results = executeTckQuery(
-      graph,
-      "MATCH (a:A) WITH DISTINCT a.num AS num RETURN num",
-    );
+    const results = executeTckQuery(graph, "MATCH (a:A) WITH DISTINCT a.num AS num RETURN num");
     expect(results.length).toBe(1);
     // May be wrapped
     const val = Array.isArray(results[0]) ? results[0][0] : results[0];

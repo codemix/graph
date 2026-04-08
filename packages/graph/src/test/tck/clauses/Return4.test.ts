@@ -12,10 +12,7 @@ describe("Return4 - Column renaming", () => {
     // Expected: 'Someone'
     const graph = createTckGraph();
     executeTckQuery(graph, "CREATE ({name: 'Someone'})");
-    const results = executeTckQuery(
-      graph,
-      "MATCH (a) WITH a.name AS a RETURN a",
-    );
+    const results = executeTckQuery(graph, "MATCH (a) WITH a.name AS a RETURN a");
     expect(results).toHaveLength(1);
     const result = Array.isArray(results[0]) ? results[0][0] : results[0];
     expect(result).toBe("Someone");
@@ -25,10 +22,7 @@ describe("Return4 - Column renaming", () => {
     const graph = createTckGraph();
     executeTckQuery(graph, "CREATE (:A {name: 'Someone'})");
 
-    const results = executeTckQuery(
-      graph,
-      "MATCH (a:A) WITH a.name AS x RETURN x",
-    );
+    const results = executeTckQuery(graph, "MATCH (a:A) WITH a.name AS x RETURN x");
     expect(results).toHaveLength(1);
     // WITH returns wrapped in array
     const result = Array.isArray(results[0]) ? results[0][0] : results[0];
@@ -39,10 +33,7 @@ describe("Return4 - Column renaming", () => {
     const graph = createTckGraph();
     executeTckQuery(graph, "CREATE (:Single)");
 
-    const results = executeTckQuery(
-      graph,
-      "MATCH (a:Single) RETURN a AS ColumnName",
-    );
+    const results = executeTckQuery(graph, "MATCH (a:Single) RETURN a AS ColumnName");
     expect(results).toHaveLength(1);
     // Results are wrapped in array
     const [columnName] = results[0] as [Record<string, unknown>];
@@ -66,10 +57,7 @@ describe("Return4 - Column renaming", () => {
     const graph = createTckGraph();
     executeTckQuery(graph, "CREATE (:A {id: 42})");
 
-    const results = executeTckQuery(
-      graph,
-      "MATCH (a:A) RETURN a.id AS x, a.id",
-    );
+    const results = executeTckQuery(graph, "MATCH (a:A) RETURN a.id AS x, a.id");
     expect(results).toHaveLength(1);
     const [x, id] = results[0] as [number, number];
     expect(x).toBe(42);
@@ -104,47 +92,32 @@ describe("Return4 - Column renaming", () => {
     // Note: Named paths ARE working (see Match6 tests), but this test requires unlabeled nodes
     const graph = createTckGraph();
     executeTckQuery(graph, "CREATE ()-[:T]->()");
-    const results = executeTckQuery(
-      graph,
-      "MATCH p = (n)-->(b) RETURN nOdEs( p )",
-    );
+    const results = executeTckQuery(graph, "MATCH p = (n)-->(b) RETURN nOdEs( p )");
     expect(results).toHaveLength(1);
     expect(Array.isArray(results[0])).toBe(true);
   });
 
-  test.fails(
-    "[6] Keeping used expression 3 - unlabeled nodes (by design)",
-    () => {
-      // Original query: MATCH p = (n)-->(b) RETURN coUnt( dIstInct p )
-      // Blocked: Uses unlabeled nodes (n) and (b) - unlabeled nodes not supported (by design)
-      // Note: Named paths ARE working (see Match6 tests), but this test requires unlabeled nodes
-      const graph = createTckGraph();
-      executeTckQuery(graph, "CREATE ()-[:T]->()");
-      const results = executeTckQuery(
-        graph,
-        "MATCH p = (n)-->(b) RETURN coUnt( dIstInct p )",
-      );
-      expect(results).toHaveLength(1);
-      expect(results[0]).toBe(1);
-    },
-  );
+  test.fails("[6] Keeping used expression 3 - unlabeled nodes (by design)", () => {
+    // Original query: MATCH p = (n)-->(b) RETURN coUnt( dIstInct p )
+    // Blocked: Uses unlabeled nodes (n) and (b) - unlabeled nodes not supported (by design)
+    // Note: Named paths ARE working (see Match6 tests), but this test requires unlabeled nodes
+    const graph = createTckGraph();
+    executeTckQuery(graph, "CREATE ()-[:T]->()");
+    const results = executeTckQuery(graph, "MATCH p = (n)-->(b) RETURN coUnt( dIstInct p )");
+    expect(results).toHaveLength(1);
+    expect(results[0]).toBe(1);
+  });
 
-  test.fails(
-    "[7] Keeping used expression 4 - unlabeled nodes (by design)",
-    () => {
-      // Original query: MATCH p = (n)-->(b) RETURN aVg(n.aGe)
-      // Blocked: Uses unlabeled nodes (n) and (b) - unlabeled nodes not supported (by design)
-      // Note: Named paths ARE working (see Match6 tests), but this test requires unlabeled nodes
-      const graph = createTckGraph();
-      executeTckQuery(graph, "CREATE ({aGe: 30})-[:T]->()");
-      const results = executeTckQuery(
-        graph,
-        "MATCH p = (n)-->(b) RETURN aVg(n.aGe)",
-      );
-      expect(results).toHaveLength(1);
-      expect(results[0]).toBe(30);
-    },
-  );
+  test.fails("[7] Keeping used expression 4 - unlabeled nodes (by design)", () => {
+    // Original query: MATCH p = (n)-->(b) RETURN aVg(n.aGe)
+    // Blocked: Uses unlabeled nodes (n) and (b) - unlabeled nodes not supported (by design)
+    // Note: Named paths ARE working (see Match6 tests), but this test requires unlabeled nodes
+    const graph = createTckGraph();
+    executeTckQuery(graph, "CREATE ({aGe: 30})-[:T]->()");
+    const results = executeTckQuery(graph, "MATCH p = (n)-->(b) RETURN aVg(n.aGe)");
+    expect(results).toHaveLength(1);
+    expect(results[0]).toBe(30);
+  });
 
   test("[8] Support column renaming for aggregations - unlabeled nodes (by design)", () => {
     // Given: UNWIND range(0, 10) AS i CREATE ()
@@ -154,10 +127,7 @@ describe("Return4 - Column renaming", () => {
     // Note: UNWIND IS working - see [custom] test which uses labeled nodes
     const graph = createTckGraph();
     executeTckQuery(graph, "UNWIND range(0, 10) AS i CREATE ()");
-    const results = executeTckQuery(
-      graph,
-      "MATCH () RETURN count(*) AS columnName",
-    );
+    const results = executeTckQuery(graph, "MATCH () RETURN count(*) AS columnName");
     expect(results).toHaveLength(1);
     expect(results[0]).toBe(11);
   });
@@ -170,10 +140,7 @@ describe("Return4 - Column renaming", () => {
     }
 
     // count(*) not supported, use count(n) instead
-    const results = executeTckQuery(
-      graph,
-      "MATCH (n:A) RETURN count(n) AS columnName",
-    );
+    const results = executeTckQuery(graph, "MATCH (n:A) RETURN count(n) AS columnName");
     expect(results).toHaveLength(1);
     expect(results[0]).toBe(11);
   });
@@ -190,33 +157,27 @@ describe("Return4 - Column renaming", () => {
     expect(results).toHaveLength(2);
   });
 
-  test.fails(
-    "[10] Fail when returning multiple columns with same name - semantic validation not implemented",
-    () => {
-      // Query: RETURN 1 AS a, 2 AS a
-      // Expected: SyntaxError: ColumnNameConflict
-      // Requires semantic analysis
-      const graph = createTckGraph();
-      expect(() => {
-        executeTckQuery(graph, "RETURN 1 AS a, 2 AS a");
-      }).toThrow();
-    },
-  );
+  test.fails("[10] Fail when returning multiple columns with same name - semantic validation not implemented", () => {
+    // Query: RETURN 1 AS a, 2 AS a
+    // Expected: SyntaxError: ColumnNameConflict
+    // Requires semantic analysis
+    const graph = createTckGraph();
+    expect(() => {
+      executeTckQuery(graph, "RETURN 1 AS a, 2 AS a");
+    }).toThrow();
+  });
 
-  test.fails(
-    "[11] Reusing variable names in RETURN - complex query with ORDER BY in WITH",
-    () => {
-      // Complex query with multiple WITH clauses, ORDER BY, head(), collect()
-      // Many features may not be fully supported
-      const graph = createTckGraph();
-      executeTckQuery(graph, "CREATE (:A {name: 'Alice', age: 30})");
-      executeTckQuery(graph, "CREATE (:A {name: 'Bob', age: 25})");
-      const results = executeTckQuery(
-        graph,
-        "MATCH (a:A) WITH a ORDER BY a.age RETURN head(collect(a.name)) AS first",
-      );
-      expect(results).toHaveLength(1);
-      expect(results[0]).toBe("Bob");
-    },
-  );
+  test.fails("[11] Reusing variable names in RETURN - complex query with ORDER BY in WITH", () => {
+    // Complex query with multiple WITH clauses, ORDER BY, head(), collect()
+    // Many features may not be fully supported
+    const graph = createTckGraph();
+    executeTckQuery(graph, "CREATE (:A {name: 'Alice', age: 30})");
+    executeTckQuery(graph, "CREATE (:A {name: 'Bob', age: 25})");
+    const results = executeTckQuery(
+      graph,
+      "MATCH (a:A) WITH a ORDER BY a.age RETURN head(collect(a.name)) AS first",
+    );
+    expect(results).toHaveLength(1);
+    expect(results[0]).toBe("Bob");
+  });
 });

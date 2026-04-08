@@ -12,10 +12,7 @@ describe("List9 - List Tail", () => {
     // tail() IS supported, but list literals in CREATE property values are not
     const graph = createTckGraph();
     // Test tail() with literal list in RETURN
-    const results = executeTckQuery(
-      graph,
-      "RETURN tail(tail([1, 2, 3, 4, 5]))",
-    );
+    const results = executeTckQuery(graph, "RETURN tail(tail([1, 2, 3, 4, 5]))");
     expect(results).toHaveLength(1);
     expect(results[0]).toEqual([3, 4, 5]);
   });
@@ -26,10 +23,7 @@ describe("List9 - List Tail", () => {
     const graph = createTckGraph();
     executeTckQuery(graph, "CREATE (:A)");
     executeTckQuery(graph, "MATCH (n:A) SET n.items = [1, 2, 3, 4, 5]");
-    const results = executeTckQuery(
-      graph,
-      "MATCH (n:A) RETURN tail(tail(n.items))",
-    );
+    const results = executeTckQuery(graph, "MATCH (n:A) RETURN tail(tail(n.items))");
     expect(results).toHaveLength(1);
     expect(results[0]).toEqual([3, 4, 5]);
   });
@@ -39,10 +33,7 @@ describe("List9 - List Tail", () => {
 
     // SKIP 1 skips the first element, similar to tail()
     // Note: Results are wrapped in arrays
-    const results = executeTckQuery(
-      graph,
-      "UNWIND [1, 2, 3, 4, 5] AS x RETURN x SKIP 1",
-    );
+    const results = executeTckQuery(graph, "UNWIND [1, 2, 3, 4, 5] AS x RETURN x SKIP 1");
 
     expect(results).toHaveLength(4);
     expect(results[0]).toEqual([2]);
@@ -56,10 +47,7 @@ describe("List9 - List Tail", () => {
 
     // SKIP 2 skips the first two elements, similar to tail(tail())
     // Note: Results are wrapped in arrays
-    const results = executeTckQuery(
-      graph,
-      "UNWIND [1, 2, 3, 4, 5] AS x RETURN x SKIP 2",
-    );
+    const results = executeTckQuery(graph, "UNWIND [1, 2, 3, 4, 5] AS x RETURN x SKIP 2");
 
     expect(results).toHaveLength(3);
     expect(results[0]).toEqual([3]);

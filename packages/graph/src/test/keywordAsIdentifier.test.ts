@@ -46,10 +46,7 @@ function createTestGraph(): Graph<GraphSchema> {
   return new Graph({ schema, storage: new InMemoryGraphStorage() });
 }
 
-function executeQuery(
-  graph: Graph<GraphSchema>,
-  queryString: string,
-): unknown[] {
+function executeQuery(graph: Graph<GraphSchema>, queryString: string): unknown[] {
   const ast = parse(queryString) as Query;
   const steps = astToSteps(ast);
   const traverser = createTraverser(steps);
@@ -64,17 +61,13 @@ describe("Keywords as identifiers", () => {
     });
 
     it("should parse keyword as alias in RETURN with multiple items", () => {
-      const ast = parse(
-        "MATCH (n) RETURN labels(n) AS labels, count(n) AS count",
-      ) as Query;
+      const ast = parse("MATCH (n) RETURN labels(n) AS labels, count(n) AS count") as Query;
       expect(ast.return!.items[0]!.alias).toBe("labels");
       expect(ast.return!.items[1]!.alias).toBe("count");
     });
 
     it("should parse keyword as alias in WITH", () => {
-      const ast = parse(
-        "MATCH (n) WITH n.name AS labels RETURN labels",
-      ) as Query;
+      const ast = parse("MATCH (n) WITH n.name AS labels RETURN labels") as Query;
       expect(ast.with![0]!.items[0]!.alias).toBe("labels");
     });
 
@@ -84,18 +77,14 @@ describe("Keywords as identifiers", () => {
     });
 
     it("should parse keyword as property access base", () => {
-      const ast = parse(
-        "MATCH (n) WITH n AS labels RETURN labels.name",
-      ) as Query;
+      const ast = parse("MATCH (n) WITH n AS labels RETURN labels.name") as Query;
       // ReturnItem normalizes PropertyAccess to variable + property
       expect(ast.return!.items[0]!.variable).toBe("labels");
       expect(ast.return!.items[0]!.property).toBe("name");
     });
 
     it("should parse keyword in ORDER BY", () => {
-      const ast = parse(
-        "MATCH (n) WITH n.name AS labels RETURN labels ORDER BY labels",
-      ) as Query;
+      const ast = parse("MATCH (n) WITH n.name AS labels RETURN labels ORDER BY labels") as Query;
       expect(ast.orderBy!.orders[0]!.alias).toBe("labels");
     });
 
@@ -103,9 +92,7 @@ describe("Keywords as identifiers", () => {
       const ast = parse(
         'MATCH (n) WITH n AS labels WHERE labels.name = "test" RETURN labels',
       ) as Query;
-      expect(
-        (ast.with![0]!.where!.condition as { variable: string }).variable,
-      ).toBe("labels");
+      expect((ast.with![0]!.where!.condition as { variable: string }).variable).toBe("labels");
     });
 
     it("should parse keyword in aggregate function argument", () => {
@@ -116,9 +103,7 @@ describe("Keywords as identifiers", () => {
     });
 
     it("should parse chained WITH with keyword aliases", () => {
-      const ast = parse(
-        "MATCH (n) WITH n AS labels WITH labels AS type RETURN type",
-      ) as Query;
+      const ast = parse("MATCH (n) WITH n AS labels WITH labels AS type RETURN type") as Query;
       expect(ast.with![0]!.items[0]!.alias).toBe("labels");
       expect(ast.with![1]!.items[0]!.alias).toBe("type");
     });
@@ -141,9 +126,7 @@ describe("Keywords as identifiers", () => {
     });
 
     it("should parse keyword variable in REMOVE", () => {
-      const ast = parse(
-        "MATCH (n) WITH n AS labels REMOVE labels.prop",
-      ) as Query;
+      const ast = parse("MATCH (n) WITH n AS labels REMOVE labels.prop") as Query;
       expect(ast.remove!.items[0]!.variable).toBe("labels");
     });
 
@@ -151,60 +134,44 @@ describe("Keywords as identifiers", () => {
       const ast = parse(
         "MATCH (n) WITH n AS labels WHERE labels.name IS NULL RETURN labels",
       ) as Query;
-      expect(
-        (ast.with![0]!.where!.condition as { variable: string }).variable,
-      ).toBe("labels");
+      expect((ast.with![0]!.where!.condition as { variable: string }).variable).toBe("labels");
     });
 
     it("should parse keyword variable in STARTS WITH condition", () => {
       const ast = parse(
         'MATCH (n) WITH n AS labels WHERE labels.name STARTS WITH "A" RETURN labels',
       ) as Query;
-      expect(
-        (ast.with![0]!.where!.condition as { variable: string }).variable,
-      ).toBe("labels");
+      expect((ast.with![0]!.where!.condition as { variable: string }).variable).toBe("labels");
     });
 
     it("should parse keyword variable in IN condition", () => {
       const ast = parse(
         "MATCH (n) WITH n AS labels WHERE labels.name IN ['a', 'b'] RETURN labels",
       ) as Query;
-      expect(
-        (ast.with![0]!.where!.condition as { variable: string }).variable,
-      ).toBe("labels");
+      expect((ast.with![0]!.where!.condition as { variable: string }).variable).toBe("labels");
     });
 
     it("should parse keyword variable in regex condition", () => {
       const ast = parse(
         'MATCH (n) WITH n AS labels WHERE labels.name =~ ".*" RETURN labels',
       ) as Query;
-      expect(
-        (ast.with![0]!.where!.condition as { variable: string }).variable,
-      ).toBe("labels");
+      expect((ast.with![0]!.where!.condition as { variable: string }).variable).toBe("labels");
     });
 
     it("should parse keyword variable in EXISTS condition", () => {
       const ast = parse(
         "MATCH (n) WITH n AS labels WHERE labels.name EXISTS RETURN labels",
       ) as Query;
-      expect(
-        (ast.with![0]!.where!.condition as { variable: string }).variable,
-      ).toBe("labels");
+      expect((ast.with![0]!.where!.condition as { variable: string }).variable).toBe("labels");
     });
 
     it("should parse keyword variable in map projection", () => {
-      const ast = parse(
-        "MATCH (n) WITH n AS labels RETURN labels{.name}",
-      ) as Query;
-      expect(
-        (ast.return!.items[0]!.expression as { variable: string }).variable,
-      ).toBe("labels");
+      const ast = parse("MATCH (n) WITH n AS labels RETURN labels{.name}") as Query;
+      expect((ast.return!.items[0]!.expression as { variable: string }).variable).toBe("labels");
     });
 
     it("should parse keyword variable in GROUP BY", () => {
-      const ast = parse(
-        "MATCH (n) WITH n AS type RETURN type, count(*) GROUP BY type",
-      ) as Query;
+      const ast = parse("MATCH (n) WITH n AS type RETURN type, count(*) GROUP BY type") as Query;
       expect(ast.groupBy!.items[0]!.variable).toBe("type");
     });
 
@@ -214,9 +181,12 @@ describe("Keywords as identifiers", () => {
         WITH n.a AS labels, n.b AS type, n.c AS count, n.d AS match
         RETURN labels, type, count, match
       `) as Query;
-      expect(
-        ast.with![0]!.items.map((i: { alias: string }) => i.alias),
-      ).toEqual(["labels", "type", "count", "match"]);
+      expect(ast.with![0]!.items.map((i: { alias: string }) => i.alias)).toEqual([
+        "labels",
+        "type",
+        "count",
+        "match",
+      ]);
     });
   });
 
@@ -225,10 +195,7 @@ describe("Keywords as identifiers", () => {
       const graph = createTestGraph();
       graph.addVertex("Person", { name: "Alice", age: 30 });
 
-      const results = executeQuery(
-        graph,
-        "MATCH (n:Person) WITH n.name AS labels RETURN labels",
-      );
+      const results = executeQuery(graph, "MATCH (n:Person) WITH n.name AS labels RETURN labels");
       expect(results).toHaveLength(1);
       expect(results[0]).toContain("Alice");
     });
@@ -237,10 +204,7 @@ describe("Keywords as identifiers", () => {
       const graph = createTestGraph();
       graph.addVertex("Person", { name: "Alice", age: 30 });
 
-      const results = executeQuery(
-        graph,
-        "MATCH (n:Person) WITH n AS type RETURN type.name",
-      );
+      const results = executeQuery(graph, "MATCH (n:Person) WITH n AS type RETURN type.name");
       expect(results).toHaveLength(1);
       expect(results[0]).toContain("Alice");
     });
@@ -319,10 +283,7 @@ describe("Keywords as identifiers", () => {
       graph.addVertex("Person", { name: "Alice", age: 30 });
 
       // Execute SET with keyword variable
-      executeQuery(
-        graph,
-        'MATCH (n:Person) WITH n AS labels SET labels.name = "Updated"',
-      );
+      executeQuery(graph, 'MATCH (n:Person) WITH n AS labels SET labels.name = "Updated"');
 
       // Verify the update worked
       const results = executeQuery(graph, "MATCH (n:Person) RETURN n.name");
@@ -350,9 +311,7 @@ describe("Keywords as identifiers", () => {
     });
 
     it("should still allow backtick-quoted keywords", () => {
-      const ast = parse(
-        "MATCH (n) WITH n AS `labels` RETURN `labels`",
-      ) as Query;
+      const ast = parse("MATCH (n) WITH n AS `labels` RETURN `labels`") as Query;
       expect(ast.with![0]!.items[0]!.alias).toBe("labels");
     });
 
@@ -373,10 +332,7 @@ describe("Keywords as identifiers", () => {
       graph.addVertex("Item", { value: 1 });
       graph.addVertex("Item", { value: 2 });
 
-      const results = executeQuery(
-        graph,
-        "MATCH (n:Item) WITH count(n) AS count RETURN count",
-      );
+      const results = executeQuery(graph, "MATCH (n:Item) WITH count(n) AS count RETURN count");
       expect(results).toHaveLength(1);
       expect(results[0]).toContain(2);
     });

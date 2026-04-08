@@ -1,11 +1,5 @@
 import { test, expect } from "vitest";
-import {
-  Graph,
-  EmptyGraphSource,
-  Vertex,
-  Edge,
-  defaultIdGenerator,
-} from "../Graph.js";
+import { Graph, EmptyGraphSource, Vertex, Edge, defaultIdGenerator } from "../Graph.js";
 import { InMemoryGraphStorage } from "../GraphStorage.js";
 import {
   EdgeNotFoundError,
@@ -104,9 +98,7 @@ test("Graph - generateElementId() - should use custom IDs for edges", () => {
 
 test("Graph - defaultIdGenerator - should generate valid UUID strings", () => {
   const id = defaultIdGenerator();
-  expect(id).toMatch(
-    /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/,
-  );
+  expect(id).toMatch(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/);
 });
 
 test("Graph - defaultIdGenerator - should generate unique IDs", () => {
@@ -530,9 +522,7 @@ test("EmptyGraphSource - should throw error when getting vertex by id", () => {
 
 test("EmptyGraphSource - should throw error when getting vertices", () => {
   const emptySource = new EmptyGraphSource({ schema: testSchema });
-  expect(() => emptySource.getVertices()).toThrow(
-    "Cannot get vertices from an empty graph source",
-  );
+  expect(() => emptySource.getVertices()).toThrow("Cannot get vertices from an empty graph source");
 });
 
 test("EmptyGraphSource - should throw error when getting edge by id", () => {
@@ -544,9 +534,7 @@ test("EmptyGraphSource - should throw error when getting edge by id", () => {
 
 test("EmptyGraphSource - should throw error when getting edges", () => {
   const emptySource = new EmptyGraphSource({ schema: testSchema });
-  expect(() => emptySource.getEdges()).toThrow(
-    "Cannot get edges from an empty graph source",
-  );
+  expect(() => emptySource.getEdges()).toThrow("Cannot get edges from an empty graph source");
 });
 
 // Domain-specific error tests
@@ -556,9 +544,9 @@ test("Graph - addEdge() - should throw VertexNotFoundError for non-existent inV"
   const graph = new Graph({ schema: testSchema, storage });
   const bob = graph.addVertex("Person", { name: "Bob", age: 25 });
 
-  expect(() =>
-    graph.addEdge("Person:nonexistent", "knows", bob.id, { since: 2020 }),
-  ).toThrow(VertexNotFoundError);
+  expect(() => graph.addEdge("Person:nonexistent", "knows", bob.id, { since: 2020 })).toThrow(
+    VertexNotFoundError,
+  );
 });
 
 test("Graph - addEdge() - should throw VertexNotFoundError for non-existent outV", () => {
@@ -566,9 +554,9 @@ test("Graph - addEdge() - should throw VertexNotFoundError for non-existent outV
   const graph = new Graph({ schema: testSchema, storage });
   const alice = graph.addVertex("Person", { name: "Alice", age: 30 });
 
-  expect(() =>
-    graph.addEdge(alice.id, "knows", "Person:nonexistent", { since: 2020 }),
-  ).toThrow(VertexNotFoundError);
+  expect(() => graph.addEdge(alice.id, "knows", "Person:nonexistent", { since: 2020 })).toThrow(
+    VertexNotFoundError,
+  );
 });
 
 test("Graph - addEdge() - VertexNotFoundError should have correct vertexId", () => {
@@ -589,9 +577,9 @@ test("Graph - getVertexById() - should throw VertexNotFoundError with throwIfNot
   const storage = new InMemoryGraphStorage();
   const graph = new Graph({ schema: testSchema, storage });
 
-  expect(() =>
-    graph.getVertexById("Person:nonexistent", { throwIfNotFound: true }),
-  ).toThrow(VertexNotFoundError);
+  expect(() => graph.getVertexById("Person:nonexistent", { throwIfNotFound: true })).toThrow(
+    VertexNotFoundError,
+  );
 });
 
 test("Graph - getVertexById() - should return undefined with throwIfNotFound: false", () => {
@@ -617,9 +605,9 @@ test("Graph - getEdgeById() - should throw EdgeNotFoundError with throwIfNotFoun
   const storage = new InMemoryGraphStorage();
   const graph = new Graph({ schema: testSchema, storage });
 
-  expect(() =>
-    graph.getEdgeById("knows:nonexistent", { throwIfNotFound: true }),
-  ).toThrow(EdgeNotFoundError);
+  expect(() => graph.getEdgeById("knows:nonexistent", { throwIfNotFound: true })).toThrow(
+    EdgeNotFoundError,
+  );
 });
 
 test("Graph - getEdgeById() - should return undefined with throwIfNotFound: false", () => {
@@ -780,9 +768,7 @@ function makeStrictType<T>(
           return { value: value as T };
         }
         return {
-          issues: [
-            { message: `Expected ${typeName}, received ${typeof value}` },
-          ],
+          issues: [{ message: `Expected ${typeName}, received ${typeof value}` }],
         };
       },
     },
@@ -824,9 +810,7 @@ test("Graph - updateProperty - should throw PropertyTypeError for invalid value 
   const alice = graph.addVertex("Person", { name: "Alice", age: 30 });
 
   // Should throw PropertyTypeError when setting age to a string
-  expect(() => graph.updateProperty(alice.id, "age", "thirty")).toThrow(
-    PropertyTypeError,
-  );
+  expect(() => graph.updateProperty(alice.id, "age", "thirty")).toThrow(PropertyTypeError);
 });
 
 test("Graph - updateProperty - PropertyTypeError should have correct context", () => {
@@ -846,9 +830,7 @@ test("Graph - updateProperty - PropertyTypeError should have correct context", (
     expect((e as PropertyTypeError).key).toBe("age");
     expect((e as PropertyTypeError).label).toBe("Person");
     expect((e as PropertyTypeError).value).toBe("not a number");
-    expect((e as PropertyTypeError).issues).toContain(
-      "Expected number, received string",
-    );
+    expect((e as PropertyTypeError).issues).toContain("Expected number, received string");
   }
 });
 
@@ -878,9 +860,7 @@ test("Graph - updateProperty - should validate edge property types", () => {
   const edge = graph.addEdge(alice.id, "knows", bob.id, { since: 2020 });
 
   // Should throw PropertyTypeError when setting since to a string
-  expect(() => graph.updateProperty(edge.id, "since", "last year")).toThrow(
-    PropertyTypeError,
-  );
+  expect(() => graph.updateProperty(edge.id, "since", "last year")).toThrow(PropertyTypeError);
 });
 
 test("Graph - Vertex.set - should throw PropertyTypeError for invalid value type", () => {

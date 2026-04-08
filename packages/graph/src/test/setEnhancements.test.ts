@@ -10,9 +10,7 @@ describe("SET clause enhancements", () => {
   describe("Grammar parsing", () => {
     describe("SET n = {props} (replace all properties)", () => {
       it("should parse SET n = {props} syntax", () => {
-        const ast = parse(
-          "MATCH (n:Person) SET n = {name: 'Alice', age: 30} RETURN n",
-        ) as Query;
+        const ast = parse("MATCH (n:Person) SET n = {name: 'Alice', age: 30} RETURN n") as Query;
 
         expect(ast.set).toBeDefined();
         expect(ast.set!.assignments).toHaveLength(1);
@@ -50,9 +48,7 @@ describe("SET clause enhancements", () => {
 
     describe("SET n += {props} (add/merge properties)", () => {
       it("should parse SET n += {props} syntax", () => {
-        const ast = parse(
-          "MATCH (n:Person) SET n += {status: 'active'} RETURN n",
-        ) as Query;
+        const ast = parse("MATCH (n:Person) SET n += {status: 'active'} RETURN n") as Query;
 
         expect(ast.set).toBeDefined();
         expect(ast.set!.assignments).toHaveLength(1);
@@ -64,9 +60,7 @@ describe("SET clause enhancements", () => {
       });
 
       it("should parse SET n += $param syntax", () => {
-        const ast = parse(
-          "MATCH (n:Person) SET n += $newProps RETURN n",
-        ) as Query;
+        const ast = parse("MATCH (n:Person) SET n += $newProps RETURN n") as Query;
 
         expect(ast.set).toBeDefined();
         const assignment = ast.set!.assignments[0] as SetAddProperties;
@@ -109,9 +103,7 @@ describe("SET clause enhancements", () => {
 
   describe("Step conversion", () => {
     it("should convert SET n = {props} to SetStep with setAllProperties", () => {
-      const ast = parse(
-        "MATCH (n:Person) SET n = {name: 'Alice'} RETURN n",
-      ) as Query;
+      const ast = parse("MATCH (n:Person) SET n = {name: 'Alice'} RETURN n") as Query;
       const steps = astToSteps(ast);
 
       // Find the SetStep
@@ -127,9 +119,7 @@ describe("SET clause enhancements", () => {
     });
 
     it("should convert SET n += {props} to SetStep with setAddProperties", () => {
-      const ast = parse(
-        "MATCH (n:Person) SET n += {status: 'active'} RETURN n",
-      ) as Query;
+      const ast = parse("MATCH (n:Person) SET n += {status: 'active'} RETURN n") as Query;
       const steps = astToSteps(ast);
 
       const setStep = steps.find((s) => s.name === "Set");
@@ -209,9 +199,7 @@ describe("SET clause enhancements", () => {
       });
 
       it("should handle SET n = {} (clear specified properties)", () => {
-        const ast = parse(
-          "MATCH (n:Person) WHERE n.name = 'Alice' SET n = {} RETURN n",
-        ) as Query;
+        const ast = parse("MATCH (n:Person) WHERE n.name = 'Alice' SET n = {} RETURN n") as Query;
         const steps = astToSteps(ast);
         const traverser = createTraverser(steps);
         const results = [...traverser.traverse(graph, [undefined])];
@@ -344,9 +332,7 @@ describe("SET clause enhancements", () => {
       });
 
       it("should throw error when variable is not found", () => {
-        const ast = parse(
-          "MATCH (n:Person) SET m = {name: 'Bob'} RETURN n",
-        ) as Query;
+        const ast = parse("MATCH (n:Person) SET m = {name: 'Bob'} RETURN n") as Query;
         const steps = astToSteps(ast);
         const traverser = createTraverser(steps);
 

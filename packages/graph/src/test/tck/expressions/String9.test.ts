@@ -70,41 +70,32 @@ describe("String9 - Exact String Suffix Search", () => {
     expect(names).toContain("");
   });
 
-  test.fails(
-    "[4] Finding strings ending with whitespace - escape sequences in CREATE not supported",
-    () => {
-      // Grammar limitation: escape sequences like \n, \t in string literals not supported in CREATE
-      const graph = createTckGraph();
-      executeTckQuery(
-        graph,
-        `CREATE (:TheLabel {name: '\nFoo\n'}), (:TheLabel {name: '\tFoo\t'})`,
-      );
+  test.fails("[4] Finding strings ending with whitespace - escape sequences in CREATE not supported", () => {
+    // Grammar limitation: escape sequences like \n, \t in string literals not supported in CREATE
+    const graph = createTckGraph();
+    executeTckQuery(graph, `CREATE (:TheLabel {name: '\nFoo\n'}), (:TheLabel {name: '\tFoo\t'})`);
 
-      const results = executeTckQuery(
-        graph,
-        "MATCH (a:TheLabel) WHERE a.name ENDS WITH ' ' RETURN a.name",
-      );
+    const results = executeTckQuery(
+      graph,
+      "MATCH (a:TheLabel) WHERE a.name ENDS WITH ' ' RETURN a.name",
+    );
 
-      expect(results).toHaveLength(0);
-    },
-  );
+    expect(results).toHaveLength(0);
+  });
 
-  test.fails(
-    "[5] Finding strings ending with newline - escape sequences in CREATE not supported",
-    () => {
-      // Grammar limitation: escape sequences like \n in string literals not supported
-      const graph = createTckGraph();
-      executeTckQuery(graph, `CREATE (:TheLabel {name: '\nFoo\n'})`);
+  test.fails("[5] Finding strings ending with newline - escape sequences in CREATE not supported", () => {
+    // Grammar limitation: escape sequences like \n in string literals not supported
+    const graph = createTckGraph();
+    executeTckQuery(graph, `CREATE (:TheLabel {name: '\nFoo\n'})`);
 
-      const results = executeTckQuery(
-        graph,
-        `MATCH (a:TheLabel) WHERE a.name ENDS WITH '\n' RETURN a.name`,
-      );
+    const results = executeTckQuery(
+      graph,
+      `MATCH (a:TheLabel) WHERE a.name ENDS WITH '\n' RETURN a.name`,
+    );
 
-      expect(results).toHaveLength(1);
-      expect(results[0]).toBe("\nFoo\n");
-    },
-  );
+    expect(results).toHaveLength(1);
+    expect(results[0]).toBe("\nFoo\n");
+  });
 
   test("[6] No string ends with null", () => {
     const graph = createTckGraph();
@@ -124,51 +115,45 @@ describe("String9 - Exact String Suffix Search", () => {
     expect(results).toHaveLength(0);
   });
 
-  test.fails(
-    "[7] No string does not end with null - NOT null propagation not implemented",
-    () => {
-      // NOT (ENDS WITH null) should return null (null propagation), so no rows match
-      // But current implementation doesn't propagate null through NOT correctly
-      const graph = createTckGraph();
-      executeTckQuery(
-        graph,
-        `CREATE (:TheLabel {name: 'ABCDEF'}), (:TheLabel {name: 'AB'}),
+  test.fails("[7] No string does not end with null - NOT null propagation not implemented", () => {
+    // NOT (ENDS WITH null) should return null (null propagation), so no rows match
+    // But current implementation doesn't propagate null through NOT correctly
+    const graph = createTckGraph();
+    executeTckQuery(
+      graph,
+      `CREATE (:TheLabel {name: 'ABCDEF'}), (:TheLabel {name: 'AB'}),
              (:TheLabel {name: 'abcdef'}), (:TheLabel {name: 'ab'}),
              (:TheLabel {name: ''})`,
-      );
+    );
 
-      const results = executeTckQuery(
-        graph,
-        "MATCH (a:TheLabel) WHERE NOT a.name ENDS WITH null RETURN a",
-      );
+    const results = executeTckQuery(
+      graph,
+      "MATCH (a:TheLabel) WHERE NOT a.name ENDS WITH null RETURN a",
+    );
 
-      expect(results).toHaveLength(0);
-    },
-  );
+    expect(results).toHaveLength(0);
+  });
 
-  test.fails(
-    "[8] Handling non-string operands for ENDS WITH - complex WITH expressions not supported",
-    () => {
-      // Grammar limitations:
-      // - Multiple UNWIND clauses not supported
-      // - List/map literals in WITH expressions not supported
-      // - ENDS WITH expression result capture in WITH not supported
-      const graph = createTckGraph();
+  test.fails("[8] Handling non-string operands for ENDS WITH - complex WITH expressions not supported", () => {
+    // Grammar limitations:
+    // - Multiple UNWIND clauses not supported
+    // - List/map literals in WITH expressions not supported
+    // - ENDS WITH expression result capture in WITH not supported
+    const graph = createTckGraph();
 
-      const results = executeTckQuery(
-        graph,
-        `WITH [1, 3.14, true, [], {}, null] AS operands
+    const results = executeTckQuery(
+      graph,
+      `WITH [1, 3.14, true, [], {}, null] AS operands
        UNWIND operands AS op1
        UNWIND operands AS op2
        WITH op1 ENDS WITH op2 AS v
        RETURN v, count(*)`,
-      );
+    );
 
-      // All combinations of non-string operands should return null for ENDS WITH
-      expect(results).toHaveLength(1);
-      expect(results[0]).toEqual([null, 36]);
-    },
-  );
+    // All combinations of non-string operands should return null for ENDS WITH
+    expect(results).toHaveLength(1);
+    expect(results[0]).toEqual([null, 36]);
+  });
 
   test("[9] NOT with ENDS WITH", () => {
     const graph = createTckGraph();

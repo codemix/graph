@@ -1,6 +1,6 @@
 # @codemix/graph
 
-A fully type safe, TypeScript-first in-memory property graph database with a Cypher-compatible query language, a fluent traversal API, lazy indexes, and async transport support.
+A fully type-safe, TypeScript-first in-memory property graph database with a Cypher-compatible query language, a **type-safe [Apache TinkerPop](https://tinkerpop.apache.org/) / [Gremlin](https://tinkerpop.apache.org/docs/current/reference/#gremlin)-style traversal API** (`GraphTraversal`), lazy indexes, and async transport support.
 
 ## Table of Contents
 
@@ -19,7 +19,7 @@ A fully type safe, TypeScript-first in-memory property graph database with a Cyp
   - [Supported Clauses](#supported-clauses)
   - [Supported Functions](#supported-functions)
   - [Supported Procedures](#supported-procedures)
-- [Traversal API](#traversal-api)
+- [Type-safe TinkerPop / Gremlin traversal API](#type-safe-tinkerpop--gremlin-traversal-api)
   - [Starting a Traversal](#starting-a-traversal)
   - [Navigation Steps](#navigation-steps)
   - [Filtering](#filtering)
@@ -44,7 +44,7 @@ A fully type safe, TypeScript-first in-memory property graph database with a Cyp
 
 - **TypeScript-first** — schema-derived types flow through the entire API; vertex/edge properties are fully typed.
 - **Cypher-compatible query language** — parse and execute `MATCH … WHERE … RETURN` queries, `UNION`, multi-statement queries, `CREATE`, `SET`, `DELETE`, `MERGE`, `UNWIND`, `CALL`, `FOREACH`, and more.
-- **Fluent traversal API** — a gremlin-inspired builder that produces strongly-typed `TraversalPath` chains (`V().out().hasLabel(…).as(…).select(…)`).
+- **Type-safe TinkerPop / Gremlin traversals** — `GraphTraversal` mirrors familiar Gremlin steps (`V`, `E`, `out` / `in` / `both`, `hasLabel`, `as` / `select`, `repeat`, …) with **schema-derived TypeScript types** on `TraversalPath` and property access, not untyped strings at every hop.
 - **Lazy indexes** — hash, B-tree, and full-text indexes are built on first use and maintained incrementally on every mutation.
 - **Unique constraints** — enforce uniqueness on any indexed property.
 - **Standard Schema validation** — property types are validated via the [Standard Schema](https://github.com/standard-schema/standard-schema) spec (compatible with Zod, Valibot, ArkType, etc.).
@@ -66,12 +66,7 @@ pnpm add @codemix/graph
 ## Quick Start
 
 ```ts
-import {
-  Graph,
-  GraphSchema,
-  InMemoryGraphStorage,
-  GraphTraversal,
-} from "@codemix/graph";
+import { Graph, GraphSchema, InMemoryGraphStorage, GraphTraversal } from "@codemix/graph";
 import * as v from "valibot"; // any Standard Schema library
 
 const schema = {
@@ -229,12 +224,7 @@ graph.deleteEdge(edge);
 Use `parseQueryToSteps` to compile a Cypher string and get back executable steps plus a result mapper:
 
 ```ts
-import {
-  Graph,
-  InMemoryGraphStorage,
-  parseQueryToSteps,
-  GraphTraversal,
-} from "@codemix/graph";
+import { Graph, InMemoryGraphStorage, parseQueryToSteps, GraphTraversal } from "@codemix/graph";
 
 const { steps, postprocess } = parseQueryToSteps(
   "MATCH (p:Person)-[:ACTED_IN]->(m:Movie) WHERE p.name = $name RETURN p.name, m.title",
@@ -330,7 +320,11 @@ procedureRegistry.register({
 
 ---
 
-## Traversal API
+## Type-safe TinkerPop / Gremlin traversal API
+
+`GraphTraversal` ([`src/Traversals.ts`](./src/Traversals.ts)) is the programmatic counterpart to Cypher: a **fluent, Gremlin-style** API in the spirit of [Apache TinkerPop](https://tinkerpop.apache.org/) — same mental model as `g.V().out('knows')` in Gremlin — but **fully typed** against your `GraphSchema` so labels, edge directions, and property keys are checked by TypeScript.
+
+If you already know Gremlin, the step names and composition will feel familiar; the main difference is that paths carry typed vertices/edges from your schema instead of generic maps.
 
 ### Starting a Traversal
 
@@ -373,12 +367,7 @@ g.V()
 ### Labeling and Selection
 
 ```ts
-g.V()
-  .hasLabel("Person")
-  .as("actor")
-  .out("ACTED_IN")
-  .as("movie")
-  .select("actor", "movie");
+g.V().hasLabel("Person").as("actor").out("ACTED_IN").as("movie").select("actor", "movie");
 // yields { actor: TraversalPath, movie: TraversalPath }
 ```
 
@@ -506,11 +495,7 @@ Duplicate inserts into a unique-indexed property throw `UniqueConstraintViolatio
 **Server side:**
 
 ```ts
-import {
-  Graph,
-  InMemoryGraphStorage,
-  handleAsyncCommand,
-} from "@codemix/graph";
+import { Graph, InMemoryGraphStorage, handleAsyncCommand } from "@codemix/graph";
 
 const graph = new Graph({ schema, storage: new InMemoryGraphStorage() });
 
@@ -549,12 +534,7 @@ for await (const path of remote.query((g) => g.V().hasLabel("Person"))) {
 Implement the `GraphStorage` interface to plug in any backend:
 
 ```ts
-import {
-  GraphStorage,
-  StoredVertex,
-  StoredEdge,
-  ElementId,
-} from "@codemix/graph";
+import { GraphStorage, StoredVertex, StoredEdge, ElementId } from "@codemix/graph";
 
 class MyStorage implements GraphStorage {
   getVertexById(id: ElementId): StoredVertex | undefined {
@@ -608,10 +588,7 @@ const graph = new Graph({ schema, storage: new MyStorage() });
 Generate a human (or LLM) readable description of the query language and your schema for use in prompts or documentation:
 
 ```ts
-import {
-  generateGrammarDescription,
-  generateSchemaGuide,
-} from "@codemix/graph";
+import { generateGrammarDescription, generateSchemaGuide } from "@codemix/graph";
 
 // Language grammar description (schema-agnostic)
 const grammar = generateGrammarDescription();

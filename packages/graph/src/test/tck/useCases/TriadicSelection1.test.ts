@@ -15,11 +15,7 @@
  * Custom tests demonstrate equivalent triadic selection patterns where possible.
  */
 import { describe, test, expect } from "vitest";
-import {
-  createTckGraph,
-  executeTckQuery,
-  type TckSchema,
-} from "../tckHelpers.js";
+import { createTckGraph, executeTckQuery, type TckSchema } from "../tckHelpers.js";
 import type { Graph } from "../../../Graph.js";
 
 /**
@@ -62,56 +58,20 @@ function createBinaryTree1(graph: Graph<TckSchema>): void {
   executeTckQuery(graph, "CREATE (:X {name: 'c42'})");
 
   // Create relationships from A to b-level
-  executeTckQuery(
-    graph,
-    "MATCH (a:A {name: 'a'}), (b:X {name: 'b1'}) CREATE (a)-[:KNOWS]->(b)",
-  );
-  executeTckQuery(
-    graph,
-    "MATCH (a:A {name: 'a'}), (b:X {name: 'b2'}) CREATE (a)-[:KNOWS]->(b)",
-  );
-  executeTckQuery(
-    graph,
-    "MATCH (a:A {name: 'a'}), (b:X {name: 'b3'}) CREATE (a)-[:FOLLOWS]->(b)",
-  );
-  executeTckQuery(
-    graph,
-    "MATCH (a:A {name: 'a'}), (b:X {name: 'b4'}) CREATE (a)-[:FOLLOWS]->(b)",
-  );
+  executeTckQuery(graph, "MATCH (a:A {name: 'a'}), (b:X {name: 'b1'}) CREATE (a)-[:KNOWS]->(b)");
+  executeTckQuery(graph, "MATCH (a:A {name: 'a'}), (b:X {name: 'b2'}) CREATE (a)-[:KNOWS]->(b)");
+  executeTckQuery(graph, "MATCH (a:A {name: 'a'}), (b:X {name: 'b3'}) CREATE (a)-[:FOLLOWS]->(b)");
+  executeTckQuery(graph, "MATCH (a:A {name: 'a'}), (b:X {name: 'b4'}) CREATE (a)-[:FOLLOWS]->(b)");
 
   // Create relationships from b-level to c-level
-  executeTckQuery(
-    graph,
-    "MATCH (b:X {name: 'b1'}), (c:X {name: 'c11'}) CREATE (b)-[:KNOWS]->(c)",
-  );
-  executeTckQuery(
-    graph,
-    "MATCH (b:X {name: 'b1'}), (c:X {name: 'c12'}) CREATE (b)-[:KNOWS]->(c)",
-  );
-  executeTckQuery(
-    graph,
-    "MATCH (b:X {name: 'b2'}), (c:X {name: 'c21'}) CREATE (b)-[:KNOWS]->(c)",
-  );
-  executeTckQuery(
-    graph,
-    "MATCH (b:X {name: 'b2'}), (c:X {name: 'c22'}) CREATE (b)-[:KNOWS]->(c)",
-  );
-  executeTckQuery(
-    graph,
-    "MATCH (b:X {name: 'b3'}), (c:X {name: 'c31'}) CREATE (b)-[:KNOWS]->(c)",
-  );
-  executeTckQuery(
-    graph,
-    "MATCH (b:X {name: 'b3'}), (c:X {name: 'c32'}) CREATE (b)-[:KNOWS]->(c)",
-  );
-  executeTckQuery(
-    graph,
-    "MATCH (b:X {name: 'b4'}), (c:X {name: 'c41'}) CREATE (b)-[:KNOWS]->(c)",
-  );
-  executeTckQuery(
-    graph,
-    "MATCH (b:X {name: 'b4'}), (c:X {name: 'c42'}) CREATE (b)-[:KNOWS]->(c)",
-  );
+  executeTckQuery(graph, "MATCH (b:X {name: 'b1'}), (c:X {name: 'c11'}) CREATE (b)-[:KNOWS]->(c)");
+  executeTckQuery(graph, "MATCH (b:X {name: 'b1'}), (c:X {name: 'c12'}) CREATE (b)-[:KNOWS]->(c)");
+  executeTckQuery(graph, "MATCH (b:X {name: 'b2'}), (c:X {name: 'c21'}) CREATE (b)-[:KNOWS]->(c)");
+  executeTckQuery(graph, "MATCH (b:X {name: 'b2'}), (c:X {name: 'c22'}) CREATE (b)-[:KNOWS]->(c)");
+  executeTckQuery(graph, "MATCH (b:X {name: 'b3'}), (c:X {name: 'c31'}) CREATE (b)-[:KNOWS]->(c)");
+  executeTckQuery(graph, "MATCH (b:X {name: 'b3'}), (c:X {name: 'c32'}) CREATE (b)-[:KNOWS]->(c)");
+  executeTckQuery(graph, "MATCH (b:X {name: 'b4'}), (c:X {name: 'c41'}) CREATE (b)-[:KNOWS]->(c)");
+  executeTckQuery(graph, "MATCH (b:X {name: 'b4'}), (c:X {name: 'c42'}) CREATE (b)-[:KNOWS]->(c)");
 }
 
 /**
@@ -140,56 +100,20 @@ function createBinaryTree2(graph: Graph<TckSchema>): void {
   executeTckQuery(graph, "CREATE (:Y {name: 'c42'})");
 
   // Create relationships from A to b-level
-  executeTckQuery(
-    graph,
-    "MATCH (a:A {name: 'a'}), (b:X {name: 'b1'}) CREATE (a)-[:KNOWS]->(b)",
-  );
-  executeTckQuery(
-    graph,
-    "MATCH (a:A {name: 'a'}), (b:X {name: 'b2'}) CREATE (a)-[:KNOWS]->(b)",
-  );
-  executeTckQuery(
-    graph,
-    "MATCH (a:A {name: 'a'}), (b:X {name: 'b3'}) CREATE (a)-[:FOLLOWS]->(b)",
-  );
-  executeTckQuery(
-    graph,
-    "MATCH (a:A {name: 'a'}), (b:X {name: 'b4'}) CREATE (a)-[:FOLLOWS]->(b)",
-  );
+  executeTckQuery(graph, "MATCH (a:A {name: 'a'}), (b:X {name: 'b1'}) CREATE (a)-[:KNOWS]->(b)");
+  executeTckQuery(graph, "MATCH (a:A {name: 'a'}), (b:X {name: 'b2'}) CREATE (a)-[:KNOWS]->(b)");
+  executeTckQuery(graph, "MATCH (a:A {name: 'a'}), (b:X {name: 'b3'}) CREATE (a)-[:FOLLOWS]->(b)");
+  executeTckQuery(graph, "MATCH (a:A {name: 'a'}), (b:X {name: 'b4'}) CREATE (a)-[:FOLLOWS]->(b)");
 
   // Create relationships from b-level to c-level
-  executeTckQuery(
-    graph,
-    "MATCH (b:X {name: 'b1'}), (c:X {name: 'c11'}) CREATE (b)-[:KNOWS]->(c)",
-  );
-  executeTckQuery(
-    graph,
-    "MATCH (b:X {name: 'b1'}), (c:Y {name: 'c12'}) CREATE (b)-[:KNOWS]->(c)",
-  );
-  executeTckQuery(
-    graph,
-    "MATCH (b:X {name: 'b2'}), (c:X {name: 'c21'}) CREATE (b)-[:KNOWS]->(c)",
-  );
-  executeTckQuery(
-    graph,
-    "MATCH (b:X {name: 'b2'}), (c:Y {name: 'c22'}) CREATE (b)-[:KNOWS]->(c)",
-  );
-  executeTckQuery(
-    graph,
-    "MATCH (b:X {name: 'b3'}), (c:X {name: 'c31'}) CREATE (b)-[:KNOWS]->(c)",
-  );
-  executeTckQuery(
-    graph,
-    "MATCH (b:X {name: 'b3'}), (c:Y {name: 'c32'}) CREATE (b)-[:KNOWS]->(c)",
-  );
-  executeTckQuery(
-    graph,
-    "MATCH (b:X {name: 'b4'}), (c:X {name: 'c41'}) CREATE (b)-[:KNOWS]->(c)",
-  );
-  executeTckQuery(
-    graph,
-    "MATCH (b:X {name: 'b4'}), (c:Y {name: 'c42'}) CREATE (b)-[:KNOWS]->(c)",
-  );
+  executeTckQuery(graph, "MATCH (b:X {name: 'b1'}), (c:X {name: 'c11'}) CREATE (b)-[:KNOWS]->(c)");
+  executeTckQuery(graph, "MATCH (b:X {name: 'b1'}), (c:Y {name: 'c12'}) CREATE (b)-[:KNOWS]->(c)");
+  executeTckQuery(graph, "MATCH (b:X {name: 'b2'}), (c:X {name: 'c21'}) CREATE (b)-[:KNOWS]->(c)");
+  executeTckQuery(graph, "MATCH (b:X {name: 'b2'}), (c:Y {name: 'c22'}) CREATE (b)-[:KNOWS]->(c)");
+  executeTckQuery(graph, "MATCH (b:X {name: 'b3'}), (c:X {name: 'c31'}) CREATE (b)-[:KNOWS]->(c)");
+  executeTckQuery(graph, "MATCH (b:X {name: 'b3'}), (c:Y {name: 'c32'}) CREATE (b)-[:KNOWS]->(c)");
+  executeTckQuery(graph, "MATCH (b:X {name: 'b4'}), (c:X {name: 'c41'}) CREATE (b)-[:KNOWS]->(c)");
+  executeTckQuery(graph, "MATCH (b:X {name: 'b4'}), (c:Y {name: 'c42'}) CREATE (b)-[:KNOWS]->(c)");
 }
 
 describe("TriadicSelection1 - Query three related nodes on binary-tree graphs", () => {
@@ -200,194 +124,143 @@ describe("TriadicSelection1 - Query three related nodes on binary-tree graphs", 
   // Expected: b2, b3, c11, c12, c21, c22
   // SKIPPED: Undirected pattern (b)-->(c) without label not supported
   // ============================================================================
-  test.fails(
-    "[1] Handling triadic friend of a friend - UNSUPPORTED: unlabeled target node pattern",
-    () => {
-      const graph = createTckGraph();
-      createBinaryTree1(graph);
-      const results = executeTckQuery(
-        graph,
-        "MATCH (a:A)-[:KNOWS]->(b)-->(c) RETURN c.name",
-      );
-      const names = results.map((r) => r as string).sort();
-      expect(names).toEqual(["b2", "b3", "c11", "c12", "c21", "c22"]);
-    },
-  );
+  test.fails("[1] Handling triadic friend of a friend - UNSUPPORTED: unlabeled target node pattern", () => {
+    const graph = createTckGraph();
+    createBinaryTree1(graph);
+    const results = executeTckQuery(graph, "MATCH (a:A)-[:KNOWS]->(b)-->(c) RETURN c.name");
+    const names = results.map((r) => r as string).sort();
+    expect(names).toEqual(["b2", "b3", "c11", "c12", "c21", "c22"]);
+  });
 
   // ============================================================================
   // Original TCK Scenarios [2-19]: All use OPTIONAL MATCH with IS NULL / IS NOT NULL
   // These patterns are not fully supported in the grammar
   // ============================================================================
-  test.fails(
-    "[2] Handling triadic friend of a friend that is not a friend - UNSUPPORTED: OPTIONAL MATCH + IS NULL",
-    () => {
-      const graph = createTckGraph();
-      createBinaryTree1(graph);
-      const results = executeTckQuery(
-        graph,
-        `MATCH (a:A)-[:KNOWS]->(b:X)-->(c:X)
+  test.fails("[2] Handling triadic friend of a friend that is not a friend - UNSUPPORTED: OPTIONAL MATCH + IS NULL", () => {
+    const graph = createTckGraph();
+    createBinaryTree1(graph);
+    const results = executeTckQuery(
+      graph,
+      `MATCH (a:A)-[:KNOWS]->(b:X)-->(c:X)
        OPTIONAL MATCH (a)-[r:KNOWS]->(c)
        WITH c WHERE r IS NULL
        RETURN c.name`,
-      );
-      const names = results.map((r) => r as string).sort();
-      expect(names).toEqual(["c11", "c12", "c21", "c22"]);
-    },
-  );
+    );
+    const names = results.map((r) => r as string).sort();
+    expect(names).toEqual(["c11", "c12", "c21", "c22"]);
+  });
 
-  test.fails(
-    "[3] Handling triadic friend of a friend that is not a friend with different relationship type - UNSUPPORTED: OPTIONAL MATCH + IS NULL",
-    () => {
-      const graph = createTckGraph();
-      createBinaryTree1(graph);
-      const results = executeTckQuery(
-        graph,
-        `MATCH (a:A)-[:KNOWS]->(b:X)-->(c:X)
+  test.fails("[3] Handling triadic friend of a friend that is not a friend with different relationship type - UNSUPPORTED: OPTIONAL MATCH + IS NULL", () => {
+    const graph = createTckGraph();
+    createBinaryTree1(graph);
+    const results = executeTckQuery(
+      graph,
+      `MATCH (a:A)-[:KNOWS]->(b:X)-->(c:X)
        OPTIONAL MATCH (a)-[r:FOLLOWS]->(c)
        WITH c WHERE r IS NULL
        RETURN c.name`,
-      );
-      const names = results.map((r) => r as string).sort();
-      expect(names).toEqual(["c11", "c12", "c21", "c22"]);
-    },
-  );
+    );
+    const names = results.map((r) => r as string).sort();
+    expect(names).toEqual(["c11", "c12", "c21", "c22"]);
+  });
 
-  test.fails(
-    "[4] Handling triadic friend of a friend that is not a friend with superset of relationship type - UNSUPPORTED: OPTIONAL MATCH + IS NULL",
-    () => {
-      const graph = createTckGraph();
-      createBinaryTree1(graph);
-      const results = executeTckQuery(
-        graph,
-        `MATCH (a:A)-[:KNOWS]->(b:X)-->(c:X)
+  test.fails("[4] Handling triadic friend of a friend that is not a friend with superset of relationship type - UNSUPPORTED: OPTIONAL MATCH + IS NULL", () => {
+    const graph = createTckGraph();
+    createBinaryTree1(graph);
+    const results = executeTckQuery(
+      graph,
+      `MATCH (a:A)-[:KNOWS]->(b:X)-->(c:X)
        OPTIONAL MATCH (a)-[r:KNOWS|FOLLOWS]->(c)
        WITH c WHERE r IS NULL
        RETURN c.name`,
-      );
-      const names = results.map((r) => r as string).sort();
-      expect(names).toEqual(["c11", "c12", "c21", "c22"]);
-    },
-  );
+    );
+    const names = results.map((r) => r as string).sort();
+    expect(names).toEqual(["c11", "c12", "c21", "c22"]);
+  });
 
-  test.fails(
-    "[5] Handling triadic friend of a friend that is not a friend with implicit subset of relationship type - UNSUPPORTED: OPTIONAL MATCH + IS NULL",
-    () => {
-      const graph = createTckGraph();
-      createBinaryTree1(graph);
-      const results = executeTckQuery(
-        graph,
-        `MATCH (a:A)-[:KNOWS|FOLLOWS]->(b:X)-->(c:X)
+  test.fails("[5] Handling triadic friend of a friend that is not a friend with implicit subset of relationship type - UNSUPPORTED: OPTIONAL MATCH + IS NULL", () => {
+    const graph = createTckGraph();
+    createBinaryTree1(graph);
+    const results = executeTckQuery(
+      graph,
+      `MATCH (a:A)-[:KNOWS|FOLLOWS]->(b:X)-->(c:X)
        OPTIONAL MATCH (a)-[r:KNOWS]->(c)
        WITH c WHERE r IS NULL
        RETURN c.name`,
-      );
-      const names = results.map((r) => r as string).sort();
-      expect(names).toEqual([
-        "c11",
-        "c12",
-        "c21",
-        "c22",
-        "c31",
-        "c32",
-        "c41",
-        "c42",
-      ]);
-    },
-  );
+    );
+    const names = results.map((r) => r as string).sort();
+    expect(names).toEqual(["c11", "c12", "c21", "c22", "c31", "c32", "c41", "c42"]);
+  });
 
-  test.fails(
-    "[6] Handling triadic friend of a friend that is not a friend with explicit subset of relationship type - UNSUPPORTED: OPTIONAL MATCH + IS NULL",
-    () => {
-      const graph = createTckGraph();
-      createBinaryTree1(graph);
-      const results = executeTckQuery(
-        graph,
-        `MATCH (a:A)-[:KNOWS|FOLLOWS]->(b:X)-->(c:X)
+  test.fails("[6] Handling triadic friend of a friend that is not a friend with explicit subset of relationship type - UNSUPPORTED: OPTIONAL MATCH + IS NULL", () => {
+    const graph = createTckGraph();
+    createBinaryTree1(graph);
+    const results = executeTckQuery(
+      graph,
+      `MATCH (a:A)-[:KNOWS|FOLLOWS]->(b:X)-->(c:X)
        OPTIONAL MATCH (a)-[r:KNOWS|FOLLOWS]->(c)
        WITH c WHERE r IS NULL
        RETURN c.name`,
-      );
-      const names = results.map((r) => r as string).sort();
-      expect(names).toEqual([
-        "c11",
-        "c12",
-        "c21",
-        "c22",
-        "c31",
-        "c32",
-        "c41",
-        "c42",
-      ]);
-    },
-  );
+    );
+    const names = results.map((r) => r as string).sort();
+    expect(names).toEqual(["c11", "c12", "c21", "c22", "c31", "c32", "c41", "c42"]);
+  });
 
-  test.fails(
-    "[7] Handling triadic friend of a friend that is not a friend with same labels - UNSUPPORTED: OPTIONAL MATCH + IS NULL",
-    () => {
-      const graph = createTckGraph();
-      createBinaryTree2(graph);
-      const results = executeTckQuery(
-        graph,
-        `MATCH (a:A)-[:KNOWS]->(b:X)-->(c:X)
+  test.fails("[7] Handling triadic friend of a friend that is not a friend with same labels - UNSUPPORTED: OPTIONAL MATCH + IS NULL", () => {
+    const graph = createTckGraph();
+    createBinaryTree2(graph);
+    const results = executeTckQuery(
+      graph,
+      `MATCH (a:A)-[:KNOWS]->(b:X)-->(c:X)
        OPTIONAL MATCH (a)-[r:KNOWS]->(c)
        WITH c WHERE r IS NULL
        RETURN c.name`,
-      );
-      const names = results.map((r) => r as string).sort();
-      expect(names).toEqual(["c11", "c21"]);
-    },
-  );
+    );
+    const names = results.map((r) => r as string).sort();
+    expect(names).toEqual(["c11", "c21"]);
+  });
 
-  test.fails(
-    "[8] Handling triadic friend of a friend that is not a friend with different labels - UNSUPPORTED: OPTIONAL MATCH + IS NULL",
-    () => {
-      const graph = createTckGraph();
-      createBinaryTree2(graph);
-      const results = executeTckQuery(
-        graph,
-        `MATCH (a:A)-[:KNOWS]->(b:X)-->(c:Y)
+  test.fails("[8] Handling triadic friend of a friend that is not a friend with different labels - UNSUPPORTED: OPTIONAL MATCH + IS NULL", () => {
+    const graph = createTckGraph();
+    createBinaryTree2(graph);
+    const results = executeTckQuery(
+      graph,
+      `MATCH (a:A)-[:KNOWS]->(b:X)-->(c:Y)
        OPTIONAL MATCH (a)-[r:KNOWS]->(c)
        WITH c WHERE r IS NULL
        RETURN c.name`,
-      );
-      const names = results.map((r) => r as string).sort();
-      expect(names).toEqual(["c12", "c22"]);
-    },
-  );
+    );
+    const names = results.map((r) => r as string).sort();
+    expect(names).toEqual(["c12", "c22"]);
+  });
 
-  test.fails(
-    "[9] Handling triadic friend of a friend that is not a friend with implicit subset of labels - UNSUPPORTED: OPTIONAL MATCH + IS NULL",
-    () => {
-      const graph = createTckGraph();
-      createBinaryTree2(graph);
-      const results = executeTckQuery(
-        graph,
-        `MATCH (a:A)-[:KNOWS]->(b:X)-->(c)
+  test.fails("[9] Handling triadic friend of a friend that is not a friend with implicit subset of labels - UNSUPPORTED: OPTIONAL MATCH + IS NULL", () => {
+    const graph = createTckGraph();
+    createBinaryTree2(graph);
+    const results = executeTckQuery(
+      graph,
+      `MATCH (a:A)-[:KNOWS]->(b:X)-->(c)
        OPTIONAL MATCH (a)-[r:KNOWS]->(c:X)
        WITH c WHERE r IS NULL
        RETURN c.name`,
-      );
-      const names = results.map((r) => r as string).sort();
-      expect(names).toEqual(["c11", "c12", "c21", "c22"]);
-    },
-  );
+    );
+    const names = results.map((r) => r as string).sort();
+    expect(names).toEqual(["c11", "c12", "c21", "c22"]);
+  });
 
-  test.fails(
-    "[10] Handling triadic friend of a friend that is not a friend with implicit superset of labels - UNSUPPORTED: OPTIONAL MATCH + IS NULL",
-    () => {
-      const graph = createTckGraph();
-      createBinaryTree2(graph);
-      const results = executeTckQuery(
-        graph,
-        `MATCH (a:A)-[:KNOWS]->(b:X)-->(c:X)
+  test.fails("[10] Handling triadic friend of a friend that is not a friend with implicit superset of labels - UNSUPPORTED: OPTIONAL MATCH + IS NULL", () => {
+    const graph = createTckGraph();
+    createBinaryTree2(graph);
+    const results = executeTckQuery(
+      graph,
+      `MATCH (a:A)-[:KNOWS]->(b:X)-->(c:X)
        OPTIONAL MATCH (a)-[r:KNOWS]->(c)
        WITH c WHERE r IS NULL
        RETURN c.name`,
-      );
-      const names = results.map((r) => r as string).sort();
-      expect(names).toEqual(["c11", "c21"]);
-    },
-  );
+    );
+    const names = results.map((r) => r as string).sort();
+    expect(names).toEqual(["c11", "c21"]);
+  });
 
   test("[11] Handling triadic friend of a friend that is a friend - UNSUPPORTED: OPTIONAL MATCH + IS NOT NULL", () => {
     const graph = createTckGraph();
@@ -539,10 +412,7 @@ describe("TriadicSelection1 - Query three related nodes on binary-tree graphs", 
     createBinaryTree1(graph);
 
     // Find direct KNOWS relationships from A
-    const results = executeTckQuery(
-      graph,
-      "MATCH (a:A)-[:KNOWS]->(b:X) RETURN b.name",
-    );
+    const results = executeTckQuery(graph, "MATCH (a:A)-[:KNOWS]->(b:X) RETURN b.name");
     const names = results.map((r) => r as string).sort();
 
     expect(names).toEqual(["b1", "b2"]);
@@ -553,10 +423,7 @@ describe("TriadicSelection1 - Query three related nodes on binary-tree graphs", 
     createBinaryTree1(graph);
 
     // Find direct FOLLOWS relationships from A
-    const results = executeTckQuery(
-      graph,
-      "MATCH (a:A)-[:FOLLOWS]->(b:X) RETURN b.name",
-    );
+    const results = executeTckQuery(graph, "MATCH (a:A)-[:FOLLOWS]->(b:X) RETURN b.name");
     const names = results.map((r) => r as string).sort();
 
     expect(names).toEqual(["b3", "b4"]);
@@ -567,10 +434,7 @@ describe("TriadicSelection1 - Query three related nodes on binary-tree graphs", 
     createBinaryTree1(graph);
 
     // Count level 1 friends
-    const level1 = executeTckQuery(
-      graph,
-      "MATCH (a:A)-[:KNOWS]->(b:X) RETURN count(b)",
-    );
+    const level1 = executeTckQuery(graph, "MATCH (a:A)-[:KNOWS]->(b:X) RETURN count(b)");
     expect(level1[0]).toBe(2);
 
     // Count level 2 friends (via KNOWS chains)

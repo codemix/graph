@@ -139,15 +139,9 @@ test("GraphError - all custom errors inherit from GraphError", () => {
   expect(new EdgeNotFoundError("test:1")).toBeInstanceOf(GraphError);
   expect(new LabelNotFoundError("test")).toBeInstanceOf(GraphError);
   expect(new InvalidComparisonError(1, "a")).toBeInstanceOf(GraphError);
-  expect(new MaxIterationsExceededError(1000, "RepeatStep")).toBeInstanceOf(
-    GraphError,
-  );
-  expect(new MemoryLimitExceededError(100000, 150000)).toBeInstanceOf(
-    GraphError,
-  );
-  expect(new PropertyValidationError("foo", "Person")).toBeInstanceOf(
-    GraphError,
-  );
+  expect(new MaxIterationsExceededError(1000, "RepeatStep")).toBeInstanceOf(GraphError);
+  expect(new MemoryLimitExceededError(100000, 150000)).toBeInstanceOf(GraphError);
+  expect(new PropertyValidationError("foo", "Person")).toBeInstanceOf(GraphError);
 });
 
 // InvalidComparisonError tests
@@ -157,9 +151,7 @@ test("InvalidComparisonError - creates error with values", () => {
   expect(error).toBeInstanceOf(Error);
   expect(error).toBeInstanceOf(GraphError);
   expect(error).toBeInstanceOf(InvalidComparisonError);
-  expect(error.message).toBe(
-    "Cannot compare values of incompatible types: number and string",
-  );
+  expect(error.message).toBe("Cannot compare values of incompatible types: number and string");
   expect(error.name).toBe("InvalidComparisonError");
   expect(error.valueA).toBe(42);
   expect(error.valueB).toBe("hello");
@@ -220,9 +212,7 @@ test("PropertyValidationError - creates error with key and label", () => {
   expect(error).toBeInstanceOf(Error);
   expect(error).toBeInstanceOf(GraphError);
   expect(error).toBeInstanceOf(PropertyValidationError);
-  expect(error.message).toBe(
-    "Property 'invalidProp' is not valid for label 'Person'",
-  );
+  expect(error.message).toBe("Property 'invalidProp' is not valid for label 'Person'");
   expect(error.name).toBe("PropertyValidationError");
   expect(error.key).toBe("invalidProp");
   expect(error.label).toBe("Person");
@@ -275,10 +265,7 @@ test("PropertyTypeError - creates error with key, label, value, and issues", () 
 });
 
 test("PropertyTypeError - handles multiple issues", () => {
-  const error = new PropertyTypeError("email", "User", null, [
-    "Expected string",
-    "Cannot be null",
-  ]);
+  const error = new PropertyTypeError("email", "User", null, ["Expected string", "Cannot be null"]);
 
   expect(error.message).toBe(
     "Property 'email' on label 'User' failed validation: Expected string; Cannot be null",
@@ -293,9 +280,7 @@ test("PropertyTypeError - is throwable", () => {
 });
 
 test("PropertyTypeError - exposes all context fields", () => {
-  const error = new PropertyTypeError("status", "Order", undefined, [
-    "Required field",
-  ]);
+  const error = new PropertyTypeError("status", "Order", undefined, ["Required field"]);
   expect(error.key).toBe("status");
   expect(error.label).toBe("Order");
   expect(error.value).toBe(undefined);
@@ -335,9 +320,7 @@ test("ReadonlyGraphError - creates error with step name", () => {
   expect(error).toBeInstanceOf(Error);
   expect(error).toBeInstanceOf(GraphError);
   expect(error).toBeInstanceOf(ReadonlyGraphError);
-  expect(error.message).toBe(
-    "Query contains mutation step 'Create' but readonly mode is enabled",
-  );
+  expect(error.message).toBe("Query contains mutation step 'Create' but readonly mode is enabled");
   expect(error.name).toBe("ReadonlyGraphError");
   expect(error.stepName).toBe("Create");
 });

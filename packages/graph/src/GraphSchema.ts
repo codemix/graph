@@ -50,10 +50,7 @@ export interface FullTextIndexConfig {
 /**
  * Index configuration for a property.
  */
-export type IndexConfig =
-  | HashIndexConfig
-  | BTreeIndexConfig
-  | FullTextIndexConfig;
+export type IndexConfig = HashIndexConfig | BTreeIndexConfig | FullTextIndexConfig;
 
 export interface GraphSchema {
   /**
@@ -77,12 +74,11 @@ export interface ElementSchema {
 /**
  * Get the properties from an element schema.
  */
-export type PropertiesFromSchema<TSchema extends ElementSchema> =
-  UndefinedToOptional<{
-    [K in keyof TSchema["properties"]]: StandardSchemaV1.InferOutput<
-      TSchema["properties"][K]["type"]
-    >;
-  }>;
+export type PropertiesFromSchema<TSchema extends ElementSchema> = UndefinedToOptional<{
+  [K in keyof TSchema["properties"]]: StandardSchemaV1.InferOutput<
+    TSchema["properties"][K]["type"]
+  >;
+}>;
 
 export interface VertexSchema extends ElementSchema {}
 
@@ -144,8 +140,7 @@ export type SortableElementProperties<
 /**
  * A valid vertex label for the given graph schema.
  */
-export type VertexLabel<TSchema extends GraphSchema> =
-  keyof TSchema["vertices"] & string;
+export type VertexLabel<TSchema extends GraphSchema> = keyof TSchema["vertices"] & string;
 
 /**
  * The properties associated with a vertex label.
@@ -162,8 +157,7 @@ export type VertexProperties<
 /**
  * A valid edge label for the given graph schema.
  */
-export type EdgeLabel<TSchema extends GraphSchema> = keyof TSchema["edges"] &
-  string;
+export type EdgeLabel<TSchema extends GraphSchema> = keyof TSchema["edges"] & string;
 
 /**
  * The properties associated with an edge label.
@@ -183,9 +177,7 @@ type UndefinedToOptional<T> = {
   [K in keyof T as undefined extends T[K] ? K : never]?: T[K];
 };
 
-export type AnyLabel<TSchema extends GraphSchema> =
-  | VertexLabel<TSchema>
-  | EdgeLabel<TSchema>;
+export type AnyLabel<TSchema extends GraphSchema> = VertexLabel<TSchema> | EdgeLabel<TSchema>;
 
 /**
  * A valid property name for any edge in the given graph schema.
@@ -198,8 +190,7 @@ export type AnyEdgePropertyName<TSchema extends GraphSchema> = {
  * A valid property name for any vertex in the given graph schema.
  */
 export type AnyVertexPropertyName<TSchema extends GraphSchema> = {
-  [L in VertexLabel<TSchema>]: keyof TSchema["vertices"][L]["properties"] &
-    string;
+  [L in VertexLabel<TSchema>]: keyof TSchema["vertices"][L]["properties"] & string;
 }[VertexLabel<TSchema>];
 
 /**

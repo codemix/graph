@@ -31,9 +31,7 @@ describe("Statistical Aggregates", () => {
     });
 
     test("percentileDisc() parses correctly", () => {
-      const result = parse(
-        "MATCH (n:A) RETURN percentileDisc(n.value, 0.5)",
-      ) as Query;
+      const result = parse("MATCH (n:A) RETURN percentileDisc(n.value, 0.5)") as Query;
       expect(result.type).toBe("Query");
       const returnItem = result.return!.items[0]!;
       expect(returnItem.aggregate).toBe("PERCENTILEDISC");
@@ -43,9 +41,7 @@ describe("Statistical Aggregates", () => {
     });
 
     test("percentileCont() parses correctly", () => {
-      const result = parse(
-        "MATCH (n:A) RETURN percentileCont(n.value, 0.75)",
-      ) as Query;
+      const result = parse("MATCH (n:A) RETURN percentileCont(n.value, 0.75)") as Query;
       expect(result.type).toBe("Query");
       const returnItem = result.return!.items[0]!;
       expect(returnItem.aggregate).toBe("PERCENTILECONT");
@@ -55,9 +51,7 @@ describe("Statistical Aggregates", () => {
     });
 
     test("stDev() with alias parses correctly", () => {
-      const result = parse(
-        "MATCH (n:A) RETURN stDev(n.value) AS stddev",
-      ) as Query;
+      const result = parse("MATCH (n:A) RETURN stDev(n.value) AS stddev") as Query;
       expect(result.type).toBe("Query");
       const returnItem = result.return!.items[0]!;
       expect(returnItem.aggregate).toBe("STDEV");
@@ -65,9 +59,7 @@ describe("Statistical Aggregates", () => {
     });
 
     test("percentileDisc() with alias parses correctly", () => {
-      const result = parse(
-        "MATCH (n:A) RETURN percentileDisc(n.value, 0.5) AS median",
-      ) as Query;
+      const result = parse("MATCH (n:A) RETURN percentileDisc(n.value, 0.5) AS median") as Query;
       expect(result.type).toBe("Query");
       const returnItem = result.return!.items[0]!;
       expect(returnItem.aggregate).toBe("PERCENTILEDISC");
@@ -84,10 +76,7 @@ describe("Statistical Aggregates", () => {
       graph.addVertex("A", { value: 20 });
       graph.addVertex("A", { value: 30 });
 
-      const result = executeTckQuery(
-        graph,
-        "MATCH (n:A) RETURN stDev(n.value)",
-      );
+      const result = executeTckQuery(graph, "MATCH (n:A) RETURN stDev(n.value)");
       expect(result).toHaveLength(1);
       expect((result[0] as Record<string, unknown>)["stDev(n.value)"]).toBe(10);
     });
@@ -96,10 +85,7 @@ describe("Statistical Aggregates", () => {
       const graph = createTckGraph();
       graph.addVertex("A", { value: 42 });
 
-      const result = executeTckQuery(
-        graph,
-        "MATCH (n:A) RETURN stDev(n.value)",
-      );
+      const result = executeTckQuery(graph, "MATCH (n:A) RETURN stDev(n.value)");
       expect(result).toHaveLength(1);
       expect((result[0] as Record<string, unknown>)["stDev(n.value)"]).toBe(0);
     });
@@ -110,10 +96,7 @@ describe("Statistical Aggregates", () => {
       graph.addVertex("A", { value: 5 });
       graph.addVertex("A", { value: 5 });
 
-      const result = executeTckQuery(
-        graph,
-        "MATCH (n:A) RETURN stDev(n.value)",
-      );
+      const result = executeTckQuery(graph, "MATCH (n:A) RETURN stDev(n.value)");
       expect(result).toHaveLength(1);
       expect((result[0] as Record<string, unknown>)["stDev(n.value)"]).toBe(0);
     });
@@ -127,25 +110,17 @@ describe("Statistical Aggregates", () => {
       graph.addVertex("A", { value: 20 });
       graph.addVertex("A", { value: 30 });
 
-      const result = executeTckQuery(
-        graph,
-        "MATCH (n:A) RETURN stDevP(n.value)",
-      );
+      const result = executeTckQuery(graph, "MATCH (n:A) RETURN stDevP(n.value)");
       expect(result).toHaveLength(1);
       // Population stdev: sqrt(((10-20)^2 + (20-20)^2 + (30-20)^2) / 3) = sqrt(200/3) ≈ 8.165
-      expect(
-        (result[0] as Record<string, unknown>)["stDevP(n.value)"],
-      ).toBeCloseTo(8.165, 2);
+      expect((result[0] as Record<string, unknown>)["stDevP(n.value)"]).toBeCloseTo(8.165, 2);
     });
 
     test("returns 0 for single value", () => {
       const graph = createTckGraph();
       graph.addVertex("A", { value: 42 });
 
-      const result = executeTckQuery(
-        graph,
-        "MATCH (n:A) RETURN stDevP(n.value)",
-      );
+      const result = executeTckQuery(graph, "MATCH (n:A) RETURN stDevP(n.value)");
       expect(result).toHaveLength(1);
       expect((result[0] as Record<string, unknown>)["stDevP(n.value)"]).toBe(0);
     });
@@ -156,10 +131,7 @@ describe("Statistical Aggregates", () => {
       const graph = createTckGraph();
       graph.addVertex("B", { value: 42 }); // Different label
 
-      const result = executeTckQuery(
-        graph,
-        "MATCH (n:A) RETURN stDevP(n.value)",
-      );
+      const result = executeTckQuery(graph, "MATCH (n:A) RETURN stDevP(n.value)");
       expect(result).toHaveLength(1);
       expect((result[0] as Record<string, unknown>)["stDevP(n.value)"]).toBe(0);
     });
@@ -172,10 +144,7 @@ describe("Statistical Aggregates", () => {
       graph.addVertex("A", { value: 20 });
       graph.addVertex("A", { value: 30 });
 
-      const result = executeTckQuery(
-        graph,
-        "MATCH (n:A) RETURN percentileDisc(n.value, 0.0) AS p",
-      );
+      const result = executeTckQuery(graph, "MATCH (n:A) RETURN percentileDisc(n.value, 0.0) AS p");
       expect(result).toHaveLength(1);
       expect((result[0] as Record<string, unknown>).p).toBe(10);
     });
@@ -186,10 +155,7 @@ describe("Statistical Aggregates", () => {
       graph.addVertex("A", { value: 20 });
       graph.addVertex("A", { value: 30 });
 
-      const result = executeTckQuery(
-        graph,
-        "MATCH (n:A) RETURN percentileDisc(n.value, 0.5) AS p",
-      );
+      const result = executeTckQuery(graph, "MATCH (n:A) RETURN percentileDisc(n.value, 0.5) AS p");
       expect(result).toHaveLength(1);
       expect((result[0] as Record<string, unknown>).p).toBe(20);
     });
@@ -200,10 +166,7 @@ describe("Statistical Aggregates", () => {
       graph.addVertex("A", { value: 20 });
       graph.addVertex("A", { value: 30 });
 
-      const result = executeTckQuery(
-        graph,
-        "MATCH (n:A) RETURN percentileDisc(n.value, 1.0) AS p",
-      );
+      const result = executeTckQuery(graph, "MATCH (n:A) RETURN percentileDisc(n.value, 1.0) AS p");
       expect(result).toHaveLength(1);
       expect((result[0] as Record<string, unknown>).p).toBe(30);
     });
@@ -214,10 +177,7 @@ describe("Statistical Aggregates", () => {
       const graph = createTckGraph();
       graph.addVertex("B", { value: 10 }); // Different label
 
-      const result = executeTckQuery(
-        graph,
-        "MATCH (n:A) RETURN percentileDisc(n.value, 0.5) AS p",
-      );
+      const result = executeTckQuery(graph, "MATCH (n:A) RETURN percentileDisc(n.value, 0.5) AS p");
       expect(result).toHaveLength(1);
       expect((result[0] as Record<string, unknown>).p).toBeNull();
     });
@@ -226,10 +186,7 @@ describe("Statistical Aggregates", () => {
       const graph = createTckGraph();
       graph.addVertex("A", { value: 42 });
 
-      const result = executeTckQuery(
-        graph,
-        "MATCH (n:A) RETURN percentileDisc(n.value, 0.5) AS p",
-      );
+      const result = executeTckQuery(graph, "MATCH (n:A) RETURN percentileDisc(n.value, 0.5) AS p");
       expect(result).toHaveLength(1);
       expect((result[0] as Record<string, unknown>).p).toBe(42);
     });
@@ -242,10 +199,7 @@ describe("Statistical Aggregates", () => {
       graph.addVertex("A", { value: 20 });
       graph.addVertex("A", { value: 30 });
 
-      const result = executeTckQuery(
-        graph,
-        "MATCH (n:A) RETURN percentileCont(n.value, 0.0) AS p",
-      );
+      const result = executeTckQuery(graph, "MATCH (n:A) RETURN percentileCont(n.value, 0.0) AS p");
       expect(result).toHaveLength(1);
       expect((result[0] as Record<string, unknown>).p).toBe(10);
     });
@@ -256,10 +210,7 @@ describe("Statistical Aggregates", () => {
       graph.addVertex("A", { value: 20 });
       graph.addVertex("A", { value: 30 });
 
-      const result = executeTckQuery(
-        graph,
-        "MATCH (n:A) RETURN percentileCont(n.value, 0.5) AS p",
-      );
+      const result = executeTckQuery(graph, "MATCH (n:A) RETURN percentileCont(n.value, 0.5) AS p");
       expect(result).toHaveLength(1);
       expect((result[0] as Record<string, unknown>).p).toBe(20);
     });
@@ -270,10 +221,7 @@ describe("Statistical Aggregates", () => {
       graph.addVertex("A", { value: 20 });
       graph.addVertex("A", { value: 30 });
 
-      const result = executeTckQuery(
-        graph,
-        "MATCH (n:A) RETURN percentileCont(n.value, 1.0) AS p",
-      );
+      const result = executeTckQuery(graph, "MATCH (n:A) RETURN percentileCont(n.value, 1.0) AS p");
       expect(result).toHaveLength(1);
       expect((result[0] as Record<string, unknown>).p).toBe(30);
     });
@@ -300,10 +248,7 @@ describe("Statistical Aggregates", () => {
       const graph = createTckGraph();
       graph.addVertex("B", { value: 10 }); // Different label
 
-      const result = executeTckQuery(
-        graph,
-        "MATCH (n:A) RETURN percentileCont(n.value, 0.5) AS p",
-      );
+      const result = executeTckQuery(graph, "MATCH (n:A) RETURN percentileCont(n.value, 0.5) AS p");
       expect(result).toHaveLength(1);
       expect((result[0] as Record<string, unknown>).p).toBeNull();
     });
@@ -316,10 +261,7 @@ describe("Statistical Aggregates", () => {
       graph.addVertex("A", { value: 20 });
       graph.addVertex("A", { value: 30 });
 
-      const result = executeTckQuery(
-        graph,
-        "MATCH (n:A) RETURN stDev(n.value) AS stddev",
-      );
+      const result = executeTckQuery(graph, "MATCH (n:A) RETURN stDev(n.value) AS stddev");
       expect(result).toHaveLength(1);
       expect((result[0] as Record<string, unknown>).stddev).toBe(10);
     });
@@ -346,15 +288,10 @@ describe("Statistical Aggregates", () => {
       graph.addVertex("A", { value: "not a number" });
       graph.addVertex("A", { value: 30 });
 
-      const result = executeTckQuery(
-        graph,
-        "MATCH (n:A) RETURN stDev(n.value)",
-      );
+      const result = executeTckQuery(graph, "MATCH (n:A) RETURN stDev(n.value)");
       expect(result).toHaveLength(1);
       // Only 10 and 30 are numeric, so stdev is computed from those
-      expect((result[0] as Record<string, unknown>)["stDev(n.value)"]).toBe(
-        10 * Math.SQRT2,
-      );
+      expect((result[0] as Record<string, unknown>)["stDev(n.value)"]).toBe(10 * Math.SQRT2);
     });
 
     test("handles missing property", () => {
@@ -363,15 +300,10 @@ describe("Statistical Aggregates", () => {
       graph.addVertex("A", {}); // No value property
       graph.addVertex("A", { value: 30 });
 
-      const result = executeTckQuery(
-        graph,
-        "MATCH (n:A) RETURN stDev(n.value)",
-      );
+      const result = executeTckQuery(graph, "MATCH (n:A) RETURN stDev(n.value)");
       expect(result).toHaveLength(1);
       // Only 10 and 30 are valid
-      expect((result[0] as Record<string, unknown>)["stDev(n.value)"]).toBe(
-        10 * Math.SQRT2,
-      );
+      expect((result[0] as Record<string, unknown>)["stDev(n.value)"]).toBe(10 * Math.SQRT2);
     });
   });
 });

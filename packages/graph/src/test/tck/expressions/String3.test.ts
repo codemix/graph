@@ -22,10 +22,7 @@ describe("String3 - String Reversal", () => {
     const graph = createTckGraph();
     executeTckQuery(graph, "CREATE (:A {name: 'Oskar'}), (:A {name: 'raksO'})");
 
-    const results = executeTckQuery(
-      graph,
-      "MATCH (n:A) WHERE n.name = 'Oskar' RETURN n.name",
-    );
+    const results = executeTckQuery(graph, "MATCH (n:A) WHERE n.name = 'Oskar' RETURN n.name");
 
     expect(results).toHaveLength(1);
     expect(results[0]).toBe("Oskar");

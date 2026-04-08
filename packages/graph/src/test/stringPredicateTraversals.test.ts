@@ -106,102 +106,78 @@ function createGraph(): {
 
 test("String Predicate Traversals - startsWith - should filter vertices where property starts with value", () => {
   const { g } = createGraph();
-  const results = Array.from(
-    g.V().hasLabel("User").startsWith("name", "Alice").values(),
-  );
+  const results = Array.from(g.V().hasLabel("User").startsWith("name", "Alice").values());
   expect(results).toHaveLength(1);
   expect(results[0]!.get("name")).toBe("Alice Smith");
 });
 
 test("String Predicate Traversals - startsWith - should find users with email starting with specific prefix", () => {
   const { g } = createGraph();
-  const results = Array.from(
-    g.V().hasLabel("User").startsWith("email", "alice").values(),
-  );
+  const results = Array.from(g.V().hasLabel("User").startsWith("email", "alice").values());
   expect(results).toHaveLength(1);
 });
 
 test("String Predicate Traversals - startsWith - should find products with SKU starting with prefix", () => {
   const { g } = createGraph();
-  const results = Array.from(
-    g.V().hasLabel("Product").startsWith("sku", "DB").values(),
-  );
+  const results = Array.from(g.V().hasLabel("Product").startsWith("sku", "DB").values());
   expect(results).toHaveLength(1);
 });
 
 test("String Predicate Traversals - startsWith - should return empty when no match", () => {
   const { g } = createGraph();
-  const results = Array.from(
-    g.V().hasLabel("User").startsWith("name", "Zack").values(),
-  );
+  const results = Array.from(g.V().hasLabel("User").startsWith("name", "Zack").values());
   expect(results).toHaveLength(0);
 });
 
 test("String Predicate Traversals - startsWith - should match all when prefix is empty string", () => {
   const { g } = createGraph();
-  const results = Array.from(
-    g.V().hasLabel("User").startsWith("name", "").values(),
-  );
+  const results = Array.from(g.V().hasLabel("User").startsWith("name", "").values());
   expect(results).toHaveLength(4);
 });
 
 test("String Predicate Traversals - endsWith - should filter vertices where property ends with value", () => {
   const { g } = createGraph();
-  const results = Array.from(
-    g.V().hasLabel("User").endsWith("name", "Smith").values(),
-  );
+  const results = Array.from(g.V().hasLabel("User").endsWith("name", "Smith").values());
   expect(results).toHaveLength(1);
   expect(results[0]!.get("name")).toBe("Alice Smith");
 });
 
 test("String Predicate Traversals - endsWith - should find users with emails ending with domain", () => {
   const { g } = createGraph();
-  const results = Array.from(
-    g.V().hasLabel("User").endsWith("email", ".com").values(),
-  );
+  const results = Array.from(g.V().hasLabel("User").endsWith("email", ".com").values());
   // alice@example.com and charlie@example.com
   expect(results).toHaveLength(2);
 });
 
 test("String Predicate Traversals - endsWith - should find users with emails ending in .org", () => {
   const { g } = createGraph();
-  const results = Array.from(
-    g.V().hasLabel("User").endsWith("email", ".org").values(),
-  );
+  const results = Array.from(g.V().hasLabel("User").endsWith("email", ".org").values());
   // bob@company.org and diana@company.org
   expect(results).toHaveLength(2);
 });
 
 test("String Predicate Traversals - endsWith - should return empty when no match", () => {
   const { g } = createGraph();
-  const results = Array.from(
-    g.V().hasLabel("User").endsWith("name", "XYZ").values(),
-  );
+  const results = Array.from(g.V().hasLabel("User").endsWith("name", "XYZ").values());
   expect(results).toHaveLength(0);
 });
 
 test("String Predicate Traversals - containing - should filter vertices where property contains value", () => {
   const { g } = createGraph();
-  const results = Array.from(
-    g.V().hasLabel("User").containing("name", "Brown").values(),
-  );
+  const results = Array.from(g.V().hasLabel("User").containing("name", "Brown").values());
   expect(results).toHaveLength(1);
   expect(results[0]!.get("name")).toBe("Charlie Brown");
 });
 
 test("String Predicate Traversals - containing - should find users with emails containing domain", () => {
   const { g } = createGraph();
-  const results = Array.from(
-    g.V().hasLabel("User").containing("email", "example").values(),
-  );
+  const results = Array.from(g.V().hasLabel("User").containing("email", "example").values());
   expect(results).toHaveLength(2);
 });
 
 test("String Predicate Traversals - containing - should find users with bio containing keyword", () => {
   const { g } = createGraph();
-  const results = Array.from(
-    g.V().hasLabel("User").containing("bio", "engineer").values(),
-  );
+  const results = Array.from(g.V().hasLabel("User").containing("bio", "engineer").values());
   expect(results).toHaveLength(1);
 });
 
@@ -215,80 +191,59 @@ test("String Predicate Traversals - containing - should find products with descr
 
 test("String Predicate Traversals - containing - should return empty when no match", () => {
   const { g } = createGraph();
-  const results = Array.from(
-    g.V().hasLabel("User").containing("name", "XYZ").values(),
-  );
+  const results = Array.from(g.V().hasLabel("User").containing("name", "XYZ").values());
   expect(results).toHaveLength(0);
 });
 
 test("String Predicate Traversals - matches (regex) - should filter vertices where property matches regex pattern", () => {
   const { g } = createGraph();
-  const results = Array.from(
-    g.V().hasLabel("User").matches("name", "^Alice.*").values(),
-  );
+  const results = Array.from(g.V().hasLabel("User").matches("name", "^Alice.*").values());
   expect(results).toHaveLength(1);
   expect(results[0]!.get("name")).toBe("Alice Smith");
 });
 
 test("String Predicate Traversals - matches (regex) - should match with suffix pattern", () => {
   const { g } = createGraph();
-  const results = Array.from(
-    g.V().hasLabel("User").matches("name", ".*Smith$").values(),
-  );
+  const results = Array.from(g.V().hasLabel("User").matches("name", ".*Smith$").values());
   expect(results).toHaveLength(1);
 });
 
 test("String Predicate Traversals - matches (regex) - should match with alternation pattern", () => {
   const { g } = createGraph();
-  const results = Array.from(
-    g.V().hasLabel("User").matches("role", "admin|moderator").values(),
-  );
+  const results = Array.from(g.V().hasLabel("User").matches("role", "admin|moderator").values());
   // Alice (admin), Charlie (admin), Diana (moderator)
   expect(results).toHaveLength(3);
 });
 
 test("String Predicate Traversals - matches (regex) - should match email pattern", () => {
   const { g } = createGraph();
-  const results = Array.from(
-    g.V().hasLabel("User").matches("email", ".*@example\\.com$").values(),
-  );
+  const results = Array.from(g.V().hasLabel("User").matches("email", ".*@example\\.com$").values());
   expect(results).toHaveLength(2);
 });
 
 test("String Predicate Traversals - matches (regex) - should handle character class patterns", () => {
   const { g } = createGraph();
-  const results = Array.from(
-    g.V().hasLabel("Product").matches("sku", "^[A-Z]+-[0-9]+$").values(),
-  );
+  const results = Array.from(g.V().hasLabel("Product").matches("sku", "^[A-Z]+-[0-9]+$").values());
   expect(results).toHaveLength(3);
 });
 
 test("String Predicate Traversals - matches (regex) - should be case-sensitive by default", () => {
   const { g } = createGraph();
-  const results = Array.from(
-    g.V().hasLabel("User").matches("name", "^ALICE.*").values(),
-  );
+  const results = Array.from(g.V().hasLabel("User").matches("name", "^ALICE.*").values());
   // No match - Alice has uppercase A, not ALICE
   expect(results).toHaveLength(0);
 });
 
 test("String Predicate Traversals - matches (regex) - should return empty when pattern doesn't match", () => {
   const { g } = createGraph();
-  const results = Array.from(
-    g.V().hasLabel("User").matches("name", "^NoMatch.*").values(),
-  );
+  const results = Array.from(g.V().hasLabel("User").matches("name", "^NoMatch.*").values());
   expect(results).toHaveLength(0);
 });
 
 test("String Predicate Traversals - combining string predicates with other conditions - should combine startsWith with has", () => {
   const { g } = createGraph();
   const results = Array.from(
-    g
-      .V()
-      .hasLabel("User")
-      .startsWith("name", "A")
-      .has("role", "admin")
-      .values(),
+    g.V().hasLabel("User").startsWith("name", "A").has("role", "admin").values(),
   );
   expect(results).toHaveLength(1);
   expect(results[0]!.get("name")).toBe("Alice Smith");
@@ -297,12 +252,7 @@ test("String Predicate Traversals - combining string predicates with other condi
 test("String Predicate Traversals - combining string predicates with other conditions - should combine endsWith with other predicates", () => {
   const { g } = createGraph();
   const results = Array.from(
-    g
-      .V()
-      .hasLabel("User")
-      .endsWith("email", ".com")
-      .containing("bio", "engineer")
-      .values(),
+    g.V().hasLabel("User").endsWith("email", ".com").containing("bio", "engineer").values(),
   );
   expect(results).toHaveLength(1);
 });
@@ -310,12 +260,7 @@ test("String Predicate Traversals - combining string predicates with other condi
 test("String Predicate Traversals - combining string predicates with other conditions - should chain multiple string predicates", () => {
   const { g } = createGraph();
   const results = Array.from(
-    g
-      .V()
-      .hasLabel("User")
-      .startsWith("email", "alice")
-      .endsWith("email", ".com")
-      .values(),
+    g.V().hasLabel("User").startsWith("email", "alice").endsWith("email", ".com").values(),
   );
   expect(results).toHaveLength(1);
 });
@@ -323,12 +268,7 @@ test("String Predicate Traversals - combining string predicates with other condi
 test("String Predicate Traversals - combining string predicates with other conditions - should combine matches with other conditions", () => {
   const { g } = createGraph();
   const results = Array.from(
-    g
-      .V()
-      .hasLabel("User")
-      .matches("email", ".*@example\\.com$")
-      .has("role", "admin")
-      .values(),
+    g.V().hasLabel("User").matches("email", ".*@example\\.com$").has("role", "admin").values(),
   );
   // Both Alice (alice@example.com) and Charlie (charlie@example.com) have role admin
   expect(results).toHaveLength(2);
@@ -421,18 +361,14 @@ test("String Predicate Traversals - EdgeTraversal string predicates - should fil
     }
   }
 
-  const results = Array.from(
-    g.E().hasLabel("reviewed").matches("comment", ".*product.*").values(),
-  );
+  const results = Array.from(g.E().hasLabel("reviewed").matches("comment", ".*product.*").values());
   expect(results.length).toBeGreaterThanOrEqual(0);
 });
 
 test("String Predicate Traversals - edge cases - should handle special regex characters in startsWith", () => {
   const { g } = createGraph();
   // startsWith uses string comparison, not regex
-  const results = Array.from(
-    g.V().hasLabel("User").startsWith("email", "alice@").values(),
-  );
+  const results = Array.from(g.V().hasLabel("User").startsWith("email", "alice@").values());
   expect(results).toHaveLength(1);
 });
 

@@ -62,7 +62,7 @@ const schema = {
     Person: {
       properties: {
         name: { type: ZodYText }, // stored as Y.Text
-        age:  { type: z.number() },
+        age: { type: z.number() },
       },
     },
   },
@@ -71,11 +71,11 @@ const schema = {
   },
 } as const satisfies GraphSchema;
 
-const doc   = new Y.Doc();
+const doc = new Y.Doc();
 const graph = new YGraph({ schema, doc });
 
 const alice = graph.addVertex("Person", { name: new Y.Text("Alice"), age: 30 });
-const bob   = graph.addVertex("Person", { name: new Y.Text("Bob"),   age: 25 });
+const bob = graph.addVertex("Person", { name: new Y.Text("Bob"), age: 25 });
 graph.addEdge(alice, "knows", bob, {});
 
 // Read a collaborative text property
@@ -112,16 +112,16 @@ Because everything is a native Yjs shared type, any two peers that apply the sam
 import * as Y from "yjs";
 import { YGraph } from "@codemix/y-graph-storage";
 
-const doc   = new Y.Doc();
+const doc = new Y.Doc();
 const graph = new YGraph({ schema, doc });
 ```
 
 `YGraph` accepts:
 
-| Option | Type | Description |
-|--------|------|-------------|
-| `schema` | `GraphSchema` | The graph schema (vertex/edge labels and property types). |
-| `doc` | `Y.Doc` | The Yjs document. Provide a shared instance to sync with providers. |
+| Option   | Type          | Description                                                         |
+| -------- | ------------- | ------------------------------------------------------------------- |
+| `schema` | `GraphSchema` | The graph schema (vertex/edge labels and property types).           |
+| `doc`    | `Y.Doc`       | The Yjs document. Provide a shared instance to sync with providers. |
 
 ### Mutating the Graph
 
@@ -193,16 +193,16 @@ Multiple `subscribe` calls share a single underlying Yjs `observeDeep` listener;
 
 ### Change Events
 
-| `kind` | Extra fields | Description |
-|--------|-------------|-------------|
-| `vertex.added` | `id` | A vertex was inserted. |
-| `vertex.deleted` | `id` | A vertex was removed. |
-| `edge.added` | `id` | An edge was inserted. |
-| `edge.deleted` | `id` | An edge was removed. |
-| `vertex.property.set` | `id`, `property` | A scalar property was set on a vertex. |
+| `kind`                    | Extra fields                      | Description                                                        |
+| ------------------------- | --------------------------------- | ------------------------------------------------------------------ |
+| `vertex.added`            | `id`                              | A vertex was inserted.                                             |
+| `vertex.deleted`          | `id`                              | A vertex was removed.                                              |
+| `edge.added`              | `id`                              | An edge was inserted.                                              |
+| `edge.deleted`            | `id`                              | An edge was removed.                                               |
+| `vertex.property.set`     | `id`, `property`                  | A scalar property was set on a vertex.                             |
 | `vertex.property.changed` | `id`, `property`, `path`, `event` | A Yjs shared-type property (e.g. `Y.Text`) was mutated internally. |
-| `edge.property.set` | `id`, `property` | A scalar property was set on an edge. |
-| `edge.property.changed` | `id`, `property`, `path`, `event` | A Yjs shared-type property on an edge was mutated. |
+| `edge.property.set`       | `id`, `property`                  | A scalar property was set on an edge.                              |
+| `edge.property.changed`   | `id`, `property`, `path`, `event` | A Yjs shared-type property on an edge was mutated.                 |
 
 ---
 
@@ -253,7 +253,7 @@ const schema = {
   vertices: {
     Document: {
       properties: {
-        title:   { type: ZodYText },
+        title: { type: ZodYText },
         content: { type: ZodYText },
       },
     },
@@ -262,7 +262,7 @@ const schema = {
 } as const satisfies GraphSchema;
 
 const doc = graph.addVertex("Document", {
-  title:   "My Doc",          // string → Y.Text
+  title: "My Doc", // string → Y.Text
   content: new Y.Text("..."), // Y.Text → Y.Text (unchanged)
 });
 
@@ -276,15 +276,17 @@ doc.get("content").insert(0, "Hello, ");
 import { ZodYArray, ZodYText } from "@codemix/y-graph-storage";
 import * as z from "zod";
 
-const Tags = ZodYArray(z.string());      // Y.Array<string>
-const Lines = ZodYArray(ZodYText);       // Y.Array<Y.Text>
+const Tags = ZodYArray(z.string()); // Y.Array<string>
+const Lines = ZodYArray(ZodYText); // Y.Array<Y.Text>
 
 // In a schema:
-tags: { type: Tags }
+tags: {
+  type: Tags;
+}
 
 // Usage — accepts native array or Y.Array:
-graph.addVertex("Post", { tags: ["crdt", "graph"] });            // converted
-graph.addVertex("Post", { tags: Y.Array.from(["crdt"]) });       // stored as-is
+graph.addVertex("Post", { tags: ["crdt", "graph"] }); // converted
+graph.addVertex("Post", { tags: Y.Array.from(["crdt"]) }); // stored as-is
 
 post.get("tags").push(["realtime"]);
 ```
@@ -297,7 +299,9 @@ import * as z from "zod";
 
 const Metadata = ZodYMap(z.string()); // Y.Map<string>
 
-metadata: { type: Metadata }
+metadata: {
+  type: Metadata;
+}
 
 // Accepts plain object or Y.Map:
 graph.addVertex("Asset", { metadata: { author: "Alice" } });
@@ -312,17 +316,19 @@ For rich-text or structured XML content:
 ```ts
 import { ZodYXmlFragment, ZodYXmlText, ZodYXmlElement } from "@codemix/y-graph-storage";
 
-body: { type: ZodYXmlFragment } // accepts string, outputs Y.XmlFragment
+body: {
+  type: ZodYXmlFragment;
+} // accepts string, outputs Y.XmlFragment
 ```
 
-| Helper | Input | Output |
-|--------|-------|--------|
-| `ZodYText` | `string \| Y.Text` | `Y.Text` |
-| `ZodYArray(schema)` | `T[] \| Y.Array<T>` | `Y.Array<T>` |
-| `ZodYMap(schema)` | `Record<string, V> \| Y.Map<V>` | `Y.Map<V>` |
-| `ZodYXmlFragment` | `string \| Y.XmlFragment` | `Y.XmlFragment` |
-| `ZodYXmlText` | `string \| Y.XmlText` | `Y.XmlText` |
-| `ZodYXmlElement` | `{tag, attrs?, children?} \| Y.XmlElement` | `Y.XmlElement` |
+| Helper              | Input                                      | Output          |
+| ------------------- | ------------------------------------------ | --------------- |
+| `ZodYText`          | `string \| Y.Text`                         | `Y.Text`        |
+| `ZodYArray(schema)` | `T[] \| Y.Array<T>`                        | `Y.Array<T>`    |
+| `ZodYMap(schema)`   | `Record<string, V> \| Y.Map<V>`            | `Y.Map<V>`      |
+| `ZodYXmlFragment`   | `string \| Y.XmlFragment`                  | `Y.XmlFragment` |
+| `ZodYXmlText`       | `string \| Y.XmlText`                      | `Y.XmlText`     |
+| `ZodYXmlElement`    | `{tag, attrs?, children?} \| Y.XmlElement` | `Y.XmlElement`  |
 
 ---
 
@@ -335,9 +341,9 @@ import * as Y from "yjs";
 import { WebsocketProvider } from "y-websocket";
 import { YGraph } from "@codemix/y-graph-storage";
 
-const doc      = new Y.Doc();
+const doc = new Y.Doc();
 const provider = new WebsocketProvider("wss://my-server", "my-room", doc);
-const graph    = new YGraph({ schema, doc });
+const graph = new YGraph({ schema, doc });
 
 // On every connected peer, graph mutations propagate automatically.
 // Changes from remote peers emit YGraphChange events via graph.subscribe().
@@ -356,13 +362,13 @@ import * as Y from "yjs";
 import { YGraphStorage } from "@codemix/y-graph-storage";
 import { Graph } from "@codemix/graph";
 
-const doc     = new Y.Doc();
+const doc = new Y.Doc();
 const storage = new YGraphStorage(doc, { schema });
-const graph   = new Graph({ schema, storage });
+const graph = new Graph({ schema, storage });
 
 // Access raw collections
 const personCollection = storage.getVertexCollectionMap("Person");
-const knowsCollection  = storage.getEdgeCollectionMap("knows");
+const knowsCollection = storage.getEdgeCollectionMap("knows");
 
 // Observe at the Yjs level
 personCollection.observeDeep((events) => {
@@ -380,25 +386,25 @@ personCollection.observeDeep((events) => {
 
 Understanding the layout can help when debugging or building custom tooling.
 
-| Y.Doc key | Type | Contents |
-|-----------|------|----------|
+| Y.Doc key   | Type                    | Contents                                        |
+| ----------- | ----------------------- | ----------------------------------------------- |
 | `V:<Label>` | `Y.Map<Y.Map<unknown>>` | All vertices of label `<Label>`. Keyed by UUID. |
-| `E:<Label>` | `Y.Map<Y.Map<unknown>>` | All edges of label `<Label>`. Keyed by UUID. |
+| `E:<Label>` | `Y.Map<Y.Map<unknown>>` | All edges of label `<Label>`. Keyed by UUID.    |
 
 Each vertex `Y.Map` contains:
 
-| Key | Value | Description |
-|-----|-------|-------------|
-| `<propertyName>` | any Yjs-compatible value | The vertex's properties. |
-| `@inE` | `Y.Map<edgeId, true>` | IDs of incoming edges (populated when an edge targeting this vertex is added). |
-| `@outE` | `Y.Map<edgeId, true>` | IDs of outgoing edges (populated when an edge originating from this vertex is added). |
+| Key              | Value                    | Description                                                                           |
+| ---------------- | ------------------------ | ------------------------------------------------------------------------------------- |
+| `<propertyName>` | any Yjs-compatible value | The vertex's properties.                                                              |
+| `@inE`           | `Y.Map<edgeId, true>`    | IDs of incoming edges (populated when an edge targeting this vertex is added).        |
+| `@outE`          | `Y.Map<edgeId, true>`    | IDs of outgoing edges (populated when an edge originating from this vertex is added). |
 
 Each edge `Y.Map` contains:
 
-| Key | Value | Description |
-|-----|-------|-------------|
-| `@inV` | `ElementId` | Target vertex ID. |
-| `@outV` | `ElementId` | Source vertex ID. |
+| Key              | Value                    | Description            |
+| ---------------- | ------------------------ | ---------------------- |
+| `@inV`           | `ElementId`              | Target vertex ID.      |
+| `@outV`          | `ElementId`              | Source vertex ID.      |
 | `<propertyName>` | any Yjs-compatible value | The edge's properties. |
 
 Internal keys all start with `@` and are skipped by the change observer so they never surface as `property.set`/`property.changed` events.

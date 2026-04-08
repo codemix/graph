@@ -11,9 +11,7 @@ const { graph } = createDemoGraph();
 describe("Map Projection", () => {
   describe("Grammar Parsing", () => {
     it("should parse basic property selector: n{.name}", () => {
-      const result = parse(
-        "MATCH (n:Person) WHERE n{.name} = n{.name} RETURN n",
-      ) as Query;
+      const result = parse("MATCH (n:Person) WHERE n{.name} = n{.name} RETURN n") as Query;
       expect(result.matches[0]?.where?.condition).toBeDefined();
     });
 
@@ -30,8 +28,7 @@ describe("Map Projection", () => {
     });
 
     it("should parse literal entry: n{status: 'active'}", () => {
-      const query =
-        "MATCH (n:Person) WHERE n{status: 'active'} = null RETURN n";
+      const query = "MATCH (n:Person) WHERE n{status: 'active'} = null RETURN n";
       const result = parse(query) as Query;
       expect(result.matches[0]?.where?.condition).toBeDefined();
     });
@@ -43,8 +40,7 @@ describe("Map Projection", () => {
     });
 
     it("should parse mixed selectors: n{.name, status: 'active', .*}", () => {
-      const query =
-        "MATCH (n:Person) WHERE n{.name, status: 'active', .*} = null RETURN n";
+      const query = "MATCH (n:Person) WHERE n{.name, status: 'active', .*} = null RETURN n";
       const result = parse(query) as Query;
       expect(result.matches[0]?.where?.condition).toBeDefined();
     });
@@ -87,8 +83,7 @@ describe("Map Projection", () => {
     });
 
     it("should parse literal entry AST correctly", () => {
-      const query =
-        "MATCH (n:Person) WHERE n{status: 'active', value: 42} = null RETURN n";
+      const query = "MATCH (n:Person) WHERE n{status: 'active', value: 42} = null RETURN n";
       const result = parse(query) as Query;
       const condition = result.matches[0]?.where?.condition;
 
@@ -102,8 +97,7 @@ describe("Map Projection", () => {
     });
 
     it("should parse variable selector AST correctly", () => {
-      const query =
-        "MATCH (n:Person), (m:Person) WHERE n{m, other} = null RETURN n";
+      const query = "MATCH (n:Person), (m:Person) WHERE n{m, other} = null RETURN n";
       const result = parse(query) as Query;
       const condition = result.matches[0]?.where?.condition;
 
@@ -133,8 +127,7 @@ describe("Map Projection", () => {
     });
 
     it("should convert literal entry to steps", () => {
-      const query =
-        "MATCH (n:Person) WHERE n{status: 'active'} = null RETURN n";
+      const query = "MATCH (n:Person) WHERE n{status: 'active'} = null RETURN n";
       const ast = parse(query) as Query;
       const steps = astToSteps(ast);
       expect(steps.length).toBeGreaterThan(0);

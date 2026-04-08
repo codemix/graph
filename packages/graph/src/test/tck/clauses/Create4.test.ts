@@ -62,20 +62,14 @@ describe("Create4 - Large Create Query", () => {
     );
 
     // Verify actors
-    const actors = executeTckQuery(
-      graph,
-      "MATCH (p:Person)-[:ACTED_IN]->(m:A) RETURN p.name",
-    );
+    const actors = executeTckQuery(graph, "MATCH (p:Person)-[:ACTED_IN]->(m:A) RETURN p.name");
     expect(actors).toHaveLength(2);
     const actorNames = actors as string[];
     expect(actorNames).toContain("Actor1");
     expect(actorNames).toContain("Actor2");
 
     // Verify director
-    const directors = executeTckQuery(
-      graph,
-      "MATCH (p:Person)-[:DIRECTED]->(m:A) RETURN p.name",
-    );
+    const directors = executeTckQuery(graph, "MATCH (p:Person)-[:DIRECTED]->(m:A) RETURN p.name");
     expect(directors).toHaveLength(1);
     expect(directors[0]).toBe("Director1");
   });

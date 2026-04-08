@@ -20,20 +20,14 @@ describe("Aggregation4 - Avg", () => {
 
   test("[Custom 1] avg() over integers with UNWIND", () => {
     const graph = createTckGraph();
-    const results = executeTckQuery(
-      graph,
-      "UNWIND [1, 2, 3, 4, 5] AS x RETURN avg(x)",
-    );
+    const results = executeTckQuery(graph, "UNWIND [1, 2, 3, 4, 5] AS x RETURN avg(x)");
     expect(results).toHaveLength(1);
     expect(results[0]).toBe(3);
   });
 
   test("[Custom 2] avg() over node properties", () => {
     const graph = createTckGraph();
-    executeTckQuery(
-      graph,
-      `CREATE (:A {num: 10}), (:A {num: 20}), (:A {num: 30})`,
-    );
+    executeTckQuery(graph, `CREATE (:A {num: 10}), (:A {num: 20}), (:A {num: 30})`);
 
     const results = executeTckQuery(graph, "MATCH (n:A) RETURN avg(n.num)");
 
@@ -43,25 +37,16 @@ describe("Aggregation4 - Avg", () => {
 
   test("[Custom 3] avg() over floats with UNWIND", () => {
     const graph = createTckGraph();
-    const results = executeTckQuery(
-      graph,
-      "UNWIND [1.0, 2.0, 3.0] AS x RETURN avg(x)",
-    );
+    const results = executeTckQuery(graph, "UNWIND [1.0, 2.0, 3.0] AS x RETURN avg(x)");
     expect(results).toHaveLength(1);
     expect(results[0]).toBe(2.0);
   });
 
   test("[Custom 4] avg() with WHERE filter", () => {
     const graph = createTckGraph();
-    executeTckQuery(
-      graph,
-      `CREATE (:A {num: 10}), (:A {num: 20}), (:A {num: 30}), (:A {num: 40})`,
-    );
+    executeTckQuery(graph, `CREATE (:A {num: 10}), (:A {num: 20}), (:A {num: 30}), (:A {num: 40})`);
 
-    const results = executeTckQuery(
-      graph,
-      "MATCH (n:A) WHERE n.num >= 20 RETURN avg(n.num)",
-    );
+    const results = executeTckQuery(graph, "MATCH (n:A) WHERE n.num >= 20 RETURN avg(n.num)");
 
     expect(results).toHaveLength(1);
     expect(results[0]).toBe(30); // (20+30+40)/3 = 90/3 = 30

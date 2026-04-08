@@ -28,10 +28,7 @@ describe("Literals3 - Hexadecimal integer", () => {
 
   test("[3] Return the largest hexadecimal integer - JS precision limits", () => {
     const graph = createTckGraph();
-    const results = executeTckQuery(
-      graph,
-      "RETURN 0x7FFFFFFFFFFFFFFF AS literal",
-    );
+    const results = executeTckQuery(graph, "RETURN 0x7FFFFFFFFFFFFFFF AS literal");
     expect(results).toHaveLength(1);
     // eslint-disable-next-line no-loss-of-precision
     expect(results[0]).toBe(9223372036854775807);
@@ -69,10 +66,7 @@ describe("Literals3 - Hexadecimal integer", () => {
 
   test("[8] Return the smallest hexadecimal integer - JS precision limits", () => {
     const graph = createTckGraph();
-    const results = executeTckQuery(
-      graph,
-      "RETURN -0x8000000000000000 AS literal",
-    );
+    const results = executeTckQuery(graph, "RETURN -0x8000000000000000 AS literal");
     expect(results).toHaveLength(1);
     expect(results[0]).toBe(-9223372036854775808);
   });
@@ -105,37 +99,23 @@ describe("Literals3 - Hexadecimal integer", () => {
 
   test("[13] Fail on an hexadecimal literal containing a lower case invalid alphanumeric character - grammar rejects correctly", () => {
     const graph = createTckGraph();
-    expect(() =>
-      executeTckQuery(graph, "RETURN 0x1A2b3j4D5E6f7 AS literal"),
-    ).toThrow();
+    expect(() => executeTckQuery(graph, "RETURN 0x1A2b3j4D5E6f7 AS literal")).toThrow();
   });
 
   test("[14] Fail on an hexadecimal literal containing a upper case invalid alphanumeric character - grammar rejects correctly", () => {
     const graph = createTckGraph();
-    expect(() =>
-      executeTckQuery(graph, "RETURN 0x1A2b3c4Z5E6f7 AS literal"),
-    ).toThrow();
+    expect(() => executeTckQuery(graph, "RETURN 0x1A2b3c4Z5E6f7 AS literal")).toThrow();
   });
 
-  test.fails(
-    "[16] Fail on a too large hexadecimal integer - semantic validation not implemented",
-    () => {
-      const graph = createTckGraph();
-      expect(() =>
-        executeTckQuery(graph, "RETURN 0x8000000000000000 AS literal"),
-      ).toThrow();
-    },
-  );
+  test.fails("[16] Fail on a too large hexadecimal integer - semantic validation not implemented", () => {
+    const graph = createTckGraph();
+    expect(() => executeTckQuery(graph, "RETURN 0x8000000000000000 AS literal")).toThrow();
+  });
 
-  test.fails(
-    "[17] Fail on a too small hexadecimal integer - semantic validation not implemented",
-    () => {
-      const graph = createTckGraph();
-      expect(() =>
-        executeTckQuery(graph, "RETURN -0x8000000000000001 AS literal"),
-      ).toThrow();
-    },
-  );
+  test.fails("[17] Fail on a too small hexadecimal integer - semantic validation not implemented", () => {
+    const graph = createTckGraph();
+    expect(() => executeTckQuery(graph, "RETURN -0x8000000000000001 AS literal")).toThrow();
+  });
 
   // Custom tests demonstrating hexadecimal integer literals in supported contexts
 
@@ -143,10 +123,7 @@ describe("Literals3 - Hexadecimal integer", () => {
     const graph = createTckGraph();
     executeTckQuery(graph, "CREATE (:A {name: 'hex', num: 0x1})");
 
-    const results = executeTckQuery(
-      graph,
-      "MATCH (a:A) WHERE a.num = 1 RETURN a.name",
-    );
+    const results = executeTckQuery(graph, "MATCH (a:A) WHERE a.num = 1 RETURN a.name");
 
     expect(results).toHaveLength(1);
     expect(results[0]).toBe("hex");
@@ -156,10 +133,7 @@ describe("Literals3 - Hexadecimal integer", () => {
     const graph = createTckGraph();
     executeTckQuery(graph, "CREATE (:A {name: 'hex', num: 0xFF})");
 
-    const results = executeTckQuery(
-      graph,
-      "MATCH (a:A) WHERE a.num = 255 RETURN a.name",
-    );
+    const results = executeTckQuery(graph, "MATCH (a:A) WHERE a.num = 255 RETURN a.name");
 
     expect(results).toHaveLength(1);
     expect(results[0]).toBe("hex");
@@ -167,15 +141,9 @@ describe("Literals3 - Hexadecimal integer", () => {
 
   test("[custom-3] Hexadecimal integer in WHERE clause", () => {
     const graph = createTckGraph();
-    executeTckQuery(
-      graph,
-      "CREATE (:A {name: 'a', num: 255}), (:A {name: 'b', num: 256})",
-    );
+    executeTckQuery(graph, "CREATE (:A {name: 'a', num: 255}), (:A {name: 'b', num: 256})");
 
-    const results = executeTckQuery(
-      graph,
-      "MATCH (a:A) WHERE a.num = 0xFF RETURN a.name",
-    );
+    const results = executeTckQuery(graph, "MATCH (a:A) WHERE a.num = 0xFF RETURN a.name");
 
     expect(results).toHaveLength(1);
     expect(results[0]).toBe("a");
@@ -185,10 +153,7 @@ describe("Literals3 - Hexadecimal integer", () => {
     const graph = createTckGraph();
     executeTckQuery(graph, "CREATE (:A {name: 'zero', num: 0})");
 
-    const results = executeTckQuery(
-      graph,
-      "MATCH (a:A) WHERE a.num = 0x0 RETURN a.name",
-    );
+    const results = executeTckQuery(graph, "MATCH (a:A) WHERE a.num = 0x0 RETURN a.name");
 
     expect(results).toHaveLength(1);
     expect(results[0]).toBe("zero");
@@ -198,10 +163,7 @@ describe("Literals3 - Hexadecimal integer", () => {
     const graph = createTckGraph();
     executeTckQuery(graph, "CREATE (:A {name: 'neg-hex', num: -0x10})");
 
-    const results = executeTckQuery(
-      graph,
-      "MATCH (a:A) WHERE a.num = -16 RETURN a.name",
-    );
+    const results = executeTckQuery(graph, "MATCH (a:A) WHERE a.num = -16 RETURN a.name");
 
     expect(results).toHaveLength(1);
     expect(results[0]).toBe("neg-hex");
@@ -212,10 +174,7 @@ describe("Literals3 - Hexadecimal integer", () => {
     executeTckQuery(graph, "CREATE (:A {name: 'lower', num: 0xabc})");
 
     // 0xabc = 10*256 + 11*16 + 12 = 2560 + 176 + 12 = 2748
-    const results = executeTckQuery(
-      graph,
-      "MATCH (a:A) WHERE a.num = 2748 RETURN a.name",
-    );
+    const results = executeTckQuery(graph, "MATCH (a:A) WHERE a.num = 2748 RETURN a.name");
 
     expect(results).toHaveLength(1);
     expect(results[0]).toBe("lower");
@@ -225,10 +184,7 @@ describe("Literals3 - Hexadecimal integer", () => {
     const graph = createTckGraph();
     executeTckQuery(graph, "CREATE (:A {name: 'upper', num: 0xABC})");
 
-    const results = executeTckQuery(
-      graph,
-      "MATCH (a:A) WHERE a.num = 2748 RETURN a.name",
-    );
+    const results = executeTckQuery(graph, "MATCH (a:A) WHERE a.num = 2748 RETURN a.name");
 
     expect(results).toHaveLength(1);
     expect(results[0]).toBe("upper");
@@ -238,10 +194,7 @@ describe("Literals3 - Hexadecimal integer", () => {
     const graph = createTckGraph();
     executeTckQuery(graph, "CREATE (:A {name: 'mixed', num: 0xAbC})");
 
-    const results = executeTckQuery(
-      graph,
-      "MATCH (a:A) WHERE a.num = 2748 RETURN a.name",
-    );
+    const results = executeTckQuery(graph, "MATCH (a:A) WHERE a.num = 2748 RETURN a.name");
 
     expect(results).toHaveLength(1);
     expect(results[0]).toBe("mixed");
@@ -250,10 +203,7 @@ describe("Literals3 - Hexadecimal integer", () => {
   test("[custom-9] Hexadecimal integer in UNWIND list", () => {
     const graph = createTckGraph();
 
-    const results = executeTckQuery(
-      graph,
-      "UNWIND [0x1, 0xA, 0xFF] AS num RETURN num",
-    );
+    const results = executeTckQuery(graph, "UNWIND [0x1, 0xA, 0xFF] AS num RETURN num");
 
     expect(results).toHaveLength(3);
     expect(results[0]).toEqual([1]);
@@ -263,10 +213,7 @@ describe("Literals3 - Hexadecimal integer", () => {
 
   test("[custom-10] Comparing hexadecimal and decimal", () => {
     const graph = createTckGraph();
-    executeTckQuery(
-      graph,
-      "CREATE (:A {name: 'hex', num: 0x100}), (:A {name: 'dec', num: 256})",
-    );
+    executeTckQuery(graph, "CREATE (:A {name: 'hex', num: 0x100}), (:A {name: 'dec', num: 256})");
 
     // Both should have the same value (256), so both should match
     const results = executeTckQuery(

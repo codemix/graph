@@ -12,10 +12,7 @@ import { createTckGraph, executeTckQuery } from "../tckHelpers.js";
 describe("String1 - Substring extraction", () => {
   test("[1] `substring()` with default second argument", () => {
     const graph = createTckGraph();
-    const results = executeTckQuery(
-      graph,
-      "RETURN substring('0123456789', 1) AS s",
-    );
+    const results = executeTckQuery(graph, "RETURN substring('0123456789', 1) AS s");
     expect(results).toHaveLength(1);
     expect(results[0]).toBe("123456789");
   });
@@ -23,10 +20,7 @@ describe("String1 - Substring extraction", () => {
   // Custom tests demonstrating string property operations in WHERE clause
   test("[custom-1] Filter by substring comparison using STARTS WITH", () => {
     const graph = createTckGraph();
-    executeTckQuery(
-      graph,
-      "CREATE (:A {name: '0123456789'}), (:A {name: 'abcdefghij'})",
-    );
+    executeTckQuery(graph, "CREATE (:A {name: '0123456789'}), (:A {name: 'abcdefghij'})");
 
     const results = executeTckQuery(
       graph,
@@ -39,15 +33,9 @@ describe("String1 - Substring extraction", () => {
 
   test("[custom-2] Filter strings by length using properties", () => {
     const graph = createTckGraph();
-    executeTckQuery(
-      graph,
-      "CREATE (:A {name: 'short', len: 5}), (:A {name: 'longer', len: 6})",
-    );
+    executeTckQuery(graph, "CREATE (:A {name: 'short', len: 5}), (:A {name: 'longer', len: 6})");
 
-    const results = executeTckQuery(
-      graph,
-      "MATCH (n:A) WHERE n.len > 5 RETURN n.name",
-    );
+    const results = executeTckQuery(graph, "MATCH (n:A) WHERE n.len > 5 RETURN n.name");
 
     expect(results).toHaveLength(1);
     expect(results[0]).toBe("longer");

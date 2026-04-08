@@ -27,8 +27,7 @@ describe("Graph Pattern Quantifiers", () => {
     describe("Plus quantifier (+)", () => {
       test("should parse [+] - one or more", () => {
         const ast = parse("MATCH (a)-[+]->(b) RETURN a, b") as Query;
-        const edge = (ast.matches[0]!.pattern as Pattern)
-          .elements[1] as EdgePattern;
+        const edge = (ast.matches[0]!.pattern as Pattern).elements[1] as EdgePattern;
         expect(edge.quantifier).toBeDefined();
         expect(edge.quantifier!.min).toBe(1);
         expect(edge.quantifier!.max).toBeUndefined();
@@ -36,8 +35,7 @@ describe("Graph Pattern Quantifiers", () => {
 
       test("should parse [:KNOWS+] - labeled one or more", () => {
         const ast = parse("MATCH (a)-[:KNOWS+]->(b) RETURN a, b") as Query;
-        const edge = (ast.matches[0]!.pattern as Pattern)
-          .elements[1] as EdgePattern;
+        const edge = (ast.matches[0]!.pattern as Pattern).elements[1] as EdgePattern;
         expect(edge.labels).toContain("KNOWS");
         expect(edge.quantifier!.min).toBe(1);
         expect(edge.quantifier!.max).toBeUndefined();
@@ -45,8 +43,7 @@ describe("Graph Pattern Quantifiers", () => {
 
       test("should parse [r+] - variable one or more", () => {
         const ast = parse("MATCH (a)-[r+]->(b) RETURN a, b") as Query;
-        const edge = (ast.matches[0]!.pattern as Pattern)
-          .elements[1] as EdgePattern;
+        const edge = (ast.matches[0]!.pattern as Pattern).elements[1] as EdgePattern;
         expect(edge.variable).toBe("r");
         expect(edge.quantifier!.min).toBe(1);
         expect(edge.quantifier!.max).toBeUndefined();
@@ -54,8 +51,7 @@ describe("Graph Pattern Quantifiers", () => {
 
       test("should parse [r:KNOWS+] - variable with label and plus", () => {
         const ast = parse("MATCH (a)-[r:KNOWS+]->(b) RETURN a, b") as Query;
-        const edge = (ast.matches[0]!.pattern as Pattern)
-          .elements[1] as EdgePattern;
+        const edge = (ast.matches[0]!.pattern as Pattern).elements[1] as EdgePattern;
         expect(edge.variable).toBe("r");
         expect(edge.labels).toContain("KNOWS");
         expect(edge.quantifier!.min).toBe(1);
@@ -66,40 +62,35 @@ describe("Graph Pattern Quantifiers", () => {
     describe("Curly brace quantifiers", () => {
       test("should parse [{2}] - exactly n", () => {
         const ast = parse("MATCH (a)-[{2}]->(b) RETURN a, b") as Query;
-        const edge = (ast.matches[0]!.pattern as Pattern)
-          .elements[1] as EdgePattern;
+        const edge = (ast.matches[0]!.pattern as Pattern).elements[1] as EdgePattern;
         expect(edge.quantifier!.min).toBe(2);
         expect(edge.quantifier!.max).toBe(2);
       });
 
       test("should parse [{1,3}] - range n to m", () => {
         const ast = parse("MATCH (a)-[{1,3}]->(b) RETURN a, b") as Query;
-        const edge = (ast.matches[0]!.pattern as Pattern)
-          .elements[1] as EdgePattern;
+        const edge = (ast.matches[0]!.pattern as Pattern).elements[1] as EdgePattern;
         expect(edge.quantifier!.min).toBe(1);
         expect(edge.quantifier!.max).toBe(3);
       });
 
       test("should parse [{2,}] - n or more", () => {
         const ast = parse("MATCH (a)-[{2,}]->(b) RETURN a, b") as Query;
-        const edge = (ast.matches[0]!.pattern as Pattern)
-          .elements[1] as EdgePattern;
+        const edge = (ast.matches[0]!.pattern as Pattern).elements[1] as EdgePattern;
         expect(edge.quantifier!.min).toBe(2);
         expect(edge.quantifier!.max).toBeUndefined();
       });
 
       test("should parse [{,3}] - zero to m", () => {
         const ast = parse("MATCH (a)-[{,3}]->(b) RETURN a, b") as Query;
-        const edge = (ast.matches[0]!.pattern as Pattern)
-          .elements[1] as EdgePattern;
+        const edge = (ast.matches[0]!.pattern as Pattern).elements[1] as EdgePattern;
         expect(edge.quantifier!.min).toBe(0);
         expect(edge.quantifier!.max).toBe(3);
       });
 
       test("should parse [:KNOWS{2}] - labeled exact count", () => {
         const ast = parse("MATCH (a)-[:KNOWS{2}]->(b) RETURN a, b") as Query;
-        const edge = (ast.matches[0]!.pattern as Pattern)
-          .elements[1] as EdgePattern;
+        const edge = (ast.matches[0]!.pattern as Pattern).elements[1] as EdgePattern;
         expect(edge.labels).toContain("KNOWS");
         expect(edge.quantifier!.min).toBe(2);
         expect(edge.quantifier!.max).toBe(2);
@@ -107,8 +98,7 @@ describe("Graph Pattern Quantifiers", () => {
 
       test("should parse [r:KNOWS{1,5}] - full form with range", () => {
         const ast = parse("MATCH (a)-[r:KNOWS{1,5}]->(b) RETURN a, b") as Query;
-        const edge = (ast.matches[0]!.pattern as Pattern)
-          .elements[1] as EdgePattern;
+        const edge = (ast.matches[0]!.pattern as Pattern).elements[1] as EdgePattern;
         expect(edge.variable).toBe("r");
         expect(edge.labels).toContain("KNOWS");
         expect(edge.quantifier!.min).toBe(1);
@@ -117,8 +107,7 @@ describe("Graph Pattern Quantifiers", () => {
 
       test("should allow whitespace in curly braces", () => {
         const ast = parse("MATCH (a)-[{ 1 , 3 }]->(b) RETURN a, b") as Query;
-        const edge = (ast.matches[0]!.pattern as Pattern)
-          .elements[1] as EdgePattern;
+        const edge = (ast.matches[0]!.pattern as Pattern).elements[1] as EdgePattern;
         expect(edge.quantifier!.min).toBe(1);
         expect(edge.quantifier!.max).toBe(3);
       });
@@ -127,16 +116,14 @@ describe("Graph Pattern Quantifiers", () => {
     describe("Open start range (*..n)", () => {
       test("should parse [*..3] - defaults min to 1", () => {
         const ast = parse("MATCH (a)-[*..3]->(b) RETURN a, b") as Query;
-        const edge = (ast.matches[0]!.pattern as Pattern)
-          .elements[1] as EdgePattern;
+        const edge = (ast.matches[0]!.pattern as Pattern).elements[1] as EdgePattern;
         expect(edge.quantifier!.min).toBe(1);
         expect(edge.quantifier!.max).toBe(3);
       });
 
       test("should parse [:KNOWS*..5] - labeled open start", () => {
         const ast = parse("MATCH (a)-[:KNOWS*..5]->(b) RETURN a, b") as Query;
-        const edge = (ast.matches[0]!.pattern as Pattern)
-          .elements[1] as EdgePattern;
+        const edge = (ast.matches[0]!.pattern as Pattern).elements[1] as EdgePattern;
         expect(edge.labels).toContain("KNOWS");
         expect(edge.quantifier!.min).toBe(1);
         expect(edge.quantifier!.max).toBe(5);
@@ -147,10 +134,8 @@ describe("Graph Pattern Quantifiers", () => {
       test("[*] and [+] should be equivalent (both 1+)", () => {
         const astStar = parse("MATCH (a)-[*]->(b) RETURN a, b") as Query;
         const astPlus = parse("MATCH (a)-[+]->(b) RETURN a, b") as Query;
-        const edgeStar = (astStar.matches[0]!.pattern as Pattern)
-          .elements[1] as EdgePattern;
-        const edgePlus = (astPlus.matches[0]!.pattern as Pattern)
-          .elements[1] as EdgePattern;
+        const edgeStar = (astStar.matches[0]!.pattern as Pattern).elements[1] as EdgePattern;
+        const edgePlus = (astPlus.matches[0]!.pattern as Pattern).elements[1] as EdgePattern;
         expect(edgeStar.quantifier!.min).toBe(edgePlus.quantifier!.min);
         expect(edgeStar.quantifier!.max).toBe(edgePlus.quantifier!.max);
       });
@@ -158,10 +143,8 @@ describe("Graph Pattern Quantifiers", () => {
       test("[*2] and [{2}] should be equivalent", () => {
         const astStar = parse("MATCH (a)-[*2]->(b) RETURN a, b") as Query;
         const astCurly = parse("MATCH (a)-[{2}]->(b) RETURN a, b") as Query;
-        const edgeStar = (astStar.matches[0]!.pattern as Pattern)
-          .elements[1] as EdgePattern;
-        const edgeCurly = (astCurly.matches[0]!.pattern as Pattern)
-          .elements[1] as EdgePattern;
+        const edgeStar = (astStar.matches[0]!.pattern as Pattern).elements[1] as EdgePattern;
+        const edgeCurly = (astCurly.matches[0]!.pattern as Pattern).elements[1] as EdgePattern;
         expect(edgeStar.quantifier!.min).toBe(edgeCurly.quantifier!.min);
         expect(edgeStar.quantifier!.max).toBe(edgeCurly.quantifier!.max);
       });
@@ -169,10 +152,8 @@ describe("Graph Pattern Quantifiers", () => {
       test("[*1..3] and [{1,3}] should be equivalent", () => {
         const astStar = parse("MATCH (a)-[*1..3]->(b) RETURN a, b") as Query;
         const astCurly = parse("MATCH (a)-[{1,3}]->(b) RETURN a, b") as Query;
-        const edgeStar = (astStar.matches[0]!.pattern as Pattern)
-          .elements[1] as EdgePattern;
-        const edgeCurly = (astCurly.matches[0]!.pattern as Pattern)
-          .elements[1] as EdgePattern;
+        const edgeStar = (astStar.matches[0]!.pattern as Pattern).elements[1] as EdgePattern;
+        const edgeCurly = (astCurly.matches[0]!.pattern as Pattern).elements[1] as EdgePattern;
         expect(edgeStar.quantifier!.min).toBe(edgeCurly.quantifier!.min);
         expect(edgeStar.quantifier!.max).toBe(edgeCurly.quantifier!.max);
       });
@@ -180,10 +161,8 @@ describe("Graph Pattern Quantifiers", () => {
       test("[*2..] and [{2,}] should be equivalent", () => {
         const astStar = parse("MATCH (a)-[*2..]->(b) RETURN a, b") as Query;
         const astCurly = parse("MATCH (a)-[{2,}]->(b) RETURN a, b") as Query;
-        const edgeStar = (astStar.matches[0]!.pattern as Pattern)
-          .elements[1] as EdgePattern;
-        const edgeCurly = (astCurly.matches[0]!.pattern as Pattern)
-          .elements[1] as EdgePattern;
+        const edgeStar = (astStar.matches[0]!.pattern as Pattern).elements[1] as EdgePattern;
+        const edgeCurly = (astCurly.matches[0]!.pattern as Pattern).elements[1] as EdgePattern;
         expect(edgeStar.quantifier!.min).toBe(edgeCurly.quantifier!.min);
         expect(edgeStar.quantifier!.max).toBe(edgeCurly.quantifier!.max);
       });
@@ -310,32 +289,28 @@ describe("Graph Pattern Quantifiers", () => {
   describe("Edge Cases", () => {
     test("should parse {0} - zero hops (self)", () => {
       const ast = parse("MATCH (a)-[{0}]->(b) RETURN a, b") as Query;
-      const edge = (ast.matches[0]!.pattern as Pattern)
-        .elements[1] as EdgePattern;
+      const edge = (ast.matches[0]!.pattern as Pattern).elements[1] as EdgePattern;
       expect(edge.quantifier!.min).toBe(0);
       expect(edge.quantifier!.max).toBe(0);
     });
 
     test("should parse {0,0} - explicitly zero", () => {
       const ast = parse("MATCH (a)-[{0,0}]->(b) RETURN a, b") as Query;
-      const edge = (ast.matches[0]!.pattern as Pattern)
-        .elements[1] as EdgePattern;
+      const edge = (ast.matches[0]!.pattern as Pattern).elements[1] as EdgePattern;
       expect(edge.quantifier!.min).toBe(0);
       expect(edge.quantifier!.max).toBe(0);
     });
 
     test("should parse large quantifiers", () => {
       const ast = parse("MATCH (a)-[{100}]->(b) RETURN a, b") as Query;
-      const edge = (ast.matches[0]!.pattern as Pattern)
-        .elements[1] as EdgePattern;
+      const edge = (ast.matches[0]!.pattern as Pattern).elements[1] as EdgePattern;
       expect(edge.quantifier!.min).toBe(100);
       expect(edge.quantifier!.max).toBe(100);
     });
 
     test("should work with bidirectional relationships", () => {
       const ast = parse("MATCH (a)-[{1,3}]-(b) RETURN a, b") as Query;
-      const edge = (ast.matches[0]!.pattern as Pattern)
-        .elements[1] as EdgePattern;
+      const edge = (ast.matches[0]!.pattern as Pattern).elements[1] as EdgePattern;
       expect(edge.direction).toBe("both");
       expect(edge.quantifier!.min).toBe(1);
       expect(edge.quantifier!.max).toBe(3);
@@ -343,8 +318,7 @@ describe("Graph Pattern Quantifiers", () => {
 
     test("should work with incoming relationships", () => {
       const ast = parse("MATCH (a)<-[{1,2}]-(b) RETURN a, b") as Query;
-      const edge = (ast.matches[0]!.pattern as Pattern)
-        .elements[1] as EdgePattern;
+      const edge = (ast.matches[0]!.pattern as Pattern).elements[1] as EdgePattern;
       expect(edge.direction).toBe("in");
       expect(edge.quantifier!.min).toBe(1);
       expect(edge.quantifier!.max).toBe(2);

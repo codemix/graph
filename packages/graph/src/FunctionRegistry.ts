@@ -57,14 +57,7 @@ export interface FunctionDefinition {
   /** Function name (case-insensitive matching) */
   name: string;
   /** Function category */
-  category:
-    | "scalar"
-    | "aggregate"
-    | "list"
-    | "type"
-    | "math"
-    | "string"
-    | "temporal";
+  category: "scalar" | "aggregate" | "list" | "type" | "math" | "string" | "temporal";
   /** Whether this function supports DISTINCT modifier */
   supportsDistinct: boolean;
   /** Argument specifications */
@@ -72,10 +65,7 @@ export interface FunctionDefinition {
   /** Whether this function accepts unlimited additional arguments beyond those specified in args */
   variadic?: boolean;
   /** Implementation function */
-  impl: (
-    args: readonly unknown[],
-    path: TraversalPath<any, any, any>,
-  ) => unknown;
+  impl: (args: readonly unknown[], path: TraversalPath<any, any, any>) => unknown;
 }
 
 /**
@@ -222,9 +212,7 @@ export class FunctionRegistry {
       name: "id",
       category: "type",
       supportsDistinct: false,
-      args: [
-        { name: "element", required: true, types: ["node", "relationship"] },
-      ],
+      args: [{ name: "element", required: true, types: ["node", "relationship"] }],
       impl: (args) => {
         const element = args[0];
         if (element instanceof Vertex || element instanceof Edge) {
@@ -239,9 +227,7 @@ export class FunctionRegistry {
       name: "elementId",
       category: "type",
       supportsDistinct: false,
-      args: [
-        { name: "element", required: true, types: ["node", "relationship"] },
-      ],
+      args: [{ name: "element", required: true, types: ["node", "relationship"] }],
       impl: (args) => {
         const element = args[0];
         if (element instanceof Vertex || element instanceof Edge) {
@@ -480,8 +466,7 @@ export class FunctionRegistry {
       impl: (args) => {
         const str = args[0];
         const delimiter = args[1];
-        if (typeof str !== "string" || typeof delimiter !== "string")
-          return null;
+        if (typeof str !== "string" || typeof delimiter !== "string") return null;
         return str.split(delimiter);
       },
     });
@@ -943,11 +928,7 @@ export class FunctionRegistry {
         const start = args[0];
         const end = args[1];
         const step = args[2] ?? 1;
-        if (
-          typeof start !== "number" ||
-          typeof end !== "number" ||
-          typeof step !== "number"
-        )
+        if (typeof start !== "number" || typeof end !== "number" || typeof step !== "number")
           return null;
         if (step === 0) return null; // Prevent infinite loop
         const result: number[] = [];
@@ -969,9 +950,7 @@ export class FunctionRegistry {
       name: "keys",
       category: "list",
       supportsDistinct: false,
-      args: [
-        { name: "map", required: true, types: ["map", "node", "relationship"] },
-      ],
+      args: [{ name: "map", required: true, types: ["map", "node", "relationship"] }],
       impl: (args) => {
         const val = args[0];
         if (val instanceof Vertex || val instanceof Edge) {
@@ -1017,9 +996,7 @@ export class FunctionRegistry {
       args: [{ name: "value", required: false, types: ["any"] }],
       impl: () => {
         // Aggregate functions are handled specially - this is just a placeholder
-        throw new Error(
-          "Aggregate functions must be handled at the step level",
-        );
+        throw new Error("Aggregate functions must be handled at the step level");
       },
     });
 
@@ -1030,9 +1007,7 @@ export class FunctionRegistry {
       supportsDistinct: true,
       args: [{ name: "value", required: true, types: ["number"] }],
       impl: () => {
-        throw new Error(
-          "Aggregate functions must be handled at the step level",
-        );
+        throw new Error("Aggregate functions must be handled at the step level");
       },
     });
 
@@ -1043,9 +1018,7 @@ export class FunctionRegistry {
       supportsDistinct: true,
       args: [{ name: "value", required: true, types: ["number"] }],
       impl: () => {
-        throw new Error(
-          "Aggregate functions must be handled at the step level",
-        );
+        throw new Error("Aggregate functions must be handled at the step level");
       },
     });
 
@@ -1056,9 +1029,7 @@ export class FunctionRegistry {
       supportsDistinct: false,
       args: [{ name: "value", required: true, types: ["any"] }],
       impl: () => {
-        throw new Error(
-          "Aggregate functions must be handled at the step level",
-        );
+        throw new Error("Aggregate functions must be handled at the step level");
       },
     });
 
@@ -1069,9 +1040,7 @@ export class FunctionRegistry {
       supportsDistinct: false,
       args: [{ name: "value", required: true, types: ["any"] }],
       impl: () => {
-        throw new Error(
-          "Aggregate functions must be handled at the step level",
-        );
+        throw new Error("Aggregate functions must be handled at the step level");
       },
     });
 
@@ -1082,9 +1051,7 @@ export class FunctionRegistry {
       supportsDistinct: true,
       args: [{ name: "value", required: true, types: ["any"] }],
       impl: () => {
-        throw new Error(
-          "Aggregate functions must be handled at the step level",
-        );
+        throw new Error("Aggregate functions must be handled at the step level");
       },
     });
   }
@@ -1170,20 +1137,14 @@ export class FunctionRegistry {
       name: "date",
       category: "temporal",
       supportsDistinct: false,
-      args: [
-        { name: "value", required: false, types: ["string", "map", "any"] },
-      ],
+      args: [{ name: "value", required: false, types: ["string", "map", "any"] }],
       impl: (args) => {
         const val = args[0];
 
         // date() with no args returns current date
         if (val === undefined) {
           const now = new Date();
-          return new DateValue(
-            now.getFullYear(),
-            now.getMonth() + 1,
-            now.getDate(),
-          );
+          return new DateValue(now.getFullYear(), now.getMonth() + 1, now.getDate());
         }
 
         // Null propagation
@@ -1195,9 +1156,7 @@ export class FunctionRegistry {
         if (typeof val === "string") {
           const dateValue = DateValue.fromString(val);
           if (!dateValue) {
-            throw new Error(
-              `Invalid date string: ${val}. Expected format: YYYY-MM-DD`,
-            );
+            throw new Error(`Invalid date string: ${val}. Expected format: YYYY-MM-DD`);
           }
           return dateValue;
         }
@@ -1207,9 +1166,7 @@ export class FunctionRegistry {
           const map = val as Record<string, unknown>;
           const dateValue = DateValue.fromMap(map);
           if (!dateValue) {
-            throw new Error(
-              `Invalid date map: must have year, month, day as numbers`,
-            );
+            throw new Error(`Invalid date map: must have year, month, day as numbers`);
           }
           return dateValue;
         }
@@ -1224,9 +1181,7 @@ export class FunctionRegistry {
       name: "localtime",
       category: "temporal",
       supportsDistinct: false,
-      args: [
-        { name: "value", required: false, types: ["string", "map", "any"] },
-      ],
+      args: [{ name: "value", required: false, types: ["string", "map", "any"] }],
       impl: (args) => {
         const val = args[0];
 
@@ -1262,9 +1217,7 @@ export class FunctionRegistry {
           const map = val as Record<string, unknown>;
           const timeValue = LocalTimeValue.fromMap(map);
           if (!timeValue) {
-            throw new Error(
-              `Invalid localtime map: must have hour, minute, second as numbers`,
-            );
+            throw new Error(`Invalid localtime map: must have hour, minute, second as numbers`);
           }
           return timeValue;
         }
@@ -1279,9 +1232,7 @@ export class FunctionRegistry {
       name: "time",
       category: "temporal",
       supportsDistinct: false,
-      args: [
-        { name: "value", required: false, types: ["string", "map", "any"] },
-      ],
+      args: [{ name: "value", required: false, types: ["string", "map", "any"] }],
       impl: (args) => {
         const val = args[0];
 
@@ -1320,9 +1271,7 @@ export class FunctionRegistry {
           const map = val as Record<string, unknown>;
           const timeValue = TimeValue.fromMap(map);
           if (!timeValue) {
-            throw new Error(
-              `Invalid time map: must have hour, minute, second as numbers`,
-            );
+            throw new Error(`Invalid time map: must have hour, minute, second as numbers`);
           }
           return timeValue;
         }
@@ -1337,9 +1286,7 @@ export class FunctionRegistry {
       name: "localdatetime",
       category: "temporal",
       supportsDistinct: false,
-      args: [
-        { name: "value", required: false, types: ["string", "map", "any"] },
-      ],
+      args: [{ name: "value", required: false, types: ["string", "map", "any"] }],
       impl: (args) => {
         const val = args[0];
 
@@ -1378,9 +1325,7 @@ export class FunctionRegistry {
           const map = val as Record<string, unknown>;
           const dtValue = LocalDateTimeValue.fromMap(map);
           if (!dtValue) {
-            throw new Error(
-              `Invalid localdatetime map: must have year, month, day as numbers`,
-            );
+            throw new Error(`Invalid localdatetime map: must have year, month, day as numbers`);
           }
           return dtValue;
         }
@@ -1395,9 +1340,7 @@ export class FunctionRegistry {
       name: "datetime",
       category: "temporal",
       supportsDistinct: false,
-      args: [
-        { name: "value", required: false, types: ["string", "map", "any"] },
-      ],
+      args: [{ name: "value", required: false, types: ["string", "map", "any"] }],
       impl: (args) => {
         const val = args[0];
 
@@ -1438,9 +1381,7 @@ export class FunctionRegistry {
           const map = val as Record<string, unknown>;
           const dtValue = DateTimeValue.fromMap(map);
           if (!dtValue) {
-            throw new Error(
-              `Invalid datetime map: must have year, month, day as numbers`,
-            );
+            throw new Error(`Invalid datetime map: must have year, month, day as numbers`);
           }
           return dtValue;
         }
@@ -1455,9 +1396,7 @@ export class FunctionRegistry {
       name: "duration",
       category: "temporal",
       supportsDistinct: false,
-      args: [
-        { name: "value", required: true, types: ["string", "map", "any"] },
-      ],
+      args: [{ name: "value", required: true, types: ["string", "map", "any"] }],
       impl: (args) => {
         const val = args[0];
 
@@ -1658,9 +1597,7 @@ export class FunctionRegistry {
 
         if (input === null || input === undefined) return null;
         if (!(input instanceof LocalDateTimeValue)) {
-          throw new Error(
-            `localdatetime.truncate requires a localdatetime value`,
-          );
+          throw new Error(`localdatetime.truncate requires a localdatetime value`);
         }
 
         return truncateLocalDateTime(unit as TruncateUnit, input, overrides);
@@ -1758,10 +1695,7 @@ export function isAggregateFunction(name: string): boolean {
  * Check if a function's argument at the given index expects a path.
  * This is used to convert VariableRef to pathRef for path functions like nodes(), relationships(), length().
  */
-export function functionArgExpectsPath(
-  name: string,
-  argIndex: number,
-): boolean {
+export function functionArgExpectsPath(name: string, argIndex: number): boolean {
   const def = functionRegistry.get(name);
   if (!def) return false;
   const argSpec = def.args[argIndex];

@@ -9,23 +9,18 @@ import { describe, test, expect } from "vitest";
 import { createTckGraph, executeTckQuery } from "../tckHelpers.js";
 
 describe("Mathematical17 - Inverse trigonometric functions", () => {
-  test.fails(
-    "[placeholder] No scenarios in original TCK feature file - asin(), acos(), atan(), atan2() not implemented",
-    () => {
-      // The Mathematical17.feature file only contains the feature header:
-      // Feature: Mathematical17 - Inverse trigonometric functions
-      // No actual Scenario blocks are defined.
-      //
-      // This would typically include tests for:
-      // - asin(0) returning 0
-      // - acos(1) returning 0
-      // - atan(0) returning 0
-      // - atan2(0, 1) returning 0
-      throw new Error(
-        "asin(), acos(), atan(), atan2() functions not implemented",
-      );
-    },
-  );
+  test.fails("[placeholder] No scenarios in original TCK feature file - asin(), acos(), atan(), atan2() not implemented", () => {
+    // The Mathematical17.feature file only contains the feature header:
+    // Feature: Mathematical17 - Inverse trigonometric functions
+    // No actual Scenario blocks are defined.
+    //
+    // This would typically include tests for:
+    // - asin(0) returning 0
+    // - acos(1) returning 0
+    // - atan(0) returning 0
+    // - atan2(0, 1) returning 0
+    throw new Error("asin(), acos(), atan(), atan2() functions not implemented");
+  });
 
   // Custom tests demonstrating inverse trig concepts
   test("[custom-1] Common inverse trig values as properties", () => {

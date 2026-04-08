@@ -23,10 +23,7 @@ describe("List10 - Reverse List", () => {
     const graph = createTckGraph();
 
     // Test reverse([1, 2, 3]) - creates [3, 2, 1]
-    const results = executeTckQuery(
-      graph,
-      "UNWIND reverse([1, 2, 3]) AS x RETURN x",
-    );
+    const results = executeTckQuery(graph, "UNWIND reverse([1, 2, 3]) AS x RETURN x");
 
     expect(results).toHaveLength(3);
     expect(results.map((r) => (r as [number])[0])).toEqual([3, 2, 1]);
@@ -36,10 +33,7 @@ describe("List10 - Reverse List", () => {
     const graph = createTckGraph();
 
     // Test reverse(range(1, 5)) - creates [5, 4, 3, 2, 1]
-    const results = executeTckQuery(
-      graph,
-      "UNWIND reverse(range(1, 5)) AS x RETURN x",
-    );
+    const results = executeTckQuery(graph, "UNWIND reverse(range(1, 5)) AS x RETURN x");
 
     expect(results).toHaveLength(5);
     expect(results.map((r) => (r as [number])[0])).toEqual([5, 4, 3, 2, 1]);
@@ -61,10 +55,7 @@ describe("List10 - Reverse List", () => {
       `CREATE (:A {num: 1}), (:A {num: 2}), (:A {num: 3}), (:A {num: 4}), (:A {num: 5})`,
     );
 
-    const results = executeTckQuery(
-      graph,
-      "MATCH (n:A) RETURN n.num ORDER BY n.num DESC",
-    );
+    const results = executeTckQuery(graph, "MATCH (n:A) RETURN n.num ORDER BY n.num DESC");
 
     expect(results).toHaveLength(5);
     expect(results).toEqual([5, 4, 3, 2, 1]);

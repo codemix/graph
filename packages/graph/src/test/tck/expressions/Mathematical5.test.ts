@@ -22,10 +22,7 @@ describe("Mathematical5 - Division", () => {
     // Create nodes with values that represent division results
     executeTckQuery(graph, "CREATE (:A {num: 3})"); // 12 / 4 = 3 computed externally
 
-    const results = executeTckQuery(
-      graph,
-      "MATCH (n:A) WHERE n.num = 3 RETURN n.num",
-    );
+    const results = executeTckQuery(graph, "MATCH (n:A) WHERE n.num = 3 RETURN n.num");
 
     expect(results).toHaveLength(1);
     expect(results[0]).toBe(3);
@@ -36,10 +33,7 @@ describe("Mathematical5 - Division", () => {
     // Create nodes with float values
     executeTckQuery(graph, "CREATE (:A {num: 2.5})"); // 5 / 2 = 2.5 computed externally
 
-    const results = executeTckQuery(
-      graph,
-      "MATCH (n:A) WHERE n.num = 2.5 RETURN n.num",
-    );
+    const results = executeTckQuery(graph, "MATCH (n:A) WHERE n.num = 2.5 RETURN n.num");
 
     expect(results).toHaveLength(1);
     expect(results[0]).toBe(2.5);

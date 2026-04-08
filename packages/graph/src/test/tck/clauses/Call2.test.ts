@@ -41,9 +41,7 @@ describe("Call2 - Procedure arguments", () => {
   // [4] In-query call to procedure that takes arguments fails when trying to pass them implicitly
   test("[4] In-query call fails with implicit arguments", () => {
     const graph = createTckGraph();
-    expect(() =>
-      executeTckQuery(graph, "CALL test.my.proc YIELD out RETURN out"),
-    ).toThrow();
+    expect(() => executeTckQuery(graph, "CALL test.my.proc YIELD out RETURN out")).toThrow();
   });
 
   // [5] Standalone call to procedure should fail if input type is wrong
@@ -55,8 +53,6 @@ describe("Call2 - Procedure arguments", () => {
   // [6] In-query call to procedure should fail if input type is wrong
   test("[6] In-query call should fail if input type is wrong", () => {
     const graph = createTckGraph();
-    expect(() =>
-      executeTckQuery(graph, "CALL test.my.proc(true) YIELD out RETURN out"),
-    ).toThrow();
+    expect(() => executeTckQuery(graph, "CALL test.my.proc(true) YIELD out RETURN out")).toThrow();
   });
 });

@@ -14,12 +14,7 @@
  * - Undirected relationship patterns - test [11]
  */
 import { describe, test, expect } from "vitest";
-import {
-  createTckGraph,
-  executeTckQuery,
-  getLabel,
-  getType,
-} from "../tckHelpers.js";
+import { createTckGraph, executeTckQuery, getLabel, getType } from "../tckHelpers.js";
 
 describe("Match7 - Optional match", () => {
   test("[1] Simple OPTIONAL MATCH on empty graph", () => {
@@ -32,20 +27,14 @@ describe("Match7 - Optional match", () => {
   test("[2] OPTIONAL MATCH with previously bound nodes - requires unlabeled nodes", () => {
     const graph = createTckGraph();
     executeTckQuery(graph, "CREATE ()");
-    const results = executeTckQuery(
-      graph,
-      "MATCH (n) OPTIONAL MATCH (n)-->(m) RETURN m",
-    );
+    const results = executeTckQuery(graph, "MATCH (n) OPTIONAL MATCH (n)-->(m) RETURN m");
     expect(results).toEqual([[null]]);
   });
 
   test("[3] OPTIONAL MATCH and bound nodes - OPTIONAL MATCH with bound nodes not working", () => {
     const graph = createTckGraph();
     executeTckQuery(graph, "CREATE (:A), (:B)-[:T]->(:C)");
-    const results = executeTckQuery(
-      graph,
-      "MATCH (a:A), (b:C) OPTIONAL MATCH (x)-->(b) RETURN x",
-    );
+    const results = executeTckQuery(graph, "MATCH (a:A), (b:C) OPTIONAL MATCH (x)-->(b) RETURN x");
     expect(results).toHaveLength(1);
     // Note: x should ideally be the B node, but OPTIONAL MATCH returns undefined due to implementation limitation
   });
@@ -63,18 +52,12 @@ describe("Match7 - Optional match", () => {
     expect(getLabel(c)).toBe("A");
   });
 
-  test.fails(
-    "[5] Optionally matching relationship with a relationship that is already bound - OPTIONAL MATCH with bound variables",
-    () => {
-      const graph = createTckGraph();
-      executeTckQuery(graph, "CREATE (:A)-[:T]->(:B)");
-      const results = executeTckQuery(
-        graph,
-        "MATCH ()-[r:T]->() OPTIONAL MATCH ()-[r]-() RETURN r",
-      );
-      expect(results).toHaveLength(1);
-    },
-  );
+  test.fails("[5] Optionally matching relationship with a relationship that is already bound - OPTIONAL MATCH with bound variables", () => {
+    const graph = createTckGraph();
+    executeTckQuery(graph, "CREATE (:A)-[:T]->(:B)");
+    const results = executeTckQuery(graph, "MATCH ()-[r:T]->() OPTIONAL MATCH ()-[r]-() RETURN r");
+    expect(results).toHaveLength(1);
+  });
 
   test("[6] Optionally matching relationship with a relationship and node that are both already bound - OPTIONAL MATCH with bound variables", () => {
     const graph = createTckGraph();
@@ -89,18 +72,12 @@ describe("Match7 - Optional match", () => {
     expect(getType(r)).toBe("T");
   });
 
-  test.fails(
-    "[7] MATCH with OPTIONAL MATCH in longer pattern - requires unlabeled nodes",
-    () => {
-      const graph = createTckGraph();
-      executeTckQuery(graph, "CREATE (a)-[:T]->(b)-[:T]->(c)");
-      const results = executeTckQuery(
-        graph,
-        "MATCH (a)-->(b) OPTIONAL MATCH (b)-->(c) RETURN c",
-      );
-      expect(results).toHaveLength(1);
-    },
-  );
+  test.fails("[7] MATCH with OPTIONAL MATCH in longer pattern - requires unlabeled nodes", () => {
+    const graph = createTckGraph();
+    executeTckQuery(graph, "CREATE (a)-[:T]->(b)-[:T]->(c)");
+    const results = executeTckQuery(graph, "MATCH (a)-->(b) OPTIONAL MATCH (b)-->(c) RETURN c");
+    expect(results).toHaveLength(1);
+  });
 
   test("[8] Longer pattern with bound nodes without matches - OPTIONAL MATCH with bound variables", () => {
     const graph = createTckGraph();
@@ -120,10 +97,7 @@ describe("Match7 - Optional match", () => {
       "MATCH (a:A) OPTIONAL MATCH (a)-->(b)-->(c) RETURN b, c",
     );
     expect(results).toHaveLength(1);
-    const [b, c] = results[0] as [
-      Record<string, unknown>,
-      Record<string, unknown>,
-    ];
+    const [b, c] = results[0] as [Record<string, unknown>, Record<string, unknown>];
     expect(getLabel(b)).toBe("B");
     expect(getLabel(c)).toBe("C");
   });
@@ -141,26 +115,20 @@ describe("Match7 - Optional match", () => {
     expect(results[0]).toEqual([null]);
   });
 
-  test.fails(
-    "[11] Return two subgraphs with bound undirected relationship and optional relationship",
-    () => {
-      const graph = createTckGraph();
-      executeTckQuery(graph, "CREATE (:A)-[:T]->(:B)-[:T]->(:C)");
-      const results = executeTckQuery(
-        graph,
-        "MATCH (a)-[r]-(b) OPTIONAL MATCH (b)-[s]-(c) RETURN a, r, b, s, c",
-      );
-      expect(results).toHaveLength(4);
-    },
-  );
-
-  test("[12] Variable length optional relationships - variable length patterns in OPTIONAL MATCH", () => {
+  test.fails("[11] Return two subgraphs with bound undirected relationship and optional relationship", () => {
     const graph = createTckGraph();
     executeTckQuery(graph, "CREATE (:A)-[:T]->(:B)-[:T]->(:C)");
     const results = executeTckQuery(
       graph,
-      "MATCH (a:A) OPTIONAL MATCH (a)-[*]->(b) RETURN b",
+      "MATCH (a)-[r]-(b) OPTIONAL MATCH (b)-[s]-(c) RETURN a, r, b, s, c",
     );
+    expect(results).toHaveLength(4);
+  });
+
+  test("[12] Variable length optional relationships - variable length patterns in OPTIONAL MATCH", () => {
+    const graph = createTckGraph();
+    executeTckQuery(graph, "CREATE (:A)-[:T]->(:B)-[:T]->(:C)");
+    const results = executeTckQuery(graph, "MATCH (a:A) OPTIONAL MATCH (a)-[*]->(b) RETURN b");
     expect(results).toHaveLength(2);
     // Single return items are wrapped
     const labels = results.map((row) => {
@@ -185,60 +153,39 @@ describe("Match7 - Optional match", () => {
   test("[14] Variable length optional relationships with length predicates - variable length patterns in OPTIONAL MATCH", () => {
     const graph = createTckGraph();
     executeTckQuery(graph, "CREATE (:A)-[:T]->(:B)");
-    const results = executeTckQuery(
-      graph,
-      "MATCH (a:A) OPTIONAL MATCH (a)-[*3..]->(b) RETURN b",
-    );
+    const results = executeTckQuery(graph, "MATCH (a:A) OPTIONAL MATCH (a)-[*3..]->(b) RETURN b");
     expect(results).toEqual([[null]]);
   });
 
   test("[15] Variable length patterns and nulls - variable length patterns in OPTIONAL MATCH", () => {
     const graph = createTckGraph();
     executeTckQuery(graph, "CREATE (:A), (:B)-[:T]->(:C)");
-    const results = executeTckQuery(
-      graph,
-      "MATCH (a:A) OPTIONAL MATCH (a)-[*]->(b) RETURN b",
-    );
+    const results = executeTckQuery(graph, "MATCH (a:A) OPTIONAL MATCH (a)-[*]->(b) RETURN b");
     expect(results).toEqual([[null]]);
   });
 
-  test.fails(
-    "[16] Optionally matching named paths - null result - named path in OPTIONAL returns undefined not null",
-    () => {
-      const graph = createTckGraph();
-      executeTckQuery(graph, "CREATE (:A)");
-      const results = executeTckQuery(
-        graph,
-        "MATCH (a:A) OPTIONAL MATCH p = (a)-->(b) RETURN p",
-      );
-      expect(results).toEqual([[null]]);
-    },
-  );
+  test.fails("[16] Optionally matching named paths - null result - named path in OPTIONAL returns undefined not null", () => {
+    const graph = createTckGraph();
+    executeTckQuery(graph, "CREATE (:A)");
+    const results = executeTckQuery(graph, "MATCH (a:A) OPTIONAL MATCH p = (a)-->(b) RETURN p");
+    expect(results).toEqual([[null]]);
+  });
 
   test("[17] Optionally matching named paths - existing result - named path in OPTIONAL returns undefined not null", () => {
     const graph = createTckGraph();
     executeTckQuery(graph, "CREATE (:A)-[:T]->(:B)");
-    const results = executeTckQuery(
-      graph,
-      "MATCH (a:A) OPTIONAL MATCH p = (a)-->(b) RETURN p",
-    );
+    const results = executeTckQuery(graph, "MATCH (a:A) OPTIONAL MATCH p = (a)-->(b) RETURN p");
     expect(results).toHaveLength(1);
     // Path should be defined (not null)
     expect(results[0]).toBeDefined();
   });
 
-  test.fails(
-    "[18] Named paths inside optional matches with node predicates - named path in OPTIONAL returns undefined not null",
-    () => {
-      const graph = createTckGraph();
-      executeTckQuery(graph, "CREATE (:A)-[:T]->(:B)");
-      const results = executeTckQuery(
-        graph,
-        "OPTIONAL MATCH p = (a:A)-->(b:C) RETURN p",
-      );
-      expect(results).toEqual([[null]]);
-    },
-  );
+  test.fails("[18] Named paths inside optional matches with node predicates - named path in OPTIONAL returns undefined not null", () => {
+    const graph = createTckGraph();
+    executeTckQuery(graph, "CREATE (:A)-[:T]->(:B)");
+    const results = executeTckQuery(graph, "OPTIONAL MATCH p = (a:A)-->(b:C) RETURN p");
+    expect(results).toEqual([[null]]);
+  });
 
   test("[19] Optionally matching named paths with single and variable length patterns - named path in OPTIONAL returns undefined not null", () => {
     const graph = createTckGraph();
@@ -252,18 +199,12 @@ describe("Match7 - Optional match", () => {
     expect(results[0]).toBeDefined();
   });
 
-  test.fails(
-    "[20] Variable length optional relationships with bound nodes, no matches - named path in OPTIONAL returns undefined not null",
-    () => {
-      const graph = createTckGraph();
-      executeTckQuery(graph, "CREATE (:A)");
-      const results = executeTckQuery(
-        graph,
-        "MATCH (a:A) OPTIONAL MATCH p = (a)-[*]->(b) RETURN p",
-      );
-      expect(results).toEqual([[null]]);
-    },
-  );
+  test.fails("[20] Variable length optional relationships with bound nodes, no matches - named path in OPTIONAL returns undefined not null", () => {
+    const graph = createTckGraph();
+    executeTckQuery(graph, "CREATE (:A)");
+    const results = executeTckQuery(graph, "MATCH (a:A) OPTIONAL MATCH p = (a)-[*]->(b) RETURN p");
+    expect(results).toEqual([[null]]);
+  });
 
   test("[21] Handling optional matches between nulls", () => {
     // TCK: OPTIONAL MATCH (a:NotThere) OPTIONAL MATCH (b:NotThere) WITH a, b OPTIONAL MATCH (b)-[r:NOR_THIS]->(a) RETURN a, b, r
@@ -288,26 +229,17 @@ describe("Match7 - Optional match", () => {
     expect(results[0]).toEqual([null, null, null]);
   });
 
-  test.fails(
-    "[22] MATCH after OPTIONAL MATCH - MATCH with null bound variable should return no rows",
-    () => {
-      const graph = createTckGraph();
-      executeTckQuery(graph, "CREATE (:A)-[:T]->(:B)");
-      const results = executeTckQuery(
-        graph,
-        "OPTIONAL MATCH (x:C) MATCH (x)-->(d:B) RETURN d",
-      );
-      expect(results).toEqual([]);
-    },
-  );
+  test.fails("[22] MATCH after OPTIONAL MATCH - MATCH with null bound variable should return no rows", () => {
+    const graph = createTckGraph();
+    executeTckQuery(graph, "CREATE (:A)-[:T]->(:B)");
+    const results = executeTckQuery(graph, "OPTIONAL MATCH (x:C) MATCH (x)-->(d:B) RETURN d");
+    expect(results).toEqual([]);
+  });
 
   test("[23] OPTIONAL MATCH with labels on the optional end node - multi-label nodes", () => {
     const graph = createTckGraph();
     executeTckQuery(graph, "CREATE (:A)-[:T]->(:B:C)");
-    const results = executeTckQuery(
-      graph,
-      "MATCH (a:A) OPTIONAL MATCH (a)-->(b:B:C) RETURN b",
-    );
+    const results = executeTckQuery(graph, "MATCH (a:A) OPTIONAL MATCH (a)-->(b:B:C) RETURN b");
     expect(results).toHaveLength(1);
     // Single return items are wrapped
     const [row] = results;
@@ -325,10 +257,7 @@ describe("Match7 - Optional match", () => {
        CREATE (s)-[:REL]->(a), (s)-[:REL]->(b), (a)-[:REL]->(c), (b)-[:LOOP]->(b)`,
     );
 
-    const results = executeTckQuery(
-      graph,
-      `MATCH (a:B) OPTIONAL MATCH (a)-[r:LOOP]-(a) RETURN r`,
-    );
+    const results = executeTckQuery(graph, `MATCH (a:B) OPTIONAL MATCH (a)-[r:LOOP]-(a) RETURN r`);
 
     expect(results).toHaveLength(1);
     // B has a LOOP relationship to itself
@@ -337,18 +266,15 @@ describe("Match7 - Optional match", () => {
     expect(getType(r[0] as Record<string, unknown>)).toBe("LOOP");
   });
 
-  test.fails(
-    "[25] Optionally matching self-loops without matches - unlabeled MATCH (a) not supported",
-    () => {
-      const graph = createTckGraph();
-      executeTckQuery(graph, "CREATE (:A), (:B)");
-      const results = executeTckQuery(
-        graph,
-        "MATCH (a) WHERE NOT (a:B) OPTIONAL MATCH (a)-[r]->(a) RETURN r",
-      );
-      expect(results).toEqual([[null]]);
-    },
-  );
+  test.fails("[25] Optionally matching self-loops without matches - unlabeled MATCH (a) not supported", () => {
+    const graph = createTckGraph();
+    executeTckQuery(graph, "CREATE (:A), (:B)");
+    const results = executeTckQuery(
+      graph,
+      "MATCH (a) WHERE NOT (a:B) OPTIONAL MATCH (a)-[r]->(a) RETURN r",
+    );
+    expect(results).toEqual([[null]]);
+  });
 
   test("[26] Handling correlated optional matches - OPTIONAL MATCH with bound variables", () => {
     const graph = createTckGraph();
@@ -397,42 +323,33 @@ describe("Match7 - Optional match", () => {
     expect(results[0]).toEqual([null]);
   });
 
-  test.fails(
-    "[29] Satisfies the open world assumption, relationships between same nodes - aggregation mixed with non-aggregate",
-    () => {
-      const graph = createTckGraph();
-      executeTckQuery(graph, "CREATE (:A)-[:T]->(:B)");
-      const results = executeTckQuery(
-        graph,
-        "MATCH (a:A) OPTIONAL MATCH (a)-[:T]->(s:B) RETURN count(*), s IS NULL",
-      );
-      expect(results).toEqual([[1, false]]);
-    },
-  );
+  test.fails("[29] Satisfies the open world assumption, relationships between same nodes - aggregation mixed with non-aggregate", () => {
+    const graph = createTckGraph();
+    executeTckQuery(graph, "CREATE (:A)-[:T]->(:B)");
+    const results = executeTckQuery(
+      graph,
+      "MATCH (a:A) OPTIONAL MATCH (a)-[:T]->(s:B) RETURN count(*), s IS NULL",
+    );
+    expect(results).toEqual([[1, false]]);
+  });
 
-  test.fails(
-    "[30] Satisfies the open world assumption, single relationship - aggregation mixed with non-aggregate",
-    () => {
-      const graph = createTckGraph();
-      executeTckQuery(graph, "CREATE (:A)");
-      const results = executeTckQuery(
-        graph,
-        "MATCH (a:A) OPTIONAL MATCH (a)-[:T]->(s:B) RETURN count(*), s IS NULL",
-      );
-      expect(results).toEqual([[1, true]]);
-    },
-  );
+  test.fails("[30] Satisfies the open world assumption, single relationship - aggregation mixed with non-aggregate", () => {
+    const graph = createTckGraph();
+    executeTckQuery(graph, "CREATE (:A)");
+    const results = executeTckQuery(
+      graph,
+      "MATCH (a:A) OPTIONAL MATCH (a)-[:T]->(s:B) RETURN count(*), s IS NULL",
+    );
+    expect(results).toEqual([[1, true]]);
+  });
 
-  test.fails(
-    "[31] Satisfies the open world assumption, relationships between different nodes - aggregation mixed with non-aggregate",
-    () => {
-      const graph = createTckGraph();
-      executeTckQuery(graph, "CREATE (:A), (:B)-[:T]->(:C)");
-      const results = executeTckQuery(
-        graph,
-        "MATCH (a:A) OPTIONAL MATCH (a)-[:T]->(s:B) RETURN count(*), s IS NULL",
-      );
-      expect(results).toEqual([[1, true]]);
-    },
-  );
+  test.fails("[31] Satisfies the open world assumption, relationships between different nodes - aggregation mixed with non-aggregate", () => {
+    const graph = createTckGraph();
+    executeTckQuery(graph, "CREATE (:A), (:B)-[:T]->(:C)");
+    const results = executeTckQuery(
+      graph,
+      "MATCH (a:A) OPTIONAL MATCH (a)-[:T]->(s:B) RETURN count(*), s IS NULL",
+    );
+    expect(results).toEqual([[1, true]]);
+  });
 });

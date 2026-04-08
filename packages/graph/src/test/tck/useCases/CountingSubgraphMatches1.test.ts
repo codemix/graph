@@ -21,32 +21,26 @@ describe("CountingSubgraphMatches1 - Matching subgraph patterns and count", () =
   // MATCH ()--() RETURN count(*)
   // SKIPPED: Unlabeled nodes, undirected patterns, count(*) not supported
   // ============================================================================
-  test.fails(
-    "[1] Undirected match in self-relationship graph, count - UNSUPPORTED: unlabeled nodes, undirected patterns, count(*)",
-    () => {
-      const graph = createTckGraph();
-      executeTckQuery(graph, "CREATE (n:A)-[:LOOP]->(n)");
-      const results = executeTckQuery(graph, "MATCH ()--() RETURN count(*)");
-      expect(results).toHaveLength(1);
-      expect(results[0]).toBe(2);
-    },
-  );
+  test.fails("[1] Undirected match in self-relationship graph, count - UNSUPPORTED: unlabeled nodes, undirected patterns, count(*)", () => {
+    const graph = createTckGraph();
+    executeTckQuery(graph, "CREATE (n:A)-[:LOOP]->(n)");
+    const results = executeTckQuery(graph, "MATCH ()--() RETURN count(*)");
+    expect(results).toHaveLength(1);
+    expect(results[0]).toBe(2);
+  });
 
   // ============================================================================
   // Original TCK Scenario [2]: Undirected match of self-relationship in self-relationship graph, count
   // MATCH (n)--(n) RETURN count(*)
   // SKIPPED: Unlabeled nodes, undirected patterns, count(*) not supported
   // ============================================================================
-  test.fails(
-    "[2] Undirected match of self-relationship in self-relationship graph, count - UNSUPPORTED: unlabeled nodes, undirected patterns, count(*)",
-    () => {
-      const graph = createTckGraph();
-      executeTckQuery(graph, "CREATE (n:A)-[:LOOP]->(n)");
-      const results = executeTckQuery(graph, "MATCH (n)--(n) RETURN count(*)");
-      expect(results).toHaveLength(1);
-      expect(results[0]).toBe(2);
-    },
-  );
+  test.fails("[2] Undirected match of self-relationship in self-relationship graph, count - UNSUPPORTED: unlabeled nodes, undirected patterns, count(*)", () => {
+    const graph = createTckGraph();
+    executeTckQuery(graph, "CREATE (n:A)-[:LOOP]->(n)");
+    const results = executeTckQuery(graph, "MATCH (n)--(n) RETURN count(*)");
+    expect(results).toHaveLength(1);
+    expect(results[0]).toBe(2);
+  });
 
   // ============================================================================
   // Original TCK Scenario [3]: Undirected match on simple relationship graph, count
@@ -92,38 +86,26 @@ describe("CountingSubgraphMatches1 - Matching subgraph patterns and count", () =
   // MATCH (n)-[r]-(n) RETURN count(r)
   // SKIPPED: Unlabeled nodes, undirected patterns not supported
   // ============================================================================
-  test.fails(
-    "[6] Counting undirected self-relationships in self-relationship graph - UNSUPPORTED: unlabeled nodes, undirected patterns",
-    () => {
-      const graph = createTckGraph();
-      executeTckQuery(graph, "CREATE (n:A)-[:LOOP]->(n)");
-      const results = executeTckQuery(
-        graph,
-        "MATCH (n)-[r]-(n) RETURN count(r)",
-      );
-      expect(results).toHaveLength(1);
-      expect(results[0]).toBe(2);
-    },
-  );
+  test.fails("[6] Counting undirected self-relationships in self-relationship graph - UNSUPPORTED: unlabeled nodes, undirected patterns", () => {
+    const graph = createTckGraph();
+    executeTckQuery(graph, "CREATE (n:A)-[:LOOP]->(n)");
+    const results = executeTckQuery(graph, "MATCH (n)-[r]-(n) RETURN count(r)");
+    expect(results).toHaveLength(1);
+    expect(results[0]).toBe(2);
+  });
 
   // ============================================================================
   // Original TCK Scenario [7]: Counting distinct undirected self-relationships in self-relationship graph
   // MATCH (n)-[r]-(n) RETURN count(DISTINCT r)
   // SKIPPED: Unlabeled nodes, undirected patterns, count(DISTINCT) not supported
   // ============================================================================
-  test.fails(
-    "[7] Counting distinct undirected self-relationships in self-relationship graph - UNSUPPORTED: unlabeled nodes, undirected patterns, count(DISTINCT)",
-    () => {
-      const graph = createTckGraph();
-      executeTckQuery(graph, "CREATE (n:A)-[:LOOP]->(n)");
-      const results = executeTckQuery(
-        graph,
-        "MATCH (n)-[r]-(n) RETURN count(DISTINCT r)",
-      );
-      expect(results).toHaveLength(1);
-      expect(results[0]).toBe(1);
-    },
-  );
+  test.fails("[7] Counting distinct undirected self-relationships in self-relationship graph - UNSUPPORTED: unlabeled nodes, undirected patterns, count(DISTINCT)", () => {
+    const graph = createTckGraph();
+    executeTckQuery(graph, "CREATE (n:A)-[:LOOP]->(n)");
+    const results = executeTckQuery(graph, "MATCH (n)-[r]-(n) RETURN count(DISTINCT r)");
+    expect(results).toHaveLength(1);
+    expect(results[0]).toBe(1);
+  });
 
   // ============================================================================
   // Original TCK Scenario [8]: Directed match of a simple relationship, count
@@ -146,10 +128,7 @@ describe("CountingSubgraphMatches1 - Matching subgraph patterns and count", () =
   test("[9] Counting directed self-relationships - UNSUPPORTED: unlabeled nodes", () => {
     const graph = createTckGraph();
     executeTckQuery(graph, "CREATE (n:A)-[:LOOP]->(n)");
-    const results = executeTckQuery(
-      graph,
-      "MATCH (n)-[r]->(n) RETURN count(r)",
-    );
+    const results = executeTckQuery(graph, "MATCH (n)-[r]->(n) RETURN count(r)");
     expect(results).toHaveLength(1);
     expect(results[0]).toBe(1);
   });
@@ -162,10 +141,7 @@ describe("CountingSubgraphMatches1 - Matching subgraph patterns and count", () =
   test("[10] Mixing directed and undirected pattern parts with self-relationship, count - UNSUPPORTED: unlabeled nodes, undirected patterns, count(*)", () => {
     const graph = createTckGraph();
     executeTckQuery(graph, "CREATE (:A)-[:T]->(:B)-[:T]->(:C)");
-    const results = executeTckQuery(
-      graph,
-      "MATCH (:A)-->()--() RETURN count(*)",
-    );
+    const results = executeTckQuery(graph, "MATCH (:A)-->()--() RETURN count(*)");
     expect(results).toHaveLength(1);
     expect(results[0]).toBe(2);
   });
@@ -175,19 +151,13 @@ describe("CountingSubgraphMatches1 - Matching subgraph patterns and count", () =
   // MATCH ()-[]-()-[]-() RETURN count(*)
   // SKIPPED: Unlabeled nodes, undirected patterns, count(*) not supported
   // ============================================================================
-  test.fails(
-    "[11] Mixing directed and undirected pattern parts with self-relationship, undirected count - UNSUPPORTED: unlabeled nodes, undirected patterns, count(*)",
-    () => {
-      const graph = createTckGraph();
-      executeTckQuery(graph, "CREATE (:A)-[:T]->(:B)-[:T]->(:C)");
-      const results = executeTckQuery(
-        graph,
-        "MATCH ()-[]-()-[]-() RETURN count(*)",
-      );
-      expect(results).toHaveLength(1);
-      expect(results[0]).toBe(4);
-    },
-  );
+  test.fails("[11] Mixing directed and undirected pattern parts with self-relationship, undirected count - UNSUPPORTED: unlabeled nodes, undirected patterns, count(*)", () => {
+    const graph = createTckGraph();
+    executeTckQuery(graph, "CREATE (:A)-[:T]->(:B)-[:T]->(:C)");
+    const results = executeTckQuery(graph, "MATCH ()-[]-()-[]-() RETURN count(*)");
+    expect(results).toHaveLength(1);
+    expect(results[0]).toBe(4);
+  });
 
   // ============================================================================
   // CUSTOM TESTS - Demonstrating counting subgraph patterns with labeled nodes
@@ -199,10 +169,7 @@ describe("CountingSubgraphMatches1 - Matching subgraph patterns and count", () =
     executeTckQuery(graph, "CREATE (a:A {name: 'looper'})-[:LOOP]->(a)");
 
     // Count the self-loop relationship
-    const results = executeTckQuery(
-      graph,
-      "MATCH (n:A)-[r:LOOP]->(n) RETURN count(r)",
-    );
+    const results = executeTckQuery(graph, "MATCH (n:A)-[r:LOOP]->(n) RETURN count(r)");
     expect(results).toHaveLength(1);
     expect(results[0]).toBe(1);
   });
@@ -213,10 +180,7 @@ describe("CountingSubgraphMatches1 - Matching subgraph patterns and count", () =
     executeTckQuery(graph, "CREATE (:A)-[:T]->(:B)");
 
     // Count matches for the directed pattern
-    const results = executeTckQuery(
-      graph,
-      "MATCH (a:A)-[r:T]->(b:B) RETURN count(r)",
-    );
+    const results = executeTckQuery(graph, "MATCH (a:A)-[r:T]->(b:B) RETURN count(r)");
     expect(results).toHaveLength(1);
     expect(results[0]).toBe(1);
   });
@@ -230,10 +194,7 @@ describe("CountingSubgraphMatches1 - Matching subgraph patterns and count", () =
     );
 
     // Count all relationships from source
-    const results = executeTckQuery(
-      graph,
-      "MATCH (a:A)-[r:T]->(b:B) RETURN count(r)",
-    );
+    const results = executeTckQuery(graph, "MATCH (a:A)-[r:T]->(b:B) RETURN count(r)");
     expect(results).toHaveLength(1);
     expect(results[0]).toBe(2);
   });
@@ -247,10 +208,7 @@ describe("CountingSubgraphMatches1 - Matching subgraph patterns and count", () =
     );
 
     // Count two-hop patterns
-    const results = executeTckQuery(
-      graph,
-      "MATCH (a:A)-[:T1]->(b:B)-[:T2]->(c:C) RETURN count(c)",
-    );
+    const results = executeTckQuery(graph, "MATCH (a:A)-[:T1]->(b:B)-[:T2]->(c:C) RETURN count(c)");
     expect(results).toHaveLength(1);
     expect(results[0]).toBe(1);
   });
@@ -258,10 +216,7 @@ describe("CountingSubgraphMatches1 - Matching subgraph patterns and count", () =
   test("[Custom 5] Counting patterns with looper in chain", () => {
     const graph = createTckGraph();
     // Create: A -> Looper (with self-loop) -> B
-    executeTckQuery(
-      graph,
-      "CREATE (:A)-[:T1]->(l:Looper), (l)-[:LOOP]->(l), (l)-[:T2]->(:B)",
-    );
+    executeTckQuery(graph, "CREATE (:A)-[:T1]->(l:Looper), (l)-[:LOOP]->(l), (l)-[:T2]->(:B)");
 
     // Count paths from A through Looper to B
     const results = executeTckQuery(
@@ -281,10 +236,7 @@ describe("CountingSubgraphMatches1 - Matching subgraph patterns and count", () =
     );
 
     // Count only the self-loops (where source equals target)
-    const results = executeTckQuery(
-      graph,
-      "MATCH (n:A)-[r:LOOP]->(n) RETURN count(r)",
-    );
+    const results = executeTckQuery(graph, "MATCH (n:A)-[r:LOOP]->(n) RETURN count(r)");
     expect(results).toHaveLength(1);
     expect(results[0]).toBe(1);
   });
@@ -319,10 +271,7 @@ describe("CountingSubgraphMatches1 - Matching subgraph patterns and count", () =
     );
 
     // Count total matches (includes duplicates of target)
-    const results = executeTckQuery(
-      graph,
-      "MATCH (a:A)-[:T]->(b:B) RETURN count(b)",
-    );
+    const results = executeTckQuery(graph, "MATCH (a:A)-[:T]->(b:B) RETURN count(b)");
     expect(results).toHaveLength(1);
     expect(results[0]).toBe(2);
   });
@@ -340,10 +289,7 @@ describe("CountingSubgraphMatches1 - Matching subgraph patterns and count", () =
     );
 
     // Count all relationships
-    const results = executeTckQuery(
-      graph,
-      "MATCH (a:A)-[r:T]->(b:B) RETURN count(r)",
-    );
+    const results = executeTckQuery(graph, "MATCH (a:A)-[r:T]->(b:B) RETURN count(r)");
     expect(results).toHaveLength(1);
     expect(results[0]).toBe(3);
   });
@@ -354,10 +300,7 @@ describe("CountingSubgraphMatches1 - Matching subgraph patterns and count", () =
     executeTckQuery(graph, "CREATE (:A), (:B)");
 
     // Count relationships that don't exist
-    const results = executeTckQuery(
-      graph,
-      "MATCH (a:A)-[r:T]->(b:B) RETURN count(r)",
-    );
+    const results = executeTckQuery(graph, "MATCH (a:A)-[r:T]->(b:B) RETURN count(r)");
     expect(results).toHaveLength(1);
     expect(results[0]).toBe(0);
   });

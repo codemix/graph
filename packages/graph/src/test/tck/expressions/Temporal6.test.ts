@@ -13,30 +13,21 @@ describe("Temporal6 - Render Temporal Values as a String", () => {
     // Original TCK: RETURN toString(date('1984-10-11')) AS s
     // Expected: '1984-10-11'
     const graph = createTckGraph();
-    const result = executeTckQuery(
-      graph,
-      "RETURN toString(date('1984-10-11'))",
-    );
+    const result = executeTckQuery(graph, "RETURN toString(date('1984-10-11'))");
     expect(result).toHaveLength(1);
     expect(result[0]).toBe("1984-10-11");
   });
 
   test("[2] Should convert localtime to string", () => {
     const graph = createTckGraph();
-    const result = executeTckQuery(
-      graph,
-      "RETURN toString(localtime('12:31:14.645876123'))",
-    );
+    const result = executeTckQuery(graph, "RETURN toString(localtime('12:31:14.645876123'))");
     expect(result).toHaveLength(1);
     expect(result[0]).toBe("12:31:14.645876123");
   });
 
   test("[3] Should convert time to string", () => {
     const graph = createTckGraph();
-    const result = executeTckQuery(
-      graph,
-      "RETURN toString(time('12:31:14.645876123+01:00'))",
-    );
+    const result = executeTckQuery(graph, "RETURN toString(time('12:31:14.645876123+01:00'))");
     expect(result).toHaveLength(1);
     expect(result[0]).toBe("12:31:14.645876123+01:00");
   });
@@ -97,35 +88,26 @@ describe("Temporal6 - Render Temporal Values as a String", () => {
     expect(result[0]).toBe(true);
   });
 
-  test.fails(
-    "[9] Should handle duration with mixed signs - format differs from TCK",
-    () => {
-      // Original TCK: RETURN toString(duration({months: -1, days: 1})) AS s
-      // Expected: 'P-1M1D'
-      // Reason: Our implementation outputs '-P1M1D' instead of 'P-1M1D'
-      const graph = createTckGraph();
-      const result = executeTckQuery(
-        graph,
-        "RETURN toString(duration({months: -1, days: 1}))",
-      );
-      expect(result).toHaveLength(1);
-      expect(result[0]).toBe("P-1M1D");
-    },
-  );
+  test.fails("[9] Should handle duration with mixed signs - format differs from TCK", () => {
+    // Original TCK: RETURN toString(duration({months: -1, days: 1})) AS s
+    // Expected: 'P-1M1D'
+    // Reason: Our implementation outputs '-P1M1D' instead of 'P-1M1D'
+    const graph = createTckGraph();
+    const result = executeTckQuery(graph, "RETURN toString(duration({months: -1, days: 1}))");
+    expect(result).toHaveLength(1);
+    expect(result[0]).toBe("P-1M1D");
+  });
 
-  test.fails(
-    "[10] Should handle datetime with named timezone - offset computation not implemented",
-    () => {
-      // Original TCK: RETURN toString(datetime('1984-10-11T12:31:14[Europe/Stockholm]')) AS s
-      // Expected: '1984-10-11T12:31:14+01:00[Europe/Stockholm]'
-      // Reason: Offset computation from named timezone not implemented (returns +00:00 instead of +01:00)
-      const graph = createTckGraph();
-      const result = executeTckQuery(
-        graph,
-        "RETURN toString(datetime('1984-10-11T12:31:14[Europe/Stockholm]'))",
-      );
-      expect(result).toHaveLength(1);
-      expect(result[0]).toBe("1984-10-11T12:31:14+01:00[Europe/Stockholm]");
-    },
-  );
+  test.fails("[10] Should handle datetime with named timezone - offset computation not implemented", () => {
+    // Original TCK: RETURN toString(datetime('1984-10-11T12:31:14[Europe/Stockholm]')) AS s
+    // Expected: '1984-10-11T12:31:14+01:00[Europe/Stockholm]'
+    // Reason: Offset computation from named timezone not implemented (returns +00:00 instead of +01:00)
+    const graph = createTckGraph();
+    const result = executeTckQuery(
+      graph,
+      "RETURN toString(datetime('1984-10-11T12:31:14[Europe/Stockholm]'))",
+    );
+    expect(result).toHaveLength(1);
+    expect(result[0]).toBe("1984-10-11T12:31:14+01:00[Europe/Stockholm]");
+  });
 });

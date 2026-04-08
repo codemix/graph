@@ -30,10 +30,7 @@ describe("Null2 - IS NOT NULL validation", () => {
 
   test("[3] Property not null check on null node", () => {
     const graph = createTckGraph();
-    const results = executeTckQuery(
-      graph,
-      "OPTIONAL MATCH (n) RETURN n.missing IS NOT NULL",
-    );
+    const results = executeTckQuery(graph, "OPTIONAL MATCH (n) RETURN n.missing IS NOT NULL");
     expect(results).toHaveLength(1);
     expect(results[0]).toBe(false);
   });
@@ -64,10 +61,7 @@ describe("Null2 - IS NOT NULL validation", () => {
 
   test("[6] IS NOT NULL is case insensitive", () => {
     const graph = createTckGraph();
-    executeTckQuery(
-      graph,
-      "CREATE (:X {prop: 42, name: 'hasProp'}), (:X {name: 'noProp'})",
-    );
+    executeTckQuery(graph, "CREATE (:X {prop: 42, name: 'hasProp'}), (:X {name: 'noProp'})");
 
     // Test IS NOT NULL with various casings in WHERE clause
     const resultsLower = executeTckQuery(
@@ -88,15 +82,9 @@ describe("Null2 - IS NOT NULL validation", () => {
   // Custom tests demonstrating IS NOT NULL behavior in WHERE clause
   test("[custom-1] IS NOT NULL for existing property", () => {
     const graph = createTckGraph();
-    executeTckQuery(
-      graph,
-      "CREATE (:A {name: 'has-num', num: 42}), (:A {name: 'no-num'})",
-    );
+    executeTckQuery(graph, "CREATE (:A {name: 'has-num', num: 42}), (:A {name: 'no-num'})");
 
-    const results = executeTckQuery(
-      graph,
-      "MATCH (n:A) WHERE n.num IS NOT NULL RETURN n.name",
-    );
+    const results = executeTckQuery(graph, "MATCH (n:A) WHERE n.num IS NOT NULL RETURN n.name");
 
     expect(results).toHaveLength(1);
     expect(results[0]).toBe("has-num");
@@ -109,10 +97,7 @@ describe("Null2 - IS NOT NULL validation", () => {
       "CREATE (:A {name: 'explicit-null', value: null}), (:A {name: 'has-value', value: 42})",
     );
 
-    const results = executeTckQuery(
-      graph,
-      "MATCH (n:A) WHERE n.value IS NOT NULL RETURN n.name",
-    );
+    const results = executeTckQuery(graph, "MATCH (n:A) WHERE n.value IS NOT NULL RETURN n.name");
 
     expect(results).toHaveLength(1);
     expect(results[0]).toBe("has-value");
@@ -151,24 +136,21 @@ describe("Null2 - IS NOT NULL validation", () => {
     expect(results).toEqual(["a", "b"]);
   });
 
-  test.fails(
-    "[custom-5] IS NOT NULL on relationship property - relationship property null check not fully supported",
-    () => {
-      const graph = createTckGraph();
-      executeTckQuery(
-        graph,
-        "CREATE (:A {name: 'a'})-[:T {num: 1}]->(:B {name: 'b1'}), (:A {name: 'a2'})-[:T]->(:B {name: 'b2'})",
-      );
+  test.fails("[custom-5] IS NOT NULL on relationship property - relationship property null check not fully supported", () => {
+    const graph = createTckGraph();
+    executeTckQuery(
+      graph,
+      "CREATE (:A {name: 'a'})-[:T {num: 1}]->(:B {name: 'b1'}), (:A {name: 'a2'})-[:T]->(:B {name: 'b2'})",
+    );
 
-      const results = executeTckQuery(
-        graph,
-        "MATCH (a:A)-[r:T]->(b:B) WHERE r.num IS NOT NULL RETURN b.name",
-      );
+    const results = executeTckQuery(
+      graph,
+      "MATCH (a:A)-[r:T]->(b:B) WHERE r.num IS NOT NULL RETURN b.name",
+    );
 
-      expect(results).toHaveLength(1);
-      expect(results[0]).toBe("b1");
-    },
-  );
+    expect(results).toHaveLength(1);
+    expect(results[0]).toBe("b1");
+  });
 
   test("[custom-6] IS NOT NULL with multiple matching nodes", () => {
     const graph = createTckGraph();
@@ -188,16 +170,10 @@ describe("Null2 - IS NOT NULL validation", () => {
 
   test("[custom-7] NOT combined with IS NULL (equivalent to IS NOT NULL)", () => {
     const graph = createTckGraph();
-    executeTckQuery(
-      graph,
-      "CREATE (:A {name: 'has-val', val: 1}), (:A {name: 'no-val'})",
-    );
+    executeTckQuery(graph, "CREATE (:A {name: 'has-val', val: 1}), (:A {name: 'no-val'})");
 
     // NOT (x IS NULL) should be equivalent to x IS NOT NULL
-    const resultsNot = executeTckQuery(
-      graph,
-      "MATCH (n:A) WHERE NOT n.val IS NULL RETURN n.name",
-    );
+    const resultsNot = executeTckQuery(graph, "MATCH (n:A) WHERE NOT n.val IS NULL RETURN n.name");
     const resultsIsNotNull = executeTckQuery(
       graph,
       "MATCH (n:A) WHERE n.val IS NOT NULL RETURN n.name",

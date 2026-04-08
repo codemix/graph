@@ -196,10 +196,7 @@ export interface CreateChainPattern {
   elements: CreateChainElement[];
 }
 
-export type CreateChainElement =
-  | CreateNodePattern
-  | CreateVariableRef
-  | CreateEdgePattern;
+export type CreateChainElement = CreateNodePattern | CreateVariableRef | CreateEdgePattern;
 
 export interface CreateEdgePattern {
   type: "CreateEdgePattern";
@@ -346,11 +343,7 @@ export interface ForeachClause {
   operations: ForeachOperation[];
 }
 
-export type ListExpression =
-  | PropertyAccess
-  | ListLiteralExpr
-  | FunctionCall
-  | VariableRef;
+export type ListExpression = PropertyAccess | ListLiteralExpr | FunctionCall | VariableRef;
 
 export interface PropertyAccess {
   type: "PropertyAccess";
@@ -501,10 +494,7 @@ export interface MultiPattern {
   patterns: Pattern[];
 }
 
-export type PatternElement =
-  | NodePattern
-  | EdgePattern
-  | ParenthesizedPathPattern;
+export type PatternElement = NodePattern | EdgePattern | ParenthesizedPathPattern;
 
 export interface NodePattern {
   type: "NodePattern";
@@ -529,11 +519,7 @@ export interface NestedMap {
  * Parameter references (e.g., $name) are resolved at query execution time.
  * Nested maps allow object-valued properties like {schema: {type: "string"}}.
  */
-export type PropertyValue =
-  | Literal
-  | ParameterRef
-  | NestedMap
-  | ListLiteralExpr;
+export type PropertyValue = Literal | ParameterRef | NestedMap | ListLiteralExpr;
 
 /**
  * Property map for node and relationship patterns.
@@ -563,12 +549,7 @@ export interface Quantifier {
 
 // Advanced label expressions for complex label matching
 // Supports: :A|B (OR), :A&B (AND), :!A (NOT), :% (wildcard), parenthesized
-export type LabelExpression =
-  | LabelName
-  | LabelOr
-  | LabelAnd
-  | LabelNot
-  | LabelWildcard;
+export type LabelExpression = LabelName | LabelOr | LabelAnd | LabelNot | LabelWildcard;
 
 /** Single label identifier */
 export interface LabelName {

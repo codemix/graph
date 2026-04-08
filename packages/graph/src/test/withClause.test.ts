@@ -114,8 +114,7 @@ describe("WITH clause grammar parsing", () => {
   });
 
   test("parses WITH with COLLECT aggregate", () => {
-    const query =
-      "MATCH (u:Person)-[:knows]->(f) WITH u, COLLECT(f) AS friends RETURN u, friends";
+    const query = "MATCH (u:Person)-[:knows]->(f) WITH u, COLLECT(f) AS friends RETURN u, friends";
     const ast = parse(query) as Query;
 
     const collectItem = ast.with![0]!.items[1]!;
@@ -127,8 +126,7 @@ describe("WITH clause grammar parsing", () => {
   });
 
   test("parses WITH with SUM aggregate", () => {
-    const query =
-      "MATCH (u:Person) WITH SUM(u.age) AS totalAge RETURN totalAge";
+    const query = "MATCH (u:Person) WITH SUM(u.age) AS totalAge RETURN totalAge";
     const ast = parse(query) as Query;
 
     const sumItem = ast.with![0]!.items[0]!;
@@ -217,12 +215,7 @@ describe("WITH clause execution", () => {
       if (r && typeof r === "object" && "id" in r) {
         return r.id;
       }
-      if (
-        Array.isArray(r) &&
-        r[0] &&
-        typeof r[0] === "object" &&
-        "id" in r[0]
-      ) {
+      if (Array.isArray(r) && r[0] && typeof r[0] === "object" && "id" in r[0]) {
         return r[0].id;
       }
       return JSON.stringify(r);
@@ -232,8 +225,7 @@ describe("WITH clause execution", () => {
   });
 
   test("WITH clause with COUNT aggregate", () => {
-    const query =
-      "MATCH (u:Person)-[:knows]->(f) WITH COUNT(f) AS cnt RETURN cnt";
+    const query = "MATCH (u:Person)-[:knows]->(f) WITH COUNT(f) AS cnt RETURN cnt";
     const ast = parse(query) as Query;
     const steps = astToSteps(ast);
     const traverser = createTraverser(steps);
@@ -266,8 +258,7 @@ describe("WITH clause execution", () => {
 
   test("WITH clause with ORDER BY alias DESC", () => {
     // This tests ORDER BY DESC using an alias defined in the WITH clause
-    const query =
-      "MATCH (u:Person) WITH u.age AS age ORDER BY age DESC RETURN age";
+    const query = "MATCH (u:Person) WITH u.age AS age ORDER BY age DESC RETURN age";
     const ast = parse(query) as Query;
     const steps = astToSteps(ast);
     const traverser = createTraverser(steps);

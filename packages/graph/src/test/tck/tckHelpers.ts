@@ -1055,9 +1055,7 @@ export function normalizeResult(value: unknown): unknown {
  * Extracts properties from a node/edge result for comparison.
  * Returns only the user-defined properties.
  */
-export function extractProperties(
-  value: Record<string, unknown>,
-): Record<string, unknown> {
+export function extractProperties(value: Record<string, unknown>): Record<string, unknown> {
   const result: Record<string, unknown> = {};
   for (const [key, val] of Object.entries(value)) {
     if (!key.startsWith("$")) {
@@ -1122,10 +1120,7 @@ export function getType(value: Record<string, unknown>): string | undefined {
  * For Vertex/Edge instances, uses the get() method.
  * For plain objects, looks in the 'properties' sub-object.
  */
-export function getProperty(
-  value: Record<string, unknown>,
-  name: string,
-): unknown {
+export function getProperty(value: Record<string, unknown>, name: string): unknown {
   // If it's a Vertex or Edge instance, use the get() method
   if (value instanceof Element) {
     return value.get(name as never);

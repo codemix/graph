@@ -1,8 +1,4 @@
-import type {
-  GraphSchema,
-  IndexConfig,
-  FullTextIndexConfig,
-} from "../GraphSchema.js";
+import type { GraphSchema, IndexConfig, FullTextIndexConfig } from "../GraphSchema.js";
 import type { ElementId, StoredElement } from "../GraphStorage.js";
 import { getLabelFromElementId } from "../GraphStorage.js";
 import type { Index, IndexStatistics } from "./types.js";
@@ -45,10 +41,7 @@ export class IndexManager<TSchema extends GraphSchema> {
    * @param property The property name.
    * @returns The index configuration, or undefined if not indexed.
    */
-  public getIndexConfig(
-    label: string,
-    property: string,
-  ): IndexConfig | undefined {
+  public getIndexConfig(label: string, property: string): IndexConfig | undefined {
     // Defensive check for incomplete schemas
     const vertices = this.#schema.vertices;
     if (vertices) {
@@ -76,11 +69,7 @@ export class IndexManager<TSchema extends GraphSchema> {
    * @param type The index type to check for.
    * @returns True if the property has an index of the specified type.
    */
-  public hasIndexOfType(
-    label: string,
-    property: string,
-    type: IndexConfig["type"],
-  ): boolean {
+  public hasIndexOfType(label: string, property: string, type: IndexConfig["type"]): boolean {
     const config = this.getIndexConfig(label, property);
     return config?.type === type;
   }
@@ -112,15 +101,10 @@ export class IndexManager<TSchema extends GraphSchema> {
     // Check vertex schema
     const vertexSchema = this.#schema.vertices?.[label];
     if (vertexSchema) {
-      for (const [property, propSchema] of Object.entries(
-        vertexSchema.properties,
-      )) {
+      for (const [property, propSchema] of Object.entries(vertexSchema.properties)) {
         if (propSchema.index) {
           const indexConfig = propSchema.index;
-          if (
-            (indexConfig.type === "hash" || indexConfig.type === "btree") &&
-            indexConfig.unique
-          ) {
+          if ((indexConfig.type === "hash" || indexConfig.type === "btree") && indexConfig.unique) {
             uniqueProps.push(property);
           }
         }
@@ -130,15 +114,10 @@ export class IndexManager<TSchema extends GraphSchema> {
     // Check edge schema
     const edgeSchema = this.#schema.edges?.[label];
     if (edgeSchema) {
-      for (const [property, propSchema] of Object.entries(
-        edgeSchema.properties,
-      )) {
+      for (const [property, propSchema] of Object.entries(edgeSchema.properties)) {
         if (propSchema.index) {
           const indexConfig = propSchema.index;
-          if (
-            (indexConfig.type === "hash" || indexConfig.type === "btree") &&
-            indexConfig.unique
-          ) {
+          if ((indexConfig.type === "hash" || indexConfig.type === "btree") && indexConfig.unique) {
             uniqueProps.push(property);
           }
         }
@@ -243,12 +222,7 @@ export class IndexManager<TSchema extends GraphSchema> {
 
     for (const existingId of existingIds) {
       if (existingId !== excludeElementId) {
-        throw new UniqueConstraintViolationError(
-          label,
-          property,
-          value,
-          existingId,
-        );
+        throw new UniqueConstraintViolationError(label, property, value, existingId);
       }
     }
   }
@@ -268,12 +242,7 @@ export class IndexManager<TSchema extends GraphSchema> {
     const uniqueProps = this.getUniqueProperties(label);
     for (const property of uniqueProps) {
       if (property in properties) {
-        this.checkUniqueConstraint(
-          label,
-          property,
-          properties[property],
-          excludeElementId,
-        );
+        this.checkUniqueConstraint(label, property, properties[property], excludeElementId);
       }
     }
   }
@@ -317,18 +286,12 @@ export class IndexManager<TSchema extends GraphSchema> {
     return index instanceof HashIndex ? index : undefined;
   }
 
-  public getBTreeIndex(
-    label: string,
-    property: string,
-  ): BTreeIndex | undefined {
+  public getBTreeIndex(label: string, property: string): BTreeIndex | undefined {
     const index = this.getIndex(label, property);
     return index instanceof BTreeIndex ? index : undefined;
   }
 
-  public getFullTextIndex(
-    label: string,
-    property: string,
-  ): FullTextIndex | undefined {
+  public getFullTextIndex(label: string, property: string): FullTextIndex | undefined {
     const index = this.getIndex(label, property);
     return index instanceof FullTextIndex ? index : undefined;
   }
@@ -350,9 +313,7 @@ export class IndexManager<TSchema extends GraphSchema> {
       default: {
         // Exhaustive check - will error at compile time if a new type is added
         const exhaustiveCheck: never = config;
-        throw new Error(
-          `Unknown index type: ${(exhaustiveCheck as IndexConfig).type}`,
-        );
+        throw new Error(`Unknown index type: ${(exhaustiveCheck as IndexConfig).type}`);
       }
     }
   }
@@ -403,8 +364,7 @@ export class IndexManager<TSchema extends GraphSchema> {
         if (value !== undefined) {
           // For unique indexes, check for duplicates before adding
           if (isUniqueIndex) {
-            let existingIds: ReadonlySet<ElementId> | Set<ElementId> =
-              new Set();
+            let existingIds: ReadonlySet<ElementId> | Set<ElementId> = new Set();
             if (index instanceof HashIndex) {
               existingIds = index.lookup(value);
             } else if (index instanceof BTreeIndex) {
@@ -415,12 +375,7 @@ export class IndexManager<TSchema extends GraphSchema> {
             }
             if (existingIds.size > 0) {
               const existingId = [...existingIds][0]!;
-              throw new UniqueConstraintViolationError(
-                label,
-                property,
-                value,
-                existingId,
-              );
+              throw new UniqueConstraintViolationError(label, property, value, existingId);
             }
           }
           index.add(element.id, value);
@@ -557,10 +512,7 @@ export class IndexManager<TSchema extends GraphSchema> {
    * @param label The element label.
    * @param elements Elements to build indexes from.
    */
-  public ensureUniqueIndexesBuilt(
-    label: string,
-    elements: Iterable<StoredElement>,
-  ): void {
+  public ensureUniqueIndexesBuilt(label: string, elements: Iterable<StoredElement>): void {
     const uniqueProps = this.getUniqueProperties(label);
     for (const property of uniqueProps) {
       const key = this.#indexKey(label, property);
@@ -623,10 +575,7 @@ export class IndexManager<TSchema extends GraphSchema> {
       for (const [property, propSchema] of Object.entries(schema.properties)) {
         if (propSchema.index) {
           const indexConfig = propSchema.index;
-          if (
-            (indexConfig.type === "hash" || indexConfig.type === "btree") &&
-            indexConfig.unique
-          ) {
+          if ((indexConfig.type === "hash" || indexConfig.type === "btree") && indexConfig.unique) {
             configs.push({
               label,
               property,
@@ -643,10 +592,7 @@ export class IndexManager<TSchema extends GraphSchema> {
       for (const [property, propSchema] of Object.entries(schema.properties)) {
         if (propSchema.index) {
           const indexConfig = propSchema.index;
-          if (
-            (indexConfig.type === "hash" || indexConfig.type === "btree") &&
-            indexConfig.unique
-          ) {
+          if ((indexConfig.type === "hash" || indexConfig.type === "btree") && indexConfig.unique) {
             configs.push({
               label,
               property,

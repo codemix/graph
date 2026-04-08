@@ -22,10 +22,7 @@ describe("List7 - List Head", () => {
   test("[Custom 1] Access first element via UNWIND with LIMIT 1", () => {
     const graph = createTckGraph();
 
-    const results = executeTckQuery(
-      graph,
-      "UNWIND [10, 20, 30] AS x RETURN x LIMIT 1",
-    );
+    const results = executeTckQuery(graph, "UNWIND [10, 20, 30] AS x RETURN x LIMIT 1");
 
     expect(results).toHaveLength(1);
     // Results are wrapped in arrays
@@ -36,10 +33,7 @@ describe("List7 - List Head", () => {
     // Grammar limitation: List literals cannot be used as property values in CREATE
     const graph = createTckGraph();
     executeTckQuery(graph, "CREATE (:A {items: [10, 20, 30]})");
-    const results = executeTckQuery(
-      graph,
-      "MATCH (n:A) RETURN head(n.items) AS r",
-    );
+    const results = executeTckQuery(graph, "MATCH (n:A) RETURN head(n.items) AS r");
     expect(results).toHaveLength(1);
     expect(results[0]).toBe(10);
   });

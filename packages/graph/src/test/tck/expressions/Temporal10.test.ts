@@ -91,37 +91,31 @@ describe("Temporal10 - Compute Durations Between two Temporal Values", () => {
     expect(d.months).toBe(-12); // -1 year
   });
 
-  test.fails(
-    "[8] Should compute duration across DST transition - named timezone computation not implemented",
-    () => {
-      const graph = createTckGraph();
-      const results = executeTckQuery(
-        graph,
-        `RETURN duration.between(
+  test.fails("[8] Should compute duration across DST transition - named timezone computation not implemented", () => {
+    const graph = createTckGraph();
+    const results = executeTckQuery(
+      graph,
+      `RETURN duration.between(
         datetime('2017-03-25T12:00[Europe/Stockholm]'),
         datetime('2017-03-27T12:00[Europe/Stockholm]')
       ) AS d`,
-      );
-      expect(results).toHaveLength(1);
-      const d = results[0] as DurationValue;
-      expect(d).toBeInstanceOf(DurationValue);
-      expect(d.days).toBe(2);
-    },
-  );
+    );
+    expect(results).toHaveLength(1);
+    const d = results[0] as DurationValue;
+    expect(d).toBeInstanceOf(DurationValue);
+    expect(d.days).toBe(2);
+  });
 
-  test.fails(
-    "[9] Should compute duration with large year values - extreme date range not supported",
-    () => {
-      const graph = createTckGraph();
-      const results = executeTckQuery(
-        graph,
-        "RETURN duration.between(date('-999999999-01-01'), date('999999999-12-31')) AS d",
-      );
-      expect(results).toHaveLength(1);
-      const d = results[0] as DurationValue;
-      expect(d).toBeInstanceOf(DurationValue);
-    },
-  );
+  test.fails("[9] Should compute duration with large year values - extreme date range not supported", () => {
+    const graph = createTckGraph();
+    const results = executeTckQuery(
+      graph,
+      "RETURN duration.between(date('-999999999-01-01'), date('999999999-12-31')) AS d",
+    );
+    expect(results).toHaveLength(1);
+    const d = results[0] as DurationValue;
+    expect(d).toBeInstanceOf(DurationValue);
+  });
 
   test("[10] Should handle null in duration computation", () => {
     const graph = createTckGraph();
@@ -180,18 +174,15 @@ describe("Temporal10 - Compute Durations Between two Temporal Values", () => {
     expect(d.seconds).toBe(7261); // 2h 1m 1s
   });
 
-  test.fails(
-    "[15] Should compute duration between mixed temporal types - mixed type comparison not implemented",
-    () => {
-      const graph = createTckGraph();
-      const results = executeTckQuery(
-        graph,
-        "RETURN duration.between(date('1984-10-11'), datetime('1985-10-11T00:00Z')) AS d",
-      );
-      expect(results).toHaveLength(1);
-      const d = results[0] as DurationValue;
-      expect(d).toBeInstanceOf(DurationValue);
-      expect(d.months).toBe(12);
-    },
-  );
+  test.fails("[15] Should compute duration between mixed temporal types - mixed type comparison not implemented", () => {
+    const graph = createTckGraph();
+    const results = executeTckQuery(
+      graph,
+      "RETURN duration.between(date('1984-10-11'), datetime('1985-10-11T00:00Z')) AS d",
+    );
+    expect(results).toHaveLength(1);
+    const d = results[0] as DurationValue;
+    expect(d).toBeInstanceOf(DurationValue);
+    expect(d.months).toBe(12);
+  });
 });

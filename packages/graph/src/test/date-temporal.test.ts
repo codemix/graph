@@ -46,10 +46,7 @@ function createTestGraph() {
   return new Graph({ schema, storage: new InMemoryGraphStorage() });
 }
 
-function executeQuery(
-  graph: Graph<GraphSchema>,
-  queryString: string,
-): unknown[] {
+function executeQuery(graph: Graph<GraphSchema>, queryString: string): unknown[] {
   const ast = parse(queryString) as Query | UnionQuery | MultiStatement;
   const steps = anyAstToSteps(ast);
   const traverser = createTraverser(steps);
@@ -331,9 +328,7 @@ describe("grammar parsing", () => {
   test.skip("parses map literal as function argument - requires grammar support", () => {
     // This test is skipped because the grammar doesn't yet support
     // map literals like {year: 2023, month: 1, day: 15} as function arguments
-    const ast = parse(
-      "RETURN date({year: 2023, month: 1, day: 15}).month",
-    ) as Query;
+    const ast = parse("RETURN date({year: 2023, month: 1, day: 15}).month") as Query;
     const expr = ast.return?.items[0]?.expression as any;
     expect(expr?.type).toBe("MemberAccess");
     expect(expr?.property).toBe("month");
@@ -551,15 +546,11 @@ describe("LocalDateTimeValue class", () => {
 
 describe("localdatetime() function", () => {
   test("localdatetime(string) creates datetime", () => {
-    const result = query(
-      "RETURN localdatetime('1984-10-11T12:31:14.645876123')",
-    );
+    const result = query("RETURN localdatetime('1984-10-11T12:31:14.645876123')");
     expect(result).toHaveLength(1);
     const dt = result[0];
     expect(dt).toBeInstanceOf(LocalDateTimeValue);
-    expect((dt as LocalDateTimeValue).toString()).toBe(
-      "1984-10-11T12:31:14.645876123",
-    );
+    expect((dt as LocalDateTimeValue).toString()).toBe("1984-10-11T12:31:14.645876123");
   });
 
   test("localdatetime() with no args returns current datetime", () => {
@@ -611,18 +602,14 @@ describe("DateTimeValue class", () => {
   });
 
   test("fromString parses datetime with named timezone", () => {
-    const dt = DateTimeValue.fromString(
-      "1984-10-11T12:31:14.645876123[Europe/Stockholm]",
-    );
+    const dt = DateTimeValue.fromString("1984-10-11T12:31:14.645876123[Europe/Stockholm]");
     expect(dt).not.toBeNull();
     expect(dt!.timezone).toBe("Europe/Stockholm");
     expect(dt!.year).toBe(1984);
   });
 
   test("fromString parses datetime with offset and named timezone", () => {
-    const dt = DateTimeValue.fromString(
-      "1984-10-11T12:31:14.645876123+01:00[Europe/Stockholm]",
-    );
+    const dt = DateTimeValue.fromString("1984-10-11T12:31:14.645876123+01:00[Europe/Stockholm]");
     expect(dt).not.toBeNull();
     expect(dt!.offset).toBe(3600);
     expect(dt!.timezone).toBe("Europe/Stockholm");
@@ -634,40 +621,22 @@ describe("DateTimeValue class", () => {
   });
 
   test("toString formats with timezone", () => {
-    const dt = new DateTimeValue(
-      1984,
-      10,
-      11,
-      12,
-      31,
-      14,
-      645876123,
-      3600,
-      "Europe/Stockholm",
-    );
-    expect(dt.toString()).toBe(
-      "1984-10-11T12:31:14.645876123+01:00[Europe/Stockholm]",
-    );
+    const dt = new DateTimeValue(1984, 10, 11, 12, 31, 14, 645876123, 3600, "Europe/Stockholm");
+    expect(dt.toString()).toBe("1984-10-11T12:31:14.645876123+01:00[Europe/Stockholm]");
   });
 });
 
 describe("datetime() function", () => {
   test("datetime(string) creates datetime with offset", () => {
-    const result = query(
-      "RETURN datetime('1984-10-11T12:31:14.645876123+01:00')",
-    );
+    const result = query("RETURN datetime('1984-10-11T12:31:14.645876123+01:00')");
     expect(result).toHaveLength(1);
     const dt = result[0];
     expect(dt).toBeInstanceOf(DateTimeValue);
-    expect((dt as DateTimeValue).toString()).toBe(
-      "1984-10-11T12:31:14.645876123+01:00",
-    );
+    expect((dt as DateTimeValue).toString()).toBe("1984-10-11T12:31:14.645876123+01:00");
   });
 
   test("datetime(string) with named timezone", () => {
-    const result = query(
-      "RETURN datetime('1984-10-11T12:31:14.645876123[Europe/Stockholm]')",
-    );
+    const result = query("RETURN datetime('1984-10-11T12:31:14.645876123[Europe/Stockholm]')");
     expect(result).toHaveLength(1);
     const dt = result[0];
     expect(dt).toBeInstanceOf(DateTimeValue);
@@ -703,9 +672,7 @@ describe("datetime() function", () => {
   });
 
   test("datetime().timezone accessor", () => {
-    const result = query(
-      "RETURN datetime('1984-10-11T12:31:14[Europe/Stockholm]').timezone",
-    );
+    const result = query("RETURN datetime('1984-10-11T12:31:14[Europe/Stockholm]').timezone");
     expect(result).toHaveLength(1);
     expect(result[0]).toBe("Europe/Stockholm");
   });
@@ -725,17 +692,13 @@ describe("toString with temporal types", () => {
   });
 
   test("toString(localdatetime) converts to string", () => {
-    const result = query(
-      "RETURN toString(localdatetime('1984-10-11T12:31:14'))",
-    );
+    const result = query("RETURN toString(localdatetime('1984-10-11T12:31:14'))");
     expect(result).toHaveLength(1);
     expect(result[0]).toBe("1984-10-11T12:31:14");
   });
 
   test("toString(datetime) converts to string", () => {
-    const result = query(
-      "RETURN toString(datetime('1984-10-11T12:31:14+01:00'))",
-    );
+    const result = query("RETURN toString(datetime('1984-10-11T12:31:14+01:00'))");
     expect(result).toHaveLength(1);
     expect(result[0]).toBe("1984-10-11T12:31:14+01:00");
   });

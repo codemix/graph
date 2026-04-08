@@ -190,9 +190,7 @@ export class ProcedureRegistry {
       name: "db.relationshipTypes",
       description: "Returns all relationship types in the graph",
       params: [],
-      yields: [
-        { name: "relationshipType", description: "A relationship type" },
-      ],
+      yields: [{ name: "relationshipType", description: "A relationship type" }],
       impl: function* (_args, context) {
         if (!context.graph) {
           return;
@@ -258,10 +256,7 @@ export class ProcedureRegistry {
           return;
         }
         // Group nodes by label and collect property info
-        const typeProps = new Map<
-          string,
-          Map<string, { types: Set<string>; count: number }>
-        >();
+        const typeProps = new Map<string, Map<string, { types: Set<string>; count: number }>>();
         const typeCounts = new Map<string, number>();
 
         for (const vertex of context.graph.getVertices()) {
@@ -273,9 +268,7 @@ export class ProcedureRegistry {
           }
           const propsMap = typeProps.get(label)!;
 
-          for (const [key, value] of Object.entries(
-            vertex[$StoredElement].properties,
-          )) {
+          for (const [key, value] of Object.entries(vertex[$StoredElement].properties)) {
             if (!propsMap.has(key)) {
               propsMap.set(key, { types: new Set(), count: 0 });
             }
@@ -321,10 +314,7 @@ export class ProcedureRegistry {
           return;
         }
         // Group edges by type and collect property info
-        const typeProps = new Map<
-          string,
-          Map<string, { types: Set<string>; count: number }>
-        >();
+        const typeProps = new Map<string, Map<string, { types: Set<string>; count: number }>>();
         const typeCounts = new Map<string, number>();
 
         for (const edge of context.graph.getEdges()) {
@@ -336,9 +326,7 @@ export class ProcedureRegistry {
           }
           const propsMap = typeProps.get(relType)!;
 
-          for (const [key, value] of Object.entries(
-            edge[$StoredElement].properties,
-          )) {
+          for (const [key, value] of Object.entries(edge[$StoredElement].properties)) {
             if (!propsMap.has(key)) {
               propsMap.set(key, { types: new Set(), count: 0 });
             }

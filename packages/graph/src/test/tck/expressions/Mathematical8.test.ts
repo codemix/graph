@@ -32,10 +32,7 @@ describe("Mathematical8 - Arithmetic precedence", () => {
     // 12 / 4 * 3 - 2 * 4 = 3 * 3 - 8 = 9 - 8 = 1
     executeTckQuery(graph, "CREATE (:A {num: 1})");
 
-    const results = executeTckQuery(
-      graph,
-      "MATCH (n:A) WHERE n.num = 1 RETURN n.num",
-    );
+    const results = executeTckQuery(graph, "MATCH (n:A) WHERE n.num = 1 RETURN n.num");
 
     expect(results).toHaveLength(1);
     expect(results[0]).toBe(1);
@@ -46,10 +43,7 @@ describe("Mathematical8 - Arithmetic precedence", () => {
     // 12 / 4 * (3 - 2 * 4) = 3 * (3 - 8) = 3 * (-5) = -15
     executeTckQuery(graph, "CREATE (:A {num: -15})");
 
-    const results = executeTckQuery(
-      graph,
-      "MATCH (n:A) WHERE n.num = -15 RETURN n.num",
-    );
+    const results = executeTckQuery(graph, "MATCH (n:A) WHERE n.num = -15 RETURN n.num");
 
     expect(results).toHaveLength(1);
     expect(results[0]).toBe(-15);

@@ -34,9 +34,7 @@ export function generateGrammarDescription(): string {
   sections.push("- `MATCH` is required and defines the graph pattern to find");
   sections.push("- `WHERE` is optional and filters the matched results");
   sections.push("- `RETURN` is required and specifies what data to return");
-  sections.push(
-    "- `ORDER BY`, `SKIP`, and `LIMIT` are optional result modifiers",
-  );
+  sections.push("- `ORDER BY`, `SKIP`, and `LIMIT` are optional result modifiers");
   sections.push("");
 
   // Pattern Matching
@@ -47,37 +45,23 @@ export function generateGrammarDescription(): string {
 
   sections.push("### Node Patterns");
   sections.push("");
-  sections.push(
-    "Nodes are written using parentheses with a variable and optional label:",
-  );
+  sections.push("Nodes are written using parentheses with a variable and optional label:");
   sections.push("");
   sections.push("- `(n)` - Any node, bound to variable `n`");
-  sections.push(
-    '- `(n:Person)` - Node with label "Person", bound to variable `n`',
-  );
-  sections.push(
-    '- `(user:User)` - Node with label "User", bound to variable `user`',
-  );
+  sections.push('- `(n:Person)` - Node with label "Person", bound to variable `n`');
+  sections.push('- `(user:User)` - Node with label "User", bound to variable `user`');
   sections.push("");
 
   sections.push("### Edge Patterns");
   sections.push("");
-  sections.push(
-    "Edges connect nodes and use arrow syntax to indicate direction:",
-  );
+  sections.push("Edges connect nodes and use arrow syntax to indicate direction:");
   sections.push("");
   sections.push("**Outgoing (left to right):**");
-  sections.push(
-    '- `(a)-[:follows]->(b)` - Node `a` has outgoing "follows" edge to node `b`',
-  );
-  sections.push(
-    "- `(a)-[r:likes]->(b)` - Same, but edge is bound to variable `r`",
-  );
+  sections.push('- `(a)-[:follows]->(b)` - Node `a` has outgoing "follows" edge to node `b`');
+  sections.push("- `(a)-[r:likes]->(b)` - Same, but edge is bound to variable `r`");
   sections.push("");
   sections.push("**Incoming (right to left):**");
-  sections.push(
-    '- `(a)<-[:follows]-(b)` - Node `a` has incoming "follows" edge from node `b`',
-  );
+  sections.push('- `(a)<-[:follows]-(b)` - Node `a` has incoming "follows" edge from node `b`');
   sections.push("");
   sections.push("**Bidirectional (either direction):**");
   sections.push(
@@ -85,9 +69,7 @@ export function generateGrammarDescription(): string {
   );
   sections.push("");
   sections.push("**Any edge type:**");
-  sections.push(
-    "- `(a)-[r:]-(b)` - Any edge type between `a` and `b`, bound to variable `r`",
-  );
+  sections.push("- `(a)-[r:]-(b)` - Any edge type between `a` and `b`, bound to variable `r`");
   sections.push("- `(a)-[r:]->(b)` - Any edge type outgoing from `a` to `b`");
   sections.push("");
 
@@ -95,12 +77,8 @@ export function generateGrammarDescription(): string {
   sections.push("");
   sections.push("Use the pipe operator `|` to match multiple edge types:");
   sections.push("");
-  sections.push(
-    '- `(a)-[:follows|likes]->(b)` - Match either "follows" OR "likes" edges',
-  );
-  sections.push(
-    "- `(a)-[:type1|type2|type3]->(b)` - Match any of three edge types",
-  );
+  sections.push('- `(a)-[:follows|likes]->(b)` - Match either "follows" OR "likes" edges');
+  sections.push("- `(a)-[:type1|type2|type3]->(b)` - Match any of three edge types");
   sections.push("");
 
   sections.push("### Variable-Length Paths");
@@ -111,9 +89,7 @@ export function generateGrammarDescription(): string {
   sections.push(
     "- `(a)-[:follows*1..3]->(b)` - Between 1 and 3 hops (emits results at EACH hop: 1, 2, and 3)",
   );
-  sections.push(
-    "- `(a)-[:follows*2..]->(b)` - 2 or more hops (emits at each level)",
-  );
+  sections.push("- `(a)-[:follows*2..]->(b)` - 2 or more hops (emits at each level)");
   sections.push(
     "- `(a)-[:follows*..5]->(b)` - Up to 5 hops (emits results at 1, 2, 3, 4, and 5 hops)",
   );
@@ -121,30 +97,22 @@ export function generateGrammarDescription(): string {
   sections.push(
     "**Important:** Range quantifiers (`*min..max`) emit results at EACH hop within the range.",
   );
-  sections.push(
-    "This means `*1..3` returns nodes reachable in 1 hop, 2 hops, OR 3 hops.",
-  );
-  sections.push(
-    "Use `DISTINCT` to remove duplicate nodes when using variable-length paths.",
-  );
+  sections.push("This means `*1..3` returns nodes reachable in 1 hop, 2 hops, OR 3 hops.");
+  sections.push("Use `DISTINCT` to remove duplicate nodes when using variable-length paths.");
   sections.push("");
 
   sections.push("### Multi-Segment Patterns");
   sections.push("");
   sections.push("Chain multiple segments together to match longer paths:");
   sections.push("");
-  sections.push(
-    "- `(a)-[:follows]->(b)-[:likes]->(c)` - Two-hop path through specific edge types",
-  );
+  sections.push("- `(a)-[:follows]->(b)-[:likes]->(c)` - Two-hop path through specific edge types");
   sections.push("- `(a)-[:r1]->(b)<-[:r2]-(c)` - Fan-in pattern");
   sections.push("");
 
   // Filtering
   sections.push("## Filtering (WHERE)");
   sections.push("");
-  sections.push(
-    "Filter matched patterns using property comparisons and logical operators:",
-  );
+  sections.push("Filter matched patterns using property comparisons and logical operators:");
   sections.push("");
 
   sections.push("### Property Access");
@@ -176,9 +144,7 @@ export function generateGrammarDescription(): string {
 
   sections.push("### Existence Check");
   sections.push("");
-  sections.push(
-    "- `property EXISTS` - Check if a property exists on a node/edge",
-  );
+  sections.push("- `property EXISTS` - Check if a property exists on a node/edge");
   sections.push("- Example: `WHERE n.email EXISTS`");
   sections.push("");
 
@@ -203,9 +169,7 @@ export function generateGrammarDescription(): string {
   sections.push("### Return Items");
   sections.push("");
   sections.push("- `RETURN n` - Return the node bound to variable `n`");
-  sections.push(
-    "- `RETURN a, b, r` - Return multiple variables (nodes and edges)",
-  );
+  sections.push("- `RETURN a, b, r` - Return multiple variables (nodes and edges)");
   sections.push("");
 
   sections.push("### DISTINCT Modifier");
@@ -213,9 +177,7 @@ export function generateGrammarDescription(): string {
   sections.push("Remove duplicate results:");
   sections.push("");
   sections.push("- `RETURN DISTINCT n` - Only unique nodes");
-  sections.push(
-    "- Use when graph traversal might reach the same node multiple times",
-  );
+  sections.push("- Use when graph traversal might reach the same node multiple times");
   sections.push("");
 
   sections.push("### COUNT Aggregation");
@@ -236,9 +198,7 @@ export function generateGrammarDescription(): string {
   sections.push("");
   sections.push("- `ORDER BY n.name` - Sort ascending (A-Z, 0-9) - default");
   sections.push("- `ORDER BY n.age DESC` - Sort descending (Z-A, 9-0)");
-  sections.push(
-    "- `ORDER BY n.lastName ASC, n.firstName ASC` - Multi-level sort",
-  );
+  sections.push("- `ORDER BY n.lastName ASC, n.firstName ASC` - Multi-level sort");
   sections.push("");
 
   sections.push("### SKIP");
@@ -273,9 +233,7 @@ export function generateGrammarDescription(): string {
   sections.push("");
   sections.push("### Supported Literal Values");
   sections.push("");
-  sections.push(
-    "- **Strings**: `\"text\"` or `'text'` (single or double quotes)",
-  );
+  sections.push("- **Strings**: `\"text\"` or `'text'` (single or double quotes)");
   sections.push("- **Numbers**: `42` (integer) or `3.14` (decimal)");
   sections.push("- **Booleans**: `true` or `false`");
   sections.push("- **Null**: `null`");
@@ -349,12 +307,8 @@ export function generateGrammarDescription(): string {
   sections.push("// Multi-hop: friends of friends (exactly 2 hops)");
   sections.push("MATCH (u:User)-[:follows*2]->(fof) RETURN DISTINCT fof");
   sections.push("");
-  sections.push(
-    "// Find all users within 3 hops (returns at 1, 2, AND 3 hops)",
-  );
-  sections.push(
-    "MATCH (u:User)-[:follows*1..3]->(connected) RETURN DISTINCT connected",
-  );
+  sections.push("// Find all users within 3 hops (returns at 1, 2, AND 3 hops)");
+  sections.push("MATCH (u:User)-[:follows*1..3]->(connected) RETURN DISTINCT connected");
   sections.push("");
   sections.push("// Complex path");
   sections.push("MATCH (u:User)-[:follows]->(f)-[:likes]->(p:Post) RETURN p");
@@ -412,9 +366,7 @@ export function generateGrammarDescription(): string {
   // Best Practices
   sections.push("## Best Practices for Query Construction");
   sections.push("");
-  sections.push(
-    "1. **Always start with MATCH** - Define the graph pattern first",
-  );
+  sections.push("1. **Always start with MATCH** - Define the graph pattern first");
   sections.push(
     "2. **Use meaningful variable names** - `user`, `post`, `comment` instead of `a`, `b`, `c`",
   );
@@ -422,12 +374,8 @@ export function generateGrammarDescription(): string {
   sections.push(
     "4. **Use DISTINCT for multi-hop** - Variable-length paths emit at each level and often produce duplicates",
   );
-  sections.push(
-    "5. **Always add LIMIT** - Prevent returning massive result sets",
-  );
-  sections.push(
-    "6. **Match specific patterns** - Use labels and edge types when known",
-  );
+  sections.push("5. **Always add LIMIT** - Prevent returning massive result sets");
+  sections.push("6. **Match specific patterns** - Use labels and edge types when known");
   sections.push(
     "7. **Filter by @id for specific entities** - Most efficient way to start from a known node",
   );
@@ -449,9 +397,7 @@ export function generateGrammarDescription(): string {
  * This output is designed to be directly included in LLM prompts to teach
  * the LLM about both the query language syntax and the specific graph structure.
  */
-export function generateSchemaGuide<TSchema extends GraphSchema>(
-  schema: TSchema,
-): string {
+export function generateSchemaGuide<TSchema extends GraphSchema>(schema: TSchema): string {
   const sections: string[] = [];
 
   // Header
@@ -593,9 +539,7 @@ export function generateSchemaGuide<TSchema extends GraphSchema>(
     sections.push(`// 1 to 3 hops (returns nodes at EACH depth: 1, 2, AND 3)`);
     sections.push(`MATCH (a)-[:${edge}*1..3]->(b) RETURN DISTINCT b`);
     sections.push("");
-    sections.push(
-      `// Up to 4 hops (search within depth 4, emits at each level)`,
-    );
+    sections.push(`// Up to 4 hops (search within depth 4, emits at each level)`);
     sections.push(`MATCH (a)-[:${edge}*1..4]->(b) RETURN DISTINCT b`);
     sections.push("");
     sections.push(`// 2 or more hops (emits at each level from 2 onwards)`);
@@ -635,17 +579,13 @@ export function generateSchemaGuide<TSchema extends GraphSchema>(
     const [prop1Name] = exampleProps[0]!;
 
     sections.push(`// Property comparison`);
-    sections.push(
-      `MATCH (v:${exampleVertex}) WHERE v.${prop1Name} = "value" RETURN v`,
-    );
+    sections.push(`MATCH (v:${exampleVertex}) WHERE v.${prop1Name} = "value" RETURN v`);
     sections.push("");
 
     if (exampleProps.length > 1) {
       const [prop2Name] = exampleProps[1]!;
       sections.push(`// Property exists`);
-      sections.push(
-        `MATCH (v:${exampleVertex}) WHERE v.${prop2Name} EXISTS RETURN v`,
-      );
+      sections.push(`MATCH (v:${exampleVertex}) WHERE v.${prop2Name} EXISTS RETURN v`);
       sections.push("");
     }
 
@@ -688,9 +628,7 @@ export function generateSchemaGuide<TSchema extends GraphSchema>(
     if (vertexLabels.length > 1 && edgeLabels.length > 0) {
       const vertex2 = vertexLabels[1];
       sections.push(`// Return multiple variables (vertices and edges)`);
-      sections.push(
-        `MATCH (v:${vertex})-[r:]->(v2:${vertex2}) RETURN v, r, v2`,
-      );
+      sections.push(`MATCH (v:${vertex})-[r:]->(v2:${vertex2}) RETURN v, r, v2`);
       sections.push("");
     }
   }
@@ -708,9 +646,7 @@ export function generateSchemaGuide<TSchema extends GraphSchema>(
     sections.push(`MATCH (v:${exampleVertex}) RETURN v ORDER BY v.${propName}`);
     sections.push("");
     sections.push(`// Order descending`);
-    sections.push(
-      `MATCH (v:${exampleVertex}) RETURN v ORDER BY v.${propName} DESC`,
-    );
+    sections.push(`MATCH (v:${exampleVertex}) RETURN v ORDER BY v.${propName} DESC`);
     sections.push("");
     sections.push(`// Pagination`);
     sections.push(`MATCH (v:${exampleVertex}) RETURN v SKIP 10 LIMIT 20`);
@@ -762,9 +698,7 @@ export function generateSchemaGuide<TSchema extends GraphSchema>(
 
     sections.push(`// Start from specific ${vertex1} and traverse`);
     sections.push(`MATCH (a:${vertex1})-[:${edge}]->(b:${vertex2})`);
-    sections.push(
-      `WHERE a.@id = "${vertex1}:12345678-1234-1234-1234-123456789abc"`,
-    );
+    sections.push(`WHERE a.@id = "${vertex1}:12345678-1234-1234-1234-123456789abc"`);
     sections.push(`RETURN b`);
     sections.push("");
 
@@ -794,9 +728,7 @@ export function generateSchemaGuide<TSchema extends GraphSchema>(
     sections.push("");
     sections.push(`// Query by ID`);
     sections.push(`MATCH (v:${vertex})`);
-    sections.push(
-      `WHERE v.@id = "${vertex}:12345678-1234-1234-1234-123456789abc"`,
-    );
+    sections.push(`WHERE v.@id = "${vertex}:12345678-1234-1234-1234-123456789abc"`);
     sections.push(`RETURN v`);
     sections.push("```");
     sections.push("");
@@ -845,13 +777,9 @@ export function generateSchemaGuide<TSchema extends GraphSchema>(
   sections.push("## Query Construction Tips");
   sections.push("");
   sections.push("1. Always start with `MATCH` to define the pattern");
-  sections.push(
-    "2. Use meaningful variable names (e.g., `u` for user, `p` for post)",
-  );
+  sections.push("2. Use meaningful variable names (e.g., `u` for user, `p` for post)");
   sections.push("3. Add `WHERE` conditions to filter results");
-  sections.push(
-    "4. Specify what to `RETURN` - typically the last variable in the pattern",
-  );
+  sections.push("4. Specify what to `RETURN` - typically the last variable in the pattern");
   sections.push(
     "5. Use `DISTINCT` when variable-length paths may produce duplicates (they emit at each hop)",
   );
@@ -867,9 +795,7 @@ export function generateSchemaGuide<TSchema extends GraphSchema>(
   // Schema Summary
   sections.push("## Quick Reference");
   sections.push("");
-  sections.push(
-    `**Available Vertex Types:** ${vertexLabels.join(", ") || "None"}`,
-  );
+  sections.push(`**Available Vertex Types:** ${vertexLabels.join(", ") || "None"}`);
   sections.push("");
   sections.push(`**Available Edge Types:** ${edgeLabels.join(", ") || "None"}`);
   sections.push("");
@@ -881,9 +807,7 @@ export function generateSchemaGuide<TSchema extends GraphSchema>(
  * Generate a compact version of the schema guide suitable for inclusion
  * in system prompts or context windows with token limits.
  */
-export function generateCompactSchemaGuide<TSchema extends GraphSchema>(
-  schema: TSchema,
-): string {
+export function generateCompactSchemaGuide<TSchema extends GraphSchema>(schema: TSchema): string {
   const sections: string[] = [];
 
   sections.push("# Graph Query Language");

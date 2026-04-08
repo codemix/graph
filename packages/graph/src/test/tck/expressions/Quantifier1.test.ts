@@ -23,10 +23,7 @@ describe("Quantifier1 - None quantifier", () => {
 
   test("[2] None quantifier on list literal containing booleans", () => {
     const graph = createTckGraph();
-    const results = executeTckQuery(
-      graph,
-      "RETURN none(x IN [true] WHERE x) AS result",
-    );
+    const results = executeTckQuery(graph, "RETURN none(x IN [true] WHERE x) AS result");
     expect(results).toHaveLength(1);
     // none(x IN [true] WHERE x) is false because true satisfies the predicate
     expect(results[0]).toBe(false);
@@ -35,10 +32,7 @@ describe("Quantifier1 - None quantifier", () => {
   test("[3] None quantifier on list literal containing integers", () => {
     const graph = createTckGraph();
     // none(x IN [1, 2, 3] WHERE x = 2) - one element equals 2, so none() returns false
-    const results = executeTckQuery(
-      graph,
-      "RETURN none(x IN [1, 2, 3] WHERE x = 2) AS result",
-    );
+    const results = executeTckQuery(graph, "RETURN none(x IN [1, 2, 3] WHERE x = 2) AS result");
     expect(results).toHaveLength(1);
     expect(results[0]).toBe(false);
   });
@@ -117,10 +111,7 @@ describe("Quantifier1 - None quantifier", () => {
 
   test("[10] None quantifier on lists containing nulls", () => {
     const graph = createTckGraph();
-    const results = executeTckQuery(
-      graph,
-      "RETURN none(x IN [null, 2] WHERE x = 2) AS result",
-    );
+    const results = executeTckQuery(graph, "RETURN none(x IN [null, 2] WHERE x = 2) AS result");
     expect(results).toHaveLength(1);
     // none() is false because 2 equals 2
     expect(results[0]).toBe(false);
@@ -128,10 +119,7 @@ describe("Quantifier1 - None quantifier", () => {
 
   test("[11] None quantifier with IS NULL predicate", () => {
     const graph = createTckGraph();
-    const results = executeTckQuery(
-      graph,
-      "RETURN none(x IN [0, null] WHERE x IS NULL) AS result",
-    );
+    const results = executeTckQuery(graph, "RETURN none(x IN [0, null] WHERE x IS NULL) AS result");
     expect(results).toHaveLength(1);
     // none() is false because null IS NULL is true
     expect(results[0]).toBe(false);
@@ -170,20 +158,14 @@ describe("Quantifier1 - None quantifier", () => {
     expect(results[0]).toBe(false);
   });
 
-  test.fails(
-    "[15] Fail none quantifier on type mismatch - semantic validation not implemented",
-    () => {
-      // Original: RETURN none(x IN ['Clara'] WHERE x % 2 = 0) AS result
-      // Expected: SyntaxError InvalidArgumentType
-      const graph = createTckGraph();
-      expect(() => {
-        executeTckQuery(
-          graph,
-          "RETURN none(x IN ['Clara'] WHERE x % 2 = 0) AS result",
-        );
-      }).toThrow();
-    },
-  );
+  test.fails("[15] Fail none quantifier on type mismatch - semantic validation not implemented", () => {
+    // Original: RETURN none(x IN ['Clara'] WHERE x % 2 = 0) AS result
+    // Expected: SyntaxError InvalidArgumentType
+    const graph = createTckGraph();
+    expect(() => {
+      executeTckQuery(graph, "RETURN none(x IN ['Clara'] WHERE x % 2 = 0) AS result");
+    }).toThrow();
+  });
 
   // Custom tests demonstrating none() functionality in WHERE clause
 

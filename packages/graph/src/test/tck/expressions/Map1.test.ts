@@ -119,55 +119,40 @@ describe("Map1 - Static value access", () => {
     expect(results).toEqual(["NULLVALUE"]);
   });
 
-  test.fails(
-    "[6a] Fail property access on integer - TypeError not validated",
-    () => {
-      const graph = createTckGraph();
-      expect(() => {
-        executeTckQuery(graph, "WITH 123 AS nonMap RETURN nonMap.num");
-      }).toThrow();
-    },
-  );
+  test.fails("[6a] Fail property access on integer - TypeError not validated", () => {
+    const graph = createTckGraph();
+    expect(() => {
+      executeTckQuery(graph, "WITH 123 AS nonMap RETURN nonMap.num");
+    }).toThrow();
+  });
 
-  test.fails(
-    "[6b] Fail property access on float - TypeError not validated",
-    () => {
-      const graph = createTckGraph();
-      expect(() => {
-        executeTckQuery(graph, "WITH 42.45 AS nonMap RETURN nonMap.num");
-      }).toThrow();
-    },
-  );
+  test.fails("[6b] Fail property access on float - TypeError not validated", () => {
+    const graph = createTckGraph();
+    expect(() => {
+      executeTckQuery(graph, "WITH 42.45 AS nonMap RETURN nonMap.num");
+    }).toThrow();
+  });
 
-  test.fails(
-    "[6c] Fail property access on boolean - TypeError not validated",
-    () => {
-      const graph = createTckGraph();
-      expect(() => {
-        executeTckQuery(graph, "WITH true AS nonMap RETURN nonMap.num");
-      }).toThrow();
-    },
-  );
+  test.fails("[6c] Fail property access on boolean - TypeError not validated", () => {
+    const graph = createTckGraph();
+    expect(() => {
+      executeTckQuery(graph, "WITH true AS nonMap RETURN nonMap.num");
+    }).toThrow();
+  });
 
-  test.fails(
-    "[6d] Fail property access on string - TypeError not validated",
-    () => {
-      const graph = createTckGraph();
-      expect(() => {
-        executeTckQuery(graph, "WITH 'string' AS nonMap RETURN nonMap.num");
-      }).toThrow();
-    },
-  );
+  test.fails("[6d] Fail property access on string - TypeError not validated", () => {
+    const graph = createTckGraph();
+    expect(() => {
+      executeTckQuery(graph, "WITH 'string' AS nonMap RETURN nonMap.num");
+    }).toThrow();
+  });
 
-  test.fails(
-    "[6e] Fail property access on list - TypeError not validated",
-    () => {
-      const graph = createTckGraph();
-      expect(() => {
-        executeTckQuery(graph, "WITH [123, true] AS nonMap RETURN nonMap.num");
-      }).toThrow();
-    },
-  );
+  test.fails("[6e] Fail property access on list - TypeError not validated", () => {
+    const graph = createTckGraph();
+    expect(() => {
+      executeTckQuery(graph, "WITH [123, true] AS nonMap RETURN nonMap.num");
+    }).toThrow();
+  });
 
   // Custom tests demonstrating property access on nodes (the supported use case)
   test("[Custom 1] Access property of a matched node", () => {
@@ -204,15 +189,9 @@ describe("Map1 - Static value access", () => {
 
   test("[Custom 4] Access multiple properties in WHERE clause", () => {
     const graph = createTckGraph();
-    executeTckQuery(
-      graph,
-      `CREATE (:A {name: 'Alice', age: 30}), (:A {name: 'Bob', age: 25})`,
-    );
+    executeTckQuery(graph, `CREATE (:A {name: 'Alice', age: 30}), (:A {name: 'Bob', age: 25})`);
 
-    const results = executeTckQuery(
-      graph,
-      "MATCH (n:A) WHERE n.age > 28 RETURN n.name",
-    );
+    const results = executeTckQuery(graph, "MATCH (n:A) WHERE n.age > 28 RETURN n.name");
 
     expect(results).toHaveLength(1);
     expect(results[0]).toBe("Alice");
@@ -225,10 +204,7 @@ describe("Map1 - Static value access", () => {
       `CREATE (:A {name: 'Alice'})-[:KNOWS {since: 2020}]->(:B {name: 'Bob'})`,
     );
 
-    const results = executeTckQuery(
-      graph,
-      "MATCH (:A)-[r:KNOWS]->(:B) RETURN r.since",
-    );
+    const results = executeTckQuery(graph, "MATCH (:A)-[r:KNOWS]->(:B) RETURN r.since");
 
     expect(results).toHaveLength(1);
     expect(results[0]).toBe(2020);

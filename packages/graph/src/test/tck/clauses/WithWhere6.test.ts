@@ -6,35 +6,32 @@ import { describe, test, expect } from "vitest";
 import { createTckGraph, executeTckQuery } from "../tckHelpers.js";
 
 describe("WithWhere6 - Filter on aggregates", () => {
-  test.fails(
-    "[1] Filter a single aggregate - unlabeled nodes, count(*), and implicit grouping not supported",
-    () => {
-      // Original test uses unlabeled nodes and count(*):
-      // CREATE (a {name: 'A'}), (b {name: 'B'})
-      // CREATE (a)-[:REL]->(), ...
-      // MATCH (a)-->() WITH a, count(*) AS relCount WHERE relCount > 1 RETURN a
-      //
-      // Multiple issues:
-      // 1. Unlabeled nodes in CREATE
-      // 2. count(*) syntax not supported (must use count(variable))
-      // 3. Undirected edge pattern
-      // 4. Implicit grouping by node identity not fully supported
-      const graph = createTckGraph();
-      executeTckQuery(graph, "CREATE (a {name: 'A'}), (b {name: 'B'})");
-      executeTckQuery(
-        graph,
-        "MATCH (a {name: 'A'}), (b {name: 'B'}) CREATE (a)-[:REL]->(:Target), (a)-[:REL]->(:Target), (b)-[:REL]->(:Target)",
-      );
+  test.fails("[1] Filter a single aggregate - unlabeled nodes, count(*), and implicit grouping not supported", () => {
+    // Original test uses unlabeled nodes and count(*):
+    // CREATE (a {name: 'A'}), (b {name: 'B'})
+    // CREATE (a)-[:REL]->(), ...
+    // MATCH (a)-->() WITH a, count(*) AS relCount WHERE relCount > 1 RETURN a
+    //
+    // Multiple issues:
+    // 1. Unlabeled nodes in CREATE
+    // 2. count(*) syntax not supported (must use count(variable))
+    // 3. Undirected edge pattern
+    // 4. Implicit grouping by node identity not fully supported
+    const graph = createTckGraph();
+    executeTckQuery(graph, "CREATE (a {name: 'A'}), (b {name: 'B'})");
+    executeTckQuery(
+      graph,
+      "MATCH (a {name: 'A'}), (b {name: 'B'}) CREATE (a)-[:REL]->(:Target), (a)-[:REL]->(:Target), (b)-[:REL]->(:Target)",
+    );
 
-      const results = executeTckQuery(
-        graph,
-        "MATCH (a)-->() WITH a, count(*) AS relCount WHERE relCount > 1 RETURN a",
-      );
-      expect(results.length).toBe(1);
-      const node = Array.isArray(results[0]) ? results[0][0] : results[0];
-      expect((node as Record<string, unknown>)["name"]).toBe("A");
-    },
-  );
+    const results = executeTckQuery(
+      graph,
+      "MATCH (a)-->() WITH a, count(*) AS relCount WHERE relCount > 1 RETURN a",
+    );
+    expect(results.length).toBe(1);
+    const node = Array.isArray(results[0]) ? results[0][0] : results[0];
+    expect((node as Record<string, unknown>)["name"]).toBe("A");
+  });
 
   // Custom tests for filtering on aggregates (without grouping by property value)
   test("[custom-1] Filter on total count aggregate", () => {

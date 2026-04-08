@@ -22,33 +22,21 @@ describe("List3 - List Equality", () => {
 
   test("[3] Equality between different lists with null should return false", () => {
     const graph = createTckGraph();
-    const results = executeTckQuery(
-      graph,
-      "RETURN [1, 2] = [null, 'foo'] AS res",
-    );
+    const results = executeTckQuery(graph, "RETURN [1, 2] = [null, 'foo'] AS res");
     expect(results).toEqual([false]);
   });
 
-  test.fails(
-    "[4] Equality between almost equal lists with null should return null - null propagation not implemented",
-    () => {
-      // In Cypher, [1, 2] = [null, 2] should return null because comparing 1 to null is null
-      // Current implementation returns false
-      const graph = createTckGraph();
-      const results = executeTckQuery(
-        graph,
-        "RETURN [1, 2] = [null, 2] AS res",
-      );
-      expect(results).toEqual([null]);
-    },
-  );
+  test.fails("[4] Equality between almost equal lists with null should return null - null propagation not implemented", () => {
+    // In Cypher, [1, 2] = [null, 2] should return null because comparing 1 to null is null
+    // Current implementation returns false
+    const graph = createTckGraph();
+    const results = executeTckQuery(graph, "RETURN [1, 2] = [null, 2] AS res");
+    expect(results).toEqual([null]);
+  });
 
   test("[5] Equality of nested lists of different length should return false despite nulls", () => {
     const graph = createTckGraph();
-    const results = executeTckQuery(
-      graph,
-      "RETURN [[1]] = [[1], [null]] AS res",
-    );
+    const results = executeTckQuery(graph, "RETURN [[1]] = [[1], [null]] AS res");
     expect(results).toEqual([false]);
   });
 
@@ -61,19 +49,16 @@ describe("List3 - List Equality", () => {
     expect(results).toEqual([false]);
   });
 
-  test.fails(
-    "[7] Equality between almost equal nested lists with null should return null - null propagation not implemented",
-    () => {
-      // In Cypher, this should return null due to null propagation in element comparison
-      // Current implementation returns false
-      const graph = createTckGraph();
-      const results = executeTckQuery(
-        graph,
-        "RETURN [[1, 2], ['foo', 'bar']] = [[1, 2], [null, 'bar']] AS res",
-      );
-      expect(results).toEqual([null]);
-    },
-  );
+  test.fails("[7] Equality between almost equal nested lists with null should return null - null propagation not implemented", () => {
+    // In Cypher, this should return null due to null propagation in element comparison
+    // Current implementation returns false
+    const graph = createTckGraph();
+    const results = executeTckQuery(
+      graph,
+      "RETURN [[1, 2], ['foo', 'bar']] = [[1, 2], [null, 'bar']] AS res",
+    );
+    expect(results).toEqual([null]);
+  });
 
   // Custom tests demonstrating list property storage and retrieval
   test("[Custom 1] Store and retrieve list property", () => {
@@ -105,10 +90,7 @@ describe("List3 - List Equality", () => {
 
   test("[Custom 4] Compare scalar values from nodes", () => {
     const graph = createTckGraph();
-    executeTckQuery(
-      graph,
-      `CREATE (:A {num: 1}), (:A {num: 1}), (:A {num: 2})`,
-    );
+    executeTckQuery(graph, `CREATE (:A {num: 1}), (:A {num: 1}), (:A {num: 2})`);
 
     // Find nodes with equal num values
     const results = executeTckQuery(

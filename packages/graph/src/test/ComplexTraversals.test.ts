@@ -90,9 +90,7 @@ test("Repeat with until() - Repeat until with property condition", () => {
 
   // Should stop when reaching someone over 40
   expect(results.length).toBeGreaterThan(0);
-  expect(results.some((v) => v.hasProperty("age") && v.get("age") > 40)).toBe(
-    true,
-  );
+  expect(results.some((v) => v.hasProperty("age") && v.get("age") > 40)).toBe(true);
 });
 
 test("Repeat with until() - Repeat until with complex filter", () => {
@@ -152,9 +150,7 @@ test("Repeat with emit() - Emit intermediate results during repeat", () => {
 
   // Should include intermediate hops, not just final level
   const immediateNeighbors = Array.from(g.V(alice.id).out("knows").values());
-  expect(
-    results.some((v) => immediateNeighbors.some((n) => n.id === v.id)),
-  ).toBe(true);
+  expect(results.some((v) => immediateNeighbors.some((n) => n.id === v.id))).toBe(true);
 });
 
 test("Repeat with emit() - Emit with until condition", () => {
@@ -236,9 +232,7 @@ test("Combining repeat, emit, until, and times - Repeat with emit and until", ()
   expect(results.length).toBeGreaterThan(0);
 
   // Should eventually reach someone over 45
-  expect(results.some((v) => v.hasProperty("age") && v.get("age") > 45)).toBe(
-    true,
-  );
+  expect(results.some((v) => v.hasProperty("age") && v.get("age") > 45)).toBe(true);
 });
 
 test("Combining repeat, emit, until, and times - Repeat with times limits iterations", () => {
@@ -266,9 +260,7 @@ test("Combining repeat, emit, until, and times - Complex repeat with filtering i
 
   // Should only traverse through vertices with age > 20
   expect(results.length).toBeGreaterThan(0);
-  expect(results.every((v) => !v.hasProperty("age") || v.get("age") > 20)).toBe(
-    true,
-  );
+  expect(results.every((v) => !v.hasProperty("age") || v.get("age") > 20)).toBe(true);
 });
 
 test("Nested repeat patterns - Sequential repeat operations", () => {
@@ -451,11 +443,9 @@ test("Repeat with complex filtering - Repeat until with multiple conditions", ()
   );
 
   expect(results.length).toBeGreaterThan(0);
-  expect(
-    results.every(
-      (v) => v.hasProperty("age") && v.get("age") > 30 && v.get("age") < 50,
-    ),
-  ).toBe(true);
+  expect(results.every((v) => v.hasProperty("age") && v.get("age") > 30 && v.get("age") < 50)).toBe(
+    true,
+  );
 });
 
 test("Repeat with complex filtering - Repeat with filter at each level", () => {
@@ -469,9 +459,7 @@ test("Repeat with complex filtering - Repeat with filter at each level", () => {
   );
 
   // All results should have age < 50
-  expect(results.every((v) => !v.hasProperty("age") || v.get("age") < 50)).toBe(
-    true,
-  );
+  expect(results.every((v) => !v.hasProperty("age") || v.get("age") < 50)).toBe(true);
 });
 
 test("Repeat with complex filtering - Repeat with label filtering inside loop", () => {

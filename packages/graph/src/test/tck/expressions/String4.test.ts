@@ -25,10 +25,7 @@ describe("String4 - String Splitting", () => {
     const graph = createTckGraph();
 
     // Simulate what split would do by using a literal list
-    const results = executeTckQuery(
-      graph,
-      "UNWIND ['one', 'two'] AS item RETURN item",
-    );
+    const results = executeTckQuery(graph, "UNWIND ['one', 'two'] AS item RETURN item");
 
     expect(results).toHaveLength(2);
     expect(results[0]).toEqual(["one"]);
@@ -38,10 +35,7 @@ describe("String4 - String Splitting", () => {
   test("[custom-2] Count items from UNWIND", () => {
     const graph = createTckGraph();
 
-    const results = executeTckQuery(
-      graph,
-      "UNWIND ['one', 'two'] AS item RETURN count(item)",
-    );
+    const results = executeTckQuery(graph, "UNWIND ['one', 'two'] AS item RETURN count(item)");
 
     expect(results).toHaveLength(1);
     expect(results[0]).toBe(2);

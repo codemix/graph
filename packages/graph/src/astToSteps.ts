@@ -133,10 +133,7 @@ export function astToSteps(query: Query): readonly Step<any>[] {
   const steps: Step<any>[] = [];
 
   // Validation: ORDER BY, SKIP, and LIMIT require a RETURN clause
-  if (
-    !query.return &&
-    (query.orderBy || query.skip !== undefined || query.limit !== undefined)
-  ) {
+  if (!query.return && (query.orderBy || query.skip !== undefined || query.limit !== undefined)) {
     throw new Error("ORDER BY, SKIP, and LIMIT require a RETURN clause");
   }
 
@@ -164,8 +161,7 @@ export function astToSteps(query: Query): readonly Step<any>[] {
   // Handle SKIP and LIMIT with RangeStep
   if (query.skip !== undefined || query.limit !== undefined) {
     const start = query.skip ?? 0;
-    const end =
-      query.limit !== undefined ? start + query.limit : Number.MAX_SAFE_INTEGER;
+    const end = query.limit !== undefined ? start + query.limit : Number.MAX_SAFE_INTEGER;
     steps.push(new RangeStep({ start, end }));
   }
 
@@ -180,10 +176,7 @@ export function astToSteps(query: Query): readonly Step<any>[] {
  * Process query segments in order for flexible clause ordering.
  * Each segment can contain MATCH, mutations, and a WITH clause that transitions to the next segment.
  */
-function processQuerySegments(
-  segments: QuerySegment[],
-  steps: Step<any>[],
-): void {
+function processQuerySegments(segments: QuerySegment[], steps: Step<any>[]): void {
   let isFirstSegment = true;
   let hasSeenNonOptionalMatch = false;
   let hasSeenWithClause = false;
@@ -212,15 +205,11 @@ function processQuerySegments(
       hasWithClause;
 
     // Check if the first MATCH in this segment is OPTIONAL
-    const firstMatchIsOptional =
-      hasMatches && segment.matches![0]!.optional === true;
+    const firstMatchIsOptional = hasMatches && segment.matches![0]!.optional === true;
 
     // For the first segment with no MATCH but mutations/list ops/WITH, add StartStep
     // Also add StartStep if the first MATCH is OPTIONAL (needs input path for null bindings)
-    if (
-      isFirstSegment &&
-      ((!hasMatches && hasContent) || firstMatchIsOptional)
-    ) {
+    if (isFirstSegment && ((!hasMatches && hasContent) || firstMatchIsOptional)) {
       steps.push(new StartStep({}));
     }
     isFirstSegment = false;
@@ -243,8 +232,7 @@ function processQuerySegments(
           );
         } else {
           // After a WITH clause or non-optional MATCH, MATCH can reference variables
-          const isAnchoredContext =
-            matchClause.optional && hasSeenNonOptionalMatch;
+          const isAnchoredContext = matchClause.optional && hasSeenNonOptionalMatch;
           patternSteps = convertPattern(
             matchClause.pattern as Pattern,
             matchClause.where,
@@ -256,13 +244,8 @@ function processQuerySegments(
         if (matchClause.optional) {
           // skipAnchor: Only skip anchor if there was a previous non-optional MATCH
           const skipAnchor = hasSeenNonOptionalMatch;
-          const variables = extractPatternVariables(
-            matchClause.pattern,
-            skipAnchor,
-          );
-          steps.push(
-            new OptionalMatchStep({ variables }, patternSteps as Step<any>[]),
-          );
+          const variables = extractPatternVariables(matchClause.pattern, skipAnchor);
+          steps.push(new OptionalMatchStep({ variables }, patternSteps as Step<any>[]));
         } else {
           steps.push(...patternSteps);
           hasSeenNonOptionalMatch = true;
@@ -344,8 +327,7 @@ function processLegacyQuery(query: Query, steps: Step<any>[]): void {
   // Process regular MATCH clauses first, then OPTIONAL MATCH clauses
   // If the first MATCH is OPTIONAL, we need a StartStep to provide an initial path
   // so that OptionalMatchStep has an input to extend with null bindings
-  const firstMatchIsOptional =
-    query.matches.length > 0 && query.matches[0]!.optional;
+  const firstMatchIsOptional = query.matches.length > 0 && query.matches[0]!.optional;
   if (firstMatchIsOptional) {
     steps.push(new StartStep({}));
   }
@@ -362,10 +344,7 @@ function processLegacyQuery(query: Query, steps: Step<any>[]): void {
       );
     } else if (matchClause.pattern.type === "MultiPattern") {
       // Handle comma-separated patterns like MATCH (a), (b)
-      patternSteps = convertMultiPattern(
-        matchClause.pattern as MultiPattern,
-        matchClause.where,
-      );
+      patternSteps = convertMultiPattern(matchClause.pattern as MultiPattern, matchClause.where);
     } else {
       // For OPTIONAL MATCH after a previous MATCH, the first node may reference
       // a previously bound variable. We enable anchor detection (anchoredToInput: true)
@@ -383,13 +362,8 @@ function processLegacyQuery(query: Query, steps: Step<any>[]): void {
       // Wrap in OptionalMatchStep for OPTIONAL MATCH
       // skipAnchor: Only skip anchor if there was a previous MATCH that bound variables
       const skipAnchor = hasSeenPreviousMatch;
-      const variables = extractPatternVariables(
-        matchClause.pattern,
-        skipAnchor,
-      );
-      steps.push(
-        new OptionalMatchStep({ variables }, patternSteps as Step<any>[]),
-      );
+      const variables = extractPatternVariables(matchClause.pattern, skipAnchor);
+      steps.push(new OptionalMatchStep({ variables }, patternSteps as Step<any>[]));
     } else {
       steps.push(...patternSteps);
     }
@@ -505,18 +479,14 @@ export function unionAstToSteps(unionQuery: UnionQuery): readonly Step<any>[] {
   const branches = unionQuery.queries.map((query) => astToSteps(query));
 
   // Create a QueryUnionStep that combines all branches
-  return [
-    new QueryUnionStep({ all: unionQuery.all }, branches as Step<any>[][]),
-  ];
+  return [new QueryUnionStep({ all: unionQuery.all }, branches as Step<any>[][])];
 }
 
 /**
  * Convert any parsed AST (Query, UnionQuery, or MultiStatement) to steps.
  * This is the main entry point for handling all query types.
  */
-export function anyAstToSteps(
-  ast: Query | UnionQuery | MultiStatement,
-): readonly Step<any>[] {
+export function anyAstToSteps(ast: Query | UnionQuery | MultiStatement): readonly Step<any>[] {
   if (ast.type === "MultiStatement") {
     return multiStatementToSteps(ast);
   }
@@ -533,9 +503,7 @@ export function anyAstToSteps(
  * @param multiStatement The MultiStatement AST node containing multiple statements.
  * @returns A single-element array containing the MultiQueryStep.
  */
-export function multiStatementToSteps(
-  multiStatement: MultiStatement,
-): readonly Step<any>[] {
+export function multiStatementToSteps(multiStatement: MultiStatement): readonly Step<any>[] {
   // Convert each statement to its own step pipeline
   const statements = multiStatement.statements.map((stmt) => {
     if (stmt.type === "UnionQuery") {
@@ -556,34 +524,32 @@ export function multiStatementToSteps(
  * 3. Add/merge properties: n += {props}
  */
 function convertSetClause(setClause: SetClause): SetStep {
-  const assignments: StepSetOperation[] = setClause.assignments.map(
-    (assignment) => {
-      // Check for SetAllProperties or SetAddProperties (map-based assignments)
-      if ("type" in assignment) {
-        if (assignment.type === "SetAllProperties") {
-          const setAll = assignment as SetAllProperties;
-          return {
-            type: "setAllProperties" as const,
-            variable: setAll.variable,
-            properties: convertSetMapValue(setAll.properties),
-          };
-        } else if (assignment.type === "SetAddProperties") {
-          const setAdd = assignment as SetAddProperties;
-          return {
-            type: "setAddProperties" as const,
-            variable: setAdd.variable,
-            properties: convertSetMapValue(setAdd.properties),
-          };
-        }
+  const assignments: StepSetOperation[] = setClause.assignments.map((assignment) => {
+    // Check for SetAllProperties or SetAddProperties (map-based assignments)
+    if ("type" in assignment) {
+      if (assignment.type === "SetAllProperties") {
+        const setAll = assignment as SetAllProperties;
+        return {
+          type: "setAllProperties" as const,
+          variable: setAll.variable,
+          properties: convertSetMapValue(setAll.properties),
+        };
+      } else if (assignment.type === "SetAddProperties") {
+        const setAdd = assignment as SetAddProperties;
+        return {
+          type: "setAddProperties" as const,
+          variable: setAdd.variable,
+          properties: convertSetMapValue(setAdd.properties),
+        };
       }
-      // Individual property assignment: n.prop = value
-      return {
-        variable: assignment.variable,
-        property: assignment.property,
-        value: convertSetValue(assignment.value),
-      };
-    },
-  );
+    }
+    // Individual property assignment: n.prop = value
+    return {
+      variable: assignment.variable,
+      property: assignment.property,
+      value: convertSetValue(assignment.value),
+    };
+  });
 
   return new SetStep({ assignments });
 }
@@ -611,9 +577,7 @@ function convertSetMapValue(
  * Convert a property map, handling nested maps and parameter references.
  * Transforms NestedMap AST nodes into plain objects.
  */
-function convertPropertyMap(
-  props: Record<string, unknown> | undefined,
-): Record<string, unknown> {
+function convertPropertyMap(props: Record<string, unknown> | undefined): Record<string, unknown> {
   if (!props) return {};
 
   const result: Record<string, unknown> = {};
@@ -671,10 +635,7 @@ function convertCreateClause(createClause: CreateClause): CreateStep {
 
   // Track variables assigned to nodes (including generated ones for anonymous nodes)
   // Maps from the node object reference to the assigned variable name
-  const nodeVariables = new Map<
-    CreateNodePattern | CreateVariableRef,
-    string
-  >();
+  const nodeVariables = new Map<CreateNodePattern | CreateVariableRef, string>();
 
   // Counter for generating unique anonymous variable names
   let anonCounter = 0;
@@ -696,9 +657,7 @@ function convertCreateClause(createClause: CreateClause): CreateStep {
       // First pass: assign variables to all nodes and collect nodes to create
       // We need to create nodes before edges so that edge endpoints can reference them
       for (let i = 0; i < elements.length; i += 2) {
-        const nodeElement = elements[i] as
-          | CreateNodePattern
-          | CreateVariableRef;
+        const nodeElement = elements[i] as CreateNodePattern | CreateVariableRef;
 
         if (nodeElement.type === "CreateVariableRef") {
           // Reference to existing node - use its variable
@@ -721,20 +680,14 @@ function convertCreateClause(createClause: CreateClause): CreateStep {
       // Second pass: collect all edges using assigned variables
       for (let i = 1; i < elements.length; i += 2) {
         const edgeElement = elements[i] as CreateEdgePattern;
-        const prevNode = elements[i - 1] as
-          | CreateNodePattern
-          | CreateVariableRef;
-        const nextNode = elements[i + 1] as
-          | CreateNodePattern
-          | CreateVariableRef;
+        const prevNode = elements[i - 1] as CreateNodePattern | CreateVariableRef;
+        const nextNode = elements[i + 1] as CreateNodePattern | CreateVariableRef;
 
         const startVariable = nodeVariables.get(prevNode);
         const endVariable = nodeVariables.get(nextNode);
 
         if (!startVariable || !endVariable) {
-          throw new Error(
-            "CREATE: Internal error - node variable not assigned",
-          );
+          throw new Error("CREATE: Internal error - node variable not assigned");
         }
 
         const edgeConfig: CreateEdgeConfig = {
@@ -816,9 +769,7 @@ function convertMergeClause(mergeClause: MergeClause): MergeStep {
       endVariable: relPattern.endVariable,
     };
   } else {
-    throw new Error(
-      `Unknown MERGE pattern type: ${(mergeClause.pattern as any).type}`,
-    );
+    throw new Error(`Unknown MERGE pattern type: ${(mergeClause.pattern as any).type}`);
   }
 
   return new MergeStep({
@@ -844,9 +795,7 @@ function convertMergeClause(mergeClause: MergeClause): MergeStep {
  * Convert a WITH clause into a WithStep.
  */
 function convertWithClause(withClause: WithClause): WithStep {
-  const items: WithItemConfig[] = withClause.items.map((item) =>
-    convertWithItem(item),
-  );
+  const items: WithItemConfig[] = withClause.items.map((item) => convertWithItem(item));
 
   // Convert ORDER BY if present
   // Build alias map from WITH items for alias resolution
@@ -965,19 +914,12 @@ function convertUnwindClause(unwindClause: UnwindClause): UnwindStep {
 /**
  * Convert an UNWIND expression AST node to a StepUnwindExpression.
  */
-function convertUnwindExpression(
-  expr: ASTUnwindExpression,
-): StepUnwindExpression {
+function convertUnwindExpression(expr: ASTUnwindExpression): StepUnwindExpression {
   if (expr.type === "ListLiteral") {
     // ListLiteral from UNWIND grammar - values may be complex AST nodes
     // Check if all values are simple primitives or if we need runtime evaluation
     const isPrimitive = (v: unknown): boolean => {
-      return (
-        typeof v === "string" ||
-        typeof v === "number" ||
-        typeof v === "boolean" ||
-        v === null
-      );
+      return typeof v === "string" || typeof v === "number" || typeof v === "boolean" || v === null;
     };
 
     const allPrimitives = expr.values.every(isPrimitive);
@@ -1054,12 +996,10 @@ function convertCallClause(callClause: CallClause): CallStep {
   const args = callClause.arguments.map((arg) => convertConditionValue(arg));
 
   // Convert yield items
-  const yieldItems: YieldItemConfig[] | undefined = callClause.yield?.map(
-    (item: YieldItem) => ({
-      name: item.name,
-      alias: item.alias,
-    }),
-  );
+  const yieldItems: YieldItemConfig[] | undefined = callClause.yield?.map((item: YieldItem) => ({
+    name: item.name,
+    alias: item.alias,
+  }));
 
   return new CallStep({
     procedureName: callClause.procedure,
@@ -1122,9 +1062,7 @@ function convertSetValue(value: SetValue): SetAssignmentValue {
 /**
  * Convert a FOREACH clause into a ForeachStep.
  */
-function convertForeachClause(
-  foreachClause: ForeachClause,
-): ForeachStep<Step<any>[]> {
+function convertForeachClause(foreachClause: ForeachClause): ForeachStep<Step<any>[]> {
   const { variable, listExpression, operations } = foreachClause;
 
   // Convert the list expression
@@ -1159,10 +1097,7 @@ function convertForeachClause(
         innerSteps.push(...shortestPathSteps);
       } else {
         // Regular pattern - convert to steps
-        const matchSteps = convertPattern(
-          matchPattern as Pattern,
-          matchClause.where,
-        );
+        const matchSteps = convertPattern(matchPattern as Pattern, matchClause.where);
         innerSteps.push(...matchSteps);
       }
     }
@@ -1263,24 +1198,16 @@ function convertShortestPathPattern(
   let targetCondition: StepCondition | undefined;
 
   if (whereClause && source.variable) {
-    const { early, late } = splitASTConditionByVariables(
-      whereClause.condition,
-      [source.variable],
-    );
+    const { early, late } = splitASTConditionByVariables(whereClause.condition, [source.variable]);
 
     // Apply early conditions to filter source vertices
     if (early) {
-      steps.push(
-        new FilterElementsStep({ condition: convertCondition(early) }),
-      );
+      steps.push(new FilterElementsStep({ condition: convertCondition(early) }));
     }
 
     // Extract target conditions from late conditions
     if (late && target.variable) {
-      const targetVarConditions = extractConditionsForVariable(
-        late,
-        target.variable,
-      );
+      const targetVarConditions = extractConditionsForVariable(late, target.variable);
       if (targetVarConditions) {
         // Use direct property access for shortestPath target conditions
         // since the target vertex hasn't been bound to a variable yet
@@ -1295,17 +1222,11 @@ function convertShortestPathPattern(
   // Add label conditions for target
   if (target.labels.length > 0) {
     if (target.labels.length === 1) {
-      targetConditions.push([
-        "=",
-        "@label",
-        target.labels[0]!,
-      ] as StepCondition);
+      targetConditions.push(["=", "@label", target.labels[0]!] as StepCondition);
     } else {
       targetConditions.push([
         "or",
-        ...target.labels.map(
-          (label) => ["=", "@label", label] as StepCondition,
-        ),
+        ...target.labels.map((label) => ["=", "@label", label] as StepCondition),
       ] as StepCondition);
     }
   }
@@ -1384,9 +1305,7 @@ function extractConditionsForVariable(
       variable,
     );
 
-    const parts = [leftExtracted, rightExtracted].filter(
-      (c): c is Condition => c !== undefined,
-    );
+    const parts = [leftExtracted, rightExtracted].filter((c): c is Condition => c !== undefined);
 
     if (parts.length === 0) return undefined;
     if (parts.length === 1) return parts[0];
@@ -1435,13 +1354,8 @@ function extractConditionsForVariable(
   }
 
   if (condition.type === "NotCondition") {
-    const inner = extractConditionsForVariable(
-      (condition as NotCondition).condition,
-      variable,
-    );
-    return inner
-      ? ({ type: "NotCondition", condition: inner } as NotCondition)
-      : undefined;
+    const inner = extractConditionsForVariable((condition as NotCondition).condition, variable);
+    return inner ? ({ type: "NotCondition", condition: inner } as NotCondition) : undefined;
   }
 
   return undefined;
@@ -1505,16 +1419,14 @@ function convertPattern(
     if (preservePriorBindings) {
       steps.push(
         new CartesianFetchStep({
-          vertexLabels:
-            firstNode.labels.length > 0 ? firstNode.labels : undefined,
+          vertexLabels: firstNode.labels.length > 0 ? firstNode.labels : undefined,
           stepLabels,
         }),
       );
     } else {
       steps.push(
         new FetchVerticesStep({
-          vertexLabels:
-            firstNode.labels.length > 0 ? firstNode.labels : undefined,
+          vertexLabels: firstNode.labels.length > 0 ? firstNode.labels : undefined,
           stepLabels,
         }),
       );
@@ -1538,10 +1450,9 @@ function convertPattern(
   let lateCondition: StepCondition | undefined;
 
   if (whereClause && firstNode.variable) {
-    const { early, late } = splitASTConditionByVariables(
-      whereClause.condition,
-      [firstNode.variable],
-    );
+    const { early, late } = splitASTConditionByVariables(whereClause.condition, [
+      firstNode.variable,
+    ]);
     earlyCondition = early ? convertCondition(early) : undefined;
     lateCondition = late ? convertCondition(late) : undefined;
   } else if (whereClause) {
@@ -1564,9 +1475,7 @@ function convertPattern(
 
       // Handle the destination node if present
       const nodePattern =
-        nextElement?.type === "NodePattern"
-          ? (nextElement as NodePattern)
-          : undefined;
+        nextElement?.type === "NodePattern" ? (nextElement as NodePattern) : undefined;
 
       // Handle the edge traversal, passing the destination node info
       const edgeSteps = convertEdgePattern(edgePattern, nodePattern);
@@ -1656,16 +1565,14 @@ function convertMultiPattern(
   if (preservePriorBindings) {
     steps.push(
       new CartesianFetchStep({
-        vertexLabels:
-          firstNode.labels.length > 0 ? firstNode.labels : undefined,
+        vertexLabels: firstNode.labels.length > 0 ? firstNode.labels : undefined,
         stepLabels: firstStepLabels,
       }),
     );
   } else {
     steps.push(
       new FetchVerticesStep({
-        vertexLabels:
-          firstNode.labels.length > 0 ? firstNode.labels : undefined,
+        vertexLabels: firstNode.labels.length > 0 ? firstNode.labels : undefined,
         stepLabels: firstStepLabels,
       }),
     );
@@ -1731,10 +1638,7 @@ function convertMultiPattern(
 /**
  * Convert an edge pattern to steps, handling quantifiers for variable-length paths.
  */
-function convertEdgePattern(
-  edgePattern: EdgePattern,
-  destNode?: NodePattern,
-): Step<any>[] {
+function convertEdgePattern(edgePattern: EdgePattern, destNode?: NodePattern): Step<any>[] {
   // No quantifier - single edge traversal + destination vertex
   if (!edgePattern.quantifier) {
     const baseStep = new EdgeStep({
@@ -1746,10 +1650,7 @@ function convertEdgePattern(
     const steps: Step<any>[] = [baseStep];
 
     // Add filter for edge properties if specified
-    if (
-      edgePattern.properties &&
-      Object.keys(edgePattern.properties).length > 0
-    ) {
+    if (edgePattern.properties && Object.keys(edgePattern.properties).length > 0) {
       const propertyConditions = Object.entries(edgePattern.properties).map(
         ([key, value]) => ["=", key, value] as StepCondition,
       );
@@ -1838,10 +1739,7 @@ function convertQuantifiedEdge(
   if (max !== undefined && effectiveMin === max) {
     // For exact count with zero min, we need emit to also get the input
     if (emitInput) {
-      return new RepeatStep(
-        { times: max, stepLabels, emitInput },
-        iterationSteps,
-      );
+      return new RepeatStep({ times: max, stepLabels, emitInput }, iterationSteps);
     }
     return new RepeatStep({ times: max, stepLabels }, iterationSteps);
   }
@@ -1871,9 +1769,7 @@ function convertQuantifiedEdge(
  * - ((a)-[r]->(b))+ - quantified pattern (one or more)
  * - ((a)-[r]->(b) WHERE r.weight > 10){2,5} - with condition and quantifier
  */
-function convertParenthesizedPathPattern(
-  parenthesized: ParenthesizedPathPattern,
-): Step<any>[] {
+function convertParenthesizedPathPattern(parenthesized: ParenthesizedPathPattern): Step<any>[] {
   // Convert the inner pattern to steps WITHOUT the WHERE clause
   // The WHERE will be added after the pattern traversal
   const patternSteps = convertPattern(
@@ -1900,8 +1796,7 @@ function convertParenthesizedPathPattern(
     const { min, max } = parenthesized.quantifier;
 
     // Extract the last variable from the pattern for step labels
-    const lastElement =
-      parenthesized.pattern.elements[parenthesized.pattern.elements.length - 1];
+    const lastElement = parenthesized.pattern.elements[parenthesized.pattern.elements.length - 1];
     const stepLabels =
       lastElement?.type === "NodePattern" && lastElement.variable
         ? [lastElement.variable]
@@ -1915,9 +1810,7 @@ function convertParenthesizedPathPattern(
     // Exact count
     if (max !== undefined && effectiveMin === max) {
       if (emitInput) {
-        return [
-          new RepeatStep({ times: max, stepLabels, emitInput }, innerSteps),
-        ];
+        return [new RepeatStep({ times: max, stepLabels, emitInput }, innerSteps)];
       }
       return [new RepeatStep({ times: max, stepLabels }, innerSteps)];
     }
@@ -1925,19 +1818,13 @@ function convertParenthesizedPathPattern(
     // Range
     if (max !== undefined) {
       return [
-        new RepeatStep(
-          { times: max, emit: true, emitStart, emitInput, stepLabels },
-          innerSteps,
-        ),
+        new RepeatStep({ times: max, emit: true, emitStart, emitInput, stepLabels }, innerSteps),
       ];
     }
 
     // Open-ended
     return [
-      new RepeatStep(
-        { times: 100, emit: true, emitStart, emitInput, stepLabels },
-        innerSteps,
-      ),
+      new RepeatStep({ times: 100, emit: true, emitStart, emitInput, stepLabels }, innerSteps),
     ];
   }
 
@@ -2042,8 +1929,7 @@ function splitASTConditionByVariables(
 
   // For IsLabeledCondition, check the variable field
   if (condition.type === "IsLabeledCondition") {
-    const isLabeledCondition =
-      condition as import("./AST.js").IsLabeledCondition;
+    const isLabeledCondition = condition as import("./AST.js").IsLabeledCondition;
     if (allowedVariables.includes(isLabeledCondition.variable)) {
       return { early: condition };
     } else {
@@ -2054,10 +1940,7 @@ function splitASTConditionByVariables(
   // For NotCondition, recursively split the inner condition
   if (condition.type === "NotCondition") {
     const notCondition = condition as NotCondition;
-    const split = splitASTConditionByVariables(
-      notCondition.condition,
-      allowedVariables,
-    );
+    const split = splitASTConditionByVariables(notCondition.condition, allowedVariables);
     return {
       early: split.early
         ? ({ type: "NotCondition", condition: split.early } as NotCondition)
@@ -2085,9 +1968,7 @@ function createLabelCondition(labels: string[]): StepCondition {
   }
 
   // Multiple labels - create OR condition
-  const conditions = labels.map(
-    (label) => ["=", "@label", label] as StepCondition,
-  );
+  const conditions = labels.map((label) => ["=", "@label", label] as StepCondition);
 
   return conditions.reduce((acc, condition) => {
     return ["or", acc, condition] as StepCondition;
@@ -2127,9 +2008,7 @@ function convertLabelExpression(expr: LabelExpression): StepCondition {
     default: {
       // Exhaustive check
       const _exhaustive: never = expr;
-      throw new Error(
-        `Unknown label expression type: ${(_exhaustive as any).type}`,
-      );
+      throw new Error(`Unknown label expression type: ${(_exhaustive as any).type}`);
     }
   }
 }
@@ -2305,9 +2184,7 @@ function convertConditionValue(
       type: "mapLiteral",
       entries: value.entries.map((entry) => ({
         key: entry.key,
-        value: convertConditionValue(
-          entry.value as import("./AST.js").ConditionValue,
-        ),
+        value: convertConditionValue(entry.value as import("./AST.js").ConditionValue),
       })),
     };
   }
@@ -2421,9 +2298,7 @@ function convertConditionValue(
       } else if (selector.type === "MapVariableSelector") {
         return { type: "variable" as const, variable: selector.variable };
       }
-      throw new Error(
-        `Unknown map projection selector type: ${(selector as any).type}`,
-      );
+      throw new Error(`Unknown map projection selector type: ${(selector as any).type}`);
     });
 
     return {
@@ -2472,11 +2347,7 @@ function convertCondition(
       // When useDirectPropertyAccess is true (e.g., shortestPath target conditions),
       // use simple property access that evaluates against the current vertex
       if (useDirectPropertyAccess) {
-        return [
-          propCondition.operator,
-          propCondition.property,
-          conditionValue,
-        ] as StepCondition;
+        return [propCondition.operator, propCondition.property, conditionValue] as StepCondition;
       }
 
       // Use ExpressionCondition with propertyRef to properly resolve the variable
@@ -2549,11 +2420,7 @@ function convertCondition(
 
     case "RegexCondition": {
       const regexCondition = condition as RegexCondition;
-      return [
-        "=~",
-        regexCondition.property,
-        regexCondition.pattern,
-      ] as StepCondition;
+      return ["=~", regexCondition.property, regexCondition.pattern] as StepCondition;
     }
 
     case "StringPredicateCondition": {
@@ -2583,8 +2450,7 @@ function convertCondition(
 
     case "IsLabeledCondition": {
       // IS LABELED condition: check if a variable has a specific label
-      const isLabeledCondition =
-        condition as import("./AST.js").IsLabeledCondition;
+      const isLabeledCondition = condition as import("./AST.js").IsLabeledCondition;
       return [
         "isLabeled",
         isLabeledCondition.variable,
@@ -2678,10 +2544,7 @@ function isLegacyFunctionExpression(
     if (expr.type === "FunctionCall") {
       const funcCall = expr as FunctionCall;
       const name = funcCall.name.toLowerCase();
-      if (
-        (name === "labels" || name === "type") &&
-        funcCall.args.length === 1
-      ) {
+      if ((name === "labels" || name === "type") && funcCall.args.length === 1) {
         const arg = funcCall.args[0];
         if (arg && typeof arg === "object" && "type" in arg) {
           if (arg.type === "VariableRef") {
@@ -2700,9 +2563,7 @@ function isLegacyFunctionExpression(
 /**
  * Helper to check if an expression is a plain variable reference
  */
-function isPlainVariableExpression(
-  item: import("./AST.js").ReturnItem,
-): string | null {
+function isPlainVariableExpression(item: import("./AST.js").ReturnItem): string | null {
   if (item.variable && !item.property && !item.function && !item.aggregate) {
     return item.variable;
   }
@@ -2751,9 +2612,7 @@ function convertReturnClause(query: Query): Step<any>[] {
   }
 
   // Check if we have any aggregate (using legacy format)
-  const aggregateItems = returnClause.items.filter(
-    (item) => item.aggregate !== undefined,
-  );
+  const aggregateItems = returnClause.items.filter((item) => item.aggregate !== undefined);
   const aggregateItem = aggregateItems[0];
 
   // Check if we have any function calls (like labels(), type())
@@ -2762,23 +2621,18 @@ function convertReturnClause(query: Query): Step<any>[] {
     (item) => isLegacyFunctionExpression(item) !== null,
   );
   const functionItem = functionItems[0];
-  const functionInfo = functionItem
-    ? isLegacyFunctionExpression(functionItem)
-    : null;
+  const functionInfo = functionItem ? isLegacyFunctionExpression(functionItem) : null;
 
   // Check if we have any plain items (non-aggregate, non-function)
   // These could be plain variables, property access, or other expressions
   const plainItems = returnClause.items.filter(
-    (item) =>
-      item.aggregate === undefined && isLegacyFunctionExpression(item) === null,
+    (item) => item.aggregate === undefined && isLegacyFunctionExpression(item) === null,
   );
 
   // If GROUP BY is present, use GroupByStep to handle mixed aggregates and functions
   if (groupByClause) {
     // Validate: non-aggregate RETURN items must appear in GROUP BY
-    const nonAggregateItems = returnClause.items.filter(
-      (item) => item.aggregate === undefined,
-    );
+    const nonAggregateItems = returnClause.items.filter((item) => item.aggregate === undefined);
 
     for (const returnItem of nonAggregateItems) {
       const matchesGroupBy = groupByClause.items.some((groupByItem) => {
@@ -2814,9 +2668,7 @@ function convertReturnClause(query: Query): Step<any>[] {
           : returnItem.property
             ? `${returnItem.variable}.${returnItem.property}`
             : returnItem.variable;
-        throw new Error(
-          `Non-aggregate return item '${itemDesc}' must appear in GROUP BY clause`,
-        );
+        throw new Error(`Non-aggregate return item '${itemDesc}' must appear in GROUP BY clause`);
       }
     }
 
@@ -2983,9 +2835,7 @@ function convertReturnClause(query: Query): Step<any>[] {
       }),
     );
     // type() returns a string, labels() returns an array
-    steps.push(
-      new LabelsStep({ returnAsString: functionInfo.function === "type" }),
-    );
+    steps.push(new LabelsStep({ returnAsString: functionInfo.function === "type" }));
 
     // Add DedupStep if DISTINCT
     if (returnClause.distinct) {
@@ -2993,9 +2843,7 @@ function convertReturnClause(query: Query): Step<any>[] {
     }
   } else {
     // Check if any items use the new expression-based format or legacy function format
-    const hasExpressionItems = returnClause.items.some(
-      (item) => item.expression !== undefined,
-    );
+    const hasExpressionItems = returnClause.items.some((item) => item.expression !== undefined);
     // Also check for legacy function items (labels/type) - these should also use ExpressionReturnStep
     const hasLegacyFunctionItems = returnClause.items.some(
       (item) => isLegacyFunctionExpression(item) !== null,
@@ -3003,51 +2851,45 @@ function convertReturnClause(query: Query): Step<any>[] {
 
     if (hasExpressionItems || hasLegacyFunctionItems) {
       // Use ExpressionReturnStep for expression-based and function return items
-      const expressionItems: ExpressionReturnItem[] = returnClause.items.map(
-        (item) => {
-          if (item.expression !== undefined) {
-            return {
-              expression: convertConditionValue(
-                item.expression as import("./AST.js").ConditionValue,
-              ),
-              alias: item.alias,
-            };
-          }
-          // Handle legacy function format (labels/type)
-          const funcInfo = isLegacyFunctionExpression(item);
-          if (funcInfo) {
-            return {
-              expression: {
-                type: "functionCall" as const,
-                name: funcInfo.function,
-                args: [
-                  { type: "variableRef" as const, variable: funcInfo.variable },
-                ],
-                distinct: false,
-              },
-              alias: item.alias ?? `${funcInfo.function}(${funcInfo.variable})`,
-            };
-          }
-          // Fallback for property access
-          if (item.property) {
-            return {
-              expression: {
-                type: "propertyRef" as const,
-                variable: item.variable!,
-                property: item.property,
-              },
-              alias: item.alias,
-            };
-          }
+      const expressionItems: ExpressionReturnItem[] = returnClause.items.map((item) => {
+        if (item.expression !== undefined) {
+          return {
+            expression: convertConditionValue(item.expression as import("./AST.js").ConditionValue),
+            alias: item.alias,
+          };
+        }
+        // Handle legacy function format (labels/type)
+        const funcInfo = isLegacyFunctionExpression(item);
+        if (funcInfo) {
           return {
             expression: {
-              type: "variableRef" as const,
+              type: "functionCall" as const,
+              name: funcInfo.function,
+              args: [{ type: "variableRef" as const, variable: funcInfo.variable }],
+              distinct: false,
+            },
+            alias: item.alias ?? `${funcInfo.function}(${funcInfo.variable})`,
+          };
+        }
+        // Fallback for property access
+        if (item.property) {
+          return {
+            expression: {
+              type: "propertyRef" as const,
               variable: item.variable!,
+              property: item.property,
             },
             alias: item.alias,
           };
-        },
-      );
+        }
+        return {
+          expression: {
+            type: "variableRef" as const,
+            variable: item.variable!,
+          },
+          alias: item.alias,
+        };
+      });
 
       steps.push(new ExpressionReturnStep({ items: expressionItems }));
 
@@ -3069,8 +2911,7 @@ function convertReturnClause(query: Query): Step<any>[] {
 
       // Check if any items have property access (e.g., RETURN d.schema)
       const hasPropertyAccess = returnClause.items.some(
-        (item) =>
-          item.property !== undefined && !item.aggregate && !item.function,
+        (item) => item.property !== undefined && !item.aggregate && !item.function,
       );
 
       // Regular return - add SelectStep to select path labels
@@ -3152,9 +2993,7 @@ function extractPatternVariables(
       } else if (element.type === "ParenthesizedPathPattern") {
         // Recursively extract variables from the inner pattern
         const parenthesized = element as ParenthesizedPathPattern;
-        variables.push(
-          ...extractPatternVariables(parenthesized.pattern, false),
-        );
+        variables.push(...extractPatternVariables(parenthesized.pattern, false));
         isFirst = false;
       }
     }
@@ -3176,9 +3015,7 @@ interface AliasInfo {
  * Build a map of aliases from RETURN clause items.
  * Maps alias name → underlying variable/property info.
  */
-function buildReturnAliasMap(
-  returnClause: ReturnClause | undefined,
-): Map<string, AliasInfo> {
+function buildReturnAliasMap(returnClause: ReturnClause | undefined): Map<string, AliasInfo> {
   const aliasMap = new Map<string, AliasInfo>();
   if (!returnClause) return aliasMap;
 

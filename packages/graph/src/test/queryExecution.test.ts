@@ -95,19 +95,13 @@ test("Query Execution End-to-End - Simple vertex queries - should fetch all user
 
 test("Query Execution End-to-End - Simple vertex queries - should filter users by age", () => {
   const graph = setupQueryExecutionGraph();
-  const results = executeQuery(
-    graph,
-    "MATCH (u:User) WHERE u.age > 25 RETURN u",
-  );
+  const results = executeQuery(graph, "MATCH (u:User) WHERE u.age > 25 RETURN u");
   expect(results).toHaveLength(2); // Bob (30) and David (35)
 });
 
 test("Query Execution End-to-End - Simple vertex queries - should filter users by active status", () => {
   const graph = setupQueryExecutionGraph();
-  const results = executeQuery(
-    graph,
-    "MATCH (u:User) WHERE u.active = true RETURN u",
-  );
+  const results = executeQuery(graph, "MATCH (u:User) WHERE u.active = true RETURN u");
   expect(results).toHaveLength(3); // Alice, Bob, David
 });
 
@@ -172,10 +166,7 @@ test("Query Execution End-to-End - Aggregation queries - should count all users"
 
 test("Query Execution End-to-End - Aggregation queries - should count filtered users", () => {
   const graph = setupQueryExecutionGraph();
-  const results = executeQuery(
-    graph,
-    "MATCH (u:User) WHERE u.age > 25 RETURN COUNT(u)",
-  );
+  const results = executeQuery(graph, "MATCH (u:User) WHERE u.age > 25 RETURN COUNT(u)");
   expect(results[0]).toBe(2);
 });
 
@@ -239,9 +230,7 @@ test("Query Execution End-to-End - DISTINCT queries - should deduplicate results
 
   // Verify all results are unique vertices
   // Results are wrapped in arrays by SelectStep/ValuesStep, so extract the vertex
-  const uniqueIds = new Set(
-    withDistinct.map((r: any) => (Array.isArray(r) ? r[0]?.id : r.id)),
-  );
+  const uniqueIds = new Set(withDistinct.map((r: any) => (Array.isArray(r) ? r[0]?.id : r.id)));
   expect(uniqueIds.size).toBe(2);
 });
 
@@ -259,10 +248,7 @@ test("Query Execution End-to-End - Real-world scenarios - should find active use
 test("Query Execution End-to-End - Real-world scenarios - should find the most connected users", () => {
   const graph = setupQueryExecutionGraph();
   // This is a simplified version - we'd need more data for a real test
-  const results = executeQuery(
-    graph,
-    "MATCH (u:User)-[:follows]->(f) RETURN u LIMIT 5",
-  );
+  const results = executeQuery(graph, "MATCH (u:User)-[:follows]->(f) RETURN u LIMIT 5");
   expect(results.length).toBeGreaterThan(0);
 });
 
@@ -311,10 +297,7 @@ function setupMultiLabelGraph(): Graph<GraphSchema> {
 
 test("Query Execution End-to-End - labels() function - should return labels for a single vertex", () => {
   const graph = setupMultiLabelGraph();
-  const results = executeQuery(
-    graph,
-    'MATCH (u:User) WHERE u.name = "Alice" RETURN labels(u)',
-  );
+  const results = executeQuery(graph, 'MATCH (u:User) WHERE u.name = "Alice" RETURN labels(u)');
   expect(results).toHaveLength(1);
   expect(results[0]).toEqual(["User"]);
 });
@@ -374,10 +357,7 @@ test("Query Execution End-to-End - labels() function - DISTINCT on empty graph",
   } as const satisfies GraphSchema;
   const emptyGraph = new Graph({ schema, storage: new InMemoryGraphStorage() });
 
-  const results = executeQuery(
-    emptyGraph,
-    "MATCH (n) RETURN DISTINCT labels(n)",
-  );
+  const results = executeQuery(emptyGraph, "MATCH (n) RETURN DISTINCT labels(n)");
   expect(results).toHaveLength(0);
 });
 
@@ -403,10 +383,7 @@ test("Query Execution End-to-End - labels() function - works on edges", () => {
 test("Query Execution End-to-End - labels() function - DISTINCT on edges", () => {
   const graph = setupMultiLabelGraph();
   // Get distinct edge labels
-  const results = executeQuery(
-    graph,
-    "MATCH ()-[r]->() RETURN DISTINCT labels(r)",
-  );
+  const results = executeQuery(graph, "MATCH ()-[r]->() RETURN DISTINCT labels(r)");
   // All edges have the same label "wrote", so should get 1 result
   expect(results).toHaveLength(1);
   expect(results[0]).toEqual(["wrote"]);
@@ -415,10 +392,7 @@ test("Query Execution End-to-End - labels() function - DISTINCT on edges", () =>
 // Tests for property access in RETURN clause
 test("Query Execution End-to-End - Property access in RETURN - should return single property", () => {
   const graph = setupQueryExecutionGraph();
-  const results = executeQuery(
-    graph,
-    'MATCH (u:User) WHERE u.name = "Alice" RETURN u.age',
-  );
+  const results = executeQuery(graph, 'MATCH (u:User) WHERE u.name = "Alice" RETURN u.age');
   expect(results).toHaveLength(1);
   expect(results[0]).toBe(25);
 });
@@ -432,30 +406,21 @@ test("Query Execution End-to-End - Property access in RETURN - should return all
 
 test("Query Execution End-to-End - Property access in RETURN - with WHERE clause", () => {
   const graph = setupQueryExecutionGraph();
-  const results = executeQuery(
-    graph,
-    "MATCH (u:User) WHERE u.age > 25 RETURN u.name",
-  );
+  const results = executeQuery(graph, "MATCH (u:User) WHERE u.age > 25 RETURN u.name");
   expect(results).toHaveLength(2);
   expect(results.sort()).toEqual(["Bob", "David"]);
 });
 
 test("Query Execution End-to-End - Property access in RETURN - multiple properties", () => {
   const graph = setupQueryExecutionGraph();
-  const results = executeQuery(
-    graph,
-    'MATCH (u:User) WHERE u.name = "Alice" RETURN u.name, u.age',
-  );
+  const results = executeQuery(graph, 'MATCH (u:User) WHERE u.name = "Alice" RETURN u.name, u.age');
   expect(results).toHaveLength(1);
   expect(results[0]).toEqual(["Alice", 25]);
 });
 
 test("Query Execution End-to-End - Property access in RETURN - mixed variable and property", () => {
   const graph = setupQueryExecutionGraph();
-  const results = executeQuery(
-    graph,
-    'MATCH (u:User) WHERE u.name = "Alice" RETURN u, u.name',
-  );
+  const results = executeQuery(graph, 'MATCH (u:User) WHERE u.name = "Alice" RETURN u, u.name');
   expect(results).toHaveLength(1);
   // First element should be the full vertex, second should be the name
   const [vertex, name] = results[0] as any[];

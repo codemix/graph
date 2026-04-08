@@ -99,10 +99,7 @@ describe("Unwind1 - Unwind", () => {
     );
 
     // Verify nodes were created
-    const results = executeTckQuery(
-      graph,
-      "MATCH (n:A) RETURN n.year, n.id ORDER BY n.id",
-    );
+    const results = executeTckQuery(graph, "MATCH (n:A) RETURN n.year, n.id ORDER BY n.id");
     expect(results).toHaveLength(2);
     expect(results[0]).toEqual([2014, 1]);
     expect(results[1]).toEqual([2015, 2]);
@@ -189,31 +186,22 @@ describe("Unwind1 - Unwind", () => {
 
   test("[11] Unwind does not prune context", () => {
     const graph = createTckGraph();
-    const results = executeTckQuery(
-      graph,
-      "WITH [1, 2, 3] AS list UNWIND list AS x RETURN *",
-    );
+    const results = executeTckQuery(graph, "WITH [1, 2, 3] AS list UNWIND list AS x RETURN *");
     expect(results).toHaveLength(3);
     // Each row should have list and x
     const row = results[0] as unknown[];
     expect(row).toHaveLength(2);
   });
 
-  test.fails(
-    "[12] Unwind does not remove variables from scope - unlabeled nodes and UNWIND after WITH not supported",
-    () => {
-      const graph = createTckGraph();
-      executeTckQuery(
-        graph,
-        "CREATE (s:S), (n), (e:E), (s)-[:X]->(e), (s)-[:Y]->(e), (n)-[:Y]->(e)",
-      );
-      const results = executeTckQuery(
-        graph,
-        "MATCH (a:S)-[:X]->(b1) WITH a, collect(b1) AS bees UNWIND bees AS b2 MATCH (a)-[:Y]->(b2) RETURN a, b2",
-      );
-      expect(results).toHaveLength(1);
-    },
-  );
+  test.fails("[12] Unwind does not remove variables from scope - unlabeled nodes and UNWIND after WITH not supported", () => {
+    const graph = createTckGraph();
+    executeTckQuery(graph, "CREATE (s:S), (n), (e:E), (s)-[:X]->(e), (s)-[:Y]->(e), (n)-[:Y]->(e)");
+    const results = executeTckQuery(
+      graph,
+      "MATCH (a:S)-[:X]->(b1) WITH a, collect(b1) AS bees UNWIND bees AS b2 MATCH (a)-[:Y]->(b2) RETURN a, b2",
+    );
+    expect(results).toHaveLength(1);
+  });
 
   test("[13] Multiple unwinds after each other", () => {
     const graph = createTckGraph();
@@ -230,17 +218,10 @@ describe("Unwind1 - Unwind", () => {
 
   test("[14] Unwind with merge - requires variable property access in MERGE", () => {
     const graph = createTckGraph();
-    executeTckQuery(
-      graph,
-      "UNWIND $props AS prop MERGE (p:A {name: prop.name})",
-      {
-        props: [{ name: "Alice" }, { name: "Bob" }],
-      },
-    );
-    const results = executeTckQuery(
-      graph,
-      "MATCH (p:A) RETURN p.name ORDER BY p.name",
-    );
+    executeTckQuery(graph, "UNWIND $props AS prop MERGE (p:A {name: prop.name})", {
+      props: [{ name: "Alice" }, { name: "Bob" }],
+    });
+    const results = executeTckQuery(graph, "MATCH (p:A) RETURN p.name ORDER BY p.name");
     expect(results).toHaveLength(2);
     expect(results[0]).toBe("Alice");
     expect(results[1]).toBe("Bob");
@@ -250,11 +231,9 @@ describe("Unwind1 - Unwind", () => {
     const graph = createTckGraph();
 
     // UNWIND parameter list of strings
-    const results = executeTckQuery(
-      graph,
-      "UNWIND $names AS name RETURN name",
-      { names: ["Alice", "Bob", "Charlie"] },
-    );
+    const results = executeTckQuery(graph, "UNWIND $names AS name RETURN name", {
+      names: ["Alice", "Bob", "Charlie"],
+    });
 
     expect(results).toHaveLength(3);
     expect(results).toContainEqual(["Alice"]);
@@ -266,10 +245,7 @@ describe("Unwind1 - Unwind", () => {
   test("[custom-1] UNWIND with string list", () => {
     const graph = createTckGraph();
 
-    const results = executeTckQuery(
-      graph,
-      "UNWIND ['a', 'b', 'c'] AS x RETURN x",
-    );
+    const results = executeTckQuery(graph, "UNWIND ['a', 'b', 'c'] AS x RETURN x");
 
     expect(results).toHaveLength(3);
     // Results are wrapped in arrays
@@ -281,10 +257,7 @@ describe("Unwind1 - Unwind", () => {
   test("[custom-2] UNWIND with mixed type list", () => {
     const graph = createTckGraph();
 
-    const results = executeTckQuery(
-      graph,
-      "UNWIND [1, 'two', 3] AS x RETURN x",
-    );
+    const results = executeTckQuery(graph, "UNWIND [1, 'two', 3] AS x RETURN x");
 
     expect(results).toHaveLength(3);
     // Results are wrapped in arrays
@@ -296,10 +269,7 @@ describe("Unwind1 - Unwind", () => {
   test("[custom-3] UNWIND with CREATE - property expression referencing UNWIND variable not supported", () => {
     const graph = createTckGraph();
     executeTckQuery(graph, "UNWIND [1, 2, 3] AS num CREATE (:A {num: num})");
-    const results = executeTckQuery(
-      graph,
-      "MATCH (n:A) RETURN n.num ORDER BY n.num",
-    );
+    const results = executeTckQuery(graph, "MATCH (n:A) RETURN n.num ORDER BY n.num");
     expect(results).toHaveLength(3);
     expect(results[0]).toBe(1);
     expect(results[1]).toBe(2);
@@ -310,10 +280,7 @@ describe("Unwind1 - Unwind", () => {
     const graph = createTckGraph();
 
     // Simplified test without CREATE (which needs PropertyValue to support variable reference)
-    const results = executeTckQuery(
-      graph,
-      "UNWIND range(1, 5) AS num RETURN num",
-    );
+    const results = executeTckQuery(graph, "UNWIND range(1, 5) AS num RETURN num");
 
     expect(results).toHaveLength(5);
     expect(results).toContainEqual([1]);
@@ -326,10 +293,7 @@ describe("Unwind1 - Unwind", () => {
   test("[custom-5] UNWIND with boolean list", () => {
     const graph = createTckGraph();
 
-    const results = executeTckQuery(
-      graph,
-      "UNWIND [true, false, true] AS x RETURN x",
-    );
+    const results = executeTckQuery(graph, "UNWIND [true, false, true] AS x RETURN x");
 
     expect(results).toHaveLength(3);
     // Results are wrapped in arrays
@@ -342,10 +306,7 @@ describe("Unwind1 - Unwind", () => {
   test("[custom-6] UNWIND with negative step range", () => {
     const graph = createTckGraph();
 
-    const results = executeTckQuery(
-      graph,
-      "UNWIND range(5, 1, -1) AS x RETURN x",
-    );
+    const results = executeTckQuery(graph, "UNWIND range(5, 1, -1) AS x RETURN x");
 
     expect(results).toHaveLength(5);
     expect(results).toContainEqual([5]);
@@ -358,10 +319,7 @@ describe("Unwind1 - Unwind", () => {
   test("[custom-7] UNWIND with float list", () => {
     const graph = createTckGraph();
 
-    const results = executeTckQuery(
-      graph,
-      "UNWIND [1.5, 2.5, 3.5] AS x RETURN x",
-    );
+    const results = executeTckQuery(graph, "UNWIND [1.5, 2.5, 3.5] AS x RETURN x");
 
     expect(results).toHaveLength(3);
     // Results are wrapped in arrays
@@ -373,10 +331,7 @@ describe("Unwind1 - Unwind", () => {
   test("[custom-8] UNWIND with nested list", () => {
     const graph = createTckGraph();
 
-    const results = executeTckQuery(
-      graph,
-      "UNWIND [[1, 2], [3, 4]] AS x RETURN x",
-    );
+    const results = executeTckQuery(graph, "UNWIND [[1, 2], [3, 4]] AS x RETURN x");
 
     expect(results).toHaveLength(2);
     expect(results).toContainEqual([[1, 2]]);

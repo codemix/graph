@@ -52,10 +52,7 @@ function createTestGraph() {
   return new Graph({ schema, storage: new InMemoryGraphStorage() });
 }
 
-function executeQuery(
-  graph: Graph<GraphSchema>,
-  queryString: string,
-): unknown[] {
+function executeQuery(graph: Graph<GraphSchema>, queryString: string): unknown[] {
   const ast = parse(queryString) as Query | UnionQuery | MultiStatement;
   const steps = anyAstToSteps(ast);
   const traverser = createTraverser(steps);
@@ -403,9 +400,7 @@ describe("duration.between() via query", () => {
   // name requires grammar changes. These tests validate the function implementation
   // via direct function calls above.
   test("duration.between dates", () => {
-    const results = query(
-      `RETURN duration.between(date('1984-10-11'), date('1985-10-11')) AS d`,
-    );
+    const results = query(`RETURN duration.between(date('1984-10-11'), date('1985-10-11')) AS d`);
     expect(results).toHaveLength(1);
     const d = results[0] as DurationValue;
     expect(d).toBeInstanceOf(DurationValue);
@@ -413,9 +408,7 @@ describe("duration.between() via query", () => {
   });
 
   test("duration.between with null returns null", () => {
-    const results = query(
-      `RETURN duration.between(null, date('1984-10-11')) AS d`,
-    );
+    const results = query(`RETURN duration.between(null, date('1984-10-11')) AS d`);
     expect(results).toHaveLength(1);
     expect(results[0]).toBeNull();
   });
@@ -423,9 +416,7 @@ describe("duration.between() via query", () => {
 
 describe("duration.inMonths() via query", () => {
   test("duration.inMonths between dates", () => {
-    const results = query(
-      `RETURN duration.inMonths(date('1984-10-11'), date('1985-01-11')) AS d`,
-    );
+    const results = query(`RETURN duration.inMonths(date('1984-10-11'), date('1985-01-11')) AS d`);
     expect(results).toHaveLength(1);
     const d = results[0] as DurationValue;
     expect(d).toBeInstanceOf(DurationValue);
@@ -435,9 +426,7 @@ describe("duration.inMonths() via query", () => {
 
 describe("duration.inDays() via query", () => {
   test("duration.inDays between dates", () => {
-    const results = query(
-      `RETURN duration.inDays(date('1984-10-11'), date('1984-10-14')) AS d`,
-    );
+    const results = query(`RETURN duration.inDays(date('1984-10-11'), date('1984-10-14')) AS d`);
     expect(results).toHaveLength(1);
     const d = results[0] as DurationValue;
     expect(d).toBeInstanceOf(DurationValue);
@@ -569,25 +558,19 @@ describe("Grammar parsing for duration functions", () => {
   });
 
   test("duration.between() parses correctly", () => {
-    const ast = parse(
-      `RETURN duration.between(date('2023-01-01'), date('2023-12-31')) AS d`,
-    );
+    const ast = parse(`RETURN duration.between(date('2023-01-01'), date('2023-12-31')) AS d`);
     expect(ast).toBeDefined();
     expect(ast.type).toBe("Query");
   });
 
   test("duration.inMonths() parses correctly", () => {
-    const ast = parse(
-      `RETURN duration.inMonths(date('2023-01-01'), date('2023-12-31')) AS d`,
-    );
+    const ast = parse(`RETURN duration.inMonths(date('2023-01-01'), date('2023-12-31')) AS d`);
     expect(ast).toBeDefined();
     expect(ast.type).toBe("Query");
   });
 
   test("duration.inDays() parses correctly", () => {
-    const ast = parse(
-      `RETURN duration.inDays(date('2023-01-01'), date('2023-12-31')) AS d`,
-    );
+    const ast = parse(`RETURN duration.inDays(date('2023-01-01'), date('2023-12-31')) AS d`);
     expect(ast).toBeDefined();
     expect(ast.type).toBe("Query");
   });

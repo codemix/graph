@@ -3,13 +3,7 @@
  * Translated from tmp/tck/features/clauses/with-where/WithWhere3.feature
  */
 import { describe, test, expect } from "vitest";
-import {
-  createTckGraph,
-  executeTckQuery,
-  getLabel,
-  getProperty,
-  getId,
-} from "../tckHelpers.js";
+import { createTckGraph, executeTckQuery, getLabel, getProperty, getId } from "../tckHelpers.js";
 
 describe("WithWhere3 - Equi-Joins on variables", () => {
   test("[1] Join between node identities", () => {
@@ -17,18 +11,12 @@ describe("WithWhere3 - Equi-Joins on variables", () => {
     executeTckQuery(graph, "CREATE (:A)");
     executeTckQuery(graph, "CREATE (:B)");
 
-    const results = executeTckQuery(
-      graph,
-      "MATCH (a:A), (b:A) WITH a, b WHERE a = b RETURN a, b",
-    );
+    const results = executeTckQuery(graph, "MATCH (a:A), (b:A) WITH a, b WHERE a = b RETURN a, b");
     // Only the A=A case should match (same node identity)
     // With two separate labels, we need to match each with itself
     // But since A and B are different labels, this query only returns A=A
     expect(results.length).toBe(1);
-    const [aNode, bNode] = results[0] as [
-      Record<string, unknown>,
-      Record<string, unknown>,
-    ];
+    const [aNode, bNode] = results[0] as [Record<string, unknown>, Record<string, unknown>];
     expect(getLabel(aNode)).toBe("A");
     expect(getLabel(bNode)).toBe("A");
     expect(getId(aNode)).toBe(getId(bNode)); // Same node identity
@@ -46,10 +34,7 @@ describe("WithWhere3 - Equi-Joins on variables", () => {
       "MATCH (a:A), (b:B) WITH a, b WHERE a.id = b.id RETURN a, b",
     );
     expect(results.length).toBe(1);
-    const [aNode, bNode] = results[0] as [
-      Record<string, unknown>,
-      Record<string, unknown>,
-    ];
+    const [aNode, bNode] = results[0] as [Record<string, unknown>, Record<string, unknown>];
     expect(getLabel(aNode)).toBe("A");
     expect(getLabel(bNode)).toBe("B");
     expect(getProperty(aNode, "id")).toBe(2);
@@ -59,22 +44,10 @@ describe("WithWhere3 - Equi-Joins on variables", () => {
   test("[3] Join between node properties of adjacent nodes", () => {
     const graph = createTckGraph();
     // Create nodes with animal property
-    executeTckQuery(
-      graph,
-      "CREATE (:A {animal: 'monkey'})-[:KNOWS]->(:B {animal: 'cow'})",
-    );
-    executeTckQuery(
-      graph,
-      "CREATE (:A {animal: 'monkey'})-[:KNOWS]->(:C {animal: 'monkey'})",
-    );
-    executeTckQuery(
-      graph,
-      "CREATE (:D {animal: 'cow'})-[:KNOWS]->(:B {animal: 'cow'})",
-    );
-    executeTckQuery(
-      graph,
-      "CREATE (:D {animal: 'cow'})-[:KNOWS]->(:C {animal: 'monkey'})",
-    );
+    executeTckQuery(graph, "CREATE (:A {animal: 'monkey'})-[:KNOWS]->(:B {animal: 'cow'})");
+    executeTckQuery(graph, "CREATE (:A {animal: 'monkey'})-[:KNOWS]->(:C {animal: 'monkey'})");
+    executeTckQuery(graph, "CREATE (:D {animal: 'cow'})-[:KNOWS]->(:B {animal: 'cow'})");
+    executeTckQuery(graph, "CREATE (:D {animal: 'cow'})-[:KNOWS]->(:C {animal: 'monkey'})");
 
     const results = executeTckQuery(
       graph,

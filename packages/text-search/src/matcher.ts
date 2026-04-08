@@ -264,10 +264,7 @@ function calculatePositionScore(
  * match("A slow gray elephant"); // ~0.0
  * match("quick"); // ~0.3
  */
-export function createMatcher(
-  query: string,
-  options: MatcherOptions = {},
-): MatcherFn {
+export function createMatcher(query: string, options: MatcherOptions = {}): MatcherFn {
   const prepared = prepareQuery(query, options);
   const queryLower = query.toLowerCase().trim();
 
@@ -318,11 +315,7 @@ export function createDetailedMatcher(
 /**
  * Internal function to perform matching with full details.
  */
-function matchWithDetails(
-  prepared: PreparedQuery,
-  queryLower: string,
-  text: string,
-): MatchResult {
+function matchWithDetails(prepared: PreparedQuery, queryLower: string, text: string): MatchResult {
   const textLower = text.toLowerCase();
   const opts = prepared.options;
 
@@ -347,11 +340,7 @@ function matchWithDetails(
   const consecutiveBonus = consecutiveRatio * opts.consecutiveBonus;
 
   // Position-based scoring
-  const positionRatio = calculatePositionScore(
-    prepared,
-    docPositions,
-    docTokens.length,
-  );
+  const positionRatio = calculatePositionScore(prepared, docPositions, docTokens.length);
   const positionScore = positionRatio * opts.positionWeight;
 
   // Count matched terms
@@ -364,8 +353,7 @@ function matchWithDetails(
 
   // Combine all scores
   // Base score is the term score, bonuses are added on top
-  const rawScore =
-    termScore + exactBonus + prefixBonus + consecutiveBonus + positionScore;
+  const rawScore = termScore + exactBonus + prefixBonus + consecutiveBonus + positionScore;
 
   // Clamp to [0, 1] range
   const score = Math.min(1, Math.max(0, rawScore));

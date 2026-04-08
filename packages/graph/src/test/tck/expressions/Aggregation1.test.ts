@@ -6,35 +6,29 @@ import { describe, test, expect } from "vitest";
 import { createTckGraph, executeTckQuery } from "../tckHelpers.js";
 
 describe("Aggregation1 - Count", () => {
-  test.fails(
-    "[1] Count only non-null values - implicit grouping not supported",
-    () => {
-      // Original TCK:
-      // Given:
-      //   CREATE ({name: 'a', num: 33})
-      //   CREATE ({name: 'a'})
-      //   CREATE ({name: 'b', num: 42})
-      // Query: MATCH (n) RETURN n.name, count(n.num)
-      // Expected:
-      //   | n.name | count(n.num) |
-      //   | 'a'    | 1            |
-      //   | 'b'    | 1            |
-      //
-      // Limitations:
-      // - Unlabeled nodes not supported
-      // - Implicit grouping by n.name not supported
-      // - count() over property expressions (n.num) not supported
-      const graph = createTckGraph();
-      executeTckQuery(graph, "CREATE ({name: 'a', num: 33})");
-      executeTckQuery(graph, "CREATE ({name: 'a'})");
-      executeTckQuery(graph, "CREATE ({name: 'b', num: 42})");
-      const results = executeTckQuery(
-        graph,
-        "MATCH (n) RETURN n.name, count(n.num)",
-      );
-      expect(results).toHaveLength(2);
-    },
-  );
+  test.fails("[1] Count only non-null values - implicit grouping not supported", () => {
+    // Original TCK:
+    // Given:
+    //   CREATE ({name: 'a', num: 33})
+    //   CREATE ({name: 'a'})
+    //   CREATE ({name: 'b', num: 42})
+    // Query: MATCH (n) RETURN n.name, count(n.num)
+    // Expected:
+    //   | n.name | count(n.num) |
+    //   | 'a'    | 1            |
+    //   | 'b'    | 1            |
+    //
+    // Limitations:
+    // - Unlabeled nodes not supported
+    // - Implicit grouping by n.name not supported
+    // - count() over property expressions (n.num) not supported
+    const graph = createTckGraph();
+    executeTckQuery(graph, "CREATE ({name: 'a', num: 33})");
+    executeTckQuery(graph, "CREATE ({name: 'a'})");
+    executeTckQuery(graph, "CREATE ({name: 'b', num: 42})");
+    const results = executeTckQuery(graph, "MATCH (n) RETURN n.name, count(n.num)");
+    expect(results).toHaveLength(2);
+  });
 
   test("[2] Counting loop relationships - unlabeled/undirected not supported", () => {
     // Original TCK:
@@ -75,10 +69,7 @@ describe("Aggregation1 - Count", () => {
       `CREATE (:A {name: 'Alice'})-[:KNOWS]->(:B {name: 'Bob'}), (:A {name: 'Charlie'})-[:KNOWS]->(:B {name: 'Diana'})`,
     );
 
-    const results = executeTckQuery(
-      graph,
-      "MATCH (:A)-[r:KNOWS]->(:B) RETURN count(r)",
-    );
+    const results = executeTckQuery(graph, "MATCH (:A)-[r:KNOWS]->(:B) RETURN count(r)");
 
     expect(results).toHaveLength(1);
     expect(results[0]).toBe(2);
@@ -91,10 +82,7 @@ describe("Aggregation1 - Count", () => {
       `CREATE (:A {name: 'Alice', age: 30}), (:A {name: 'Bob', age: 25}), (:A {name: 'Charlie', age: 35})`,
     );
 
-    const results = executeTckQuery(
-      graph,
-      "MATCH (n:A) WHERE n.age >= 30 RETURN count(n)",
-    );
+    const results = executeTckQuery(graph, "MATCH (n:A) WHERE n.age >= 30 RETURN count(n)");
 
     expect(results).toHaveLength(1);
     expect(results[0]).toBe(2);
@@ -110,31 +98,19 @@ describe("Aggregation1 - Count", () => {
     expect(results[0]).toBe(0);
   });
 
-  test.fails(
-    "[Custom 5] Count DISTINCT nodes - DISTINCT in aggregates not supported",
-    () => {
-      // Grammar limitation: count(DISTINCT x) syntax not supported
-      // The grammar doesn't support DISTINCT keyword inside aggregate functions
-      const graph = createTckGraph();
-      executeTckQuery(
-        graph,
-        `CREATE (:A {name: 'Alice'}), (:A {name: 'Bob'}), (:A {name: 'Alice'})`,
-      );
-      const results = executeTckQuery(
-        graph,
-        "MATCH (n:A) RETURN count(DISTINCT n.name)",
-      );
-      expect(results).toHaveLength(1);
-      expect(results[0]).toBe(2);
-    },
-  );
+  test.fails("[Custom 5] Count DISTINCT nodes - DISTINCT in aggregates not supported", () => {
+    // Grammar limitation: count(DISTINCT x) syntax not supported
+    // The grammar doesn't support DISTINCT keyword inside aggregate functions
+    const graph = createTckGraph();
+    executeTckQuery(graph, `CREATE (:A {name: 'Alice'}), (:A {name: 'Bob'}), (:A {name: 'Alice'})`);
+    const results = executeTckQuery(graph, "MATCH (n:A) RETURN count(DISTINCT n.name)");
+    expect(results).toHaveLength(1);
+    expect(results[0]).toBe(2);
+  });
 
   test("[Custom 6] Count with UNWIND", () => {
     const graph = createTckGraph();
-    const results = executeTckQuery(
-      graph,
-      "UNWIND [1, 2, 3, 4, 5] AS x RETURN count(x)",
-    );
+    const results = executeTckQuery(graph, "UNWIND [1, 2, 3, 4, 5] AS x RETURN count(x)");
     expect(results).toHaveLength(1);
     expect(results[0]).toBe(5);
   });

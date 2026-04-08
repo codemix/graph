@@ -130,16 +130,13 @@ describe("WithOrderBy3 - Order by multiple expressions", () => {
   });
 
   // [8] Fail on sorting by undefined variables - semantic validation
-  test.fails(
-    "[8] Fail on sorting by undefined variables - semantic validation not implemented",
-    () => {
-      const graph = createTckGraph();
-      executeTckQuery(graph, "CREATE (:A {num: 1})");
-      expect(() => {
-        executeTckQuery(graph, "MATCH (a:A) WITH a ORDER BY b, a.num RETURN a");
-      }).toThrow();
-    },
-  );
+  test.fails("[8] Fail on sorting by undefined variables - semantic validation not implemented", () => {
+    const graph = createTckGraph();
+    executeTckQuery(graph, "CREATE (:A {num: 1})");
+    expect(() => {
+      executeTckQuery(graph, "MATCH (a:A) WITH a ORDER BY b, a.num RETURN a");
+    }).toThrow();
+  });
 
   // Custom tests for supported patterns
   test("[custom-1] Multi-column ORDER BY with property expressions", () => {

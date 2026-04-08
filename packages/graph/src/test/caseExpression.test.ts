@@ -4,11 +4,7 @@ import { astToSteps } from "../astToSteps.js";
 import { createTraverser, setQueryParams, clearQueryParams } from "../Steps.js";
 import { Graph } from "../Graph.js";
 import { InMemoryGraphStorage } from "../GraphStorage.js";
-import type {
-  Query,
-  SimpleCaseExpression,
-  SearchedCaseExpression,
-} from "../AST.js";
+import type { Query, SimpleCaseExpression, SearchedCaseExpression } from "../AST.js";
 import type { StandardSchemaV1 } from "@standard-schema/spec";
 
 function makeType<T>(_defaultValue: T): StandardSchemaV1<T> {

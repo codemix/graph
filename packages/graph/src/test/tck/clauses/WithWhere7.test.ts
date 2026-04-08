@@ -6,75 +6,57 @@ import { describe, test, expect } from "vitest";
 import { createTckGraph, executeTckQuery } from "../tckHelpers.js";
 
 describe("WithWhere7 - Variable visibility under aliasing", () => {
-  test.fails(
-    "[1] WHERE sees a variable bound before but not after WITH - unlabeled nodes and RETURN * not supported",
-    () => {
-      // Original test uses unlabeled nodes and RETURN *:
-      // CREATE ({name2: 'A'}), ({name2: 'B'}), ({name2: 'C'})
-      // MATCH (a) WITH a.name2 AS name WHERE a.name2 = 'B' RETURN *
-      //
-      // Note: The WHERE clause referencing 'a.name2' when 'a' is no longer in scope
-      // after WITH projection is a special case that may or may not be supported
-      const graph = createTckGraph();
-      executeTckQuery(
-        graph,
-        "CREATE ({name2: 'A'}), ({name2: 'B'}), ({name2: 'C'})",
-      );
+  test.fails("[1] WHERE sees a variable bound before but not after WITH - unlabeled nodes and RETURN * not supported", () => {
+    // Original test uses unlabeled nodes and RETURN *:
+    // CREATE ({name2: 'A'}), ({name2: 'B'}), ({name2: 'C'})
+    // MATCH (a) WITH a.name2 AS name WHERE a.name2 = 'B' RETURN *
+    //
+    // Note: The WHERE clause referencing 'a.name2' when 'a' is no longer in scope
+    // after WITH projection is a special case that may or may not be supported
+    const graph = createTckGraph();
+    executeTckQuery(graph, "CREATE ({name2: 'A'}), ({name2: 'B'}), ({name2: 'C'})");
 
-      const results = executeTckQuery(
-        graph,
-        "MATCH (a) WITH a.name2 AS name WHERE a.name2 = 'B' RETURN *",
-      );
-      expect(results.length).toBe(1);
-      const row = results[0] as Record<string, unknown>;
-      expect(row["name"]).toBe("B");
-    },
-  );
+    const results = executeTckQuery(
+      graph,
+      "MATCH (a) WITH a.name2 AS name WHERE a.name2 = 'B' RETURN *",
+    );
+    expect(results.length).toBe(1);
+    const row = results[0] as Record<string, unknown>;
+    expect(row["name"]).toBe("B");
+  });
 
-  test.fails(
-    "[2] WHERE sees a variable bound after but not before WITH - unlabeled nodes and RETURN * not supported",
-    () => {
-      // Original test uses unlabeled nodes and RETURN *:
-      // CREATE ({name2: 'A'}), ({name2: 'B'}), ({name2: 'C'})
-      // MATCH (a) WITH a.name2 AS name WHERE name = 'B' RETURN *
-      const graph = createTckGraph();
-      executeTckQuery(
-        graph,
-        "CREATE ({name2: 'A'}), ({name2: 'B'}), ({name2: 'C'})",
-      );
+  test.fails("[2] WHERE sees a variable bound after but not before WITH - unlabeled nodes and RETURN * not supported", () => {
+    // Original test uses unlabeled nodes and RETURN *:
+    // CREATE ({name2: 'A'}), ({name2: 'B'}), ({name2: 'C'})
+    // MATCH (a) WITH a.name2 AS name WHERE name = 'B' RETURN *
+    const graph = createTckGraph();
+    executeTckQuery(graph, "CREATE ({name2: 'A'}), ({name2: 'B'}), ({name2: 'C'})");
 
-      const results = executeTckQuery(
-        graph,
-        "MATCH (a) WITH a.name2 AS name WHERE name = 'B' RETURN *",
-      );
-      expect(results.length).toBe(1);
-      const row = results[0] as Record<string, unknown>;
-      expect(row["name"]).toBe("B");
-    },
-  );
+    const results = executeTckQuery(
+      graph,
+      "MATCH (a) WITH a.name2 AS name WHERE name = 'B' RETURN *",
+    );
+    expect(results.length).toBe(1);
+    const row = results[0] as Record<string, unknown>;
+    expect(row["name"]).toBe("B");
+  });
 
-  test.fails(
-    "[3] WHERE sees both variables - unlabeled nodes and RETURN * not supported",
-    () => {
-      // Original test uses unlabeled nodes and RETURN *:
-      // CREATE ({name2: 'A'}), ({name2: 'B'}), ({name2: 'C'})
-      // MATCH (a) WITH a.name2 AS name WHERE name = 'B' OR a.name2 = 'C' RETURN *
-      const graph = createTckGraph();
-      executeTckQuery(
-        graph,
-        "CREATE ({name2: 'A'}), ({name2: 'B'}), ({name2: 'C'})",
-      );
+  test.fails("[3] WHERE sees both variables - unlabeled nodes and RETURN * not supported", () => {
+    // Original test uses unlabeled nodes and RETURN *:
+    // CREATE ({name2: 'A'}), ({name2: 'B'}), ({name2: 'C'})
+    // MATCH (a) WITH a.name2 AS name WHERE name = 'B' OR a.name2 = 'C' RETURN *
+    const graph = createTckGraph();
+    executeTckQuery(graph, "CREATE ({name2: 'A'}), ({name2: 'B'}), ({name2: 'C'})");
 
-      const results = executeTckQuery(
-        graph,
-        "MATCH (a) WITH a.name2 AS name WHERE name = 'B' OR a.name2 = 'C' RETURN *",
-      );
-      expect(results.length).toBe(2);
-      const names = results.map((r) => (r as Record<string, unknown>)["name"]);
-      expect(names).toContain("B");
-      expect(names).toContain("C");
-    },
-  );
+    const results = executeTckQuery(
+      graph,
+      "MATCH (a) WITH a.name2 AS name WHERE name = 'B' OR a.name2 = 'C' RETURN *",
+    );
+    expect(results.length).toBe(2);
+    const names = results.map((r) => (r as Record<string, unknown>)["name"]);
+    expect(names).toContain("B");
+    expect(names).toContain("C");
+  });
 
   // Custom tests for variable visibility in WITH WHERE
   test("[custom-1] WHERE filters on alias from WITH", () => {
@@ -83,10 +65,7 @@ describe("WithWhere7 - Variable visibility under aliasing", () => {
     executeTckQuery(graph, "CREATE (:A {name: 'Y'})");
     executeTckQuery(graph, "CREATE (:A {name: 'Z'})");
 
-    const results = executeTckQuery(
-      graph,
-      "MATCH (a:A) WITH a.name AS n WHERE n = 'Y' RETURN n",
-    );
+    const results = executeTckQuery(graph, "MATCH (a:A) WITH a.name AS n WHERE n = 'Y' RETURN n");
     expect(results.length).toBe(1);
     const val = Array.isArray(results[0]) ? results[0][0] : results[0];
     expect(val).toBe("Y");

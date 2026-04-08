@@ -109,24 +109,18 @@ describe("Temporal7 - Compare Temporal Values", () => {
   test("[11] Should compare durations with different representations", () => {
     const graph = createTckGraph();
     // P14D and P2W are equivalent (14 days = 2 weeks)
-    const results = executeTckQuery(
-      graph,
-      "RETURN duration('P14D') = duration('P2W') AS result",
-    );
+    const results = executeTckQuery(graph, "RETURN duration('P14D') = duration('P2W') AS result");
     expect(results).toHaveLength(1);
     expect(results[0]).toBe(true);
   });
 
-  test.fails(
-    "[12] Should compare datetime across timezones - timezone normalization not implemented",
-    () => {
-      const graph = createTckGraph();
-      const results = executeTckQuery(
-        graph,
-        "RETURN datetime('1984-10-11T12:31:14+01:00') = datetime('1984-10-11T11:31:14Z') AS result",
-      );
-      expect(results).toHaveLength(1);
-      expect(results[0]).toBe(true);
-    },
-  );
+  test.fails("[12] Should compare datetime across timezones - timezone normalization not implemented", () => {
+    const graph = createTckGraph();
+    const results = executeTckQuery(
+      graph,
+      "RETURN datetime('1984-10-11T12:31:14+01:00') = datetime('1984-10-11T11:31:14Z') AS result",
+    );
+    expect(results).toHaveLength(1);
+    expect(results[0]).toBe(true);
+  });
 });
