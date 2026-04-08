@@ -3,6 +3,9 @@
   "version": "0.0.1",
   "description": "The codemix graph database.",
   "license": "MIT",
+  "files": [
+    "dist"
+  ],
   "type": "module",
   "types": "./dist/index.d.ts",
   "exports": {
@@ -12,6 +15,9 @@
         "default": "./dist/index.js"
       }
     }
+  },
+  "publishConfig": {
+    "access": "public"
   },
   "scripts": {
     "build": "pnpm run build:grammar && tsc",
