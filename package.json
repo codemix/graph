@@ -10,6 +10,9 @@
   ],
   "scripts": {
     "build": "pnpm run -r build",
+    "changeset": "changeset",
+    "version-packages": "changeset version",
+    "release": "pnpm build && changeset publish",
     "typecheck": "pnpm run -r typecheck",
     "test": "vitest",
     "test:coverage": "vitest run --coverage",
@@ -19,6 +22,7 @@
     "format:check": "oxfmt --check ."
   },
   "devDependencies": {
+    "@changesets/cli": "^2.30.0",
     "@vitest/coverage-istanbul": "catalog:",
     "oxfmt": "^0.44.0",
     "oxlint": "^1.59.0",
