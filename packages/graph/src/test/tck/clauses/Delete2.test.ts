@@ -32,18 +32,15 @@ describe("Delete2 - Deleting relationships", () => {
     expect(results).toHaveLength(0);
   });
 
-  test.fails(
-    "[4] Ignore null when deleting relationship - OPTIONAL MATCH not fully supported",
-    () => {
-      const graph = createTckGraph();
-      const results = executeTckQuery(
-        graph,
-        "OPTIONAL MATCH ()-[r:DoesNotExist]-() DELETE r RETURN r",
-      );
-      expect(results).toHaveLength(1);
-      expect(results[0]).toBeNull();
-    },
-  );
+  test.fails("[4] Ignore null when deleting relationship - OPTIONAL MATCH not fully supported", () => {
+    const graph = createTckGraph();
+    const results = executeTckQuery(
+      graph,
+      "OPTIONAL MATCH ()-[r:DoesNotExist]-() DELETE r RETURN r",
+    );
+    expect(results).toHaveLength(1);
+    expect(results[0]).toBeNull();
+  });
 
   test("[5] Failing when deleting a relationship type - syntax error", () => {
     const graph = createTckGraph();

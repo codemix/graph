@@ -12,10 +12,7 @@ describe("Graph9 - Retrieve all properties as a property map", () => {
     const graph = createTckGraph();
     executeTckQuery(graph, `CREATE (:Person {name: 'Popeye', level: 9001})`);
 
-    const results = executeTckQuery(
-      graph,
-      "MATCH (p:Person) RETURN properties(p)",
-    );
+    const results = executeTckQuery(graph, "MATCH (p:Person) RETURN properties(p)");
 
     expect(results).toHaveLength(1);
     const props = results[0] as Record<string, unknown>;
@@ -25,15 +22,9 @@ describe("Graph9 - Retrieve all properties as a property map", () => {
 
   test("[2] `properties()` on a relationship", () => {
     const graph = createTckGraph();
-    executeTckQuery(
-      graph,
-      `CREATE (:A)-[:KNOWS {since: 2020, strength: 5}]->(:B)`,
-    );
+    executeTckQuery(graph, `CREATE (:A)-[:KNOWS {since: 2020, strength: 5}]->(:B)`);
 
-    const results = executeTckQuery(
-      graph,
-      "MATCH (:A)-[r:KNOWS]->(:B) RETURN properties(r)",
-    );
+    const results = executeTckQuery(graph, "MATCH (:A)-[r:KNOWS]->(:B) RETURN properties(r)");
 
     expect(results).toHaveLength(1);
     const props = results[0] as Record<string, unknown>;
@@ -44,10 +35,7 @@ describe("Graph9 - Retrieve all properties as a property map", () => {
   test("[3] `properties()` on null", () => {
     // OPTIONAL MATCH implementation needed to return null
     const graph = createTckGraph();
-    const results = executeTckQuery(
-      graph,
-      "OPTIONAL MATCH (n:NonExistent) RETURN properties(n)",
-    );
+    const results = executeTckQuery(graph, "OPTIONAL MATCH (n:NonExistent) RETURN properties(n)");
     expect(results).toHaveLength(1);
     expect(results[0]).toBeNull();
   });
@@ -55,10 +43,7 @@ describe("Graph9 - Retrieve all properties as a property map", () => {
   test("[4] `properties()` on a map", () => {
     // Map literals in function arguments not yet supported in grammar
     const graph = createTckGraph();
-    const results = executeTckQuery(
-      graph,
-      "RETURN properties({name: 'Alice', age: 30})",
-    );
+    const results = executeTckQuery(graph, "RETURN properties({name: 'Alice', age: 30})");
     expect(results).toHaveLength(1);
     expect(results[0]).toEqual({ name: "Alice", age: 30 });
   });
@@ -93,10 +78,7 @@ describe("Graph9 - Retrieve all properties as a property map", () => {
     const graph = createTckGraph();
     executeTckQuery(graph, `CREATE (:Person {name: 'Popeye', level: 9001})`);
 
-    const results = executeTckQuery(
-      graph,
-      "MATCH (p:Person) RETURN p.name, p.level",
-    );
+    const results = executeTckQuery(graph, "MATCH (p:Person) RETURN p.name, p.level");
 
     expect(results).toHaveLength(1);
     const [name, level] = results[0] as [string, number];
@@ -106,15 +88,9 @@ describe("Graph9 - Retrieve all properties as a property map", () => {
 
   test("[Custom 2] Relationship properties can be returned", () => {
     const graph = createTckGraph();
-    executeTckQuery(
-      graph,
-      `CREATE (:A)-[:KNOWS {since: 2020, strength: 5}]->(:B)`,
-    );
+    executeTckQuery(graph, `CREATE (:A)-[:KNOWS {since: 2020, strength: 5}]->(:B)`);
 
-    const results = executeTckQuery(
-      graph,
-      "MATCH (:A)-[r:KNOWS]->(:B) RETURN r.since, r.strength",
-    );
+    const results = executeTckQuery(graph, "MATCH (:A)-[r:KNOWS]->(:B) RETURN r.since, r.strength");
 
     expect(results).toHaveLength(1);
     const [since, strength] = results[0] as [number, number];

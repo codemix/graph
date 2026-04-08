@@ -32,10 +32,7 @@ describe("Precedence2 - On numeric values", () => {
     const graph = createTckGraph();
     // RETURN 4 ^ 3 * 2 ^ 3 AS a, 4 ^ 3 * (2 ^ 3) AS b
     // Expected: a=512.0 (64*8), b=512.0 (64*8)
-    const results = executeTckQuery(
-      graph,
-      "RETURN 4 ^ 3 * 2 ^ 3 AS a, 4 ^ 3 * (2 ^ 3) AS b",
-    );
+    const results = executeTckQuery(graph, "RETURN 4 ^ 3 * 2 ^ 3 AS a, 4 ^ 3 * (2 ^ 3) AS b");
     expect(results).toHaveLength(1);
     expect(results[0]).toEqual([512, 512]);
   });
@@ -44,10 +41,7 @@ describe("Precedence2 - On numeric values", () => {
     const graph = createTckGraph();
     // RETURN 4 ^ 3 + 2 ^ 3 AS a, 4 ^ 3 + (2 ^ 3) AS b
     // Expected: a=72.0 (64+8), b=72.0 (64+8)
-    const results = executeTckQuery(
-      graph,
-      "RETURN 4 ^ 3 + 2 ^ 3 AS a, 4 ^ 3 + (2 ^ 3) AS b",
-    );
+    const results = executeTckQuery(graph, "RETURN 4 ^ 3 + 2 ^ 3 AS a, 4 ^ 3 + (2 ^ 3) AS b");
     expect(results).toHaveLength(1);
     expect(results[0]).toEqual([72, 72]);
   });
@@ -56,10 +50,7 @@ describe("Precedence2 - On numeric values", () => {
     const graph = createTckGraph();
     // RETURN -3 ^ 2 AS a, (-3) ^ 2 AS b, -(3 ^ 2) AS c
     // Expected: a=9.0, b=9.0, c=-9.0
-    const results = executeTckQuery(
-      graph,
-      "RETURN -3 ^ 2 AS a, (-3) ^ 2 AS b, -(3 ^ 2) AS c",
-    );
+    const results = executeTckQuery(graph, "RETURN -3 ^ 2 AS a, (-3) ^ 2 AS b, -(3 ^ 2) AS c");
     expect(results).toHaveLength(1);
     expect(results[0]).toEqual([9, 9, -9]);
   });
@@ -68,10 +59,7 @@ describe("Precedence2 - On numeric values", () => {
     const graph = createTckGraph();
     // RETURN -3 + 2 AS a, (-3) + 2 AS b, -(3 + 2) AS c
     // Expected: a=-1, b=-1, c=-5
-    const results = executeTckQuery(
-      graph,
-      "RETURN -3 + 2 AS a, (-3) + 2 AS b, -(3 + 2) AS c",
-    );
+    const results = executeTckQuery(graph, "RETURN -3 + 2 AS a, (-3) + 2 AS b, -(3 + 2) AS c");
     expect(results).toHaveLength(1);
     expect(results[0]).toEqual([-1, -1, -5]);
   });
@@ -85,10 +73,7 @@ describe("Precedence2 - On numeric values", () => {
     executeTckQuery(graph, "CREATE (:A {correct: 14, incorrect: 40})");
 
     // Verify the expected precedence result
-    const results = executeTckQuery(
-      graph,
-      "MATCH (n:A) WHERE n.correct = 14 RETURN n.correct",
-    );
+    const results = executeTckQuery(graph, "MATCH (n:A) WHERE n.correct = 14 RETURN n.correct");
     expect(results).toHaveLength(1);
     expect(results[0]).toBe(14);
   });
@@ -96,15 +81,9 @@ describe("Precedence2 - On numeric values", () => {
   test("[custom-2] Division takes precedence over subtraction", () => {
     const graph = createTckGraph();
     // 10 / 2 - 6 / 3 = 5 - 2 = 3 (if / binds tighter than -)
-    executeTckQuery(
-      graph,
-      "CREATE (:A {val: 3}), (:A {val: 5}), (:A {val: 2})",
-    );
+    executeTckQuery(graph, "CREATE (:A {val: 3}), (:A {val: 5}), (:A {val: 2})");
 
-    const results = executeTckQuery(
-      graph,
-      "MATCH (n:A) WHERE n.val = 3 RETURN n.val",
-    );
+    const results = executeTckQuery(graph, "MATCH (n:A) WHERE n.val = 3 RETURN n.val");
     expect(results).toHaveLength(1);
     expect(results[0]).toBe(3);
   });
@@ -114,10 +93,7 @@ describe("Precedence2 - On numeric values", () => {
     // 10 % 3 + 5 % 2 = 1 + 1 = 2 (if % binds tighter than +)
     executeTckQuery(graph, "CREATE (:A {val: 2}), (:A {val: 3})");
 
-    const results = executeTckQuery(
-      graph,
-      "MATCH (n:A) WHERE n.val = 2 RETURN n.val",
-    );
+    const results = executeTckQuery(graph, "MATCH (n:A) WHERE n.val = 2 RETURN n.val");
     expect(results).toHaveLength(1);
     expect(results[0]).toBe(2);
   });
@@ -127,16 +103,10 @@ describe("Precedence2 - On numeric values", () => {
     // Store results of expressions computed according to standard precedence
     // 2 + 3 * 4 = 2 + 12 = 14
     // (2 + 3) * 4 = 5 * 4 = 20
-    executeTckQuery(
-      graph,
-      "CREATE (:A {id: 1, val: 14}), (:A {id: 2, val: 20})",
-    );
+    executeTckQuery(graph, "CREATE (:A {id: 1, val: 14}), (:A {id: 2, val: 20})");
 
     // Find node where val equals 2 + 3 * 4 (standard precedence)
-    const results = executeTckQuery(
-      graph,
-      "MATCH (n:A) WHERE n.val = 14 RETURN n.id",
-    );
+    const results = executeTckQuery(graph, "MATCH (n:A) WHERE n.val = 14 RETURN n.id");
     expect(results).toHaveLength(1);
     expect(results[0]).toBe(1);
   });
@@ -144,15 +114,9 @@ describe("Precedence2 - On numeric values", () => {
   test("[custom-5] Negative numbers in comparisons", () => {
     const graph = createTckGraph();
     // -3 + 2 = -1 (unary minus binds tightest)
-    executeTckQuery(
-      graph,
-      "CREATE (:A {val: -1}), (:A {val: -5}), (:A {val: 1})",
-    );
+    executeTckQuery(graph, "CREATE (:A {val: -1}), (:A {val: -5}), (:A {val: 1})");
 
-    const results = executeTckQuery(
-      graph,
-      "MATCH (n:A) WHERE n.val = -1 RETURN n.val",
-    );
+    const results = executeTckQuery(graph, "MATCH (n:A) WHERE n.val = -1 RETURN n.val");
     expect(results).toHaveLength(1);
     expect(results[0]).toBe(-1);
   });
@@ -174,15 +138,9 @@ describe("Precedence2 - On numeric values", () => {
   test("[custom-7] Float results from division", () => {
     const graph = createTckGraph();
     // 7 / 2 = 3.5
-    executeTckQuery(
-      graph,
-      "CREATE (:A {val: 3.5}), (:A {val: 3}), (:A {val: 4})",
-    );
+    executeTckQuery(graph, "CREATE (:A {val: 3.5}), (:A {val: 3}), (:A {val: 4})");
 
-    const results = executeTckQuery(
-      graph,
-      "MATCH (n:A) WHERE n.val = 3.5 RETURN n.val",
-    );
+    const results = executeTckQuery(graph, "MATCH (n:A) WHERE n.val = 3.5 RETURN n.val");
     expect(results).toHaveLength(1);
     expect(results[0]).toBe(3.5);
   });
@@ -208,32 +166,20 @@ describe("Precedence2 - On numeric values", () => {
     // Without precedence (left to right): ((10 - 3) * 2 + 8) / 4 = (7 * 2 + 8) / 4 = 22 / 4 = 5.5
     executeTckQuery(graph, "CREATE (:A {correct: 6, wrong: 5.5})");
 
-    const results = executeTckQuery(
-      graph,
-      "MATCH (n:A) WHERE n.correct = 6 RETURN n.correct",
-    );
+    const results = executeTckQuery(graph, "MATCH (n:A) WHERE n.correct = 6 RETURN n.correct");
     expect(results).toHaveLength(1);
     expect(results[0]).toBe(6);
   });
 
   test("[custom-10] Comparison operators work correctly with numeric literals", () => {
     const graph = createTckGraph();
-    executeTckQuery(
-      graph,
-      "CREATE (:A {num: 5}), (:A {num: 10}), (:A {num: 15}), (:A {num: 20})",
-    );
+    executeTckQuery(graph, "CREATE (:A {num: 5}), (:A {num: 10}), (:A {num: 15}), (:A {num: 20})");
 
     // Testing various numeric comparisons
-    const gt = executeTckQuery(
-      graph,
-      "MATCH (n:A) WHERE n.num > 10 RETURN n.num ORDER BY n.num",
-    );
+    const gt = executeTckQuery(graph, "MATCH (n:A) WHERE n.num > 10 RETURN n.num ORDER BY n.num");
     expect(gt).toEqual([15, 20]);
 
-    const lt = executeTckQuery(
-      graph,
-      "MATCH (n:A) WHERE n.num < 10 RETURN n.num",
-    );
+    const lt = executeTckQuery(graph, "MATCH (n:A) WHERE n.num < 10 RETURN n.num");
     expect(lt).toEqual([5]);
 
     const between = executeTckQuery(

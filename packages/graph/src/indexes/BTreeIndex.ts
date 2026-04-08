@@ -83,10 +83,7 @@ export class BTreeIndex implements Index {
    */
   #findFirstEqual(value: number | string): number {
     const pos = this.#findInsertionPoint(value);
-    if (
-      pos < this.#entries.length &&
-      this.#compare(this.#entries[pos]!.value, value) === 0
-    ) {
+    if (pos < this.#entries.length && this.#compare(this.#entries[pos]!.value, value) === 0) {
       return pos;
     }
     return -1;
@@ -134,11 +131,7 @@ export class BTreeIndex implements Index {
     this.#elementValues.delete(elementId);
   }
 
-  public update(
-    elementId: ElementId,
-    oldValue: unknown,
-    newValue: unknown,
-  ): void {
+  public update(elementId: ElementId, oldValue: unknown, newValue: unknown): void {
     this.remove(elementId, oldValue);
     this.add(elementId, newValue);
   }

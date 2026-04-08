@@ -55,10 +55,7 @@ describe("Merge1 - Merge node", () => {
     executeTckQuery(graph, "CREATE (:TheLabel {num: 42})");
 
     // MERGE should create new node with different property
-    const results = executeTckQuery(
-      graph,
-      "MERGE (a:TheLabel {num: 43}) RETURN a.num",
-    );
+    const results = executeTckQuery(graph, "MERGE (a:TheLabel {num: 43}) RETURN a.num");
     expect(results).toHaveLength(1);
     expect(results[0]).toBe(43);
 
@@ -76,10 +73,7 @@ describe("Merge1 - Merge node", () => {
     executeTckQuery(graph, "CREATE (:TheLabel {num: 42})");
 
     // MERGE should match existing node
-    const results = executeTckQuery(
-      graph,
-      "MERGE (a:TheLabel {num: 42}) RETURN a.num",
-    );
+    const results = executeTckQuery(graph, "MERGE (a:TheLabel {num: 42}) RETURN a.num");
     expect(results).toHaveLength(1);
     expect(results[0]).toBe(42);
 
@@ -120,32 +114,23 @@ describe("Merge1 - Merge node", () => {
     // Query requires UNWIND and MATCH...WITH...MERGE chaining
     const graph = createTckGraph();
     executeTckQuery(graph, "CREATE (:A {id: 1}), (:A {id: 2})");
-    executeTckQuery(
-      graph,
-      "UNWIND [1, 2] AS x MATCH (a:A {id: x}) MERGE (b:B {id: x})",
-    );
-    const results = executeTckQuery(
-      graph,
-      "MATCH (b:B) RETURN b.id ORDER BY b.id",
-    );
+    executeTckQuery(graph, "UNWIND [1, 2] AS x MATCH (a:A {id: x}) MERGE (b:B {id: x})");
+    const results = executeTckQuery(graph, "MATCH (b:B) RETURN b.id ORDER BY b.id");
     expect(results).toHaveLength(2);
     // Note: property access in ORDER BY may return null, but nodes should be created
     const nodes = executeTckQuery(graph, "MATCH (b:B) RETURN b");
     expect(nodes).toHaveLength(2);
   });
 
-  test.fails(
-    "[10] Merge must properly handle multiple labels - multi-label not supported",
-    () => {
-      // Query: CREATE (:L:A {num: 42}), MERGE (test:L:B {num: 42})
-      // Multi-label syntax not supported
-      const graph = createTckGraph();
-      executeTckQuery(graph, "CREATE (:L:A {num: 42})");
-      executeTckQuery(graph, "MERGE (test:L:B {num: 42})");
-      const results = executeTckQuery(graph, "MATCH (n:L) RETURN n.num");
-      expect(results).toHaveLength(2);
-    },
-  );
+  test.fails("[10] Merge must properly handle multiple labels - multi-label not supported", () => {
+    // Query: CREATE (:L:A {num: 42}), MERGE (test:L:B {num: 42})
+    // Multi-label syntax not supported
+    const graph = createTckGraph();
+    executeTckQuery(graph, "CREATE (:L:A {num: 42})");
+    executeTckQuery(graph, "MERGE (test:L:B {num: 42})");
+    const results = executeTckQuery(graph, "MATCH (n:L) RETURN n.num");
+    expect(results).toHaveLength(2);
+  });
 
   test("[11] Merge should be able to merge using property of bound node", () => {
     // Query requires MATCH...MERGE pattern which requires WITH...MATCH chaining
@@ -158,32 +143,23 @@ describe("Merge1 - Merge node", () => {
     expect(results[0]).toBe(42);
   });
 
-  test.fails(
-    "[12] Merge should be able to merge using property of freshly created node - unlabeled nodes not supported",
-    () => {
-      // Query: CREATE (a {num: 1}) MERGE ({v: a.num})
-      // Uses unlabeled nodes
-      const graph = createTckGraph();
-      executeTckQuery(graph, "CREATE (a {num: 1}) MERGE ({v: a.num})");
-      const results = executeTckQuery(graph, "MATCH (n) RETURN n.v");
-      expect(results).toHaveLength(1);
-      expect(results[0]).toBe(1);
-    },
-  );
+  test.fails("[12] Merge should be able to merge using property of freshly created node - unlabeled nodes not supported", () => {
+    // Query: CREATE (a {num: 1}) MERGE ({v: a.num})
+    // Uses unlabeled nodes
+    const graph = createTckGraph();
+    executeTckQuery(graph, "CREATE (a {num: 1}) MERGE ({v: a.num})");
+    const results = executeTckQuery(graph, "MATCH (n) RETURN n.v");
+    expect(results).toHaveLength(1);
+    expect(results[0]).toBe(1);
+  });
 
-  test.fails(
-    "[13] Merge should bind a path - named path syntax not supported",
-    () => {
-      // Query: MERGE p = (a {num: 1})
-      // Named path assignment (p = ...) not supported in grammar
-      const graph = createTckGraph();
-      const results = executeTckQuery(
-        graph,
-        "MERGE p = (a:A {num: 1}) RETURN p",
-      );
-      expect(results).toHaveLength(1);
-    },
-  );
+  test.fails("[13] Merge should bind a path - named path syntax not supported", () => {
+    // Query: MERGE p = (a {num: 1})
+    // Named path assignment (p = ...) not supported in grammar
+    const graph = createTckGraph();
+    const results = executeTckQuery(graph, "MERGE p = (a:A {num: 1}) RETURN p");
+    expect(results).toHaveLength(1);
+  });
 
   test("[14] Merges should not be able to match on deleted nodes", () => {
     // Query requires MATCH...DELETE...MERGE which is complex clause interoperation
@@ -195,18 +171,15 @@ describe("Merge1 - Merge node", () => {
     expect(results[0]).toBe("test");
   });
 
-  test.fails(
-    "[15] Fail when merge a node that is already bound - semantic validation not implemented",
-    () => {
-      // Query: MATCH (a) MERGE (a)
-      // Requires semantic analysis to detect variable already bound error
-      const graph = createTckGraph();
-      executeTckQuery(graph, "CREATE (:A)");
-      expect(() => {
-        executeTckQuery(graph, "MATCH (a:A) MERGE (a)");
-      }).toThrow();
-    },
-  );
+  test.fails("[15] Fail when merge a node that is already bound - semantic validation not implemented", () => {
+    // Query: MATCH (a) MERGE (a)
+    // Requires semantic analysis to detect variable already bound error
+    const graph = createTckGraph();
+    executeTckQuery(graph, "CREATE (:A)");
+    expect(() => {
+      executeTckQuery(graph, "MATCH (a:A) MERGE (a)");
+    }).toThrow();
+  });
 
   test("[16] Fail when using parameter as node predicate in MERGE", () => {
     // Query: MERGE (n $param)
@@ -217,17 +190,14 @@ describe("Merge1 - Merge node", () => {
     }).toThrow();
   });
 
-  test.fails(
-    "[17] Fail on merging node with null property - null property validation not implemented",
-    () => {
-      // Query: MERGE ({num: null})
-      // Also uses unlabeled nodes
-      const graph = createTckGraph();
-      expect(() => {
-        executeTckQuery(graph, "MERGE (:A {num: null})");
-      }).toThrow();
-    },
-  );
+  test.fails("[17] Fail on merging node with null property - null property validation not implemented", () => {
+    // Query: MERGE ({num: null})
+    // Also uses unlabeled nodes
+    const graph = createTckGraph();
+    expect(() => {
+      executeTckQuery(graph, "MERGE (:A {num: null})");
+    }).toThrow();
+  });
 
   // Custom tests for supported scenarios
   test("[custom] MERGE creates node when no match exists", () => {

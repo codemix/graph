@@ -4,9 +4,7 @@ import { parseQueryToSteps, ReadonlyGraphError } from "../index.js";
 test("parseQueryToSteps - postprocessor - should convert single return variable to object", () => {
   const { postprocess } = parseQueryToSteps("MATCH (c:Concept) RETURN c");
 
-  const row = [
-    { "@type": "Vertex", id: "Concept:123", properties: { name: "User" } },
-  ];
+  const row = [{ "@type": "Vertex", id: "Concept:123", properties: { name: "User" } }];
   const result = postprocess(row);
 
   expect(result).toEqual({
@@ -19,9 +17,7 @@ test("parseQueryToSteps - postprocessor - should convert single return variable 
 });
 
 test("parseQueryToSteps - postprocessor - should convert multiple return variables to object", () => {
-  const { postprocess } = parseQueryToSteps(
-    "MATCH (a:User)-[r:follows]->(b:User) RETURN a, r, b",
-  );
+  const { postprocess } = parseQueryToSteps("MATCH (a:User)-[r:follows]->(b:User) RETURN a, r, b");
 
   const row = [
     { "@type": "Vertex", id: "User:1", properties: { name: "Alice" } },
@@ -40,9 +36,7 @@ test("parseQueryToSteps - postprocessor - should convert multiple return variabl
 test("parseQueryToSteps - postprocessor - should handle queries with DISTINCT", () => {
   const { postprocess } = parseQueryToSteps("MATCH (u:User) RETURN DISTINCT u");
 
-  const row = [
-    { "@type": "Vertex", id: "User:1", properties: { name: "Alice" } },
-  ];
+  const row = [{ "@type": "Vertex", id: "User:1", properties: { name: "Alice" } }];
   const result = postprocess(row);
 
   expect(result).toEqual({
@@ -51,13 +45,9 @@ test("parseQueryToSteps - postprocessor - should handle queries with DISTINCT", 
 });
 
 test("parseQueryToSteps - postprocessor - should handle queries with ORDER BY and LIMIT", () => {
-  const { postprocess } = parseQueryToSteps(
-    "MATCH (u:User) RETURN u ORDER BY u.name LIMIT 10",
-  );
+  const { postprocess } = parseQueryToSteps("MATCH (u:User) RETURN u ORDER BY u.name LIMIT 10");
 
-  const row = [
-    { "@type": "Vertex", id: "User:1", properties: { name: "Alice" } },
-  ];
+  const row = [{ "@type": "Vertex", id: "User:1", properties: { name: "Alice" } }];
   const result = postprocess(row);
 
   expect(result).toEqual({
@@ -66,9 +56,7 @@ test("parseQueryToSteps - postprocessor - should handle queries with ORDER BY an
 });
 
 test("parseQueryToSteps - postprocessor - should group multiple properties from same variable", () => {
-  const { postprocess } = parseQueryToSteps(
-    "MATCH (c:Concept) RETURN c.name, c.description",
-  );
+  const { postprocess } = parseQueryToSteps("MATCH (c:Concept) RETURN c.name, c.description");
 
   const row = ["Organization", "A business entity"];
   const result = postprocess(row);
@@ -162,10 +150,9 @@ test("parseQueryToSteps - readonly - throws on MERGE", () => {
 
 test("parseQueryToSteps - readonly - throws on FOREACH", () => {
   expect(() => {
-    parseQueryToSteps(
-      "MATCH (u:User) FOREACH (x IN [1,2,3] | SET u.count = x) RETURN u",
-      { readonly: true },
-    );
+    parseQueryToSteps("MATCH (u:User) FOREACH (x IN [1,2,3] | SET u.count = x) RETURN u", {
+      readonly: true,
+    });
   }).toThrow(ReadonlyGraphError);
 });
 

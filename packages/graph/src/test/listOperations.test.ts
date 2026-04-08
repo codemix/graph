@@ -4,12 +4,7 @@ import { astToSteps } from "../astToSteps.js";
 import { Graph } from "../Graph.js";
 import { InMemoryGraphStorage } from "../GraphStorage.js";
 import { createTraverser, setQueryParams, clearQueryParams } from "../Steps.js";
-import type {
-  Query,
-  ListIndexExpression,
-  SliceExpression,
-  ListLiteralExpr,
-} from "../AST.js";
+import type { Query, ListIndexExpression, SliceExpression, ListLiteralExpr } from "../AST.js";
 import type { GraphSchema } from "../GraphSchema.js";
 import { StandardSchemaV1 } from "@standard-schema/spec";
 
@@ -50,9 +45,7 @@ describe("List Operations - Indexing and Slicing", () => {
       // Property access with index is now an ExpressionCondition
       expect(condition.type).toBe("ExpressionCondition");
       if (condition.type === "ExpressionCondition") {
-        expect((condition.left as ListIndexExpression).type).toBe(
-          "ListIndexExpression",
-        );
+        expect((condition.left as ListIndexExpression).type).toBe("ListIndexExpression");
         const indexExpr = condition.left as ListIndexExpression;
         expect((indexExpr.list as any).type).toBe("PropertyAccess");
         expect(indexExpr.index).toBe(0);
@@ -66,9 +59,7 @@ describe("List Operations - Indexing and Slicing", () => {
       const condition = ast.matches[0]!.where!.condition;
       expect(condition.type).toBe("ExpressionCondition");
       if (condition.type === "ExpressionCondition") {
-        expect((condition.left as ListIndexExpression).type).toBe(
-          "ListIndexExpression",
-        );
+        expect((condition.left as ListIndexExpression).type).toBe("ListIndexExpression");
         const indexExpr = condition.left as ListIndexExpression;
         expect((indexExpr.list as any).type).toBe("ListLiteral");
         expect(indexExpr.index).toBe(0);
@@ -183,9 +174,7 @@ describe("List Operations - Indexing and Slicing", () => {
       expect(condition.type).toBe("ExpressionCondition");
       if (condition.type === "ExpressionCondition") {
         // Outer is ListIndexExpression
-        expect((condition.left as ListIndexExpression).type).toBe(
-          "ListIndexExpression",
-        );
+        expect((condition.left as ListIndexExpression).type).toBe("ListIndexExpression");
         const outer = condition.left as ListIndexExpression;
         expect(outer.index).toBe(1);
         // Inner is also ListIndexExpression
@@ -201,9 +190,7 @@ describe("List Operations - Indexing and Slicing", () => {
       expect(condition.type).toBe("ExpressionCondition");
       if (condition.type === "ExpressionCondition") {
         // Outer is ListIndexExpression
-        expect((condition.left as ListIndexExpression).type).toBe(
-          "ListIndexExpression",
-        );
+        expect((condition.left as ListIndexExpression).type).toBe("ListIndexExpression");
         const outer = condition.left as ListIndexExpression;
         // Inner is SliceExpression
         expect((outer.list as any).type).toBe("SliceExpression");

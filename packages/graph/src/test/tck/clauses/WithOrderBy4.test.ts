@@ -45,45 +45,39 @@ describe("WithOrderBy4 - Order by in combination with projection and aliasing", 
     expect(results[2]).toEqual([3, 33]);
   });
 
-  test.fails(
-    "[3] Sort by two projected expressions - ORDER BY expression evaluation not supported at runtime",
-    () => {
-      const graph = createTckGraph();
-      executeTckQuery(
-        graph,
-        "CREATE (:A {num: 1, num2: 10}), (:A {num: 2, num2: 20}), (:A {num: 3, num2: 30}), (:A {num: 4, num2: 40}), (:A {num: 5, num2: 50})",
-      );
-      const results = executeTckQuery(
-        graph,
-        "MATCH (a:A) WITH a, a.num + a.num2 AS total, a.num2 % 3 AS remainder ORDER BY a.num2 % 3, a.num + a.num2 LIMIT 3 RETURN a.num AS num, total, remainder",
-      );
-      expect(results).toHaveLength(3);
-      expect(results[0]).toEqual([3, 33, 0]);
-      expect(results[1]).toEqual([1, 11, 1]);
-      expect(results[2]).toEqual([4, 44, 1]);
-    },
-  );
+  test.fails("[3] Sort by two projected expressions - ORDER BY expression evaluation not supported at runtime", () => {
+    const graph = createTckGraph();
+    executeTckQuery(
+      graph,
+      "CREATE (:A {num: 1, num2: 10}), (:A {num: 2, num2: 20}), (:A {num: 3, num2: 30}), (:A {num: 4, num2: 40}), (:A {num: 5, num2: 50})",
+    );
+    const results = executeTckQuery(
+      graph,
+      "MATCH (a:A) WITH a, a.num + a.num2 AS total, a.num2 % 3 AS remainder ORDER BY a.num2 % 3, a.num + a.num2 LIMIT 3 RETURN a.num AS num, total, remainder",
+    );
+    expect(results).toHaveLength(3);
+    expect(results[0]).toEqual([3, 33, 0]);
+    expect(results[1]).toEqual([1, 11, 1]);
+    expect(results[2]).toEqual([4, 44, 1]);
+  });
 
   // [4] Sort by one projected expression and one alias with order priority different than projection
   // Requires runtime evaluation of expressions in ORDER BY (a.num2 % 3), not just alias lookup
-  test.fails(
-    "[4] Sort by projected expression and alias - ORDER BY expression evaluation not supported",
-    () => {
-      const graph = createTckGraph();
-      executeTckQuery(
-        graph,
-        "CREATE (:A {num: 1, num2: 10}), (:A {num: 2, num2: 20}), (:A {num: 3, num2: 30}), (:A {num: 4, num2: 40}), (:A {num: 5, num2: 50})",
-      );
-      const results = executeTckQuery(
-        graph,
-        "MATCH (a:A) WITH a, a.num + a.num2 AS sum, a.num2 % 3 AS mod ORDER BY a.num2 % 3, sum LIMIT 3 RETURN a.num AS num, sum, mod",
-      );
-      expect(results).toHaveLength(3);
-      expect(results[0]).toEqual([3, 33, 0]);
-      expect(results[1]).toEqual([1, 11, 1]);
-      expect(results[2]).toEqual([4, 44, 1]);
-    },
-  );
+  test.fails("[4] Sort by projected expression and alias - ORDER BY expression evaluation not supported", () => {
+    const graph = createTckGraph();
+    executeTckQuery(
+      graph,
+      "CREATE (:A {num: 1, num2: 10}), (:A {num: 2, num2: 20}), (:A {num: 3, num2: 30}), (:A {num: 4, num2: 40}), (:A {num: 5, num2: 50})",
+    );
+    const results = executeTckQuery(
+      graph,
+      "MATCH (a:A) WITH a, a.num + a.num2 AS sum, a.num2 % 3 AS mod ORDER BY a.num2 % 3, sum LIMIT 3 RETURN a.num AS num, sum, mod",
+    );
+    expect(results).toHaveLength(3);
+    expect(results[0]).toEqual([3, 33, 0]);
+    expect(results[1]).toEqual([1, 11, 1]);
+    expect(results[2]).toEqual([4, 44, 1]);
+  });
 
   // [5] Sort by one alias and one projected expression with order priority different than projection
   test("[5] Sort by alias and projected expression", () => {
@@ -188,103 +182,79 @@ describe("WithOrderBy4 - Order by in combination with projection and aliasing", 
 
   // [10] Sort by non-projected expression containing alias containing shadowed variable
   // Requires runtime evaluation of expressions in ORDER BY (x * -1), not just alias lookup
-  test.fails(
-    "[10] Sort by expression containing alias - ORDER BY expression evaluation not supported",
-    () => {
-      const graph = createTckGraph();
-      executeTckQuery(
-        graph,
-        "CREATE (:A {num: 1, num2: 10}), (:A {num: 2, num2: 20}), (:A {num: 3, num2: 30}), (:A {num: 4, num2: 40}), (:A {num: 5, num2: 50})",
-      );
-      const results = executeTckQuery(
-        graph,
-        "MATCH (a:A) WITH a.num2 AS x WITH x % 3 AS x ORDER BY x * -1 LIMIT 3 RETURN x",
-      );
-      expect(results).toHaveLength(3);
-      // Sorted by x * -1 descending (0, -1, -1, -2, -2) -> ascending order of x * -1 is -2, -2, -1
-      expect(results[0]).toEqual([2]);
-      expect(results[1]).toEqual([2]);
-      expect(results[2]).toEqual([1]);
-    },
-  );
+  test.fails("[10] Sort by expression containing alias - ORDER BY expression evaluation not supported", () => {
+    const graph = createTckGraph();
+    executeTckQuery(
+      graph,
+      "CREATE (:A {num: 1, num2: 10}), (:A {num: 2, num2: 20}), (:A {num: 3, num2: 30}), (:A {num: 4, num2: 40}), (:A {num: 5, num2: 50})",
+    );
+    const results = executeTckQuery(
+      graph,
+      "MATCH (a:A) WITH a.num2 AS x WITH x % 3 AS x ORDER BY x * -1 LIMIT 3 RETURN x",
+    );
+    expect(results).toHaveLength(3);
+    // Sorted by x * -1 descending (0, -1, -1, -2, -2) -> ascending order of x * -1 is -2, -2, -1
+    expect(results[0]).toEqual([2]);
+    expect(results[1]).toEqual([2]);
+    expect(results[2]).toEqual([1]);
+  });
 
   // [11] Sort by an aggregate projection
-  test.fails(
-    "[11] Sort by an aggregate projection - aggregation in ORDER BY not supported",
-    () => {
-      const graph = createTckGraph();
-      executeTckQuery(
-        graph,
-        "CREATE (:A {num: 1, num2: 10}), (:A {num: 2, num2: 20}), (:A {num: 3, num2: 30}), (:A {num: 4, num2: 40}), (:A {num: 5, num2: 50})",
-      );
-      const results = executeTckQuery(
-        graph,
-        "MATCH (a:A) WITH a.num2 % 3 AS mod, sum(a.num + a.num2) AS s ORDER BY sum(a.num + a.num2) LIMIT 2 RETURN mod, s",
-      );
-      expect(results).toHaveLength(2);
-    },
-  );
+  test.fails("[11] Sort by an aggregate projection - aggregation in ORDER BY not supported", () => {
+    const graph = createTckGraph();
+    executeTckQuery(
+      graph,
+      "CREATE (:A {num: 1, num2: 10}), (:A {num: 2, num2: 20}), (:A {num: 3, num2: 30}), (:A {num: 4, num2: 40}), (:A {num: 5, num2: 50})",
+    );
+    const results = executeTckQuery(
+      graph,
+      "MATCH (a:A) WITH a.num2 % 3 AS mod, sum(a.num + a.num2) AS s ORDER BY sum(a.num + a.num2) LIMIT 2 RETURN mod, s",
+    );
+    expect(results).toHaveLength(2);
+  });
 
   // [12] Sort by an aliased aggregate projection
-  test.fails(
-    "[12] Sort by an aliased aggregate projection - ORDER BY alias not supported",
-    () => {
-      const graph = createTckGraph();
-      executeTckQuery(
-        graph,
-        "CREATE (:A {num: 1, num2: 10}), (:A {num: 2, num2: 20}), (:A {num: 3, num2: 30}), (:A {num: 4, num2: 40}), (:A {num: 5, num2: 50})",
-      );
-      const results = executeTckQuery(
-        graph,
-        "MATCH (a:A) WITH a.num2 % 3 AS mod, sum(a.num + a.num2) AS s ORDER BY s LIMIT 2 RETURN mod, s",
-      );
-      expect(results).toHaveLength(2);
-    },
-  );
+  test.fails("[12] Sort by an aliased aggregate projection - ORDER BY alias not supported", () => {
+    const graph = createTckGraph();
+    executeTckQuery(
+      graph,
+      "CREATE (:A {num: 1, num2: 10}), (:A {num: 2, num2: 20}), (:A {num: 3, num2: 30}), (:A {num: 4, num2: 40}), (:A {num: 5, num2: 50})",
+    );
+    const results = executeTckQuery(
+      graph,
+      "MATCH (a:A) WITH a.num2 % 3 AS mod, sum(a.num + a.num2) AS s ORDER BY s LIMIT 2 RETURN mod, s",
+    );
+    expect(results).toHaveLength(2);
+  });
 
   // [13] Fail on sorting by non-projected aggregation on a variable
-  test.fails(
-    "[13] Fail on sorting by non-projected aggregation - semantic validation not implemented",
-    () => {
-      const graph = createTckGraph();
-      executeTckQuery(graph, "CREATE (:A {num: 1}), (:A {num: 2})");
-      expect(() => {
-        executeTckQuery(
-          graph,
-          "MATCH (a:A) WITH a.num AS num ORDER BY count(a) RETURN num",
-        );
-      }).toThrow();
-    },
-  );
+  test.fails("[13] Fail on sorting by non-projected aggregation - semantic validation not implemented", () => {
+    const graph = createTckGraph();
+    executeTckQuery(graph, "CREATE (:A {num: 1}), (:A {num: 2})");
+    expect(() => {
+      executeTckQuery(graph, "MATCH (a:A) WITH a.num AS num ORDER BY count(a) RETURN num");
+    }).toThrow();
+  });
 
   // [14] Fail on sorting by non-projected aggregation on an expression
-  test.fails(
-    "[14] Fail on sorting by non-projected aggregation - semantic validation not implemented",
-    () => {
-      const graph = createTckGraph();
-      executeTckQuery(graph, "CREATE (:A {num: 1}), (:A {num: 2})");
-      expect(() => {
-        executeTckQuery(
-          graph,
-          "MATCH (a:A) WITH a.num AS num ORDER BY sum(a.num * 2) RETURN num",
-        );
-      }).toThrow();
-    },
-  );
+  test.fails("[14] Fail on sorting by non-projected aggregation - semantic validation not implemented", () => {
+    const graph = createTckGraph();
+    executeTckQuery(graph, "CREATE (:A {num: 1}), (:A {num: 2})");
+    expect(() => {
+      executeTckQuery(graph, "MATCH (a:A) WITH a.num AS num ORDER BY sum(a.num * 2) RETURN num");
+    }).toThrow();
+  });
 
   // [15] Sort by aliased aggregate projection allows subsequent matching - uses WITH...MATCH chaining
-  test.fails(
-    "[15] Sort by aliased aggregate allows subsequent matching - WITH...MATCH chaining not supported",
-    () => {
-      const graph = createTckGraph();
-      executeTckQuery(graph, "CREATE (:A)-[:REL]->(:X), (:A)-[:REL]->(:X)");
-      const results = executeTckQuery(
-        graph,
-        "MATCH (a:A)-[r:REL]->(b:X) WITH a, r, b, count(*) AS c ORDER BY c MATCH (a)-[r]->(b) RETURN r",
-      );
-      expect(results).toHaveLength(2);
-    },
-  );
+  test.fails("[15] Sort by aliased aggregate allows subsequent matching - WITH...MATCH chaining not supported", () => {
+    const graph = createTckGraph();
+    executeTckQuery(graph, "CREATE (:A)-[:REL]->(:X), (:A)-[:REL]->(:X)");
+    const results = executeTckQuery(
+      graph,
+      "MATCH (a:A)-[r:REL]->(b:X) WITH a, r, b, count(*) AS c ORDER BY c MATCH (a)-[r]->(b) RETURN r",
+    );
+    expect(results).toHaveLength(2);
+  });
 
   // [16] Handle constants and parameters - parameters not supported
   test("[16] Handle constants and parameters - parameters not supported", () => {
@@ -301,10 +271,7 @@ describe("WithOrderBy4 - Order by in combination with projection and aliasing", 
   // [17] Handle projected variables in ORDER BY with aggregation
   test("[17] Handle projected variables with aggregation - aggregation in ORDER BY not supported", () => {
     const graph = createTckGraph();
-    executeTckQuery(
-      graph,
-      "CREATE (:Person {age: 30})-[:KNOWS]->(:Person {age: 25})",
-    );
+    executeTckQuery(graph, "CREATE (:Person {age: 30})-[:KNOWS]->(:Person {age: 25})");
     const results = executeTckQuery(
       graph,
       "MATCH (me:Person)-[:KNOWS]->(you:Person) WITH me.age AS age, you ORDER BY age, age + count(you.age) RETURN age",
@@ -315,10 +282,7 @@ describe("WithOrderBy4 - Order by in combination with projection and aliasing", 
   // [18] Handle projected property accesses in ORDER BY with aggregation
   test("[18] Handle property accesses with aggregation - aggregation in ORDER BY not supported", () => {
     const graph = createTckGraph();
-    executeTckQuery(
-      graph,
-      "CREATE (:Person {age: 30})-[:KNOWS]->(:Person {age: 25})",
-    );
+    executeTckQuery(graph, "CREATE (:Person {age: 30})-[:KNOWS]->(:Person {age: 25})");
     const results = executeTckQuery(
       graph,
       "MATCH (me:Person)-[:KNOWS]->(you:Person) WITH me, you ORDER BY me.age + count(you.age) RETURN me",
@@ -327,40 +291,28 @@ describe("WithOrderBy4 - Order by in combination with projection and aliasing", 
   });
 
   // [19] Fail if non-projected variables used in ORDER BY with aggregation
-  test.fails(
-    "[19] Fail if non-projected variables used - semantic validation not implemented",
-    () => {
-      const graph = createTckGraph();
+  test.fails("[19] Fail if non-projected variables used - semantic validation not implemented", () => {
+    const graph = createTckGraph();
+    executeTckQuery(graph, "CREATE (:Person {age: 30})-[:KNOWS]->(:Person {age: 25})");
+    expect(() => {
       executeTckQuery(
         graph,
-        "CREATE (:Person {age: 30})-[:KNOWS]->(:Person {age: 25})",
+        "MATCH (me:Person)-[:KNOWS]->(you:Person) WITH me.age AS age ORDER BY you.age + count(you) RETURN age",
       );
-      expect(() => {
-        executeTckQuery(
-          graph,
-          "MATCH (me:Person)-[:KNOWS]->(you:Person) WITH me.age AS age ORDER BY you.age + count(you) RETURN age",
-        );
-      }).toThrow();
-    },
-  );
+    }).toThrow();
+  });
 
   // [20] Fail if complex expressions used in ORDER BY with aggregation
-  test.fails(
-    "[20] Fail if complex expressions with aggregation - semantic validation not implemented",
-    () => {
-      const graph = createTckGraph();
+  test.fails("[20] Fail if complex expressions with aggregation - semantic validation not implemented", () => {
+    const graph = createTckGraph();
+    executeTckQuery(graph, "CREATE (:Person {age: 30})-[:KNOWS]->(:Person {age: 25})");
+    expect(() => {
       executeTckQuery(
         graph,
-        "CREATE (:Person {age: 30})-[:KNOWS]->(:Person {age: 25})",
+        "MATCH (me:Person)-[:KNOWS]->(you:Person) WITH me.age AS age, you ORDER BY age + you.age + count(you) RETURN age",
       );
-      expect(() => {
-        executeTckQuery(
-          graph,
-          "MATCH (me:Person)-[:KNOWS]->(you:Person) WITH me.age AS age, you ORDER BY age + you.age + count(you) RETURN age",
-        );
-      }).toThrow();
-    },
-  );
+    }).toThrow();
+  });
 
   // Custom tests for supported patterns
   test("[custom-1] WITH node projection with ORDER BY on property expression", () => {
@@ -370,10 +322,7 @@ describe("WithOrderBy4 - Order by in combination with projection and aliasing", 
       `CREATE (:A {num: 3, val: 30}), (:A {num: 1, val: 10}), (:A {num: 2, val: 20})`,
     );
 
-    const results = executeTckQuery(
-      graph,
-      `MATCH (a:A) WITH a ORDER BY a.num RETURN a.val AS val`,
-    );
+    const results = executeTckQuery(graph, `MATCH (a:A) WITH a ORDER BY a.num RETURN a.val AS val`);
     expect(results.length).toBe(3);
     // Ordered by num (1,2,3) so vals are (10, 20, 30)
     expect(results).toEqual([10, 20, 30]);
@@ -381,10 +330,7 @@ describe("WithOrderBy4 - Order by in combination with projection and aliasing", 
 
   test("[custom-2] WITH ORDER BY then project multiple values", () => {
     const graph = createTckGraph();
-    executeTckQuery(
-      graph,
-      `CREATE (:A {x: 3, y: 'c'}), (:A {x: 1, y: 'a'}), (:A {x: 2, y: 'b'})`,
-    );
+    executeTckQuery(graph, `CREATE (:A {x: 3, y: 'c'}), (:A {x: 1, y: 'a'}), (:A {x: 2, y: 'b'})`);
 
     const results = executeTckQuery(
       graph,
@@ -400,15 +346,9 @@ describe("WithOrderBy4 - Order by in combination with projection and aliasing", 
 
   test("[custom-3] WITH ORDER BY property then return property", () => {
     const graph = createTckGraph();
-    executeTckQuery(
-      graph,
-      `CREATE (:A {num: 3}), (:A {num: 1}), (:A {num: 2})`,
-    );
+    executeTckQuery(graph, `CREATE (:A {num: 3}), (:A {num: 1}), (:A {num: 2})`);
 
-    const results = executeTckQuery(
-      graph,
-      `MATCH (a:A) WITH a ORDER BY a.num RETURN a.num AS x`,
-    );
+    const results = executeTckQuery(graph, `MATCH (a:A) WITH a ORDER BY a.num RETURN a.num AS x`);
     expect(results.length).toBe(3);
     expect(results).toEqual([1, 2, 3]);
   });
@@ -432,10 +372,7 @@ describe("WithOrderBy4 - Order by in combination with projection and aliasing", 
 
   test("[custom-5] WITH DISTINCT on property then ORDER BY", () => {
     const graph = createTckGraph();
-    executeTckQuery(
-      graph,
-      `CREATE (:A {num: 1}), (:A {num: 2}), (:A {num: 1}), (:A {num: 3})`,
-    );
+    executeTckQuery(graph, `CREATE (:A {num: 1}), (:A {num: 2}), (:A {num: 1}), (:A {num: 3})`);
 
     const results = executeTckQuery(
       graph,

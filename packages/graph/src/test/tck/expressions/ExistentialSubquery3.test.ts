@@ -12,106 +12,97 @@ import { createTckGraph, executeTckQuery } from "../tckHelpers.js";
 describe("ExistentialSubquery3 - Nested existential subquery", () => {
   // Original TCK scenarios - all use nested subquery syntax which is not supported
 
-  test.fails(
-    "[1] Nested simple existential subquery - nested subqueries not supported",
-    () => {
-      // Original TCK:
-      // CREATE (a:A {prop: 1})-[:R]->(b:B {prop: 1}), (a)-[:R]->(:C {prop: 2}), (a)-[:R]->(:D {prop: 3})
-      // MATCH (n) WHERE exists {
-      //   MATCH (m) WHERE exists {
-      //     (n)-[]->(m) WHERE n.prop = m.prop
-      //   }
-      //   RETURN true
-      // } RETURN n
-      // Expected: (:A {prop:1})
-      //
-      // Nested existential subqueries are not supported
-      // Grammar only supports single-level EXISTS { pattern [WHERE condition] }
-      const graph = createTckGraph();
-      executeTckQuery(
-        graph,
-        "CREATE (a:A {prop: 1})-[:R]->(b:B {prop: 1}), (a)-[:R]->(:C {prop: 2}), (a)-[:R]->(:D {prop: 3})",
-      );
+  test.fails("[1] Nested simple existential subquery - nested subqueries not supported", () => {
+    // Original TCK:
+    // CREATE (a:A {prop: 1})-[:R]->(b:B {prop: 1}), (a)-[:R]->(:C {prop: 2}), (a)-[:R]->(:D {prop: 3})
+    // MATCH (n) WHERE exists {
+    //   MATCH (m) WHERE exists {
+    //     (n)-[]->(m) WHERE n.prop = m.prop
+    //   }
+    //   RETURN true
+    // } RETURN n
+    // Expected: (:A {prop:1})
+    //
+    // Nested existential subqueries are not supported
+    // Grammar only supports single-level EXISTS { pattern [WHERE condition] }
+    const graph = createTckGraph();
+    executeTckQuery(
+      graph,
+      "CREATE (a:A {prop: 1})-[:R]->(b:B {prop: 1}), (a)-[:R]->(:C {prop: 2}), (a)-[:R]->(:D {prop: 3})",
+    );
 
-      const results = executeTckQuery(
-        graph,
-        `MATCH (n) WHERE exists {
+    const results = executeTckQuery(
+      graph,
+      `MATCH (n) WHERE exists {
         MATCH (m) WHERE exists {
           (n)-[]->(m) WHERE n.prop = m.prop
         }
         RETURN true
       } RETURN n`,
-      );
+    );
 
-      expect(results).toHaveLength(1);
-    },
-  );
+    expect(results).toHaveLength(1);
+  });
 
-  test.fails(
-    "[2] Nested full existential subquery - nested subqueries not supported",
-    () => {
-      // Original TCK:
-      // MATCH (n) WHERE exists {
-      //   MATCH (m) WHERE exists {
-      //     MATCH (l)<-[:R]-(n)-[:R]->(m) RETURN true
-      //   }
-      //   RETURN true
-      // } RETURN n
-      // Expected: (:A {prop:1})
-      //
-      // Nested existential subqueries are not supported
-      const graph = createTckGraph();
-      executeTckQuery(
-        graph,
-        "CREATE (a:A {prop: 1})-[:R]->(b:B {prop: 1}), (a)-[:R]->(:C {prop: 2}), (a)-[:R]->(:D {prop: 3})",
-      );
+  test.fails("[2] Nested full existential subquery - nested subqueries not supported", () => {
+    // Original TCK:
+    // MATCH (n) WHERE exists {
+    //   MATCH (m) WHERE exists {
+    //     MATCH (l)<-[:R]-(n)-[:R]->(m) RETURN true
+    //   }
+    //   RETURN true
+    // } RETURN n
+    // Expected: (:A {prop:1})
+    //
+    // Nested existential subqueries are not supported
+    const graph = createTckGraph();
+    executeTckQuery(
+      graph,
+      "CREATE (a:A {prop: 1})-[:R]->(b:B {prop: 1}), (a)-[:R]->(:C {prop: 2}), (a)-[:R]->(:D {prop: 3})",
+    );
 
-      const results = executeTckQuery(
-        graph,
-        `MATCH (n) WHERE exists {
+    const results = executeTckQuery(
+      graph,
+      `MATCH (n) WHERE exists {
         MATCH (m) WHERE exists {
           MATCH (l)<-[:R]-(n)-[:R]->(m) RETURN true
         }
         RETURN true
       } RETURN n`,
-      );
+    );
 
-      expect(results).toHaveLength(1);
-    },
-  );
+    expect(results).toHaveLength(1);
+  });
 
-  test.fails(
-    "[3] Nested full existential subquery with pattern predicate - pattern predicates not supported",
-    () => {
-      // Original TCK:
-      // MATCH (n) WHERE exists {
-      //   MATCH (m) WHERE exists {
-      //     MATCH (l) WHERE (l)<-[:R]-(n)-[:R]->(m) RETURN true
-      //   }
-      //   RETURN true
-      // } RETURN n
-      // Expected: (:A {prop:1})
-      //
-      // Both nested subqueries and pattern predicates in WHERE are not supported
-      const graph = createTckGraph();
-      executeTckQuery(
-        graph,
-        "CREATE (a:A {prop: 1})-[:R]->(b:B {prop: 1}), (a)-[:R]->(:C {prop: 2}), (a)-[:R]->(:D {prop: 3})",
-      );
+  test.fails("[3] Nested full existential subquery with pattern predicate - pattern predicates not supported", () => {
+    // Original TCK:
+    // MATCH (n) WHERE exists {
+    //   MATCH (m) WHERE exists {
+    //     MATCH (l) WHERE (l)<-[:R]-(n)-[:R]->(m) RETURN true
+    //   }
+    //   RETURN true
+    // } RETURN n
+    // Expected: (:A {prop:1})
+    //
+    // Both nested subqueries and pattern predicates in WHERE are not supported
+    const graph = createTckGraph();
+    executeTckQuery(
+      graph,
+      "CREATE (a:A {prop: 1})-[:R]->(b:B {prop: 1}), (a)-[:R]->(:C {prop: 2}), (a)-[:R]->(:D {prop: 3})",
+    );
 
-      const results = executeTckQuery(
-        graph,
-        `MATCH (n) WHERE exists {
+    const results = executeTckQuery(
+      graph,
+      `MATCH (n) WHERE exists {
         MATCH (m) WHERE exists {
           MATCH (l) WHERE (l)<-[:R]-(n)-[:R]->(m) RETURN true
         }
         RETURN true
       } RETURN n`,
-      );
+    );
 
-      expect(results).toHaveLength(1);
-    },
-  );
+    expect(results).toHaveLength(1);
+  });
 
   // Custom tests demonstrating equivalent functionality using supported pattern syntax
 
@@ -124,10 +115,7 @@ describe("ExistentialSubquery3 - Nested existential subquery", () => {
 
     // Find nodes that have a 2-hop path
     // This is a simpler alternative to nested EXISTS
-    const results = executeTckQuery(
-      graph,
-      `MATCH (n:A)-[:R]->(m:B)-[:R]->(o:C) RETURN n.name`,
-    );
+    const results = executeTckQuery(graph, `MATCH (n:A)-[:R]->(m:B)-[:R]->(o:C) RETURN n.name`);
 
     expect(results).toHaveLength(1);
     expect(results[0]).toBe("root");
@@ -183,10 +171,7 @@ describe("ExistentialSubquery3 - Nested existential subquery", () => {
               (a)-[:R]->(:D {name: 'd1'})`,
     );
     // Create node with fewer connections
-    executeTckQuery(
-      graph,
-      `CREATE (:A {name: 'spoke'})-[:R]->(:B {name: 'b2'})`,
-    );
+    executeTckQuery(graph, `CREATE (:A {name: 'spoke'})-[:R]->(:B {name: 'b2'})`);
 
     // Verify nodes with connections to both B and C labels
     const resultsB = executeTckQuery(

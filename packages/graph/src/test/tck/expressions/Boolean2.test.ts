@@ -121,23 +121,20 @@ describe("Boolean2 - OR logical operations", () => {
     }
   });
 
-  test.fails(
-    "[5] Disjunction is commutative on null - UNWIND with null and complex expressions not supported",
-    () => {
-      const graph = createTckGraph();
-      const results = executeTckQuery(
-        graph,
-        `UNWIND [true, false, null] AS a
+  test.fails("[5] Disjunction is commutative on null - UNWIND with null and complex expressions not supported", () => {
+    const graph = createTckGraph();
+    const results = executeTckQuery(
+      graph,
+      `UNWIND [true, false, null] AS a
        UNWIND [true, false, null] AS b
        WITH a, b WHERE a IS NULL OR b IS NULL
        RETURN a, b, (a OR b) IS NULL = (b OR a) IS NULL AS result`,
-      );
-      for (const r of results) {
-        const result = (r as unknown[])[2];
-        expect(result).toBe(true);
-      }
-    },
-  );
+    );
+    for (const r of results) {
+      const result = (r as unknown[])[2];
+      expect(result).toBe(true);
+    }
+  });
 
   test("[6] Disjunction is associative on non-null", () => {
     // Original TCK:
@@ -161,42 +158,33 @@ describe("Boolean2 - OR logical operations", () => {
     }
   });
 
-  test.fails(
-    "[7] Disjunction is associative on null - UNWIND with null and complex expressions not supported",
-    () => {
-      const graph = createTckGraph();
-      const results = executeTckQuery(
-        graph,
-        `UNWIND [true, false, null] AS a
+  test.fails("[7] Disjunction is associative on null - UNWIND with null and complex expressions not supported", () => {
+    const graph = createTckGraph();
+    const results = executeTckQuery(
+      graph,
+      `UNWIND [true, false, null] AS a
        UNWIND [true, false, null] AS b
        UNWIND [true, false, null] AS c
        WITH a, b, c WHERE a IS NULL OR b IS NULL OR c IS NULL
        RETURN a, b, c, (a OR (b OR c)) IS NULL = ((a OR b) OR c) IS NULL AS result`,
-      );
-      for (const r of results) {
-        const result = (r as unknown[])[3];
-        expect(result).toBe(true);
-      }
-    },
-  );
+    );
+    for (const r of results) {
+      const result = (r as unknown[])[3];
+      expect(result).toBe(true);
+    }
+  });
 
-  test.fails(
-    "[8] Fail on disjunction of at least one non-booleans - error validation not implemented",
-    () => {
-      const graph = createTckGraph();
-      expect(() => executeTckQuery(graph, "RETURN 123 OR true")).toThrow();
-    },
-  );
+  test.fails("[8] Fail on disjunction of at least one non-booleans - error validation not implemented", () => {
+    const graph = createTckGraph();
+    expect(() => executeTckQuery(graph, "RETURN 123 OR true")).toThrow();
+  });
 
   // Custom tests demonstrating OR behavior in WHERE clause
   test("[custom-1] OR in WHERE clause with property comparisons", () => {
     const graph = createTckGraph();
     executeTckQuery(graph, "CREATE (:A {x: 1}), (:A {x: 2}), (:A {x: 3})");
 
-    const results = executeTckQuery(
-      graph,
-      "MATCH (n:A) WHERE n.x = 1 OR n.x = 2 RETURN n.x",
-    );
+    const results = executeTckQuery(graph, "MATCH (n:A) WHERE n.x = 1 OR n.x = 2 RETURN n.x");
 
     expect(results).toHaveLength(2);
     const values = results
@@ -223,10 +211,7 @@ describe("Boolean2 - OR logical operations", () => {
 
   test("[custom-3] Multiple OR conditions", () => {
     const graph = createTckGraph();
-    executeTckQuery(
-      graph,
-      "CREATE (:A {num: 1}), (:A {num: 5}), (:A {num: 10}), (:A {num: 15})",
-    );
+    executeTckQuery(graph, "CREATE (:A {num: 1}), (:A {num: 5}), (:A {num: 10}), (:A {num: 15})");
 
     const results = executeTckQuery(
       graph,
@@ -242,10 +227,7 @@ describe("Boolean2 - OR logical operations", () => {
 
   test("[custom-4] OR with AND precedence", () => {
     const graph = createTckGraph();
-    executeTckQuery(
-      graph,
-      "CREATE (:A {a: 1, b: 2}), (:A {a: 1, b: 3}), (:A {a: 2, b: 2})",
-    );
+    executeTckQuery(graph, "CREATE (:A {a: 1, b: 2}), (:A {a: 1, b: 3}), (:A {a: 2, b: 2})");
 
     // a = 1 AND b = 2 should match first node
     // a = 2 AND b = 2 should match third node

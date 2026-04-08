@@ -20,16 +20,12 @@ function makeType<T>(_defaultValue: T): StandardSchemaV1<T> {
 
 // Helper to extract nodes from a Pattern
 function getNodes(pattern: Pattern): NodePattern[] {
-  return pattern.elements.filter(
-    (e): e is NodePattern => e.type === "NodePattern",
-  );
+  return pattern.elements.filter((e): e is NodePattern => e.type === "NodePattern");
 }
 
 // Helper to extract edges from a Pattern
 function getEdges(pattern: Pattern): EdgePattern[] {
-  return pattern.elements.filter(
-    (e): e is EdgePattern => e.type === "EdgePattern",
-  );
+  return pattern.elements.filter((e): e is EdgePattern => e.type === "EdgePattern");
 }
 
 describe("Backtick-quoted identifier grammar parsing", () => {
@@ -202,8 +198,7 @@ describe("Backtick-quoted identifier grammar parsing", () => {
 
   describe("Function identifiers", () => {
     test("parses backtick-quoted function name", () => {
-      const query =
-        "MATCH (n:Person) WHERE `toLower`(n.name) = 'alice' RETURN n";
+      const query = "MATCH (n:Person) WHERE `toLower`(n.name) = 'alice' RETURN n";
       const ast = parse(query) as Query;
 
       // Should parse without error - function invocation with backtick name
@@ -292,8 +287,7 @@ describe("Backtick identifier query execution", () => {
   });
 
   test("queries with backtick-quoted property name", () => {
-    const query =
-      "MATCH (n:Person) WHERE n.`first name` = 'Alice' RETURN n.`first name`";
+    const query = "MATCH (n:Person) WHERE n.`first name` = 'Alice' RETURN n.`first name`";
     const ast = parse(query) as Query;
     const steps = astToSteps(ast);
     const traverser = createTraverser(steps);
@@ -316,8 +310,7 @@ describe("Backtick identifier query execution", () => {
   });
 
   test("queries with backtick property containing dash", () => {
-    const query =
-      "MATCH (n:Person) WHERE n.`prop-with-dash` = 'value1' RETURN n.`first name`";
+    const query = "MATCH (n:Person) WHERE n.`prop-with-dash` = 'value1' RETURN n.`first name`";
     const ast = parse(query) as Query;
     const steps = astToSteps(ast);
     const traverser = createTraverser(steps);
@@ -330,8 +323,7 @@ describe("Backtick identifier query execution", () => {
   test("queries with parameter with backtick name", () => {
     setQueryParams({ "first name": "Alice" });
 
-    const query =
-      "MATCH (n:Person) WHERE n.`first name` = $`first name` RETURN n.`last name`";
+    const query = "MATCH (n:Person) WHERE n.`first name` = $`first name` RETURN n.`last name`";
     const ast = parse(query) as Query;
     const steps = astToSteps(ast);
     const traverser = createTraverser(steps);
@@ -374,8 +366,7 @@ describe("Backtick identifier SET/CREATE operations", () => {
   });
 
   test("SET with backtick-quoted property name", () => {
-    const query =
-      "MATCH (n:Person) SET n.`full name` = 'Alice Smith' RETURN n.`full name`";
+    const query = "MATCH (n:Person) SET n.`full name` = 'Alice Smith' RETURN n.`full name`";
     const ast = parse(query) as Query;
     const steps = astToSteps(ast);
     const traverser = createTraverser(steps);
@@ -397,8 +388,7 @@ describe("Backtick identifier SET/CREATE operations", () => {
   });
 
   test("CREATE with backtick-quoted property name", () => {
-    const query =
-      "CREATE (n:`User Account` {`first name`: 'Charlie'}) RETURN n.`first name`";
+    const query = "CREATE (n:`User Account` {`first name`: 'Charlie'}) RETURN n.`first name`";
     const ast = parse(query) as Query;
     const steps = astToSteps(ast);
     const traverser = createTraverser(steps);

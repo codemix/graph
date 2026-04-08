@@ -3,12 +3,7 @@
  * Translated from tmp/tck/features/clauses/set/Set2.feature
  */
 import { describe, test, expect } from "vitest";
-import {
-  createTckGraph,
-  executeTckQuery,
-  getLabel,
-  getProperty,
-} from "../tckHelpers.js";
+import { createTckGraph, executeTckQuery, getLabel, getProperty } from "../tckHelpers.js";
 
 describe("Set2 - Set a Property to Null", () => {
   test("[1] Setting a node property to null removes the existing property", () => {
@@ -34,10 +29,7 @@ describe("Set2 - Set a Property to Null", () => {
   test("[2] Setting a node property to null removes the existing property, but not before SET - unlabeled WHERE clause not supported", () => {
     const graph = createTckGraph();
     executeTckQuery(graph, "CREATE ({name: 'Michael', num: 42})");
-    executeTckQuery(
-      graph,
-      "MATCH (n) WHERE n.name = 'Michael' SET n.name = null",
-    );
+    executeTckQuery(graph, "MATCH (n) WHERE n.name = 'Michael' SET n.name = null");
     const results = executeTckQuery(graph, "MATCH (n) RETURN n.name, n.num");
     expect(results).toHaveLength(1);
     const [name, num] = results[0] as [unknown, number];
@@ -47,15 +39,9 @@ describe("Set2 - Set a Property to Null", () => {
 
   test("[3] Setting a relationship property to null removes the existing property - unlabeled nodes and untyped relationship match not supported", () => {
     const graph = createTckGraph();
-    executeTckQuery(
-      graph,
-      "CREATE ()-[:REL {property1: 12, property2: 24}]->()",
-    );
+    executeTckQuery(graph, "CREATE ()-[:REL {property1: 12, property2: 24}]->()");
     executeTckQuery(graph, "MATCH ()-[r]->() SET r.property1 = null");
-    const results = executeTckQuery(
-      graph,
-      "MATCH ()-[r]->() RETURN r.property1, r.property2",
-    );
+    const results = executeTckQuery(graph, "MATCH ()-[r]->() RETURN r.property1, r.property2");
     expect(results).toHaveLength(1);
     const [prop1, prop2] = results[0] as [unknown, number];
     expect(prop1).toBeNull();

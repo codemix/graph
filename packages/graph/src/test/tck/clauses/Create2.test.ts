@@ -11,10 +11,7 @@ describe("Create2 - Creating relationships", () => {
     executeTckQuery(graph, "CREATE ()-[:R]->()");
 
     // Verify nodes and relationship were created
-    const results = executeTckQuery(
-      graph,
-      "MATCH (a)-[r:R]->(b) RETURN count(r)",
-    );
+    const results = executeTckQuery(graph, "MATCH (a)-[r:R]->(b) RETURN count(r)");
     expect(results).toEqual([1]);
   });
 
@@ -26,10 +23,7 @@ describe("Create2 - Creating relationships", () => {
     const nodeCount = executeTckQuery(graph, "MATCH (n) RETURN count(n)");
     expect(nodeCount).toEqual([2]);
 
-    const relCount = executeTckQuery(
-      graph,
-      "MATCH ()-[r:R]->() RETURN count(r)",
-    );
+    const relCount = executeTckQuery(graph, "MATCH ()-[r:R]->() RETURN count(r)");
     expect(relCount).toEqual([1]);
   });
 
@@ -41,10 +35,7 @@ describe("Create2 - Creating relationships", () => {
     const nodeCount = executeTckQuery(graph, "MATCH (n) RETURN count(n)");
     expect(nodeCount).toEqual([2]);
 
-    const relCount = executeTckQuery(
-      graph,
-      "MATCH ()-[r:R]->() RETURN count(r)",
-    );
+    const relCount = executeTckQuery(graph, "MATCH ()-[r:R]->() RETURN count(r)");
     expect(relCount).toEqual([1]);
   });
 
@@ -53,15 +44,9 @@ describe("Create2 - Creating relationships", () => {
     executeTckQuery(graph, "CREATE (:A)<-[:R]-(:B)");
 
     // Verify relationship direction
-    const results = executeTckQuery(
-      graph,
-      "MATCH (a:A)<-[:R]-(b:B) RETURN a, b",
-    );
+    const results = executeTckQuery(graph, "MATCH (a:A)<-[:R]-(b:B) RETURN a, b");
     expect(results).toHaveLength(1);
-    const [a, b] = results[0] as [
-      Record<string, unknown>,
-      Record<string, unknown>,
-    ];
+    const [a, b] = results[0] as [Record<string, unknown>, Record<string, unknown>];
     expect(getLabel(a)).toBe("A");
     expect(getLabel(b)).toBe("B");
   });
@@ -74,15 +59,9 @@ describe("Create2 - Creating relationships", () => {
     executeTckQuery(graph, "MATCH (x:X), (y:Y) CREATE (x)-[:R]->(y)");
 
     // Verify relationship was created
-    const results = executeTckQuery(
-      graph,
-      "MATCH (x:X)-[:R]->(y:Y) RETURN x, y",
-    );
+    const results = executeTckQuery(graph, "MATCH (x:X)-[:R]->(y:Y) RETURN x, y");
     expect(results).toHaveLength(1);
-    const [x, y] = results[0] as [
-      Record<string, unknown>,
-      Record<string, unknown>,
-    ];
+    const [x, y] = results[0] as [Record<string, unknown>, Record<string, unknown>];
     expect(getLabel(x)).toBe("X");
     expect(getLabel(y)).toBe("Y");
   });
@@ -95,28 +74,19 @@ describe("Create2 - Creating relationships", () => {
     executeTckQuery(graph, "MATCH (x:X), (y:Y) CREATE (x)<-[:R]-(y)");
 
     // Verify relationship direction (Y->X)
-    const results = executeTckQuery(
-      graph,
-      "MATCH (x:X)<-[:R]-(y:Y) RETURN x, y",
-    );
+    const results = executeTckQuery(graph, "MATCH (x:X)<-[:R]-(y:Y) RETURN x, y");
     expect(results).toHaveLength(1);
-    const [x, y] = results[0] as [
-      Record<string, unknown>,
-      Record<string, unknown>,
-    ];
+    const [x, y] = results[0] as [Record<string, unknown>, Record<string, unknown>];
     expect(getLabel(x)).toBe("X");
     expect(getLabel(y)).toBe("Y");
   });
 
-  test.fails(
-    "[7] Create a single node and a single self loop in a single pattern - self-referencing CREATE not supported",
-    () => {
-      const graph = createTckGraph();
-      executeTckQuery(graph, "CREATE (root)-[:LINK]->(root)");
-      const results = executeTckQuery(graph, "MATCH (n)-[:LINK]->(n) RETURN n");
-      expect(results).toHaveLength(1);
-    },
-  );
+  test.fails("[7] Create a single node and a single self loop in a single pattern - self-referencing CREATE not supported", () => {
+    const graph = createTckGraph();
+    executeTckQuery(graph, "CREATE (root)-[:LINK]->(root)");
+    const results = executeTckQuery(graph, "MATCH (n)-[:LINK]->(n) RETURN n");
+    expect(results).toHaveLength(1);
+  });
 
   test("[8] Create a single node and a single self loop in separate patterns", () => {
     const graph = createTckGraph();
@@ -126,10 +96,7 @@ describe("Create2 - Creating relationships", () => {
     const nodeCount = executeTckQuery(graph, "MATCH (n) RETURN count(n)");
     expect(nodeCount).toEqual([1]);
 
-    const relCount = executeTckQuery(
-      graph,
-      "MATCH (n)-[r:LINK]->(n) RETURN count(r)",
-    );
+    const relCount = executeTckQuery(graph, "MATCH (n)-[r:LINK]->(n) RETURN count(r)");
     expect(relCount).toEqual([1]);
   });
 
@@ -141,10 +108,7 @@ describe("Create2 - Creating relationships", () => {
     const nodeCount = executeTckQuery(graph, "MATCH (n) RETURN count(n)");
     expect(nodeCount).toEqual([1]);
 
-    const relCount = executeTckQuery(
-      graph,
-      "MATCH (n)-[r:LINK]->(n) RETURN count(r)",
-    );
+    const relCount = executeTckQuery(graph, "MATCH (n)-[r:LINK]->(n) RETURN count(r)");
     expect(relCount).toEqual([1]);
   });
 
@@ -155,10 +119,7 @@ describe("Create2 - Creating relationships", () => {
     executeTckQuery(graph, "MATCH (root:Root) CREATE (root)-[:LINK]->(root)");
 
     // Verify self-loop was created
-    const results = executeTckQuery(
-      graph,
-      "MATCH (root:Root)-[:LINK]->(root) RETURN root",
-    );
+    const results = executeTckQuery(graph, "MATCH (root:Root)-[:LINK]->(root) RETURN root");
     expect(results).toHaveLength(1);
     // Single return items are wrapped in arrays
     const [root] = results[0] as [Record<string, unknown>];
@@ -172,15 +133,9 @@ describe("Create2 - Creating relationships", () => {
     executeTckQuery(graph, "MATCH (x:Begin) CREATE (x)-[:TYPE]->(:End)");
 
     // Verify relationship and new node were created
-    const results = executeTckQuery(
-      graph,
-      "MATCH (x:Begin)-[:TYPE]->(y:End) RETURN x, y",
-    );
+    const results = executeTckQuery(graph, "MATCH (x:Begin)-[:TYPE]->(y:End) RETURN x, y");
     expect(results).toHaveLength(1);
-    const [x, y] = results[0] as [
-      Record<string, unknown>,
-      Record<string, unknown>,
-    ];
+    const [x, y] = results[0] as [Record<string, unknown>, Record<string, unknown>];
     expect(getLabel(x)).toBe("Begin");
     expect(getLabel(y)).toBe("End");
   });
@@ -192,15 +147,9 @@ describe("Create2 - Creating relationships", () => {
     executeTckQuery(graph, "MATCH (x:End) CREATE (:Begin)-[:TYPE]->(x)");
 
     // Verify relationship and new node were created
-    const results = executeTckQuery(
-      graph,
-      "MATCH (b:Begin)-[:TYPE]->(e:End) RETURN b, e",
-    );
+    const results = executeTckQuery(graph, "MATCH (b:Begin)-[:TYPE]->(e:End) RETURN b, e");
     expect(results).toHaveLength(1);
-    const [b, e] = results[0] as [
-      Record<string, unknown>,
-      Record<string, unknown>,
-    ];
+    const [b, e] = results[0] as [Record<string, unknown>, Record<string, unknown>];
     expect(getLabel(b)).toBe("Begin");
     expect(getLabel(e)).toBe("End");
   });
@@ -216,10 +165,7 @@ describe("Create2 - Creating relationships", () => {
 
   test("[14] Create a single relationship with a property and return it", () => {
     const graph = createTckGraph();
-    const results = executeTckQuery(
-      graph,
-      "CREATE ()-[r:R {num: 42}]->() RETURN r.num AS num",
-    );
+    const results = executeTckQuery(graph, "CREATE ()-[r:R {num: 42}]->() RETURN r.num AS num");
     expect(results).toEqual([42]);
   });
 
@@ -228,10 +174,7 @@ describe("Create2 - Creating relationships", () => {
     executeTckQuery(graph, "CREATE ()-[:R {id: 12, name: 'foo'}]->()");
 
     // Verify relationship was created with properties
-    const results = executeTckQuery(
-      graph,
-      "MATCH ()-[r:R]->() RETURN r.id, r.name",
-    );
+    const results = executeTckQuery(graph, "MATCH ()-[r:R]->() RETURN r.id, r.name");
     expect(results).toEqual([[12, "foo"]]);
   });
 
@@ -285,39 +228,25 @@ describe("Create2 - Creating relationships", () => {
   test("[23] Fail when creating a relationship that is already bound - requires untyped edge matching", () => {
     const graph = createTckGraph();
     executeTckQuery(graph, "CREATE (:A)-[:R]->(:B)");
-    expect(() =>
-      executeTckQuery(graph, "MATCH ()-[r]->() CREATE ()-[r]->()"),
-    ).toThrow();
+    expect(() => executeTckQuery(graph, "MATCH ()-[r]->() CREATE ()-[r]->()")).toThrow();
   });
 
-  test.fails(
-    "[24] Fail when creating a relationship using undefined variable in pattern",
-    () => {
-      const graph = createTckGraph();
-      executeTckQuery(graph, "CREATE (:A)");
-      expect(() =>
-        executeTckQuery(
-          graph,
-          "MATCH (a) CREATE (a)-[:KNOWS]->(b {name: missing}) RETURN b",
-        ),
-      ).toThrow();
-    },
-  );
+  test.fails("[24] Fail when creating a relationship using undefined variable in pattern", () => {
+    const graph = createTckGraph();
+    executeTckQuery(graph, "CREATE (:A)");
+    expect(() =>
+      executeTckQuery(graph, "MATCH (a) CREATE (a)-[:KNOWS]->(b {name: missing}) RETURN b"),
+    ).toThrow();
+  });
 
   // Additional tests with labeled nodes (custom tests)
   test("[custom] Create relationship between labeled nodes in single pattern", () => {
     const graph = createTckGraph();
     executeTckQuery(graph, "CREATE (:A)-[:R]->(:B)");
 
-    const results = executeTckQuery(
-      graph,
-      "MATCH (a:A)-[:R]->(b:B) RETURN a, b",
-    );
+    const results = executeTckQuery(graph, "MATCH (a:A)-[:R]->(b:B) RETURN a, b");
     expect(results).toHaveLength(1);
-    const [a, b] = results[0] as [
-      Record<string, unknown>,
-      Record<string, unknown>,
-    ];
+    const [a, b] = results[0] as [Record<string, unknown>, Record<string, unknown>];
     expect(getLabel(a)).toBe("A");
     expect(getLabel(b)).toBe("B");
   });
@@ -326,10 +255,7 @@ describe("Create2 - Creating relationships", () => {
     const graph = createTckGraph();
     executeTckQuery(graph, "CREATE (:A)-[:R {num: 42}]->(:B)");
 
-    const results = executeTckQuery(
-      graph,
-      "MATCH (:A)-[r:R]->(:B) RETURN r.num AS num",
-    );
+    const results = executeTckQuery(graph, "MATCH (:A)-[r:R]->(:B) RETURN r.num AS num");
     expect(results).toHaveLength(1);
     // Single return values come back as the value directly
     const num = results[0] as number;

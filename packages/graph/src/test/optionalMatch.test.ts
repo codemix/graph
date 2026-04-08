@@ -9,8 +9,7 @@ const { graph } = createDemoGraph();
 
 describe("OPTIONAL MATCH grammar parsing", () => {
   test("parses OPTIONAL MATCH clause", () => {
-    const query =
-      "MATCH (n:Person) OPTIONAL MATCH (n)-[:knows]->(m) RETURN n, m";
+    const query = "MATCH (n:Person) OPTIONAL MATCH (n)-[:knows]->(m) RETURN n, m";
     const ast = parse(query) as Query;
 
     expect(ast.type).toBe("Query");
@@ -24,8 +23,7 @@ describe("OPTIONAL MATCH grammar parsing", () => {
   });
 
   test("parses OPTIONAL MATCH with WHERE clause", () => {
-    const query =
-      "MATCH (n:Person) OPTIONAL MATCH (n)-[:knows]->(m) WHERE m.age > 30 RETURN n, m";
+    const query = "MATCH (n:Person) OPTIONAL MATCH (n)-[:knows]->(m) WHERE m.age > 30 RETURN n, m";
     const ast = parse(query) as Query;
 
     expect(ast.matches[1]!.optional).toBe(true);
@@ -59,8 +57,7 @@ describe("OPTIONAL MATCH grammar parsing", () => {
 
 describe("OPTIONAL MATCH astToSteps conversion", () => {
   test("creates OptionalMatchStep for OPTIONAL MATCH clause", () => {
-    const query =
-      "MATCH (n:Person) OPTIONAL MATCH (n)-[:knows]->(m) RETURN n, m";
+    const query = "MATCH (n:Person) OPTIONAL MATCH (n)-[:knows]->(m) RETURN n, m";
     const ast = parse(query) as Query;
     const steps = astToSteps(ast);
 
@@ -75,8 +72,7 @@ describe("OPTIONAL MATCH astToSteps conversion", () => {
   });
 
   test("extracts correct variables from optional pattern", () => {
-    const query =
-      "MATCH (a:Person) OPTIONAL MATCH (a)-[r:knows]->(b:Person) RETURN a, r, b";
+    const query = "MATCH (a:Person) OPTIONAL MATCH (a)-[r:knows]->(b:Person) RETURN a, r, b";
     const ast = parse(query) as Query;
     const steps = astToSteps(ast);
 
@@ -201,8 +197,7 @@ describe("OPTIONAL MATCH execution", () => {
 
 describe("OPTIONAL MATCH edge cases", () => {
   test("handles empty graph gracefully", () => {
-    const query =
-      "MATCH (n:NonExistent) OPTIONAL MATCH (n)-[:rel]->(m) RETURN n, m";
+    const query = "MATCH (n:NonExistent) OPTIONAL MATCH (n)-[:rel]->(m) RETURN n, m";
     const ast = parse(query) as Query;
     const steps = astToSteps(ast);
     const traverser = createTraverser(steps);

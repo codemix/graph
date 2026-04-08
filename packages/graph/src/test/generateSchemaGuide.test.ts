@@ -359,9 +359,7 @@ test("Edge patterns without labels - should include examples of matching edges w
   const guide = generateSchemaGuide(schema);
 
   // Check that examples include matching any edge type
-  expect(guide).toContain(
-    "MATCH (a:Concept)-[r:]-(b:UserStory) RETURN a, r, b",
-  );
+  expect(guide).toContain("MATCH (a:Concept)-[r:]-(b:UserStory) RETURN a, r, b");
 
   // Check that examples show capturing edge variables
   expect(guide).toContain("-[r:]-");
@@ -403,12 +401,8 @@ test("ID format documentation - should include properly formatted ID examples in
   expect(guide).toContain("User:12345678-1234-1234-1234-123456789abc");
 
   // Check that examples include ID queries
-  expect(guide).toContain(
-    'v.@id = "User:12345678-1234-1234-1234-123456789abc"',
-  );
-  expect(guide).toContain(
-    'WHERE a.@id = "User:12345678-1234-1234-1234-123456789abc"',
-  );
+  expect(guide).toContain('v.@id = "User:12345678-1234-1234-1234-123456789abc"');
+  expect(guide).toContain('WHERE a.@id = "User:12345678-1234-1234-1234-123456789abc"');
 });
 
 test("ID format documentation - should include ID format in compact guide", () => {

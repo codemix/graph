@@ -24,20 +24,11 @@ describe("Merge9 - Merge clause interoperation with other clauses", () => {
       graph,
       "UNWIND ['Keanu', 'Carrie', 'Laurence'] AS actor MERGE (m:Movie {name: 'The Matrix'}) MERGE (p:Person {name: actor}) MERGE (p)-[:ACTED_IN]->(m)",
     );
-    const movieResults = executeTckQuery(
-      graph,
-      "MATCH (m:Movie) RETURN count(m)",
-    );
+    const movieResults = executeTckQuery(graph, "MATCH (m:Movie) RETURN count(m)");
     expect(movieResults[0]).toBe(1);
-    const personResults = executeTckQuery(
-      graph,
-      "MATCH (p:Person) RETURN count(p)",
-    );
+    const personResults = executeTckQuery(graph, "MATCH (p:Person) RETURN count(p)");
     expect(personResults[0]).toBe(3);
-    const relResults = executeTckQuery(
-      graph,
-      "MATCH ()-[r:ACTED_IN]->() RETURN count(r)",
-    );
+    const relResults = executeTckQuery(graph, "MATCH ()-[r:ACTED_IN]->() RETURN count(r)");
     expect(relResults[0]).toBe(3);
   });
 
@@ -63,10 +54,7 @@ describe("Merge9 - Merge clause interoperation with other clauses", () => {
     expect(nodesC[0]).toBe(1);
 
     // Verify relationships
-    const rels = executeTckQuery(
-      graph,
-      "MATCH ()-[r:KNOWS]->() RETURN count(r)",
-    );
+    const rels = executeTckQuery(graph, "MATCH ()-[r:KNOWS]->() RETURN count(r)");
     expect(rels[0]).toBe(2);
   });
 
@@ -93,10 +81,7 @@ describe("Merge9 - Merge clause interoperation with other clauses", () => {
       "CREATE (a:A {name: 'test'}), (b:B {name: 'other'}) MERGE (a)-[:T]->(b)",
     );
 
-    const results = executeTckQuery(
-      graph,
-      "MATCH (a:A)-[r:T]->(b:B) RETURN a.name, b.name",
-    );
+    const results = executeTckQuery(graph, "MATCH (a:A)-[r:T]->(b:B) RETURN a.name, b.name");
     expect(results).toHaveLength(1);
     const [aName, bName] = results[0] as [string, string];
     expect(aName).toBe("test");
@@ -112,22 +97,13 @@ describe("Merge9 - Merge clause interoperation with other clauses", () => {
       "MERGE (a:A {name: 'first'}) MERGE (b:B {name: 'second'}) CREATE (c:C {name: 'third'})",
     );
 
-    const resultsA = executeTckQuery(
-      graph,
-      "MATCH (n:A {name: 'first'}) RETURN count(n)",
-    );
+    const resultsA = executeTckQuery(graph, "MATCH (n:A {name: 'first'}) RETURN count(n)");
     expect(resultsA[0]).toBe(1);
 
-    const resultsB = executeTckQuery(
-      graph,
-      "MATCH (n:B {name: 'second'}) RETURN count(n)",
-    );
+    const resultsB = executeTckQuery(graph, "MATCH (n:B {name: 'second'}) RETURN count(n)");
     expect(resultsB[0]).toBe(1);
 
-    const resultsC = executeTckQuery(
-      graph,
-      "MATCH (n:C {name: 'third'}) RETURN count(n)",
-    );
+    const resultsC = executeTckQuery(graph, "MATCH (n:C {name: 'third'}) RETURN count(n)");
     expect(resultsC[0]).toBe(1);
   });
 
@@ -136,10 +112,7 @@ describe("Merge9 - Merge clause interoperation with other clauses", () => {
 
     executeTckQuery(graph, "CREATE (a:A) MERGE (b:B) MERGE (a)-[:LINK]->(b)");
 
-    const results = executeTckQuery(
-      graph,
-      "MATCH (a:A)-[:LINK]->(b:B) RETURN count(a)",
-    );
+    const results = executeTckQuery(graph, "MATCH (a:A)-[:LINK]->(b:B) RETURN count(a)");
     expect(results[0]).toBe(1);
   });
 
@@ -147,10 +120,7 @@ describe("Merge9 - Merge clause interoperation with other clauses", () => {
     const graph = createTckGraph();
 
     // Create initial data
-    executeTckQuery(
-      graph,
-      "CREATE (:A {name: 'unique'}), (:B {name: 'unique'})",
-    );
+    executeTckQuery(graph, "CREATE (:A {name: 'unique'}), (:B {name: 'unique'})");
 
     // Multiple MERGEs for same patterns
     executeTckQuery(
@@ -167,16 +137,10 @@ describe("Merge9 - Merge clause interoperation with other clauses", () => {
     );
 
     // Should still have only 1 of each
-    const nodesA = executeTckQuery(
-      graph,
-      "MATCH (n:A {name: 'unique'}) RETURN count(n)",
-    );
+    const nodesA = executeTckQuery(graph, "MATCH (n:A {name: 'unique'}) RETURN count(n)");
     expect(nodesA[0]).toBe(1);
 
-    const nodesB = executeTckQuery(
-      graph,
-      "MATCH (n:B {name: 'unique'}) RETURN count(n)",
-    );
+    const nodesB = executeTckQuery(graph, "MATCH (n:B {name: 'unique'}) RETURN count(n)");
     expect(nodesB[0]).toBe(1);
 
     const rels = executeTckQuery(

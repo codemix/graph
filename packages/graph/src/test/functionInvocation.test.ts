@@ -116,9 +116,7 @@ describe("FunctionRegistry", () => {
     });
 
     it("should evaluate replace", () => {
-      expect(evaluateFunction("replace", ["hello", "l", "L"], path)).toBe(
-        "heLLo",
-      );
+      expect(evaluateFunction("replace", ["hello", "l", "L"], path)).toBe("heLLo");
     });
 
     it("should evaluate reverse", () => {
@@ -126,11 +124,7 @@ describe("FunctionRegistry", () => {
     });
 
     it("should evaluate split", () => {
-      expect(evaluateFunction("split", ["a,b,c", ","], path)).toEqual([
-        "a",
-        "b",
-        "c",
-      ]);
+      expect(evaluateFunction("split", ["a,b,c", ","], path)).toEqual(["a", "b", "c"]);
     });
 
     it("should evaluate toString", () => {
@@ -246,9 +240,7 @@ describe("FunctionRegistry", () => {
 
     it("should evaluate range", () => {
       expect(evaluateFunction("range", [1, 5], path)).toEqual([1, 2, 3, 4, 5]);
-      expect(evaluateFunction("range", [0, 10, 2], path)).toEqual([
-        0, 2, 4, 6, 8, 10,
-      ]);
+      expect(evaluateFunction("range", [0, 10, 2], path)).toEqual([0, 2, 4, 6, 8, 10]);
     });
 
     it("should evaluate size for lists", () => {
@@ -268,18 +260,14 @@ describe("FunctionRegistry", () => {
 
 describe("Grammar: Function Call Parsing", () => {
   it("should parse simple function call with no arguments", () => {
-    const query = parse(
-      "MATCH (n:Person) WHERE rand() > 0.5 RETURN n",
-    ) as Query;
+    const query = parse("MATCH (n:Person) WHERE rand() > 0.5 RETURN n") as Query;
     const where = query.matches[0]!.where;
     expect(where).toBeDefined();
     expect(where!.condition.type).toBe("ExpressionCondition");
   });
 
   it("should parse function call with single argument", () => {
-    const query = parse(
-      "MATCH (n:Person) WHERE toLower(n.name) = 'alice' RETURN n",
-    ) as Query;
+    const query = parse("MATCH (n:Person) WHERE toLower(n.name) = 'alice' RETURN n") as Query;
     const where = query.matches[0]!.where;
     expect(where).toBeDefined();
     // The left side should be a FunctionCall
@@ -291,17 +279,13 @@ describe("Grammar: Function Call Parsing", () => {
   });
 
   it("should parse function call with multiple arguments", () => {
-    const query = parse(
-      "MATCH (n:Person) WHERE substring(n.name, 0, 3) = 'Ali' RETURN n",
-    ) as Query;
+    const query = parse("MATCH (n:Person) WHERE substring(n.name, 0, 3) = 'Ali' RETURN n") as Query;
     const where = query.matches[0]!.where;
     expect(where).toBeDefined();
   });
 
   it("should parse nested function calls", () => {
-    const query = parse(
-      "MATCH (n:Person) WHERE toLower(trim(n.name)) = 'alice' RETURN n",
-    ) as Query;
+    const query = parse("MATCH (n:Person) WHERE toLower(trim(n.name)) = 'alice' RETURN n") as Query;
     const where = query.matches[0]!.where;
     expect(where).toBeDefined();
     // The outer function should be toLower
@@ -317,9 +301,7 @@ describe("Grammar: Function Call Parsing", () => {
   });
 
   it("should parse function call with DISTINCT", () => {
-    const query = parse(
-      "MATCH (n:Person) WHERE count(DISTINCT n.age) > 0 RETURN n",
-    ) as Query;
+    const query = parse("MATCH (n:Person) WHERE count(DISTINCT n.age) > 0 RETURN n") as Query;
     // Even though this doesn't make semantic sense in WHERE, it should parse
     const where = query.matches[0]!.where;
     expect(where).toBeDefined();
@@ -331,9 +313,7 @@ describe("Grammar: Function Call Parsing", () => {
   });
 
   it("should parse arithmetic with function calls", () => {
-    const query = parse(
-      "MATCH (n:Person) WHERE abs(n.age - 30) < 5 RETURN n",
-    ) as Query;
+    const query = parse("MATCH (n:Person) WHERE abs(n.age - 30) < 5 RETURN n") as Query;
     const where = query.matches[0]!.where;
     expect(where).toBeDefined();
   });
@@ -375,8 +355,7 @@ describe("Query Execution: Function Calls", () => {
   });
 
   it("should execute query with trim in WHERE", () => {
-    const query =
-      "MATCH (n:Person) WHERE trim(n.name) = 'Charlie' RETURN n.name";
+    const query = "MATCH (n:Person) WHERE trim(n.name) = 'Charlie' RETURN n.name";
     const ast = parse(query) as Query;
     const steps = astToSteps(ast);
     const traverser = createTraverser(steps);
@@ -399,8 +378,7 @@ describe("Query Execution: Function Calls", () => {
   });
 
   it("should execute query with nested functions", () => {
-    const query =
-      "MATCH (n:Person) WHERE toLower(trim(n.name)) = 'charlie' RETURN n.name";
+    const query = "MATCH (n:Person) WHERE toLower(trim(n.name)) = 'charlie' RETURN n.name";
     const ast = parse(query) as Query;
     const steps = astToSteps(ast);
     const traverser = createTraverser(steps);
@@ -422,8 +400,7 @@ describe("Query Execution: Function Calls", () => {
   });
 
   it("should execute query with substring function", () => {
-    const query =
-      "MATCH (n:Person) WHERE substring(n.name, 0, 3) = 'Ali' RETURN n.name";
+    const query = "MATCH (n:Person) WHERE substring(n.name, 0, 3) = 'Ali' RETURN n.name";
     const ast = parse(query) as Query;
     const steps = astToSteps(ast);
     const traverser = createTraverser(steps);
@@ -437,8 +414,7 @@ describe("Query Execution: Function Calls", () => {
     // Add a person with no name
     graph.addVertex("Person", { age: 40 });
 
-    const query =
-      "MATCH (n:Person) WHERE coalesce(n.name, 'Unknown') = 'Unknown' RETURN n.age";
+    const query = "MATCH (n:Person) WHERE coalesce(n.name, 'Unknown') = 'Unknown' RETURN n.age";
     const ast = parse(query) as Query;
     const steps = astToSteps(ast);
     const traverser = createTraverser(steps);
@@ -451,8 +427,7 @@ describe("Query Execution: Function Calls", () => {
   it("should handle null values in function arguments", () => {
     graph.addVertex("Person", { age: 45 }); // No name
 
-    const query =
-      "MATCH (n:Person) WHERE toLower(n.name) = 'alice' RETURN n.name";
+    const query = "MATCH (n:Person) WHERE toLower(n.name) = 'alice' RETURN n.name";
     const ast = parse(query) as Query;
     const steps = astToSteps(ast);
     const traverser = createTraverser(steps);

@@ -8,9 +8,7 @@ const { graph, alice } = createDemoGraph();
 const g = new GraphTraversal(graph);
 
 test("OrderVertexTraversal - Single by() ordering - Order by name ascending", () => {
-  const results = Array.from(
-    g.V().hasLabel("Person").order().by("name", "asc").values(),
-  );
+  const results = Array.from(g.V().hasLabel("Person").order().by("name", "asc").values());
 
   expect(results.length).toBeGreaterThan(0);
 
@@ -21,9 +19,7 @@ test("OrderVertexTraversal - Single by() ordering - Order by name ascending", ()
 });
 
 test("OrderVertexTraversal - Single by() ordering - Order by name descending", () => {
-  const results = Array.from(
-    g.V().hasLabel("Person").order().by("name", "desc").values(),
-  );
+  const results = Array.from(g.V().hasLabel("Person").order().by("name", "desc").values());
 
   expect(results.length).toBeGreaterThan(0);
 
@@ -34,9 +30,7 @@ test("OrderVertexTraversal - Single by() ordering - Order by name descending", (
 });
 
 test("OrderVertexTraversal - Single by() ordering - Order by age ascending", () => {
-  const results = Array.from(
-    g.V().hasLabel("Person").order().by("age", "asc").values(),
-  );
+  const results = Array.from(g.V().hasLabel("Person").order().by("age", "asc").values());
 
   expect(results.length).toBeGreaterThan(0);
 
@@ -49,9 +43,7 @@ test("OrderVertexTraversal - Single by() ordering - Order by age ascending", () 
 });
 
 test("OrderVertexTraversal - Single by() ordering - Order by age descending", () => {
-  const results = Array.from(
-    g.V().hasLabel("Person").order().by("age", "desc").values(),
-  );
+  const results = Array.from(g.V().hasLabel("Person").order().by("age", "desc").values());
 
   expect(results.length).toBeGreaterThan(0);
 
@@ -64,9 +56,7 @@ test("OrderVertexTraversal - Single by() ordering - Order by age descending", ()
 });
 
 test("OrderVertexTraversal - Single by() ordering - Order with default direction (asc)", () => {
-  const results = Array.from(
-    g.V().hasLabel("Person").order().by("name").values(),
-  );
+  const results = Array.from(g.V().hasLabel("Person").order().by("name").values());
 
   expect(results.length).toBeGreaterThan(0);
 
@@ -90,13 +80,7 @@ test("OrderVertexTraversal - Multiple by() chaining - Order by age then by name"
   const g2 = new GraphTraversal(testGraph);
 
   const results = Array.from(
-    g2
-      .V()
-      .hasLabel("Person")
-      .order()
-      .by("age", "asc")
-      .by("name", "asc")
-      .values(),
+    g2.V().hasLabel("Person").order().by("age", "asc").by("name", "asc").values(),
   );
 
   expect(results.length).toBeGreaterThan(0);
@@ -130,13 +114,7 @@ test("OrderVertexTraversal - Multiple by() chaining - Order by age asc then name
   const g2 = new GraphTraversal(testGraph);
 
   const results = Array.from(
-    g2
-      .V()
-      .hasLabel("Person")
-      .order()
-      .by("age", "asc")
-      .by("name", "desc")
-      .values(),
+    g2.V().hasLabel("Person").order().by("age", "asc").by("name", "desc").values(),
   );
 
   // Find vertices with same age
@@ -163,14 +141,7 @@ test("OrderVertexTraversal - Multiple by() chaining - Order by three properties"
   const g2 = new GraphTraversal(testGraph);
 
   const results = Array.from(
-    g2
-      .V()
-      .hasLabel("Person")
-      .order()
-      .by("age", "asc")
-      .by("name", "asc")
-      .by("ref", "asc")
-      .values(),
+    g2.V().hasLabel("Person").order().by("age", "asc").by("name", "asc").by("ref", "asc").values(),
   );
 
   expect(results.length).toBeGreaterThan(0);
@@ -219,13 +190,7 @@ test("OrderVertexTraversal - Multiple by() chaining - Chaining by() with differe
 
 test("OrderVertexTraversal - Order with filtering - Order after has() filter", () => {
   const results = Array.from(
-    g
-      .V()
-      .hasLabel("Person")
-      .has("age", ">", 30)
-      .order()
-      .by("age", "asc")
-      .values(),
+    g.V().hasLabel("Person").has("age", ">", 30).order().by("age", "asc").values(),
   );
 
   expect(results.length).toBeGreaterThan(0);
@@ -233,21 +198,13 @@ test("OrderVertexTraversal - Order with filtering - Order after has() filter", (
 
   // Verify ordering
   for (let i = 1; i < results.length; i++) {
-    expect(results[i - 1]!.get("age")).toBeLessThanOrEqual(
-      results[i]!.get("age"),
-    );
+    expect(results[i - 1]!.get("age")).toBeLessThanOrEqual(results[i]!.get("age"));
   }
 });
 
 test("OrderVertexTraversal - Order with filtering - Order before has() filter", () => {
   const results = Array.from(
-    g
-      .V()
-      .hasLabel("Person")
-      .order()
-      .by("age", "desc")
-      .has("age", ">", 30)
-      .values(),
+    g.V().hasLabel("Person").order().by("age", "desc").has("age", ">", 30).values(),
   );
 
   expect(results.length).toBeGreaterThan(0);
@@ -255,9 +212,7 @@ test("OrderVertexTraversal - Order with filtering - Order before has() filter", 
 
   // Verify ordering is maintained after filter
   for (let i = 1; i < results.length; i++) {
-    expect(results[i - 1]!.get("age")).toBeGreaterThanOrEqual(
-      results[i]!.get("age"),
-    );
+    expect(results[i - 1]!.get("age")).toBeGreaterThanOrEqual(results[i]!.get("age"));
   }
 });
 
@@ -273,9 +228,7 @@ test("OrderVertexTraversal - Order with filtering - Order with multiple filters"
       .values(),
   );
 
-  expect(results.every((v) => v.get("age") > 25 && v.get("age") < 50)).toBe(
-    true,
-  );
+  expect(results.every((v) => v.get("age") > 25 && v.get("age") < 50)).toBe(true);
 
   // Verify ordering
   const names = results.map((v) => v.get("name"));
@@ -283,28 +236,20 @@ test("OrderVertexTraversal - Order with filtering - Order with multiple filters"
 });
 
 test("OrderVertexTraversal - Order with pagination - Order with limit", () => {
-  const results = Array.from(
-    g.V().hasLabel("Person").order().by("age", "asc").limit(3).values(),
-  );
+  const results = Array.from(g.V().hasLabel("Person").order().by("age", "asc").limit(3).values());
 
   expect(results).toHaveLength(3);
 
   // Should get the 3 youngest people in order
   for (let i = 1; i < results.length; i++) {
-    expect(results[i - 1]!.get("age")).toBeLessThanOrEqual(
-      results[i]!.get("age"),
-    );
+    expect(results[i - 1]!.get("age")).toBeLessThanOrEqual(results[i]!.get("age"));
   }
 });
 
 test("OrderVertexTraversal - Order with pagination - Order with skip", () => {
-  const allOrdered = Array.from(
-    g.V().hasLabel("Person").order().by("age", "asc").values(),
-  );
+  const allOrdered = Array.from(g.V().hasLabel("Person").order().by("age", "asc").values());
 
-  const skipped = Array.from(
-    g.V().hasLabel("Person").order().by("age", "asc").skip(2).values(),
-  );
+  const skipped = Array.from(g.V().hasLabel("Person").order().by("age", "asc").skip(2).values());
 
   expect(skipped.length).toBe(allOrdered.length - 2);
 
@@ -326,30 +271,19 @@ test("OrderVertexTraversal - Order with pagination - Order with range", () => {
 
 test("OrderVertexTraversal - Order with pagination - Multiple by() with pagination", () => {
   const results = Array.from(
-    g
-      .V()
-      .hasLabel("Person")
-      .order()
-      .by("age", "desc")
-      .by("name", "asc")
-      .limit(5)
-      .values(),
+    g.V().hasLabel("Person").order().by("age", "desc").by("name", "asc").limit(5).values(),
   );
 
   expect(results.length).toBeLessThanOrEqual(5);
 
   // Verify ordering
   for (let i = 1; i < results.length; i++) {
-    expect(results[i - 1]!.get("age")).toBeGreaterThanOrEqual(
-      results[i]!.get("age"),
-    );
+    expect(results[i - 1]!.get("age")).toBeGreaterThanOrEqual(results[i]!.get("age"));
   }
 });
 
 test("OrderVertexTraversal - Order with traversal operations - Order after out() navigation", () => {
-  const results = Array.from(
-    g.V(alice.id).out("knows").order().by("name", "asc").values(),
-  );
+  const results = Array.from(g.V(alice.id).out("knows").order().by("name", "asc").values());
 
   expect(results.length).toBeGreaterThan(0);
 
@@ -366,31 +300,17 @@ test("OrderVertexTraversal - Order with traversal operations - Order with select
 
   // Verify ordering is preserved
   for (let i = 1; i < results.length; i++) {
-    expect(results[i - 1]!.get("age")).toBeLessThanOrEqual(
-      results[i]!.get("age"),
-    );
+    expect(results[i - 1]!.get("age")).toBeLessThanOrEqual(results[i]!.get("age"));
   }
 });
 
 test("OrderVertexTraversal - Order with traversal operations - Order within union", () => {
   // Test ordering within each union branch separately
   const younger = Array.from(
-    g
-      .V()
-      .hasLabel("Person")
-      .has("age", "<", 35)
-      .order()
-      .by("name", "asc")
-      .values(),
+    g.V().hasLabel("Person").has("age", "<", 35).order().by("name", "asc").values(),
   );
   const older = Array.from(
-    g
-      .V()
-      .hasLabel("Person")
-      .has("age", ">=", 35)
-      .order()
-      .by("name", "desc")
-      .values(),
+    g.V().hasLabel("Person").has("age", ">=", 35).order().by("name", "desc").values(),
   );
 
   // Combine results
@@ -401,13 +321,7 @@ test("OrderVertexTraversal - Order with traversal operations - Order within unio
 
 test("OrderVertexTraversal - Order with traversal operations - Order after dedup", () => {
   const results = Array.from(
-    g
-      .union(g.V(alice.id), g.V(alice.id))
-      .dedup()
-      .out("knows")
-      .order()
-      .by("name", "asc")
-      .values(),
+    g.union(g.V(alice.id), g.V(alice.id)).dedup().out("knows").order().by("name", "asc").values(),
   );
 
   const names = results.map((v) => v.get("name"));
@@ -415,9 +329,7 @@ test("OrderVertexTraversal - Order with traversal operations - Order after dedup
 });
 
 test("OrderVertexTraversal - Order edge cases - Order empty traversal", () => {
-  const results = Array.from(
-    g.V().has("name", "NonExistent").order().by("name", "asc").values(),
-  );
+  const results = Array.from(g.V().has("name", "NonExistent").order().by("name", "asc").values());
 
   expect(results).toHaveLength(0);
 });
@@ -442,13 +354,7 @@ test("OrderVertexTraversal - Order edge cases - Order with all same values", () 
   const g2 = new GraphTraversal(testGraph);
 
   const results = Array.from(
-    g2
-      .V()
-      .hasLabel("Person")
-      .order()
-      .by("name", "asc")
-      .by("age", "asc")
-      .values(),
+    g2.V().hasLabel("Person").order().by("name", "asc").by("age", "asc").values(),
   );
 
   expect(results.length).toBe(3);
@@ -490,13 +396,7 @@ test("OrderVertexTraversal - Order edge cases - Order with very large dataset", 
 
   const start = Date.now();
   const results = Array.from(
-    g2
-      .V()
-      .hasLabel("Person")
-      .order()
-      .by("age", "asc")
-      .by("name", "asc")
-      .values(),
+    g2.V().hasLabel("Person").order().by("age", "asc").by("name", "asc").values(),
   );
   const duration = Date.now() - start;
 
@@ -505,9 +405,7 @@ test("OrderVertexTraversal - Order edge cases - Order with very large dataset", 
 
   // Verify ordering
   for (let i = 1; i < results.length; i++) {
-    expect(results[i - 1]!.get("age")).toBeLessThanOrEqual(
-      results[i]!.get("age"),
-    );
+    expect(results[i - 1]!.get("age")).toBeLessThanOrEqual(results[i]!.get("age"));
   }
 });
 
@@ -533,9 +431,7 @@ test("OrderVertexTraversal - Order with repeat - Order within repeat step", () =
   const results = Array.from(
     g
       .V(alice.id)
-      .repeat(($) =>
-        $.out("knows").hasLabel("Person").order().by("age", "asc").limit(1),
-      )
+      .repeat(($) => $.out("knows").hasLabel("Person").order().by("age", "asc").limit(1))
       .times(2)
       .values(),
   );
@@ -562,21 +458,13 @@ test("OrderVertexTraversal - Order with repeat - Order with emit and repeat", ()
 
   // Verify descending age order
   for (let i = 1; i < results.length; i++) {
-    expect(results[i - 1]!.get("age")).toBeGreaterThanOrEqual(
-      results[i]!.get("age"),
-    );
+    expect(results[i - 1]!.get("age")).toBeGreaterThanOrEqual(results[i]!.get("age"));
   }
 });
 
 test("OrderVertexTraversal - Order type safety - Order by existing properties maintains type safety", () => {
   const results = Array.from(
-    g
-      .V()
-      .hasLabel("Person")
-      .order()
-      .by("name", "asc")
-      .by("age", "desc")
-      .values(),
+    g.V().hasLabel("Person").order().by("name", "asc").by("age", "desc").values(),
   );
 
   // Should compile and run without errors
@@ -586,9 +474,7 @@ test("OrderVertexTraversal - Order type safety - Order by existing properties ma
 });
 
 test("OrderVertexTraversal - Order type safety - Order preserves path type through selection", () => {
-  const results = Array.from(
-    g.V().hasLabel("Person").as("p").order().by("name", "asc").values(),
-  );
+  const results = Array.from(g.V().hasLabel("Person").as("p").order().by("name", "asc").values());
 
   expect(results.length).toBeGreaterThan(0);
   expect(results.every((v) => v.label === "Person")).toBe(true);

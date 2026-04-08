@@ -2,7 +2,9 @@
   "name": "@codemix/text-search",
   "version": "0.0.1",
   "description": "Fast, accurate text search with BM25 scoring and stemming.",
+  "license": "MIT",
   "type": "module",
+  "types": "./dist/index.d.ts",
   "exports": {
     ".": {
       "import": {
@@ -11,8 +13,6 @@
       }
     }
   },
-  "types": "./dist/index.d.ts",
-  "license": "MIT",
   "scripts": {
     "build": "tsc",
     "typecheck": "tsc --noEmit",

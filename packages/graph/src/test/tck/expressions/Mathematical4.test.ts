@@ -22,10 +22,7 @@ describe("Mathematical4 - Multiplication", () => {
     // Create nodes with values that represent multiplication results
     executeTckQuery(graph, "CREATE (:A {num: 24})"); // 6 * 4 = 24 computed externally
 
-    const results = executeTckQuery(
-      graph,
-      "MATCH (n:A) WHERE n.num = 24 RETURN n.num",
-    );
+    const results = executeTckQuery(graph, "MATCH (n:A) WHERE n.num = 24 RETURN n.num");
 
     expect(results).toHaveLength(1);
     expect(results[0]).toBe(24);

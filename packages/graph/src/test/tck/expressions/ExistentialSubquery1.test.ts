@@ -24,10 +24,7 @@ describe("ExistentialSubquery1 - Simple existential subquery", () => {
       "CREATE (a:A {prop: 1})-[:R]->(b:B {prop: 1}), (a)-[:R]->(:C {prop: 2}), (a)-[:R]->(:D {prop: 3})",
     );
 
-    const results = executeTckQuery(
-      graph,
-      "MATCH (n) WHERE exists { (n)-->() } RETURN n",
-    );
+    const results = executeTckQuery(graph, "MATCH (n) WHERE exists { (n)-->() } RETURN n");
 
     expect(results).toHaveLength(1);
   });
@@ -64,10 +61,7 @@ describe("ExistentialSubquery1 - Simple existential subquery", () => {
       "CREATE (a:A {prop: 1})-[:R]->(b:B {prop: 1}), (a)-[:R]->(:C {prop: 2}), (a)-[:R]->(:D {prop: 3})",
     );
 
-    const results = executeTckQuery(
-      graph,
-      "MATCH (n) WHERE exists { (n)-[:NA]->() } RETURN n",
-    );
+    const results = executeTckQuery(graph, "MATCH (n) WHERE exists { (n)-[:NA]->() } RETURN n");
 
     expect(results).toHaveLength(0);
   });
@@ -97,10 +91,7 @@ describe("ExistentialSubquery1 - Simple existential subquery", () => {
 
   test("[C1] EXISTS returns nodes with outgoing relationship", () => {
     const graph = createTckGraph();
-    executeTckQuery(
-      graph,
-      `CREATE (:A {prop: 1})-[:R]->(:B {prop: 1}), (:C {prop: 2})`,
-    );
+    executeTckQuery(graph, `CREATE (:A {prop: 1})-[:R]->(:B {prop: 1}), (:C {prop: 2})`);
 
     const results = executeTckQuery(
       graph,
@@ -147,20 +138,14 @@ describe("ExistentialSubquery1 - Simple existential subquery", () => {
     const graph = createTckGraph();
     executeTckQuery(graph, `CREATE (:A {prop: 1}), (:B {prop: 2})`);
 
-    const results = executeTckQuery(
-      graph,
-      `MATCH (n:A) WHERE EXISTS { (n)-[:NA]->(m) } RETURN n`,
-    );
+    const results = executeTckQuery(graph, `MATCH (n:A) WHERE EXISTS { (n)-[:NA]->(m) } RETURN n`);
 
     expect(results).toHaveLength(0);
   });
 
   test("[C5] EXISTS with incoming relationship direction", () => {
     const graph = createTckGraph();
-    executeTckQuery(
-      graph,
-      `CREATE (:A {name: 'a1'})-[:R]->(:B {name: 'b1'}), (:C {name: 'c1'})`,
-    );
+    executeTckQuery(graph, `CREATE (:A {name: 'a1'})-[:R]->(:B {name: 'b1'}), (:C {name: 'c1'})`);
 
     // Check for incoming relationships
     const results = executeTckQuery(
@@ -210,10 +195,7 @@ describe("ExistentialSubquery1 - Simple existential subquery", () => {
 
   test("[C8] NOT EXISTS filters nodes without matching pattern", () => {
     const graph = createTckGraph();
-    executeTckQuery(
-      graph,
-      `CREATE (:A {name: 'connected'})-[:R]->(:B), (:A {name: 'isolated'})`,
-    );
+    executeTckQuery(graph, `CREATE (:A {name: 'connected'})-[:R]->(:B), (:A {name: 'isolated'})`);
 
     const results = executeTckQuery(
       graph,

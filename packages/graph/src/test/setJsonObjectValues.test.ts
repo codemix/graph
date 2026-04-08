@@ -1,10 +1,7 @@
 import { describe, it, expect, beforeEach, afterEach } from "vitest";
 import { parse } from "../grammar.js";
 import { astToSteps } from "../astToSteps.js";
-import {
-  createTraverser as makeTraverser,
-  clearQueryParams,
-} from "../Steps.js";
+import { createTraverser as makeTraverser, clearQueryParams } from "../Steps.js";
 import { createDemoGraph, type DemoSchema } from "../getDemoGraph.js";
 import type { Query, SetAssignment } from "../AST.js";
 import type { Graph } from "../Graph.js";
@@ -13,9 +10,7 @@ describe("SET property to JSON object values", () => {
   describe("Grammar parsing", () => {
     describe("Simple JSON object values", () => {
       it("should parse SET n.prop = {key: value}", () => {
-        const ast = parse(
-          'MATCH (n:Person) SET n.schema = {type: "string"} RETURN n',
-        ) as Query;
+        const ast = parse('MATCH (n:Person) SET n.schema = {type: "string"} RETURN n') as Query;
 
         expect(ast.set).toBeDefined();
         expect(ast.set!.assignments).toHaveLength(1);
@@ -43,9 +38,7 @@ describe("SET property to JSON object values", () => {
       });
 
       it("should parse SET with empty JSON object", () => {
-        const ast = parse(
-          "MATCH (n:Config) SET n.options = {} RETURN n",
-        ) as Query;
+        const ast = parse("MATCH (n:Config) SET n.options = {} RETURN n") as Query;
 
         expect(ast.set).toBeDefined();
         const assignment = ast.set!.assignments[0] as SetAssignment;
@@ -300,8 +293,7 @@ describe("SET property to JSON object values", () => {
         ) as Query;
 
         expect(ast.segments![0]!.set).toBeDefined();
-        const assignment = ast.segments![0]!.set!
-          .assignments[0] as SetAssignment;
+        const assignment = ast.segments![0]!.set!.assignments[0] as SetAssignment;
         expect(assignment.variable).toBe("dt");
         expect(assignment.property).toBe("schema");
         expect(assignment.value).toEqual({
@@ -387,15 +379,11 @@ describe("SET property to JSON object values", () => {
         const ast = parse(query) as Query;
 
         expect(ast.segments).toHaveLength(2);
-        expect(
-          (ast.segments![0]!.set!.assignments[0] as SetAssignment).value,
-        ).toEqual({
+        expect((ast.segments![0]!.set!.assignments[0] as SetAssignment).value).toEqual({
           type: "NestedMap",
           value: { type: "string" },
         });
-        expect(
-          (ast.segments![1]!.set!.assignments[0] as SetAssignment).value,
-        ).toEqual({
+        expect((ast.segments![1]!.set!.assignments[0] as SetAssignment).value).toEqual({
           type: "NestedMap",
           value: { type: "string", format: "email" },
         });
@@ -422,12 +410,9 @@ describe("SET property to JSON object values", () => {
           const ast = parse(query) as Query;
           expect(ast.set).toBeDefined();
           const value = (ast.set!.assignments[0] as SetAssignment).value;
-          expect(
-            typeof value === "object" &&
-              value !== null &&
-              "type" in value &&
-              value.type,
-          ).toBe("NestedMap");
+          expect(typeof value === "object" && value !== null && "type" in value && value.type).toBe(
+            "NestedMap",
+          );
         }
       });
     });
@@ -435,9 +420,7 @@ describe("SET property to JSON object values", () => {
 
   describe("Step conversion", () => {
     it("should convert SET with JSON object to SetStep", () => {
-      const ast = parse(
-        'MATCH (n:DataType) SET n.schema = {type: "string"} RETURN n',
-      ) as Query;
+      const ast = parse('MATCH (n:DataType) SET n.schema = {type: "string"} RETURN n') as Query;
       const steps = astToSteps(ast);
 
       const setStep = steps.find((s) => s.name === "Set");
@@ -488,9 +471,7 @@ describe("SET property to JSON object values", () => {
     describe("Setting JSON object properties", () => {
       it("should set a property to a simple JSON object", () => {
         // Create a node first
-        const createAst = parse(
-          'CREATE (dt:DataType {name: "String"}) RETURN dt',
-        ) as Query;
+        const createAst = parse('CREATE (dt:DataType {name: "String"}) RETURN dt') as Query;
         const createSteps = astToSteps(createAst);
         const createTraverser = makeTraverser(createSteps);
         const createResults = [...createTraverser.traverse(graph, [undefined])];
@@ -506,9 +487,7 @@ describe("SET property to JSON object values", () => {
         expect(setResults).toHaveLength(1);
 
         // Verify the property was set correctly
-        const verifyAst = parse(
-          'MATCH (dt:DataType {name: "String"}) RETURN dt.schema',
-        ) as Query;
+        const verifyAst = parse('MATCH (dt:DataType {name: "String"}) RETURN dt.schema') as Query;
         const verifySteps = astToSteps(verifyAst);
         const verifyTraverser = makeTraverser(verifySteps);
         const verifyResults = [...verifyTraverser.traverse(graph, [undefined])];
@@ -518,13 +497,9 @@ describe("SET property to JSON object values", () => {
       });
 
       it("should set a property to a JSON object with multiple fields", () => {
-        const createAst = parse(
-          'CREATE (dt:DataType {name: "Email"}) RETURN dt',
-        ) as Query;
+        const createAst = parse('CREATE (dt:DataType {name: "Email"}) RETURN dt') as Query;
         const createSteps = astToSteps(createAst);
-        for (const _ of makeTraverser(createSteps).traverse(graph, [
-          undefined,
-        ]));
+        for (const _ of makeTraverser(createSteps).traverse(graph, [undefined]));
 
         const setAst = parse(
           'MATCH (dt:DataType {name: "Email"}) SET dt.schema = {type: "string", format: "email"} RETURN dt',
@@ -532,21 +507,15 @@ describe("SET property to JSON object values", () => {
         const setSteps = astToSteps(setAst);
         for (const _ of makeTraverser(setSteps).traverse(graph, [undefined]));
 
-        const verifyAst = parse(
-          'MATCH (dt:DataType {name: "Email"}) RETURN dt.schema',
-        ) as Query;
+        const verifyAst = parse('MATCH (dt:DataType {name: "Email"}) RETURN dt.schema') as Query;
         const verifySteps = astToSteps(verifyAst);
-        const verifyResults = [
-          ...makeTraverser(verifySteps).traverse(graph, [undefined]),
-        ];
+        const verifyResults = [...makeTraverser(verifySteps).traverse(graph, [undefined])];
 
         expect(verifyResults[0]).toEqual({ type: "string", format: "email" });
       });
 
       it("should set a property to a nested JSON object", () => {
-        const createAst = parse(
-          'CREATE (c:Config {name: "main"}) RETURN c',
-        ) as Query;
+        const createAst = parse('CREATE (c:Config {name: "main"}) RETURN c') as Query;
         // eslint-disable-next-line no-unused-expressions
         [...makeTraverser(astToSteps(createAst)).traverse(graph, [undefined])];
 
@@ -556,9 +525,7 @@ describe("SET property to JSON object values", () => {
         // eslint-disable-next-line no-unused-expressions
         [...makeTraverser(astToSteps(setAst)).traverse(graph, [undefined])];
 
-        const verifyAst = parse(
-          'MATCH (c:Config {name: "main"}) RETURN c.settings',
-        ) as Query;
+        const verifyAst = parse('MATCH (c:Config {name: "main"}) RETURN c.settings') as Query;
         const verifyResults = [
           ...makeTraverser(astToSteps(verifyAst)).traverse(graph, [undefined]),
         ];
@@ -569,9 +536,7 @@ describe("SET property to JSON object values", () => {
       });
 
       it("should set multiple properties including JSON objects", () => {
-        const createAst = parse(
-          'CREATE (dt:DataType {name: "Token"}) RETURN dt',
-        ) as Query;
+        const createAst = parse('CREATE (dt:DataType {name: "Token"}) RETURN dt') as Query;
         // eslint-disable-next-line no-unused-expressions
         [...makeTraverser(astToSteps(createAst)).traverse(graph, [undefined])];
 
@@ -588,10 +553,7 @@ describe("SET property to JSON object values", () => {
           ...makeTraverser(astToSteps(verifyAst)).traverse(graph, [undefined]),
         ];
 
-        expect(verifyResults[0]).toEqual([
-          "A secure token",
-          { type: "string", minLength: 16 },
-        ]);
+        expect(verifyResults[0]).toEqual(["A secure token", { type: "string", minLength: 16 }]);
       });
 
       it("should preserve JSON object when updating other properties", () => {
@@ -616,10 +578,7 @@ describe("SET property to JSON object values", () => {
           ...makeTraverser(astToSteps(verifyAst)).traverse(graph, [undefined]),
         ];
 
-        expect(verifyResults[0]).toEqual([
-          "A valid URL",
-          { type: "string", format: "uri" },
-        ]);
+        expect(verifyResults[0]).toEqual(["A valid URL", { type: "string", format: "uri" }]);
       });
 
       it("should update an existing JSON object property", () => {
@@ -636,9 +595,7 @@ describe("SET property to JSON object values", () => {
         // eslint-disable-next-line no-unused-expressions
         [...makeTraverser(astToSteps(updateAst)).traverse(graph, [undefined])];
 
-        const verifyAst = parse(
-          'MATCH (dt:DataType {name: "Number"}) RETURN dt.schema',
-        ) as Query;
+        const verifyAst = parse('MATCH (dt:DataType {name: "Number"}) RETURN dt.schema') as Query;
         const verifyResults = [
           ...makeTraverser(astToSteps(verifyAst)).traverse(graph, [undefined]),
         ];
@@ -655,9 +612,7 @@ describe("SET property to JSON object values", () => {
         // eslint-disable-next-line no-unused-expressions
         [...makeTraverser(astToSteps(mergeAst)).traverse(graph, [undefined])];
 
-        const verifyAst = parse(
-          'MATCH (dt:DataType {name: "Boolean"}) RETURN dt.schema',
-        ) as Query;
+        const verifyAst = parse('MATCH (dt:DataType {name: "Boolean"}) RETURN dt.schema') as Query;
         const verifyResults = [
           ...makeTraverser(astToSteps(verifyAst)).traverse(graph, [undefined]),
         ];
@@ -680,9 +635,7 @@ describe("SET property to JSON object values", () => {
         // eslint-disable-next-line no-unused-expressions
         [...makeTraverser(astToSteps(mergeAst)).traverse(graph, [undefined])];
 
-        const verifyAst = parse(
-          'MATCH (dt:DataType {name: "Integer"}) RETURN dt.schema',
-        ) as Query;
+        const verifyAst = parse('MATCH (dt:DataType {name: "Integer"}) RETURN dt.schema') as Query;
         const verifyResults = [
           ...makeTraverser(astToSteps(verifyAst)).traverse(graph, [undefined]),
         ];
@@ -702,9 +655,7 @@ describe("SET property to JSON object values", () => {
         const queryAst = parse(
           "MATCH (c:Config) RETURN c.settings.debug, c.settings.level",
         ) as Query;
-        const results = [
-          ...makeTraverser(astToSteps(queryAst)).traverse(graph, [undefined]),
-        ];
+        const results = [...makeTraverser(astToSteps(queryAst)).traverse(graph, [undefined])];
 
         expect(results[0]).toEqual([true, 3]);
       });
@@ -726,9 +677,7 @@ describe("SET property to JSON object values", () => {
         const queryAst = parse(
           "MATCH (c:Config) WHERE c.settings.debug = true RETURN c.name",
         ) as Query;
-        const results = [
-          ...makeTraverser(astToSteps(queryAst)).traverse(graph, [undefined]),
-        ];
+        const results = [...makeTraverser(astToSteps(queryAst)).traverse(graph, [undefined])];
 
         expect(results).toHaveLength(1);
         expect(results[0]).toEqual("dev");
@@ -737,9 +686,7 @@ describe("SET property to JSON object values", () => {
 
     describe("Edge cases", () => {
       it("should handle setting property to empty object", () => {
-        const createAst = parse(
-          'CREATE (c:Config {name: "empty"}) RETURN c',
-        ) as Query;
+        const createAst = parse('CREATE (c:Config {name: "empty"}) RETURN c') as Query;
         // eslint-disable-next-line no-unused-expressions
         [...makeTraverser(astToSteps(createAst)).traverse(graph, [undefined])];
 
@@ -749,20 +696,14 @@ describe("SET property to JSON object values", () => {
         // eslint-disable-next-line no-unused-expressions
         [...makeTraverser(astToSteps(setAst)).traverse(graph, [undefined])];
 
-        const verifyAst = parse(
-          'MATCH (c:Config {name: "empty"}) RETURN c.options',
-        ) as Query;
-        const results = [
-          ...makeTraverser(astToSteps(verifyAst)).traverse(graph, [undefined]),
-        ];
+        const verifyAst = parse('MATCH (c:Config {name: "empty"}) RETURN c.options') as Query;
+        const results = [...makeTraverser(astToSteps(verifyAst)).traverse(graph, [undefined])];
 
         expect(results[0]).toEqual({});
       });
 
       it("should handle JSON object with null value", () => {
-        const createAst = parse(
-          'CREATE (c:Config {name: "nullable"}) RETURN c',
-        ) as Query;
+        const createAst = parse('CREATE (c:Config {name: "nullable"}) RETURN c') as Query;
         // eslint-disable-next-line no-unused-expressions
         [...makeTraverser(astToSteps(createAst)).traverse(graph, [undefined])];
 
@@ -772,20 +713,14 @@ describe("SET property to JSON object values", () => {
         // eslint-disable-next-line no-unused-expressions
         [...makeTraverser(astToSteps(setAst)).traverse(graph, [undefined])];
 
-        const verifyAst = parse(
-          'MATCH (c:Config {name: "nullable"}) RETURN c.options',
-        ) as Query;
-        const results = [
-          ...makeTraverser(astToSteps(verifyAst)).traverse(graph, [undefined]),
-        ];
+        const verifyAst = parse('MATCH (c:Config {name: "nullable"}) RETURN c.options') as Query;
+        const results = [...makeTraverser(astToSteps(verifyAst)).traverse(graph, [undefined])];
 
         expect(results[0]).toEqual({ default: null, value: 42 });
       });
 
       it("should handle JSON object with mixed value types", () => {
-        const createAst = parse(
-          'CREATE (c:Config {name: "mixed"}) RETURN c',
-        ) as Query;
+        const createAst = parse('CREATE (c:Config {name: "mixed"}) RETURN c') as Query;
         // eslint-disable-next-line no-unused-expressions
         [...makeTraverser(astToSteps(createAst)).traverse(graph, [undefined])];
 
@@ -795,12 +730,8 @@ describe("SET property to JSON object values", () => {
         // eslint-disable-next-line no-unused-expressions
         [...makeTraverser(astToSteps(setAst)).traverse(graph, [undefined])];
 
-        const verifyAst = parse(
-          'MATCH (c:Config {name: "mixed"}) RETURN c.data',
-        ) as Query;
-        const results = [
-          ...makeTraverser(astToSteps(verifyAst)).traverse(graph, [undefined]),
-        ];
+        const verifyAst = parse('MATCH (c:Config {name: "mixed"}) RETURN c.data') as Query;
+        const results = [...makeTraverser(astToSteps(verifyAst)).traverse(graph, [undefined])];
 
         expect(results[0]).toEqual({
           str: "hello",
@@ -811,9 +742,7 @@ describe("SET property to JSON object values", () => {
       });
 
       it("should handle arrays within JSON objects", () => {
-        const createAst = parse(
-          'CREATE (s:Schema {name: "Person"}) RETURN s',
-        ) as Query;
+        const createAst = parse('CREATE (s:Schema {name: "Person"}) RETURN s') as Query;
         // eslint-disable-next-line no-unused-expressions
         [...makeTraverser(astToSteps(createAst)).traverse(graph, [undefined])];
 
@@ -826,9 +755,7 @@ describe("SET property to JSON object values", () => {
         const verifyAst = parse(
           'MATCH (s:Schema) WHERE s.name = "Person" RETURN s.definition',
         ) as Query;
-        const results = [
-          ...makeTraverser(astToSteps(verifyAst)).traverse(graph, [undefined]),
-        ];
+        const results = [...makeTraverser(astToSteps(verifyAst)).traverse(graph, [undefined])];
 
         expect(results[0]).toEqual({
           type: "object",
@@ -838,9 +765,7 @@ describe("SET property to JSON object values", () => {
       });
 
       it("should handle nested objects within arrays within objects", () => {
-        const createAst = parse(
-          'CREATE (s:Schema {name: "Complex"}) RETURN s',
-        ) as Query;
+        const createAst = parse('CREATE (s:Schema {name: "Complex"}) RETURN s') as Query;
         // eslint-disable-next-line no-unused-expressions
         [...makeTraverser(astToSteps(createAst)).traverse(graph, [undefined])];
 
@@ -854,9 +779,7 @@ describe("SET property to JSON object values", () => {
         const verifyAst = parse(
           'MATCH (s:Schema) WHERE s.name = "Complex" RETURN s.schema',
         ) as Query;
-        const results = [
-          ...makeTraverser(astToSteps(verifyAst)).traverse(graph, [undefined]),
-        ];
+        const results = [...makeTraverser(astToSteps(verifyAst)).traverse(graph, [undefined])];
 
         expect(results[0]).toEqual({
           type: "array",
@@ -899,18 +822,14 @@ describe("SET property to JSON object values", () => {
 
       // Verify all were created
       const countAst = parse("MATCH (dt:DataType) RETURN count(dt)") as Query;
-      const countResults = [
-        ...makeTraverser(astToSteps(countAst)).traverse(graph, [undefined]),
-      ];
+      const countResults = [...makeTraverser(astToSteps(countAst)).traverse(graph, [undefined])];
       expect(countResults[0]).toEqual(queries.length);
 
       // Verify specific schema for Email type (use WHERE clause for reliable filtering)
       const emailAst = parse(
         'MATCH (dt:DataType) WHERE dt.name = "EmailType" RETURN dt.schema',
       ) as Query;
-      const emailResults = [
-        ...makeTraverser(astToSteps(emailAst)).traverse(graph, [undefined]),
-      ];
+      const emailResults = [...makeTraverser(astToSteps(emailAst)).traverse(graph, [undefined])];
       expect(emailResults).toHaveLength(1);
       expect(emailResults[0]).toEqual({ type: "string", format: "email" });
     });
@@ -929,9 +848,7 @@ describe("SET property to JSON object values", () => {
       const verifyAst = parse(
         'MATCH (dt:DataType {name: "Slug"}) RETURN dt.description, dt.schema',
       ) as Query;
-      const results = [
-        ...makeTraverser(astToSteps(verifyAst)).traverse(graph, [undefined]),
-      ];
+      const results = [...makeTraverser(astToSteps(verifyAst)).traverse(graph, [undefined])];
 
       expect(results[0]).toEqual([
         "A URL-friendly identifier string.",
@@ -950,12 +867,8 @@ describe("SET property to JSON object values", () => {
       // eslint-disable-next-line no-unused-expressions
       [...makeTraverser(astToSteps(ast)).traverse(graph, [undefined])];
 
-      const verifyAst = parse(
-        'MATCH (dt:DataType {name: "Token"}) RETURN dt.schema',
-      ) as Query;
-      const results = [
-        ...makeTraverser(astToSteps(verifyAst)).traverse(graph, [undefined]),
-      ];
+      const verifyAst = parse('MATCH (dt:DataType {name: "Token"}) RETURN dt.schema') as Query;
+      const results = [...makeTraverser(astToSteps(verifyAst)).traverse(graph, [undefined])];
 
       expect(results[0]).toEqual({ type: "string", minLength: 16 });
     });

@@ -58,15 +58,9 @@ describe("Literals1 - Boolean and Null", () => {
 
   test("[custom-1] Boolean true in WHERE clause", () => {
     const graph = createTckGraph();
-    executeTckQuery(
-      graph,
-      "CREATE (:A {name: 'a1', flag: true}), (:A {name: 'a2', flag: false})",
-    );
+    executeTckQuery(graph, "CREATE (:A {name: 'a1', flag: true}), (:A {name: 'a2', flag: false})");
 
-    const results = executeTckQuery(
-      graph,
-      "MATCH (a:A) WHERE a.flag = true RETURN a.name",
-    );
+    const results = executeTckQuery(graph, "MATCH (a:A) WHERE a.flag = true RETURN a.name");
 
     expect(results).toHaveLength(1);
     expect(results[0]).toBe("a1");
@@ -74,15 +68,9 @@ describe("Literals1 - Boolean and Null", () => {
 
   test("[custom-2] Boolean false in WHERE clause", () => {
     const graph = createTckGraph();
-    executeTckQuery(
-      graph,
-      "CREATE (:A {name: 'a1', flag: true}), (:A {name: 'a2', flag: false})",
-    );
+    executeTckQuery(graph, "CREATE (:A {name: 'a1', flag: true}), (:A {name: 'a2', flag: false})");
 
-    const results = executeTckQuery(
-      graph,
-      "MATCH (a:A) WHERE a.flag = false RETURN a.name",
-    );
+    const results = executeTckQuery(graph, "MATCH (a:A) WHERE a.flag = false RETURN a.name");
 
     expect(results).toHaveLength(1);
     expect(results[0]).toBe("a2");
@@ -92,10 +80,7 @@ describe("Literals1 - Boolean and Null", () => {
     const graph = createTckGraph();
     executeTckQuery(graph, "CREATE (:A {name: 'test', active: true})");
 
-    const results = executeTckQuery(
-      graph,
-      "MATCH (a:A) WHERE a.active = true RETURN a.name",
-    );
+    const results = executeTckQuery(graph, "MATCH (a:A) WHERE a.active = true RETURN a.name");
 
     expect(results).toHaveLength(1);
     expect(results[0]).toBe("test");
@@ -105,10 +90,7 @@ describe("Literals1 - Boolean and Null", () => {
     const graph = createTckGraph();
     executeTckQuery(graph, "CREATE (:A {name: 'test', active: false})");
 
-    const results = executeTckQuery(
-      graph,
-      "MATCH (a:A) WHERE a.active = false RETURN a.name",
-    );
+    const results = executeTckQuery(graph, "MATCH (a:A) WHERE a.active = false RETURN a.name");
 
     expect(results).toHaveLength(1);
     expect(results[0]).toBe("test");
@@ -122,10 +104,7 @@ describe("Literals1 - Boolean and Null", () => {
     );
 
     // Node without 'value' property has null value
-    const results = executeTckQuery(
-      graph,
-      "MATCH (a:A) WHERE a.value IS NULL RETURN a.name",
-    );
+    const results = executeTckQuery(graph, "MATCH (a:A) WHERE a.value IS NULL RETURN a.name");
 
     expect(results).toHaveLength(1);
     expect(results[0]).toBe("no-value");
@@ -136,10 +115,7 @@ describe("Literals1 - Boolean and Null", () => {
     executeTckQuery(graph, "CREATE (:A {name: 'test', value: null})");
 
     // Property set to null should match IS NULL
-    const results = executeTckQuery(
-      graph,
-      "MATCH (a:A) WHERE a.value IS NULL RETURN a.name",
-    );
+    const results = executeTckQuery(graph, "MATCH (a:A) WHERE a.value IS NULL RETURN a.name");
 
     expect(results).toHaveLength(1);
     expect(results[0]).toBe("test");
@@ -149,10 +125,7 @@ describe("Literals1 - Boolean and Null", () => {
     const graph = createTckGraph();
     executeTckQuery(graph, "CREATE (:A {name: 'test', flag: TRUE})");
 
-    const results = executeTckQuery(
-      graph,
-      "MATCH (a:A) WHERE a.flag = true RETURN a.name",
-    );
+    const results = executeTckQuery(graph, "MATCH (a:A) WHERE a.flag = true RETURN a.name");
 
     expect(results).toHaveLength(1);
     expect(results[0]).toBe("test");
@@ -162,10 +135,7 @@ describe("Literals1 - Boolean and Null", () => {
     const graph = createTckGraph();
     executeTckQuery(graph, "CREATE (:A {name: 'test', flag: FALSE})");
 
-    const results = executeTckQuery(
-      graph,
-      "MATCH (a:A) WHERE a.flag = false RETURN a.name",
-    );
+    const results = executeTckQuery(graph, "MATCH (a:A) WHERE a.flag = false RETURN a.name");
 
     expect(results).toHaveLength(1);
     expect(results[0]).toBe("test");
@@ -174,10 +144,7 @@ describe("Literals1 - Boolean and Null", () => {
   test("[custom-9] Using UNWIND with boolean values", () => {
     const graph = createTckGraph();
 
-    const results = executeTckQuery(
-      graph,
-      "UNWIND [true, false, true] AS val RETURN val",
-    );
+    const results = executeTckQuery(graph, "UNWIND [true, false, true] AS val RETURN val");
 
     expect(results).toHaveLength(3);
     expect(results[0]).toEqual([true]);
@@ -187,15 +154,9 @@ describe("Literals1 - Boolean and Null", () => {
 
   test("[custom-10] Filtering by boolean NOT", () => {
     const graph = createTckGraph();
-    executeTckQuery(
-      graph,
-      "CREATE (:A {name: 'a1', flag: true}), (:A {name: 'a2', flag: false})",
-    );
+    executeTckQuery(graph, "CREATE (:A {name: 'a1', flag: true}), (:A {name: 'a2', flag: false})");
 
-    const results = executeTckQuery(
-      graph,
-      "MATCH (a:A) WHERE NOT a.flag = true RETURN a.name",
-    );
+    const results = executeTckQuery(graph, "MATCH (a:A) WHERE NOT a.flag = true RETURN a.name");
 
     expect(results).toHaveLength(1);
     expect(results[0]).toBe("a2");

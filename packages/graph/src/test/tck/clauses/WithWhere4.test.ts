@@ -11,43 +11,31 @@ describe("WithWhere4 - Non-Equi-Joins on variables", () => {
     executeTckQuery(graph, "CREATE (:A)");
     executeTckQuery(graph, "CREATE (:B)");
 
-    const results = executeTckQuery(
-      graph,
-      "MATCH (a:A), (b:B) WITH a, b WHERE a <> b RETURN a, b",
-    );
+    const results = executeTckQuery(graph, "MATCH (a:A), (b:B) WITH a, b WHERE a <> b RETURN a, b");
     // A <> B should match since they are different nodes
     expect(results.length).toBe(1);
-    const [aNode, bNode] = results[0] as [
-      Record<string, unknown>,
-      Record<string, unknown>,
-    ];
+    const [aNode, bNode] = results[0] as [Record<string, unknown>, Record<string, unknown>];
     expect(getLabel(aNode)).toBe("A");
     expect(getLabel(bNode)).toBe("B");
   });
 
-  test.fails(
-    "[2] Join with disjunctive multi-part predicates including patterns - pattern predicates in WHERE not supported",
-    () => {
-      // Original test uses pattern predicates in WHERE:
-      // WHERE a.id = 0 AND (a)-[:T]->(b:TheLabel) OR (a)-[:T*]->(b:MissingLabel)
-      // Pattern predicates like (a)-[:T]->(b) in WHERE clause not supported
-      const graph = createTckGraph();
-      executeTckQuery(graph, "CREATE (:A {id: 0})-[:T]->(:TheLabel)");
-      executeTckQuery(graph, "CREATE (:A {id: 1})-[:T]->(:TheLabel)");
+  test.fails("[2] Join with disjunctive multi-part predicates including patterns - pattern predicates in WHERE not supported", () => {
+    // Original test uses pattern predicates in WHERE:
+    // WHERE a.id = 0 AND (a)-[:T]->(b:TheLabel) OR (a)-[:T*]->(b:MissingLabel)
+    // Pattern predicates like (a)-[:T]->(b) in WHERE clause not supported
+    const graph = createTckGraph();
+    executeTckQuery(graph, "CREATE (:A {id: 0})-[:T]->(:TheLabel)");
+    executeTckQuery(graph, "CREATE (:A {id: 1})-[:T]->(:TheLabel)");
 
-      const results = executeTckQuery(
-        graph,
-        "MATCH (a:A), (b) WITH a, b WHERE a.id = 0 AND (a)-[:T]->(b:TheLabel) OR (a)-[:T*]->(b:MissingLabel) RETURN a, b",
-      );
-      expect(results.length).toBe(1);
-      const [aNode, bNode] = results[0] as [
-        Record<string, unknown>,
-        Record<string, unknown>,
-      ];
-      expect(getLabel(aNode)).toBe("A");
-      expect(getLabel(bNode)).toBe("TheLabel");
-    },
-  );
+    const results = executeTckQuery(
+      graph,
+      "MATCH (a:A), (b) WITH a, b WHERE a.id = 0 AND (a)-[:T]->(b:TheLabel) OR (a)-[:T*]->(b:MissingLabel) RETURN a, b",
+    );
+    expect(results.length).toBe(1);
+    const [aNode, bNode] = results[0] as [Record<string, unknown>, Record<string, unknown>];
+    expect(getLabel(aNode)).toBe("A");
+    expect(getLabel(bNode)).toBe("TheLabel");
+  });
 
   // Custom tests for non-equi joins
   test("[custom-1] Join nodes with less than comparison", () => {

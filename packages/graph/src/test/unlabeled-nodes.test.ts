@@ -127,23 +127,14 @@ describe("Unlabeled nodes support", () => {
     test("CREATE ()-[:R]->() creates relationship between unlabeled nodes", () => {
       const graph = createTckGraph();
       executeTckQuery(graph, "CREATE ()-[:R]->()");
-      const results = executeTckQuery(
-        graph,
-        "MATCH (a)-[r:R]->(b) RETURN count(r)",
-      );
+      const results = executeTckQuery(graph, "MATCH (a)-[r:R]->(b) RETURN count(r)");
       expect(results).toEqual([1]);
     });
 
     test("CREATE (n1 {num: 1}), (n2 {num: 3}), (n3 {num: -5})", () => {
       const graph = createTckGraph();
-      executeTckQuery(
-        graph,
-        "CREATE (n1 {num: 1}), (n2 {num: 3}), (n3 {num: -5})",
-      );
-      const results = executeTckQuery(
-        graph,
-        "MATCH (n) RETURN n.num ORDER BY n.num",
-      );
+      executeTckQuery(graph, "CREATE (n1 {num: 1}), (n2 {num: 3}), (n3 {num: -5})");
+      const results = executeTckQuery(graph, "MATCH (n) RETURN n.num ORDER BY n.num");
       expect(results).toEqual([-5, 1, 3]);
     });
 
@@ -153,10 +144,7 @@ describe("Unlabeled nodes support", () => {
       executeTckQuery(graph, "CREATE (:B {name: 'b'})");
       executeTckQuery(graph, "CREATE ({name: 'c'})"); // No label
 
-      const results = executeTckQuery(
-        graph,
-        "MATCH (n) RETURN n.name ORDER BY n.name",
-      );
+      const results = executeTckQuery(graph, "MATCH (n) RETURN n.name ORDER BY n.name");
       expect(results).toEqual(["a", "b", "c"]);
     });
 
@@ -169,10 +157,7 @@ describe("Unlabeled nodes support", () => {
       expect(nodeCount).toEqual([2]);
 
       // Should have 1 relationship
-      const relCount = executeTckQuery(
-        graph,
-        "MATCH ()-[r]->() RETURN count(r)",
-      );
+      const relCount = executeTckQuery(graph, "MATCH ()-[r]->() RETURN count(r)");
       expect(relCount).toEqual([1]);
     });
   });

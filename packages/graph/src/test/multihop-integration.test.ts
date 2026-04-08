@@ -74,8 +74,7 @@ test("Multi-hop query integration tests - should execute 2-hop query with single
   graph.addEdge(prop1.id, "RelatesTo", concept2.id, {});
 
   // Parse and execute the query with single dash
-  const query =
-    "MATCH (c:Concept)-[e:IsA]-(a:Property)-(d:Concept) RETURN c, e, a, d LIMIT 10";
+  const query = "MATCH (c:Concept)-[e:IsA]-(a:Property)-(d:Concept) RETURN c, e, a, d LIMIT 10";
   const ast = parse(query) as Query;
 
   expect((ast.matches[0]!.pattern as Pattern).elements).toHaveLength(5);
@@ -103,8 +102,7 @@ test("Multi-hop query integration tests - should execute arbitrary depth query w
   graph.addEdge(c.id, "connects", d.id, {});
 
   // Parse 3-hop query with single dash
-  const query =
-    "MATCH (n1:Node)-(n2:Node)-(n3:Node)-(n4:Node) RETURN n1, n2, n3, n4";
+  const query = "MATCH (n1:Node)-(n2:Node)-(n3:Node)-(n4:Node) RETURN n1, n2, n3, n4";
   const ast = parse(query) as Query;
 
   expect((ast.matches[0]!.pattern as Pattern).elements).toHaveLength(7);

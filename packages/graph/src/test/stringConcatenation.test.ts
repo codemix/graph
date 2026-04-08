@@ -51,9 +51,7 @@ function createGraph() {
 
 describe("String Concatenation - Grammar", () => {
   test("parses string literal concatenation", () => {
-    const ast = parse(
-      "MATCH (n) WHERE n.name = 'Hello' + ' ' + 'World' RETURN n",
-    ) as Query;
+    const ast = parse("MATCH (n) WHERE n.name = 'Hello' + ' ' + 'World' RETURN n") as Query;
     expect(ast).toBeDefined();
     const condition = ast.matches[0]!.where!.condition as any;
     expect(condition.value.type).toBe("ArithmeticExpression");
@@ -61,9 +59,7 @@ describe("String Concatenation - Grammar", () => {
   });
 
   test("parses property + string literal", () => {
-    const ast = parse(
-      "MATCH (n) WHERE n.firstName + ' Doe' = 'John Doe' RETURN n",
-    ) as Query;
+    const ast = parse("MATCH (n) WHERE n.firstName + ' Doe' = 'John Doe' RETURN n") as Query;
     expect(ast).toBeDefined();
     const condition = ast.matches[0]!.where!.condition as any;
     expect(condition.left.type).toBe("ArithmeticExpression");
@@ -73,9 +69,7 @@ describe("String Concatenation - Grammar", () => {
   });
 
   test("parses property + property concatenation", () => {
-    const ast = parse(
-      "MATCH (n) WHERE n.firstName + n.lastName = 'JohnDoe' RETURN n",
-    ) as Query;
+    const ast = parse("MATCH (n) WHERE n.firstName + n.lastName = 'JohnDoe' RETURN n") as Query;
     expect(ast).toBeDefined();
     const condition = ast.matches[0]!.where!.condition as any;
     expect(condition.left.type).toBe("ArithmeticExpression");
@@ -96,9 +90,7 @@ describe("String Concatenation - Grammar", () => {
   });
 
   test("parses string concatenation with parameter", () => {
-    const ast = parse(
-      "MATCH (n) WHERE n.greeting = 'Hello, ' + $name RETURN n",
-    ) as Query;
+    const ast = parse("MATCH (n) WHERE n.greeting = 'Hello, ' + $name RETURN n") as Query;
     expect(ast).toBeDefined();
     const condition = ast.matches[0]!.where!.condition as any;
     expect(condition.value.type).toBe("ArithmeticExpression");
@@ -119,9 +111,7 @@ describe("String Concatenation - Step Conversion", () => {
     ) as Query;
     const steps = astToSteps(ast);
     expect(steps.length).toBeGreaterThan(0);
-    const filterStep = steps.find(
-      (s) => s.constructor.name === "FilterElementsStep",
-    );
+    const filterStep = steps.find((s) => s.constructor.name === "FilterElementsStep");
     expect(filterStep).toBeDefined();
   });
 });
@@ -381,9 +371,7 @@ describe("String Concatenation - Edge Cases", () => {
 
   test("number + string coercion", () => {
     // When one operand is string, + becomes concatenation
-    const ast = parse(
-      "MATCH (n:Person) WHERE 'Age: ' + 25 = 'Age: 25' RETURN n",
-    ) as Query;
+    const ast = parse("MATCH (n:Person) WHERE 'Age: ' + 25 = 'Age: 25' RETURN n") as Query;
     const graph = createGraph();
     graph.addVertex("Person", {
       id: "p1",
@@ -404,9 +392,7 @@ describe("String Concatenation - Edge Cases", () => {
   test("boolean + string coercion", () => {
     setQueryParams({ flag: true });
 
-    const ast = parse(
-      "MATCH (n:Person) WHERE 'Value: ' + $flag = 'Value: true' RETURN n",
-    ) as Query;
+    const ast = parse("MATCH (n:Person) WHERE 'Value: ' + $flag = 'Value: true' RETURN n") as Query;
     const graph = createGraph();
     graph.addVertex("Person", {
       id: "p1",

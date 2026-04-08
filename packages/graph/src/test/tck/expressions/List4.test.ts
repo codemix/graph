@@ -10,19 +10,13 @@ import { createTckGraph, executeTckQuery } from "../tckHelpers.js";
 describe("List4 - List Concatenation", () => {
   test("[1] Concatenating lists of same type", () => {
     const graph = createTckGraph();
-    const results = executeTckQuery(
-      graph,
-      "RETURN [1, 10, 100] + [4, 5] AS foo",
-    );
+    const results = executeTckQuery(graph, "RETURN [1, 10, 100] + [4, 5] AS foo");
     expect(results).toEqual([[1, 10, 100, 4, 5]]);
   });
 
   test("[2] Concatenating a list with a scalar of same type", () => {
     const graph = createTckGraph();
-    const results = executeTckQuery(
-      graph,
-      "RETURN [false, true] + false AS foo",
-    );
+    const results = executeTckQuery(graph, "RETURN [false, true] + false AS foo");
     expect(results).toEqual([[false, true, false]]);
   });
 

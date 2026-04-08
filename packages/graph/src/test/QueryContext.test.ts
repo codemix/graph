@@ -78,13 +78,9 @@ describe("QueryContext isolation", () => {
       const steps = astToSteps(ast);
 
       // Create contexts for each name
-      const contexts = names.map(
-        (name) => new QueryContext(testGraph, { name }),
-      );
+      const contexts = names.map((name) => new QueryContext(testGraph, { name }));
       const traversers = contexts.map(() => createTraverser(steps));
-      const iterators = traversers.map((t, i) =>
-        t.traverse(testGraph, [], contexts[i]),
-      );
+      const iterators = traversers.map((t, i) => t.traverse(testGraph, [], contexts[i]));
 
       // Interleave all iterations in round-robin fashion
       const allResults: unknown[][] = names.map(() => []);
@@ -243,8 +239,7 @@ describe("QueryContext isolation", () => {
       otherGraph.addEdge(otherPerson, "knows", otherFriend, {});
 
       // Query with relationship traversal
-      const query =
-        "MATCH (p:Person)-[:knows]->(f:Person) RETURN p.name, f.name";
+      const query = "MATCH (p:Person)-[:knows]->(f:Person) RETURN p.name, f.name";
       const ast = parse(query) as Query;
       const steps = astToSteps(ast);
 
@@ -325,9 +320,7 @@ describe("QueryContext isolation", () => {
         name: "InnerPerson",
       });
       const innerTraverser = createTraverser(steps);
-      const innerResults = [
-        ...innerTraverser.traverse(innerGraph, [], innerContext),
-      ];
+      const innerResults = [...innerTraverser.traverse(innerGraph, [], innerContext)];
 
       // Inner results should be from inner graph
       expect(innerResults).toHaveLength(1);
@@ -420,20 +413,18 @@ describe("QueryContext isolation", () => {
 
       // Run 100 queries concurrently with Promise.all
       const promises = Array.from({ length: 100 }, (_, i) => {
-        return new Promise<{ index: number; name: string | undefined }>(
-          (resolve) => {
-            // Random delay to encourage interleaving
-            setTimeout(() => {
-              const context = new QueryContext(testGraph, {
-                name: `Person${i}`,
-              });
-              const traverser = createTraverser(steps);
-              const results = [...traverser.traverse(testGraph, [], context)];
-              const foundName = (results[0] as any[])?.[0]?.get?.("name");
-              resolve({ index: i, name: foundName });
-            }, Math.random() * 50);
-          },
-        );
+        return new Promise<{ index: number; name: string | undefined }>((resolve) => {
+          // Random delay to encourage interleaving
+          setTimeout(() => {
+            const context = new QueryContext(testGraph, {
+              name: `Person${i}`,
+            });
+            const traverser = createTraverser(steps);
+            const results = [...traverser.traverse(testGraph, [], context)];
+            const foundName = (results[0] as any[])?.[0]?.get?.("name");
+            resolve({ index: i, name: foundName });
+          }, Math.random() * 50);
+        });
       });
 
       const allResults = await Promise.all(promises);

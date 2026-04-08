@@ -22,16 +22,13 @@ describe("Create3 - Interoperation with other clauses", () => {
     expect(results[0]).toBe(3);
   });
 
-  test.fails(
-    "[3] MATCH-CREATE-WITH-CREATE - unlabeled nodes not supported",
-    () => {
-      const graph = createTckGraph();
-      executeTckQuery(graph, "CREATE ()");
-      executeTckQuery(graph, "MATCH () CREATE () WITH * MATCH () CREATE ()");
-      const results = executeTckQuery(graph, "MATCH (n) RETURN count(n)");
-      expect(results[0]).toBeGreaterThan(1);
-    },
-  );
+  test.fails("[3] MATCH-CREATE-WITH-CREATE - unlabeled nodes not supported", () => {
+    const graph = createTckGraph();
+    executeTckQuery(graph, "CREATE ()");
+    executeTckQuery(graph, "MATCH () CREATE () WITH * MATCH () CREATE ()");
+    const results = executeTckQuery(graph, "MATCH (n) RETURN count(n)");
+    expect(results[0]).toBeGreaterThan(1);
+  });
 
   test("[4] MATCH-CREATE: Newly-created nodes not visible to preceding MATCH", () => {
     const graph = createTckGraph();
@@ -41,18 +38,15 @@ describe("Create3 - Interoperation with other clauses", () => {
     expect(results[0]).toBe(2);
   });
 
-  test.fails(
-    "[5] WITH-CREATE: Nodes are not created when aliases are applied to variable names - unlabeled nodes not supported",
-    () => {
-      const graph = createTckGraph();
-      executeTckQuery(graph, "CREATE (), ()");
-      const results = executeTckQuery(
-        graph,
-        "MATCH (n) MATCH (m) WITH n AS a, m AS b CREATE (a)-[:T]->(b) RETURN a, b",
-      );
-      expect(results).toHaveLength(4);
-    },
-  );
+  test.fails("[5] WITH-CREATE: Nodes are not created when aliases are applied to variable names - unlabeled nodes not supported", () => {
+    const graph = createTckGraph();
+    executeTckQuery(graph, "CREATE (), ()");
+    const results = executeTckQuery(
+      graph,
+      "MATCH (n) MATCH (m) WITH n AS a, m AS b CREATE (a)-[:T]->(b) RETURN a, b",
+    );
+    expect(results).toHaveLength(4);
+  });
 
   test("[6] WITH-CREATE: Only a single node is created when an alias is applied to a variable name", () => {
     const graph = createTckGraph();
@@ -72,18 +66,15 @@ describe("Create3 - Interoperation with other clauses", () => {
     expect(nodeCount).toHaveLength(2); // Original X + new A
   });
 
-  test.fails(
-    "[7] WITH-CREATE: Nodes are not created when aliases are applied to variable names multiple times - unlabeled nodes not supported",
-    () => {
-      const graph = createTckGraph();
-      executeTckQuery(graph, "CREATE (), ()");
-      const results = executeTckQuery(
-        graph,
-        "MATCH (n) MATCH (m) WITH n AS a, m AS b WITH a AS x, b AS y CREATE (x)-[:T]->(y) RETURN x, y",
-      );
-      expect(results).toHaveLength(4);
-    },
-  );
+  test.fails("[7] WITH-CREATE: Nodes are not created when aliases are applied to variable names multiple times - unlabeled nodes not supported", () => {
+    const graph = createTckGraph();
+    executeTckQuery(graph, "CREATE (), ()");
+    const results = executeTckQuery(
+      graph,
+      "MATCH (n) MATCH (m) WITH n AS a, m AS b WITH a AS x, b AS y CREATE (x)-[:T]->(y) RETURN x, y",
+    );
+    expect(results).toHaveLength(4);
+  });
 
   test("[8] WITH-CREATE: Only a single node is created when an alias is applied to a variable name multiple times", () => {
     const graph = createTckGraph();
@@ -98,17 +89,14 @@ describe("Create3 - Interoperation with other clauses", () => {
     expect(x).toBeDefined();
   });
 
-  test.fails(
-    "[9] WITH-CREATE: A bound node should be recognized after projection with WITH + WITH - unlabeled nodes not supported",
-    () => {
-      const graph = createTckGraph();
-      const results = executeTckQuery(
-        graph,
-        "CREATE (a) WITH a WITH * CREATE (b) CREATE (a)<-[:T]-(b) RETURN a, b",
-      );
-      expect(results).toHaveLength(1);
-    },
-  );
+  test.fails("[9] WITH-CREATE: A bound node should be recognized after projection with WITH + WITH - unlabeled nodes not supported", () => {
+    const graph = createTckGraph();
+    const results = executeTckQuery(
+      graph,
+      "CREATE (a) WITH a WITH * CREATE (b) CREATE (a)<-[:T]-(b) RETURN a, b",
+    );
+    expect(results).toHaveLength(1);
+  });
 
   test("[10] WITH-UNWIND-CREATE: A bound node should be recognized after projection with WITH + UNWIND", () => {
     const graph = createTckGraph();
@@ -117,10 +105,7 @@ describe("Create3 - Interoperation with other clauses", () => {
       "CREATE (a) WITH a UNWIND [0] AS i CREATE (b) CREATE (a)<-[:T]-(b) RETURN a, b",
     );
     expect(results).toHaveLength(1);
-    const [a, b] = results[0] as [
-      Record<string, unknown>,
-      Record<string, unknown>,
-    ];
+    const [a, b] = results[0] as [Record<string, unknown>, Record<string, unknown>];
     expect(a).toBeDefined();
     expect(b).toBeDefined();
   });
@@ -132,10 +117,7 @@ describe("Create3 - Interoperation with other clauses", () => {
       "CREATE (a) WITH a MERGE () CREATE (b) CREATE (a)<-[:T]-(b) RETURN a, b",
     );
     expect(results).toHaveLength(1);
-    const [a, b] = results[0] as [
-      Record<string, unknown>,
-      Record<string, unknown>,
-    ];
+    const [a, b] = results[0] as [Record<string, unknown>, Record<string, unknown>];
     expect(a).toBeDefined();
     expect(b).toBeDefined();
   });
@@ -147,29 +129,17 @@ describe("Create3 - Interoperation with other clauses", () => {
       "CREATE (a) WITH a MERGE (x) MERGE (y) MERGE (x)-[:T]->(y) CREATE (b) CREATE (a)<-[:T]-(b) RETURN a, b",
     );
     expect(results).toHaveLength(1);
-    const [a, b] = results[0] as [
-      Record<string, unknown>,
-      Record<string, unknown>,
-    ];
+    const [a, b] = results[0] as [Record<string, unknown>, Record<string, unknown>];
     expect(a).toBeDefined();
     expect(b).toBeDefined();
   });
 
   test("[13] Merge followed by multiple creates", () => {
     const graph = createTckGraph();
-    executeTckQuery(
-      graph,
-      "MERGE (t:T {id: 42}) CREATE (f:R) CREATE (t)-[:REL]->(f)",
-    );
-    const results = executeTckQuery(
-      graph,
-      "MATCH (t:T)-[:REL]->(f:R) RETURN t, f",
-    );
+    executeTckQuery(graph, "MERGE (t:T {id: 42}) CREATE (f:R) CREATE (t)-[:REL]->(f)");
+    const results = executeTckQuery(graph, "MATCH (t:T)-[:REL]->(f:R) RETURN t, f");
     expect(results).toHaveLength(1);
-    const [t, f] = results[0] as [
-      Record<string, unknown>,
-      Record<string, unknown>,
-    ];
+    const [t, f] = results[0] as [Record<string, unknown>, Record<string, unknown>];
     expect(getLabel(t)).toBe("T");
     expect(getLabel(f)).toBe("R");
   });
@@ -212,10 +182,7 @@ describe("Create3 - Interoperation with other clauses", () => {
     const graph = createTckGraph();
     executeTckQuery(graph, "CREATE (:A {num: 1})");
 
-    const results = executeTckQuery(
-      graph,
-      "MATCH (n:A) WITH n CREATE (n)-[:T]->(:B) RETURN n",
-    );
+    const results = executeTckQuery(graph, "MATCH (n:A) WITH n CREATE (n)-[:T]->(:B) RETURN n");
 
     expect(results).toHaveLength(1);
 
@@ -228,15 +195,9 @@ describe("Create3 - Interoperation with other clauses", () => {
     const graph = createTckGraph();
     executeTckQuery(graph, "CREATE (a:A) CREATE (b:B) CREATE (a)-[:R]->(b)");
 
-    const results = executeTckQuery(
-      graph,
-      "MATCH (a:A)-[:R]->(b:B) RETURN a, b",
-    );
+    const results = executeTckQuery(graph, "MATCH (a:A)-[:R]->(b:B) RETURN a, b");
     expect(results).toHaveLength(1);
-    const [a, b] = results[0] as [
-      Record<string, unknown>,
-      Record<string, unknown>,
-    ];
+    const [a, b] = results[0] as [Record<string, unknown>, Record<string, unknown>];
     expect(getLabel(a)).toBe("A");
     expect(getLabel(b)).toBe("B");
   });

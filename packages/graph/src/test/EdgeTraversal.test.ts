@@ -156,24 +156,17 @@ test("Edge set operations - union() combines edge traversals", () => {
 });
 
 test("Edge set operations - intersect() finds common edges", () => {
-  const edges = Array.from(
-    g.V(alice.id).outE("knows").intersect(g.E().hasLabel("knows")).values(),
-  );
+  const edges = Array.from(g.V(alice.id).outE("knows").intersect(g.E().hasLabel("knows")).values());
 
   // Alice's outgoing "knows" edges should be in both sets
   // outV is the source (alice), inV is the target
   expect(edges.length).toBe(2);
-  expect(
-    edges.every((e) => e.label === "knows" && e.outV.id === alice.id),
-  ).toBe(true);
+  expect(edges.every((e) => e.label === "knows" && e.outV.id === alice.id)).toBe(true);
 });
 
 test("Edge set operations - dedup() removes duplicate edges", () => {
   const edges = Array.from(
-    g
-      .union(g.V(alice.id).outE("knows"), g.V(alice.id).outE("knows"))
-      .dedup()
-      .values(),
+    g.union(g.V(alice.id).outE("knows"), g.V(alice.id).outE("knows")).dedup().values(),
   );
 
   // Should deduplicate the union of identical traversals
@@ -206,15 +199,7 @@ test("Edge ordering and pagination - Edge to vertex with range", () => {
 
 test("Edge traversal with select - select() retrieves labeled edges and vertices", () => {
   const results = Array.from(
-    g
-      .V()
-      .as("v1")
-      .outE("knows")
-      .as("e")
-      .inV()
-      .as("v2")
-      .select("v1", "e", "v2")
-      .values(),
+    g.V().as("v1").outE("knows").as("e").inV().as("v2").select("v1", "e", "v2").values(),
   );
 
   expect(results.length).toBeGreaterThan(0);

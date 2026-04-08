@@ -7,9 +7,7 @@ const { graph, alice, bob } = createDemoGraph();
 const g = new GraphTraversal(graph);
 
 test("Property and Value Extraction - properties() method - properties() with no arguments extracts all properties", () => {
-  const results = Array.from(
-    g.V(alice.id).hasLabel("Person").properties().values(),
-  );
+  const results = Array.from(g.V(alice.id).hasLabel("Person").properties().values());
 
   expect(results).toHaveLength(1);
   expect(results[0]).toHaveProperty("name");
@@ -29,9 +27,7 @@ test("Property and Value Extraction - properties() method - properties() with si
 });
 
 test("Property and Value Extraction - properties() method - properties() with multiple property names", () => {
-  const results = Array.from(
-    g.V(alice.id).hasLabel("Person").properties("name").values(),
-  );
+  const results = Array.from(g.V(alice.id).hasLabel("Person").properties("name").values());
 
   expect(results).toHaveLength(1);
   expect(results[0]).toHaveProperty("name");
@@ -39,9 +35,7 @@ test("Property and Value Extraction - properties() method - properties() with mu
 });
 
 test("Property and Value Extraction - properties() method - properties() on multiple vertices", () => {
-  const results = Array.from(
-    g.V().hasLabel("Person").limit(3).properties("name").values(),
-  );
+  const results = Array.from(g.V().hasLabel("Person").limit(3).properties("name").values());
 
   expect(results).toHaveLength(3);
   expect(results.every((r) => r.hasOwnProperty("name"))).toBe(true);
@@ -58,14 +52,10 @@ test("Property and Value Extraction - properties() method - properties() after t
 });
 
 test("Property and Value Extraction - properties() method - properties() with Thing vertices (different schema)", () => {
-  const results = Array.from(
-    g.V().hasLabel("Thing").limit(2).properties("name", "ref").values(),
-  );
+  const results = Array.from(g.V().hasLabel("Thing").limit(2).properties("name", "ref").values());
 
   expect(results.length).toBeGreaterThan(0);
-  expect(
-    results.every((r) => r.hasOwnProperty("name") && r.hasOwnProperty("ref")),
-  ).toBe(true);
+  expect(results.every((r) => r.hasOwnProperty("name") && r.hasOwnProperty("ref"))).toBe(true);
 });
 
 test("Property and Value Extraction - properties() method - properties() preserves property values", () => {
@@ -91,13 +81,7 @@ test("Property and Value Extraction - properties() with filtering - properties()
 test("Property and Value Extraction - properties() with filtering - properties() with select", () => {
   // Test extracting properties before select
   const results = Array.from(
-    g
-      .V(alice.id)
-      .hasLabel("Person")
-      .as("person")
-      .out("knows")
-      .properties("name")
-      .values(),
+    g.V(alice.id).hasLabel("Person").as("person").out("knows").properties("name").values(),
   );
 
   expect(results.length).toBeGreaterThan(0);
@@ -115,13 +99,7 @@ test("Property and Value Extraction - properties() with filtering - properties()
 
 test("Property and Value Extraction - properties() with ordering and pagination - properties() after order()", () => {
   const results = Array.from(
-    g
-      .V()
-      .hasLabel("Person")
-      .order()
-      .by("name", "asc")
-      .properties("name")
-      .values(),
+    g.V().hasLabel("Person").order().by("name", "asc").properties("name").values(),
   );
 
   expect(results.length).toBeGreaterThan(0);
@@ -131,17 +109,13 @@ test("Property and Value Extraction - properties() with ordering and pagination 
 });
 
 test("Property and Value Extraction - properties() with ordering and pagination - properties() with limit", () => {
-  const results = Array.from(
-    g.V().hasLabel("Person").limit(3).properties("name", "age").values(),
-  );
+  const results = Array.from(g.V().hasLabel("Person").limit(3).properties("name", "age").values());
 
   expect(results).toHaveLength(3);
 });
 
 test("Property and Value Extraction - properties() with ordering and pagination - properties() with range", () => {
-  const results = Array.from(
-    g.V().hasLabel("Person").range(1, 4).properties("name").values(),
-  );
+  const results = Array.from(g.V().hasLabel("Person").range(1, 4).properties("name").values());
 
   expect(results.length).toBeLessThanOrEqual(3);
 });
@@ -272,10 +246,7 @@ test("Property and Value Extraction - Property extraction patterns - Extract and
 
   expect(results.length).toBeGreaterThan(0);
   expect(
-    results.every(
-      (r) =>
-        typeof r.name === "string" && ["senior", "junior"].includes(r.ageGroup),
-    ),
+    results.every((r) => typeof r.name === "string" && ["senior", "junior"].includes(r.ageGroup)),
   ).toBe(true);
 });
 
@@ -306,25 +277,19 @@ test("Property and Value Extraction - Property extraction patterns - Conditional
 });
 
 test("Property and Value Extraction - Property extraction with aggregation - Count vertices with specific property value", () => {
-  const count = Array.from(
-    g.V().hasLabel("Person").has("age", ">", 30).count().values(),
-  )[0]!;
+  const count = Array.from(g.V().hasLabel("Person").has("age", ">", 30).count().values())[0]!;
 
   expect(typeof count).toBe("number");
   expect(count).toBeGreaterThan(0);
 });
 
 test("Property and Value Extraction - Property extraction with aggregation - Extract properties and count", () => {
-  const results = Array.from(
-    g.V().hasLabel("Person").properties("name").values(),
-  );
+  const results = Array.from(g.V().hasLabel("Person").properties("name").values());
 
   expect(results.length).toBeGreaterThan(0);
 
   const count = results.length;
-  const totalVertices = Array.from(
-    g.V().hasLabel("Person").count().values(),
-  )[0];
+  const totalVertices = Array.from(g.V().hasLabel("Person").count().values())[0];
 
   expect(count).toBe(totalVertices);
 });
@@ -354,17 +319,13 @@ test("Property and Value Extraction - Property extraction with aggregation - Gro
 });
 
 test("Property and Value Extraction - Property extraction edge cases - properties() on empty traversal", () => {
-  const results = Array.from(
-    g.V().has("name", "=", "NonExistent").properties("name").values(),
-  );
+  const results = Array.from(g.V().has("name", "=", "NonExistent").properties("name").values());
 
   expect(results).toHaveLength(0);
 });
 
 test("Property and Value Extraction - Property extraction edge cases - properties() returns valid property objects", () => {
-  const results = Array.from(
-    g.V(alice.id).hasLabel("Person").properties("name").values(),
-  );
+  const results = Array.from(g.V(alice.id).hasLabel("Person").properties("name").values());
 
   expect(results).toHaveLength(1);
   expect(results[0]).toHaveProperty("name");
@@ -429,9 +390,7 @@ test("Property and Value Extraction - Complex property extraction scenarios - Ex
 });
 
 test("Property and Value Extraction - Complex property extraction scenarios - Properties from union branches", () => {
-  const results = Array.from(
-    g.union(g.V(alice.id), g.V(bob.id)).properties("name").values(),
-  );
+  const results = Array.from(g.union(g.V(alice.id), g.V(bob.id)).properties("name").values());
 
   expect(results).toHaveLength(2);
 
@@ -487,9 +446,7 @@ test("Property and Value Extraction - Complex property extraction scenarios - Pr
   );
 
   expect(results.length).toBeGreaterThan(0);
-  expect(results.every((r) => r.displayName === `Person: ${r.name}`)).toBe(
-    true,
-  );
+  expect(results.every((r) => r.displayName === `Person: ${r.name}`)).toBe(true);
 });
 
 test("Property and Value Extraction - Performance with property extraction - Extract properties from many vertices", () => {
@@ -504,9 +461,7 @@ test("Property and Value Extraction - Performance with property extraction - Ext
 });
 
 test("Property and Value Extraction - Performance with property extraction - Multiple property extractions in sequence", () => {
-  const names = Array.from(
-    g.V().hasLabel("Person").properties("name").values(),
-  );
+  const names = Array.from(g.V().hasLabel("Person").properties("name").values());
 
   const ages = Array.from(g.V().hasLabel("Person").properties("age").values());
 
@@ -534,10 +489,7 @@ test("Property and Value Extraction - Performance with property extraction - Com
   expect(results.length).toBeLessThanOrEqual(5);
   expect(
     results.every(
-      (r) =>
-        r.hasOwnProperty("name") &&
-        r.hasOwnProperty("age") &&
-        r.hasOwnProperty("category"),
+      (r) => r.hasOwnProperty("name") && r.hasOwnProperty("age") && r.hasOwnProperty("category"),
     ),
   ).toBe(true);
 });

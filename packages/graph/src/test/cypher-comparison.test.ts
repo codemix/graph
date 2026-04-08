@@ -31,9 +31,7 @@ test("Clause Support - SUPPORTED Clauses - MATCH - basic pattern matching", () =
 });
 
 test("Clause Support - SUPPORTED Clauses - WHERE - filtering conditions", () => {
-  expect(() =>
-    parse("MATCH (n) WHERE n.prop = 'value' RETURN n"),
-  ).not.toThrow();
+  expect(() => parse("MATCH (n) WHERE n.prop = 'value' RETURN n")).not.toThrow();
 });
 
 test("Clause Support - SUPPORTED Clauses - RETURN - projecting results", () => {
@@ -67,9 +65,7 @@ test("Clause Support - SUPPORTED Clauses - SET - property updates", () => {
 
 test("Clause Support - SUPPORTED Clauses - OPTIONAL MATCH - left outer join pattern", () => {
   // Cypher: OPTIONAL MATCH returns null for non-matching patterns
-  const result = parse(
-    "MATCH (n) OPTIONAL MATCH (n)-[:REL]->(m) RETURN n, m",
-  ) as Query;
+  const result = parse("MATCH (n) OPTIONAL MATCH (n)-[:REL]->(m) RETURN n, m") as Query;
   expect(result.matches).toHaveLength(2);
   expect(result.matches[0]!.optional).toBeFalsy();
   expect(result.matches[1]!.optional).toBe(true);
@@ -138,9 +134,7 @@ test("Clause Support - SUPPORTED Clauses - REMOVE - property removal", () => {
 
 test("Clause Support - SUPPORTED Clauses - UNION - combining results", () => {
   // Cypher: UNION combines results of multiple queries
-  const ast = parse(
-    "MATCH (a:A) RETURN a.name UNION MATCH (b:B) RETURN b.name",
-  ) as any;
+  const ast = parse("MATCH (a:A) RETURN a.name UNION MATCH (b:B) RETURN b.name") as any;
   expect(ast.type).toBe("UnionQuery");
   expect(ast.all).toBe(false);
   expect(ast.queries).toHaveLength(2);
@@ -148,9 +142,7 @@ test("Clause Support - SUPPORTED Clauses - UNION - combining results", () => {
 
 test("Clause Support - SUPPORTED Clauses - UNION ALL - combining results with duplicates", () => {
   // Cypher: UNION ALL combines results keeping duplicates
-  const ast = parse(
-    "MATCH (a:A) RETURN a.name UNION ALL MATCH (b:B) RETURN b.name",
-  ) as any;
+  const ast = parse("MATCH (a:A) RETURN a.name UNION ALL MATCH (b:B) RETURN b.name") as any;
   expect(ast.type).toBe("UnionQuery");
   expect(ast.all).toBe(true);
   expect(ast.queries).toHaveLength(2);
@@ -169,27 +161,21 @@ test("Clause Support - SUPPORTED Clauses - FOREACH - with function calls like no
   // FOREACH with function call as list expression is now supported
   // via named path patterns (p = ...) and path functions
   expect(() =>
-    parse(
-      "MATCH p = (a)-[*]->(b) FOREACH (n IN nodes(p) | SET n.marked = true)",
-    ),
+    parse("MATCH p = (a)-[*]->(b) FOREACH (n IN nodes(p) | SET n.marked = true)"),
   ).not.toThrow();
 });
 
 test("Clause Support - PARTIAL SUPPORT - FOREACH - with property access list", () => {
   // FOREACH with property access is supported
   expect(() =>
-    parse(
-      "MATCH (p:Person) FOREACH (x IN p.items | SET x.checked = true) RETURN p",
-    ),
+    parse("MATCH (p:Person) FOREACH (x IN p.items | SET x.checked = true) RETURN p"),
   ).not.toThrow();
 });
 
 test("Clause Support - PARTIAL SUPPORT - FOREACH - with literal list", () => {
   // FOREACH with literal list is supported
   expect(() =>
-    parse(
-      "MATCH (p:Person) FOREACH (x IN [1, 2, 3] | SET p.value = 1) RETURN p",
-    ),
+    parse("MATCH (p:Person) FOREACH (x IN [1, 2, 3] | SET p.value = 1) RETURN p"),
   ).not.toThrow();
 });
 
@@ -203,9 +189,7 @@ test("Expression Support - SUPPORTED Expressions - Property access with dot nota
 });
 
 test("Expression Support - SUPPORTED Expressions - Dynamic property access with bracket notation", () => {
-  expect(() =>
-    parse("MATCH (n) WHERE n['name'] = 'test' RETURN n"),
-  ).not.toThrow();
+  expect(() => parse("MATCH (n) WHERE n['name'] = 'test' RETURN n")).not.toThrow();
   // Verify it creates DynamicPropertyAccess AST node
   const ast = parse("MATCH (n) WHERE n['name'] = 'Alice' RETURN n") as Query;
   const condition = ast.matches[0]!.where!.condition as any;
@@ -228,21 +212,15 @@ test("Expression Support - SUPPORTED Expressions - Float literals", () => {
 
 test("Expression Support - SUPPORTED Expressions - Boolean literals", () => {
   expect(() => parse("MATCH (n) WHERE n.active = true RETURN n")).not.toThrow();
-  expect(() =>
-    parse("MATCH (n) WHERE n.active = false RETURN n"),
-  ).not.toThrow();
+  expect(() => parse("MATCH (n) WHERE n.active = false RETURN n")).not.toThrow();
 });
 
 test("Expression Support - SUPPORTED Expressions - NULL literal", () => {
-  expect(() =>
-    parse("MATCH (n) WHERE n.deleted = null RETURN n"),
-  ).not.toThrow();
+  expect(() => parse("MATCH (n) WHERE n.deleted = null RETURN n")).not.toThrow();
 });
 
 test("Expression Support - SUPPORTED Expressions - List literals in IN clause", () => {
-  expect(() =>
-    parse("MATCH (n) WHERE n.status IN ['active', 'pending'] RETURN n"),
-  ).not.toThrow();
+  expect(() => parse("MATCH (n) WHERE n.status IN ['active', 'pending'] RETURN n")).not.toThrow();
 });
 
 test("Expression Support - SUPPORTED Expressions - Negative integers (-5)", () => {
@@ -275,9 +253,7 @@ test("Expression Support - SUPPORTED Expressions - Arithmetic expressions (+, -,
 
 test("Expression Support - SUPPORTED Expressions - String concatenation (+) in WHERE", () => {
   // String concatenation with + operator works in WHERE clauses
-  const ast = parse(
-    "MATCH (n) WHERE n.firstName + ' ' + n.lastName = 'John Doe' RETURN n",
-  ) as any;
+  const ast = parse("MATCH (n) WHERE n.firstName + ' ' + n.lastName = 'John Doe' RETURN n") as any;
   expect(ast).toBeDefined();
   // The concatenation is represented as nested ArithmeticExpressions
   expect(ast.matches[0].where.condition.left.type).toBe("ArithmeticExpression");
@@ -286,9 +262,7 @@ test("Expression Support - SUPPORTED Expressions - String concatenation (+) in W
 
 test("Expression Support - SUPPORTED - String concatenation (+) in RETURN", () => {
   // String concatenation in RETURN clause is now supported via ArithmeticExpression
-  expect(() =>
-    parse("MATCH (n) RETURN n.firstName + ' ' + n.lastName"),
-  ).not.toThrow();
+  expect(() => parse("MATCH (n) RETURN n.firstName + ' ' + n.lastName")).not.toThrow();
 });
 
 test("Expression Support - SUPPORTED - Property comparison with comma-separated MATCH", () => {
@@ -301,46 +275,34 @@ test("Expression Support - SUPPORTED - Property comparison with comma-separated 
 
 test("Expression Support - SUPPORTED - List indexing ([index])", () => {
   // List indexing works in both WHERE and RETURN clauses
-  expect(() =>
-    parse("MATCH (n) WHERE n.tags[0] = 'first' RETURN n"),
-  ).not.toThrow();
+  expect(() => parse("MATCH (n) WHERE n.tags[0] = 'first' RETURN n")).not.toThrow();
   expect(() => parse("MATCH (n) RETURN n.tags[0]")).not.toThrow();
 });
 
 test("Expression Support - SUPPORTED - List slicing ([start..end])", () => {
   // List slicing works in both WHERE and RETURN clauses
-  expect(() =>
-    parse("MATCH (n) WHERE n.tags[0..3] = 'fir' RETURN n"),
-  ).not.toThrow();
+  expect(() => parse("MATCH (n) WHERE n.tags[0..3] = 'fir' RETURN n")).not.toThrow();
   expect(() => parse("MATCH (n) RETURN n.tags[0..3]")).not.toThrow();
 });
 
 test("Expression Support - SUPPORTED Expressions - Map literals as expressions", () => {
   // Map literals are now supported as expressions in RETURN
-  expect(() =>
-    parse("MATCH (n) RETURN {name: n.name, age: n.age}"),
-  ).not.toThrow();
+  expect(() => parse("MATCH (n) RETURN {name: n.name, age: n.age}")).not.toThrow();
   // Empty map
   expect(() => parse("UNWIND [1] AS x RETURN {} AS emptyMap")).not.toThrow();
   // Nested values
-  expect(() =>
-    parse("MATCH (n) RETURN {key: 'value', nested: [1, 2, 3]}"),
-  ).not.toThrow();
+  expect(() => parse("MATCH (n) RETURN {key: 'value', nested: [1, 2, 3]}")).not.toThrow();
 });
 
 test("Expression Support - SUPPORTED Expressions - CASE expressions in WHERE", () => {
   // Simple CASE expression in WHERE clause
   expect(() =>
-    parse(
-      "MATCH (n) WHERE CASE n.type WHEN 'A' THEN 1 ELSE 0 END = 1 RETURN n",
-    ),
+    parse("MATCH (n) WHERE CASE n.type WHEN 'A' THEN 1 ELSE 0 END = 1 RETURN n"),
   ).not.toThrow();
 
   // Searched CASE expression in WHERE clause
   expect(() =>
-    parse(
-      "MATCH (n) WHERE CASE WHEN n.age > 18 THEN 'adult' ELSE 'minor' END = 'adult' RETURN n",
-    ),
+    parse("MATCH (n) WHERE CASE WHEN n.age > 18 THEN 'adult' ELSE 'minor' END = 'adult' RETURN n"),
   ).not.toThrow();
 
   // Note: CASE in RETURN clause not yet supported (requires ReturnItem grammar extension)
@@ -401,9 +363,7 @@ test("Comparison Operators - SUPPORTED Operators - Greater than or equal (>=)", 
 });
 
 test("Comparison Operators - SUPPORTED (via extension) - Regex match (=~)", () => {
-  expect(() =>
-    parse("MATCH (n) WHERE n.name =~ 'Tim.*' RETURN n"),
-  ).not.toThrow();
+  expect(() => parse("MATCH (n) WHERE n.name =~ 'Tim.*' RETURN n")).not.toThrow();
   const ast = parse("MATCH (n) WHERE n.name =~ 'Tim.*' RETURN n") as any;
   expect(ast.matches[0].where.condition.type).toBe("RegexCondition");
   expect(ast.matches[0].where.condition.pattern).toBe("Tim.*");
@@ -420,27 +380,19 @@ test("Comparison Operators - SUPPORTED (Codemix extension) - Cypher inequality (
  * ============================================================================
  */
 test("Logical Operators - SUPPORTED Operators - AND", () => {
-  expect(() =>
-    parse("MATCH (n) WHERE n.a = 1 AND n.b = 2 RETURN n"),
-  ).not.toThrow();
+  expect(() => parse("MATCH (n) WHERE n.a = 1 AND n.b = 2 RETURN n")).not.toThrow();
 });
 
 test("Logical Operators - SUPPORTED Operators - OR", () => {
-  expect(() =>
-    parse("MATCH (n) WHERE n.a = 1 OR n.b = 2 RETURN n"),
-  ).not.toThrow();
+  expect(() => parse("MATCH (n) WHERE n.a = 1 OR n.b = 2 RETURN n")).not.toThrow();
 });
 
 test("Logical Operators - SUPPORTED Operators - NOT", () => {
-  expect(() =>
-    parse("MATCH (n) WHERE NOT n.active = true RETURN n"),
-  ).not.toThrow();
+  expect(() => parse("MATCH (n) WHERE NOT n.active = true RETURN n")).not.toThrow();
 });
 
 test("Logical Operators - SUPPORTED Operators - XOR", () => {
-  expect(() =>
-    parse("MATCH (n) WHERE n.a = 1 XOR n.b = 2 RETURN n"),
-  ).not.toThrow();
+  expect(() => parse("MATCH (n) WHERE n.a = 1 XOR n.b = 2 RETURN n")).not.toThrow();
   const ast = parse("MATCH (n) WHERE n.a = 1 XOR n.b = 2 RETURN n") as Query;
   expect(ast.matches[0]!.where?.condition.type).toBe("XorCondition");
 });
@@ -451,37 +403,23 @@ test("Logical Operators - SUPPORTED Operators - XOR", () => {
  * ============================================================================
  */
 test("String Predicates - SUPPORTED String Predicates - STARTS WITH", () => {
-  expect(() =>
-    parse("MATCH (n) WHERE n.name STARTS WITH 'A' RETURN n"),
-  ).not.toThrow();
+  expect(() => parse("MATCH (n) WHERE n.name STARTS WITH 'A' RETURN n")).not.toThrow();
   const ast = parse("MATCH (n) WHERE n.name STARTS WITH 'A' RETURN n") as Query;
-  expect(ast.matches[0]!.where?.condition.type).toBe(
-    "StringPredicateCondition",
-  );
-  expect((ast.matches[0]!.where!.condition as any).predicate).toBe(
-    "STARTS WITH",
-  );
+  expect(ast.matches[0]!.where?.condition.type).toBe("StringPredicateCondition");
+  expect((ast.matches[0]!.where!.condition as any).predicate).toBe("STARTS WITH");
 });
 
 test("String Predicates - SUPPORTED String Predicates - ENDS WITH", () => {
-  expect(() =>
-    parse("MATCH (n) WHERE n.name ENDS WITH 'son' RETURN n"),
-  ).not.toThrow();
+  expect(() => parse("MATCH (n) WHERE n.name ENDS WITH 'son' RETURN n")).not.toThrow();
   const ast = parse("MATCH (n) WHERE n.name ENDS WITH 'son' RETURN n") as Query;
-  expect(ast.matches[0]!.where?.condition.type).toBe(
-    "StringPredicateCondition",
-  );
+  expect(ast.matches[0]!.where?.condition.type).toBe("StringPredicateCondition");
   expect((ast.matches[0]!.where!.condition as any).predicate).toBe("ENDS WITH");
 });
 
 test("String Predicates - SUPPORTED String Predicates - CONTAINS", () => {
-  expect(() =>
-    parse("MATCH (n) WHERE n.name CONTAINS 'test' RETURN n"),
-  ).not.toThrow();
+  expect(() => parse("MATCH (n) WHERE n.name CONTAINS 'test' RETURN n")).not.toThrow();
   const ast = parse("MATCH (n) WHERE n.name CONTAINS 'test' RETURN n") as Query;
-  expect(ast.matches[0]!.where?.condition.type).toBe(
-    "StringPredicateCondition",
-  );
+  expect(ast.matches[0]!.where?.condition.type).toBe("StringPredicateCondition");
   expect((ast.matches[0]!.where!.condition as any).predicate).toBe("CONTAINS");
 });
 
@@ -491,15 +429,11 @@ test("String Predicates - SUPPORTED String Predicates - CONTAINS", () => {
  * ============================================================================
  */
 test("NULL Handling - SUPPORTED - IS NULL", () => {
-  expect(() =>
-    parse("MATCH (n) WHERE n.deleted IS NULL RETURN n"),
-  ).not.toThrow();
+  expect(() => parse("MATCH (n) WHERE n.deleted IS NULL RETURN n")).not.toThrow();
 });
 
 test("NULL Handling - SUPPORTED - IS NOT NULL", () => {
-  expect(() =>
-    parse("MATCH (n) WHERE n.name IS NOT NULL RETURN n"),
-  ).not.toThrow();
+  expect(() => parse("MATCH (n) WHERE n.name IS NOT NULL RETURN n")).not.toThrow();
 });
 
 /**
@@ -514,19 +448,13 @@ test("Label Predicates - SUPPORTED - IS :Label (IS LABELED)", () => {
 
 test("Label Predicates - SUPPORTED - IS NOT :Label", () => {
   // Check if a node does NOT have a specific label
-  expect(() =>
-    parse("MATCH (n) WHERE n IS NOT :Person RETURN n"),
-  ).not.toThrow();
+  expect(() => parse("MATCH (n) WHERE n IS NOT :Person RETURN n")).not.toThrow();
 });
 
 test("Label Predicates - SUPPORTED - IS :LabelExpression", () => {
   // IS LABELED works with label expressions (OR, AND, NOT)
-  expect(() =>
-    parse("MATCH (n) WHERE n IS :Person|Admin RETURN n"),
-  ).not.toThrow();
-  expect(() =>
-    parse("MATCH (n) WHERE n IS :Person&Admin RETURN n"),
-  ).not.toThrow();
+  expect(() => parse("MATCH (n) WHERE n IS :Person|Admin RETURN n")).not.toThrow();
+  expect(() => parse("MATCH (n) WHERE n IS :Person&Admin RETURN n")).not.toThrow();
   expect(() => parse("MATCH (n) WHERE n IS :!Person RETURN n")).not.toThrow();
 });
 
@@ -588,9 +516,7 @@ test("Pattern Matching - SUPPORTED Patterns - Advanced label expression parenthe
 });
 
 test("Pattern Matching - SUPPORTED Patterns - Node with inline properties", () => {
-  expect(() =>
-    parse("MATCH (n:Person {name: 'Alice'}) RETURN n"),
-  ).not.toThrow();
+  expect(() => parse("MATCH (n:Person {name: 'Alice'}) RETURN n")).not.toThrow();
 });
 
 test("Pattern Matching - SUPPORTED Patterns - Outgoing relationship", () => {
@@ -610,9 +536,7 @@ test("Pattern Matching - SUPPORTED Patterns - Relationship with variable", () =>
 });
 
 test("Pattern Matching - SUPPORTED Patterns - Relationship with multiple types (|)", () => {
-  expect(() =>
-    parse("MATCH (a)-[:KNOWS|LIKES]->(b) RETURN a, b"),
-  ).not.toThrow();
+  expect(() => parse("MATCH (a)-[:KNOWS|LIKES]->(b) RETURN a, b")).not.toThrow();
 });
 
 test("Pattern Matching - SUPPORTED Patterns - Variable-length path (*n)", () => {
@@ -632,15 +556,11 @@ test("Pattern Matching - SUPPORTED Patterns - Variable-length path (*) - any len
 });
 
 test("Pattern Matching - SUPPORTED Patterns - shortestPath function", () => {
-  expect(() =>
-    parse("MATCH p = shortestPath((a)-[:KNOWS*]->(b)) RETURN p"),
-  ).not.toThrow();
+  expect(() => parse("MATCH p = shortestPath((a)-[:KNOWS*]->(b)) RETURN p")).not.toThrow();
 });
 
 test("Pattern Matching - SUPPORTED Patterns - allShortestPaths function", () => {
-  expect(() =>
-    parse("MATCH p = allShortestPaths((a)-[:KNOWS*]->(b)) RETURN p"),
-  ).not.toThrow();
+  expect(() => parse("MATCH p = allShortestPaths((a)-[:KNOWS*]->(b)) RETURN p")).not.toThrow();
 });
 
 test("Pattern Matching - SUPPORTED - Multiple patterns in single MATCH (comma-separated)", () => {
@@ -685,9 +605,7 @@ test("Pattern Matching - SUPPORTED Patterns - Graph pattern quantifier {n,}", ()
 test("Pattern Matching - SUPPORTED Patterns - Parenthesized path pattern", () => {
   // Parenthesized path patterns with inline WHERE
   // Note: Must use correct syntax with proper pattern structure
-  expect(() =>
-    parse("MATCH (a)(((a)-[r:KNOWS]->(b)) WHERE r.weight > 5)+ RETURN a"),
-  ).not.toThrow();
+  expect(() => parse("MATCH (a)(((a)-[r:KNOWS]->(b)) WHERE r.weight > 5)+ RETURN a")).not.toThrow();
 });
 
 test("Pattern Matching - SUPPORTED Patterns - Named path patterns (p = ...)", () => {
@@ -762,9 +680,7 @@ test("Function Support - SUPPORTED Functions - COUNT with DISTINCT", () => {
 
 test("Function Support - SUPPORTED Functions - String functions in WHERE and RETURN (toUpper, toLower, trim, etc.)", () => {
   // String functions work in WHERE conditions via the FunctionRegistry
-  const result = parse(
-    "MATCH (n) WHERE toLower(n.name) = 'alice' RETURN n",
-  ) as Query;
+  const result = parse("MATCH (n) WHERE toLower(n.name) = 'alice' RETURN n") as Query;
   expect(result.matches[0]!.where!.condition.type).toBe("ExpressionCondition");
   // Functions in RETURN clause now supported via ArithmeticExpression
   expect(() => parse("MATCH (n) RETURN toUpper(n.name)")).not.toThrow();
@@ -789,12 +705,8 @@ test("Function Support - SUPPORTED Functions - List functions in WHERE and RETUR
 test("Function Support - SUPPORTED Functions - Path functions (nodes, relationships, length)", () => {
   // Path functions are now supported with named path patterns
   expect(() => parse("MATCH p = (a)-[*]->(b) RETURN nodes(p)")).not.toThrow();
-  expect(() =>
-    parse("MATCH p = (a)-[:KNOWS]->(b) RETURN relationships(p)"),
-  ).not.toThrow();
-  expect(() =>
-    parse("MATCH p = (a)-[*1..5]->(b) RETURN length(p)"),
-  ).not.toThrow();
+  expect(() => parse("MATCH p = (a)-[:KNOWS]->(b) RETURN relationships(p)")).not.toThrow();
+  expect(() => parse("MATCH p = (a)-[*1..5]->(b) RETURN length(p)")).not.toThrow();
 
   // Functions are registered and available for evaluation
   // See pathFunctions.test.ts for full test coverage
@@ -802,9 +714,7 @@ test("Function Support - SUPPORTED Functions - Path functions (nodes, relationsh
 
 test("Function Support - Type functions in WHERE and RETURN (type, labels)", () => {
   // Type functions work in WHERE conditions for filtering
-  const result = parse(
-    "MATCH (n)-[r]->(m) WHERE type(r) = 'KNOWS' RETURN n",
-  ) as Query;
+  const result = parse("MATCH (n)-[r]->(m) WHERE type(r) = 'KNOWS' RETURN n") as Query;
   expect(result.matches[0]!.where!.condition.type).toBe("ExpressionCondition");
   // type() function now works in RETURN clause
   const result2 = parse("MATCH (n)-[r]->(m) RETURN type(r)") as Query;
@@ -813,14 +723,10 @@ test("Function Support - Type functions in WHERE and RETURN (type, labels)", () 
 
 test("Function Support - SUPPORTED Functions - Coalesce function in WHERE and RETURN", () => {
   // Coalesce works in WHERE conditions
-  const result = parse(
-    "MATCH (n) WHERE coalesce(n.nickname, n.name) = 'Alice' RETURN n",
-  ) as Query;
+  const result = parse("MATCH (n) WHERE coalesce(n.nickname, n.name) = 'Alice' RETURN n") as Query;
   expect(result.matches[0]!.where!.condition.type).toBe("ExpressionCondition");
   // Functions in RETURN clause now supported
-  expect(() =>
-    parse("MATCH (n) RETURN coalesce(n.nickname, n.name)"),
-  ).not.toThrow();
+  expect(() => parse("MATCH (n) RETURN coalesce(n.nickname, n.name)")).not.toThrow();
 });
 
 test("Function Support - SUPPORTED Functions - Exists function (subquery)", () => {
@@ -916,33 +822,19 @@ test("ORDER BY Features - SUPPORTED - Order by property DESC", () => {
 });
 
 test("ORDER BY Features - SUPPORTED - Multiple order items", () => {
-  expect(() =>
-    parse("MATCH (n) RETURN n ORDER BY n.name ASC, n.age DESC"),
-  ).not.toThrow();
+  expect(() => parse("MATCH (n) RETURN n ORDER BY n.name ASC, n.age DESC")).not.toThrow();
 });
 
 test("ORDER BY Features - SUPPORTED - ASCENDING/DESCENDING keywords (full form)", () => {
-  expect(() =>
-    parse("MATCH (n) RETURN n ORDER BY n.name ASCENDING"),
-  ).not.toThrow();
-  expect(() =>
-    parse("MATCH (n) RETURN n ORDER BY n.name DESCENDING"),
-  ).not.toThrow();
+  expect(() => parse("MATCH (n) RETURN n ORDER BY n.name ASCENDING")).not.toThrow();
+  expect(() => parse("MATCH (n) RETURN n ORDER BY n.name DESCENDING")).not.toThrow();
 });
 
 test("ORDER BY Features - SUPPORTED - NULLS FIRST / NULLS LAST", () => {
-  expect(() =>
-    parse("MATCH (n) RETURN n ORDER BY n.name NULLS FIRST"),
-  ).not.toThrow();
-  expect(() =>
-    parse("MATCH (n) RETURN n ORDER BY n.name NULLS LAST"),
-  ).not.toThrow();
-  expect(() =>
-    parse("MATCH (n) RETURN n ORDER BY n.name ASC NULLS FIRST"),
-  ).not.toThrow();
-  expect(() =>
-    parse("MATCH (n) RETURN n ORDER BY n.name DESC NULLS LAST"),
-  ).not.toThrow();
+  expect(() => parse("MATCH (n) RETURN n ORDER BY n.name NULLS FIRST")).not.toThrow();
+  expect(() => parse("MATCH (n) RETURN n ORDER BY n.name NULLS LAST")).not.toThrow();
+  expect(() => parse("MATCH (n) RETURN n ORDER BY n.name ASC NULLS FIRST")).not.toThrow();
+  expect(() => parse("MATCH (n) RETURN n ORDER BY n.name DESC NULLS LAST")).not.toThrow();
 });
 
 test("ORDER BY Features - BEHAVIORAL DIFFERENCES from Neo4j Cypher - Default null ordering differs from Neo4j", () => {
@@ -1020,9 +912,7 @@ test("Identifier Syntax - SUPPORTED - Identifiers starting with underscore", () 
 
 test("Identifier Syntax - SUPPORTED - Backtick-escaped identifiers", () => {
   // Cypher: `my identifier` or `weird-name`
-  expect(() =>
-    parse("MATCH (`my node`:Person) RETURN `my node`"),
-  ).not.toThrow();
+  expect(() => parse("MATCH (`my node`:Person) RETURN `my node`")).not.toThrow();
 });
 
 test("Identifier Syntax - SUPPORTED - Identifiers with special characters", () => {
@@ -1041,9 +931,7 @@ test("Identifier Syntax - NOT SUPPORTED - Unicode identifiers", () => {
  */
 test("List Comprehensions and Quantifiers - PARTIAL - List comprehension [x IN list | expr]", () => {
   // List comprehension is supported in WHERE clause expressions (not RETURN clause yet)
-  const ast = parse(
-    "MATCH (n:Person) WHERE size([x IN n.scores | x * 2]) > 0 RETURN n",
-  ) as Query;
+  const ast = parse("MATCH (n:Person) WHERE size([x IN n.scores | x * 2]) > 0 RETURN n") as Query;
   expect(ast).toBeDefined();
   expect(ast.matches[0]!.where).toBeDefined();
 });
@@ -1068,39 +956,29 @@ test("List Comprehensions and Quantifiers - PARTIAL - Pattern comprehension in W
 
 test("List Comprehensions and Quantifiers - SUPPORTED - Pattern comprehension in RETURN", () => {
   // Pattern comprehension now parses in RETURN clause
-  expect(() =>
-    parse("MATCH (a) RETURN [(a)-[:KNOWS]->(b) | b.name]"),
-  ).not.toThrow();
+  expect(() => parse("MATCH (a) RETURN [(a)-[:KNOWS]->(b) | b.name]")).not.toThrow();
 });
 
 test("List Comprehensions and Quantifiers - SUPPORTED - ALL quantifier", () => {
-  const ast = parse(
-    "MATCH (n) WHERE ALL(x IN n.values WHERE x > 0) RETURN n",
-  ) as Query;
+  const ast = parse("MATCH (n) WHERE ALL(x IN n.values WHERE x > 0) RETURN n") as Query;
   expect(ast).toBeDefined();
   expect(ast.matches[0]!.where).toBeDefined();
 });
 
 test("List Comprehensions and Quantifiers - SUPPORTED - ANY quantifier", () => {
-  const ast = parse(
-    "MATCH (n) WHERE ANY(x IN n.values WHERE x > 0) RETURN n",
-  ) as Query;
+  const ast = parse("MATCH (n) WHERE ANY(x IN n.values WHERE x > 0) RETURN n") as Query;
   expect(ast).toBeDefined();
   expect(ast.matches[0]!.where).toBeDefined();
 });
 
 test("List Comprehensions and Quantifiers - SUPPORTED - NONE quantifier", () => {
-  const ast = parse(
-    "MATCH (n) WHERE NONE(x IN n.values WHERE x < 0) RETURN n",
-  ) as Query;
+  const ast = parse("MATCH (n) WHERE NONE(x IN n.values WHERE x < 0) RETURN n") as Query;
   expect(ast).toBeDefined();
   expect(ast.matches[0]!.where).toBeDefined();
 });
 
 test("List Comprehensions and Quantifiers - SUPPORTED - SINGLE quantifier", () => {
-  const ast = parse(
-    "MATCH (n) WHERE SINGLE(x IN n.values WHERE x = 0) RETURN n",
-  ) as Query;
+  const ast = parse("MATCH (n) WHERE SINGLE(x IN n.values WHERE x = 0) RETURN n") as Query;
   expect(ast).toBeDefined();
   expect(ast.matches[0]!.where).toBeDefined();
 });
@@ -1115,9 +993,7 @@ test("Behavioral Differences - DIFFERENT: EXISTS as postfix vs function", () => 
   expect(() => parse("MATCH (u) WHERE u.email EXISTS RETURN u")).not.toThrow();
 
   // Cypher: EXISTS { MATCH (u)-[:HAS_EMAIL]->() }
-  expect(() =>
-    parse("MATCH (u) WHERE EXISTS { MATCH (u)-[:HAS_EMAIL]->() } RETURN u"),
-  ).toThrow();
+  expect(() => parse("MATCH (u) WHERE EXISTS { MATCH (u)-[:HAS_EMAIL]->() } RETURN u")).toThrow();
 });
 
 test("Behavioral Differences - SUPPORTED: Variable-length without label or variable", () => {
@@ -1212,29 +1088,21 @@ test("Variable-Length Path Edge Cases - SUPPORTED - [*..3] - open start range (C
  */
 test("Subquery and Existential Patterns - SUPPORTED - EXISTS { pattern } syntax", () => {
   // Basic EXISTS with pattern is supported
-  const ast = parse(
-    "MATCH (n) WHERE EXISTS { (n)-[:KNOWS]->() } RETURN n",
-  ) as Query;
+  const ast = parse("MATCH (n) WHERE EXISTS { (n)-[:KNOWS]->() } RETURN n") as Query;
   expect(ast.matches[0]!.where).toBeDefined();
 });
 
 test("Subquery and Existential Patterns - NOT SUPPORTED - EXISTS { MATCH ... } full subquery", () => {
   // Full subquery with MATCH inside EXISTS is not supported
-  expect(() =>
-    parse("MATCH (n) WHERE EXISTS { MATCH (n)-[:KNOWS]->() } RETURN n"),
-  ).toThrow();
+  expect(() => parse("MATCH (n) WHERE EXISTS { MATCH (n)-[:KNOWS]->() } RETURN n")).toThrow();
 });
 
 test("Subquery and Existential Patterns - NOT SUPPORTED - COUNT { } subquery pattern", () => {
-  expect(() =>
-    parse("MATCH (n) WHERE COUNT { (n)-[:KNOWS]->() } > 5 RETURN n"),
-  ).toThrow();
+  expect(() => parse("MATCH (n) WHERE COUNT { (n)-[:KNOWS]->() } > 5 RETURN n")).toThrow();
 });
 
 test("Subquery and Existential Patterns - NOT SUPPORTED - CALL { } subquery", () => {
-  expect(() =>
-    parse("MATCH (n) CALL { WITH n RETURN n.name AS name } RETURN name"),
-  ).toThrow();
+  expect(() => parse("MATCH (n) CALL { WITH n RETURN n.name AS name } RETURN name")).toThrow();
 });
 
 test("Subquery and Existential Patterns - SUPPORTED - EXISTS as function with pattern", () => {
@@ -1295,17 +1163,13 @@ test("Temporal and Spatial Types - NOT SUPPORTED - point() spatial function", ()
 test("Map and List Operations - SUPPORTED - Map projection in WHERE and RETURN", () => {
   // Map projection works in WHERE clause expressions
   // Cypher: n {.name, .age} returns a map with just those properties
-  expect(() =>
-    parse("MATCH (n:Person) WHERE n{.name}['name'] = 'Alice' RETURN n"),
-  ).not.toThrow();
+  expect(() => parse("MATCH (n:Person) WHERE n{.name}['name'] = 'Alice' RETURN n")).not.toThrow();
   // Map projection in RETURN clause now supported
   expect(() => parse("MATCH (n:Person) RETURN n {.name, .age}")).not.toThrow();
 });
 
 test("Map and List Operations - SUPPORTED - Map literal in RETURN", () => {
-  expect(() =>
-    parse("MATCH (n) RETURN {name: n.name, count: 1}"),
-  ).not.toThrow();
+  expect(() => parse("MATCH (n) RETURN {name: n.name, count: 1}")).not.toThrow();
 });
 
 test("Map and List Operations - SUPPORTED - List range [start..end]", () => {
@@ -1356,9 +1220,7 @@ test("Graph Projection and Catalog - NOT SUPPORTED - CREATE INDEX", () => {
 });
 
 test("Graph Projection and Catalog - NOT SUPPORTED - CREATE CONSTRAINT", () => {
-  expect(() =>
-    parse("CREATE CONSTRAINT FOR (n:Person) REQUIRE n.id IS UNIQUE"),
-  ).toThrow();
+  expect(() => parse("CREATE CONSTRAINT FOR (n:Person) REQUIRE n.id IS UNIQUE")).toThrow();
 });
 
 /**
@@ -1371,9 +1233,7 @@ test("Load and Import - NOT SUPPORTED - LOAD CSV", () => {
 });
 
 test("Load and Import - NOT SUPPORTED - LOAD CSV WITH HEADERS", () => {
-  expect(() =>
-    parse("LOAD CSV WITH HEADERS FROM 'file.csv' AS row RETURN row.name"),
-  ).toThrow();
+  expect(() => parse("LOAD CSV WITH HEADERS FROM 'file.csv' AS row RETURN row.name")).toThrow();
 });
 
 /**
@@ -1383,9 +1243,7 @@ test("Load and Import - NOT SUPPORTED - LOAD CSV WITH HEADERS", () => {
  */
 test("Transaction Control - NOT SUPPORTED - USING PERIODIC COMMIT", () => {
   expect(() =>
-    parse(
-      "USING PERIODIC COMMIT 500 LOAD CSV FROM 'file.csv' AS row CREATE (n)",
-    ),
+    parse("USING PERIODIC COMMIT 500 LOAD CSV FROM 'file.csv' AS row CREATE (n)"),
   ).toThrow();
 });
 
@@ -1396,18 +1254,14 @@ test("Transaction Control - NOT SUPPORTED - USING PERIODIC COMMIT", () => {
  */
 test("Advanced String Operations - SUPPORTED - toString() function in WHERE and RETURN", () => {
   // toString() works in WHERE clause expressions
-  expect(() =>
-    parse("MATCH (n) WHERE toString(n.age) = '30' RETURN n"),
-  ).not.toThrow();
+  expect(() => parse("MATCH (n) WHERE toString(n.age) = '30' RETURN n")).not.toThrow();
   // toString() in RETURN clause now supported
   expect(() => parse("MATCH (n) RETURN toString(n.age)")).not.toThrow();
 });
 
 test("Advanced String Operations - SUPPORTED - substring() function in WHERE and RETURN", () => {
   // substring() works in WHERE clause expressions
-  expect(() =>
-    parse("MATCH (n) WHERE substring(n.name, 0, 3) = 'Ali' RETURN n"),
-  ).not.toThrow();
+  expect(() => parse("MATCH (n) WHERE substring(n.name, 0, 3) = 'Ali' RETURN n")).not.toThrow();
   // substring() in RETURN clause now supported
   expect(() => parse("MATCH (n) RETURN substring(n.name, 0, 3)")).not.toThrow();
 });
@@ -1418,25 +1272,19 @@ test("Advanced String Operations - SUPPORTED - replace() function in WHERE and R
     parse("MATCH (n) WHERE replace(n.name, 'old', 'new') = 'new' RETURN n"),
   ).not.toThrow();
   // replace() in RETURN clause now supported
-  expect(() =>
-    parse("MATCH (n) RETURN replace(n.name, 'old', 'new')"),
-  ).not.toThrow();
+  expect(() => parse("MATCH (n) RETURN replace(n.name, 'old', 'new')")).not.toThrow();
 });
 
 test("Advanced String Operations - SUPPORTED - split() function in WHERE and RETURN", () => {
   // split() works in WHERE clause expressions (returns list)
-  expect(() =>
-    parse("MATCH (n) WHERE size(split(n.tags, ',')) > 2 RETURN n"),
-  ).not.toThrow();
+  expect(() => parse("MATCH (n) WHERE size(split(n.tags, ',')) > 2 RETURN n")).not.toThrow();
   // split() in RETURN clause now supported
   expect(() => parse("MATCH (n) RETURN split(n.tags, ',')")).not.toThrow();
 });
 
 test("Advanced String Operations - SUPPORTED - reverse() for strings in WHERE and RETURN", () => {
   // reverse() works in WHERE clause expressions
-  expect(() =>
-    parse("MATCH (n) WHERE reverse(n.name) = 'ecilA' RETURN n"),
-  ).not.toThrow();
+  expect(() => parse("MATCH (n) WHERE reverse(n.name) = 'ecilA' RETURN n")).not.toThrow();
   // reverse() in RETURN clause now supported
   expect(() => parse("MATCH (n) RETURN reverse(n.name)")).not.toThrow();
 });
@@ -1448,24 +1296,18 @@ test("Advanced String Operations - SUPPORTED - reverse() for strings in WHERE an
  */
 test("Hints and Query Planning - NOT SUPPORTED - USING INDEX hint", () => {
   expect(() =>
-    parse(
-      "MATCH (n:Person) USING INDEX n:Person(name) WHERE n.name = 'Alice' RETURN n",
-    ),
+    parse("MATCH (n:Person) USING INDEX n:Person(name) WHERE n.name = 'Alice' RETURN n"),
   ).toThrow();
 });
 
 test("Hints and Query Planning - NOT SUPPORTED - USING SCAN hint", () => {
   expect(() =>
-    parse(
-      "MATCH (n:Person) USING SCAN n:Person WHERE n.name = 'Alice' RETURN n",
-    ),
+    parse("MATCH (n:Person) USING SCAN n:Person WHERE n.name = 'Alice' RETURN n"),
   ).toThrow();
 });
 
 test("Hints and Query Planning - NOT SUPPORTED - USING JOIN hint", () => {
-  expect(() =>
-    parse("MATCH (a)--(b)--(c) USING JOIN ON b RETURN a, b, c"),
-  ).toThrow();
+  expect(() => parse("MATCH (a)--(b)--(c) USING JOIN ON b RETURN a, b, c")).toThrow();
 });
 
 test("Hints and Query Planning - NOT SUPPORTED - EXPLAIN", () => {
@@ -1482,11 +1324,8 @@ test("Hints and Query Planning - NOT SUPPORTED - PROFILE", () => {
  * ============================================================================
  */
 test("Relationship Property Patterns - SUPPORTED - Edge pattern with inline properties", () => {
-  const result = parse(
-    "MATCH (a)-[r:KNOWS {since: 2020}]->(b) RETURN r",
-  ) as Query;
-  const edge = (result.matches[0]!.pattern as Pattern)
-    .elements[1] as EdgePattern;
+  const result = parse("MATCH (a)-[r:KNOWS {since: 2020}]->(b) RETURN r") as Query;
+  const edge = (result.matches[0]!.pattern as Pattern).elements[1] as EdgePattern;
   expect(edge.properties).toEqual({ since: 2020 });
 });
 
@@ -1494,8 +1333,7 @@ test("Relationship Property Patterns - SUPPORTED - Edge pattern with multiple in
   const result = parse(
     "MATCH (a)-[r:WORKS_AT {role: 'Engineer', since: 2019}]->(b) RETURN r",
   ) as Query;
-  const edge = (result.matches[0]!.pattern as Pattern)
-    .elements[1] as EdgePattern;
+  const edge = (result.matches[0]!.pattern as Pattern).elements[1] as EdgePattern;
   expect(edge.properties).toEqual({ role: "Engineer", since: 2019 });
 });
 
@@ -1508,9 +1346,7 @@ test("Codemix Extensions (NOT in standard Cypher) - @-prefixed properties for me
   // This is a Codemix extension for accessing @id, @type, etc.
   expect(() => parse("MATCH (n) WHERE n.@id = 'abc' RETURN n")).not.toThrow();
 
-  expect(() =>
-    parse("MATCH (n) WHERE n.@type = 'Person' RETURN n"),
-  ).not.toThrow();
+  expect(() => parse("MATCH (n) WHERE n.@type = 'Person' RETURN n")).not.toThrow();
 });
 
 test("Codemix Extensions (NOT in standard Cypher) - Postfix EXISTS (property EXISTS)", () => {
@@ -1520,9 +1356,7 @@ test("Codemix Extensions (NOT in standard Cypher) - Postfix EXISTS (property EXI
 });
 
 test("Codemix Extensions (NOT in standard Cypher) - @-prefixed properties in inline node properties", () => {
-  expect(() =>
-    parse("MATCH (n:Node {@id: 'test-123'}) RETURN n"),
-  ).not.toThrow();
+  expect(() => parse("MATCH (n:Node {@id: 'test-123'}) RETURN n")).not.toThrow();
 });
 
 /**
@@ -1603,9 +1437,7 @@ test("Edge Cases - Empty list literal", () => {
 
 test("Edge Cases - Deeply nested expressions", () => {
   // Deeply nested arithmetic should work
-  expect(() =>
-    parse("MATCH (n) WHERE ((((n.a + 1) * 2) - 3) / 4) > 0 RETURN n"),
-  ).not.toThrow();
+  expect(() => parse("MATCH (n) WHERE ((((n.a + 1) * 2) - 3) / 4) > 0 RETURN n")).not.toThrow();
 });
 
 test("Edge Cases - Long variable-length path range", () => {
@@ -1616,37 +1448,25 @@ test("Edge Cases - Long variable-length path range", () => {
 test("Edge Cases - Multiple chained string predicates", () => {
   // Multiple conditions should work
   expect(() =>
-    parse(
-      "MATCH (n) WHERE n.name STARTS WITH 'A' AND n.name ENDS WITH 'z' RETURN n",
-    ),
+    parse("MATCH (n) WHERE n.name STARTS WITH 'A' AND n.name ENDS WITH 'z' RETURN n"),
   ).not.toThrow();
 });
 
 test("Edge Cases - Unicode in string literals", () => {
-  expect(() =>
-    parse("MATCH (n) WHERE n.name = 'André' RETURN n"),
-  ).not.toThrow();
-  expect(() =>
-    parse("MATCH (n) WHERE n.name = '日本語' RETURN n"),
-  ).not.toThrow();
+  expect(() => parse("MATCH (n) WHERE n.name = 'André' RETURN n")).not.toThrow();
+  expect(() => parse("MATCH (n) WHERE n.name = '日本語' RETURN n")).not.toThrow();
 });
 
 test("Edge Cases - Escaped quotes in strings", () => {
   // Single quotes with escaped single quote
-  expect(() =>
-    parse("MATCH (n) WHERE n.name = 'O\\'Brien' RETURN n"),
-  ).not.toThrow();
+  expect(() => parse("MATCH (n) WHERE n.name = 'O\\'Brien' RETURN n")).not.toThrow();
   // Double quotes with escaped double quote
-  expect(() =>
-    parse('MATCH (n) WHERE n.name = "He said \\"hello\\"" RETURN n'),
-  ).not.toThrow();
+  expect(() => parse('MATCH (n) WHERE n.name = "He said \\"hello\\"" RETURN n')).not.toThrow();
 });
 
 test("Edge Cases - Very long property names", () => {
   const longProp = "a".repeat(100);
-  expect(() =>
-    parse(`MATCH (n) WHERE n.${longProp} = 1 RETURN n`),
-  ).not.toThrow();
+  expect(() => parse(`MATCH (n) WHERE n.${longProp} = 1 RETURN n`)).not.toThrow();
 });
 
 test("Edge Cases - Whitespace handling", () => {
@@ -1664,13 +1484,9 @@ test("Edge Cases - Case insensitivity of keywords", () => {
 
 test("Edge Cases - Boolean literals", () => {
   expect(() => parse("MATCH (n) WHERE n.active = true RETURN n")).not.toThrow();
-  expect(() =>
-    parse("MATCH (n) WHERE n.active = false RETURN n"),
-  ).not.toThrow();
+  expect(() => parse("MATCH (n) WHERE n.active = false RETURN n")).not.toThrow();
   expect(() => parse("MATCH (n) WHERE n.active = TRUE RETURN n")).not.toThrow();
-  expect(() =>
-    parse("MATCH (n) WHERE n.active = FALSE RETURN n"),
-  ).not.toThrow();
+  expect(() => parse("MATCH (n) WHERE n.active = FALSE RETURN n")).not.toThrow();
 });
 
 test("Edge Cases - Null literal", () => {

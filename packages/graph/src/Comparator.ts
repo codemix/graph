@@ -130,16 +130,10 @@ export function compareObjects(a: object, b: object): number {
     if (isPlainObject(b)) {
       return 1;
     }
-    if (
-      typeof (a as any).toString === "function" &&
-      typeof (b as any).toString === "function"
-    ) {
+    if (typeof (a as any).toString === "function" && typeof (b as any).toString === "function") {
       return (a as any).toString().localeCompare((b as any).toString());
     }
-    if (
-      typeof (a as any).valueOf === "function" &&
-      typeof (b as any).valueOf === "function"
-    ) {
+    if (typeof (a as any).valueOf === "function" && typeof (b as any).valueOf === "function") {
       return compare((a as any).valueOf(), (b as any).valueOf());
     }
     return 1;

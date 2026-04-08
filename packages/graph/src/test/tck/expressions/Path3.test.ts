@@ -26,56 +26,47 @@ describe("Path3 - Length of a path", () => {
     expect(results).toHaveLength(3);
   });
 
-  test.fails(
-    "[2] Failing when using `length()` on a node - semantic type validation not implemented",
-    () => {
-      // Original TCK:
-      // MATCH (n)
-      // RETURN length(n)
-      //
-      // Expected: SyntaxError - InvalidArgumentType
-      //
-      // Limitations:
-      // - Unlabeled nodes not supported
-      // - Semantic type validation for function arguments not implemented
-      // - Error would be thrown at runtime, not at compile time
-      const graph = createTckGraph();
-      executeTckQuery(graph, "CREATE (:A)");
-      expect(() => {
-        executeTckQuery(graph, "MATCH (n) RETURN length(n)");
-      }).toThrow();
-    },
-  );
+  test.fails("[2] Failing when using `length()` on a node - semantic type validation not implemented", () => {
+    // Original TCK:
+    // MATCH (n)
+    // RETURN length(n)
+    //
+    // Expected: SyntaxError - InvalidArgumentType
+    //
+    // Limitations:
+    // - Unlabeled nodes not supported
+    // - Semantic type validation for function arguments not implemented
+    // - Error would be thrown at runtime, not at compile time
+    const graph = createTckGraph();
+    executeTckQuery(graph, "CREATE (:A)");
+    expect(() => {
+      executeTckQuery(graph, "MATCH (n) RETURN length(n)");
+    }).toThrow();
+  });
 
-  test.fails(
-    "[3] Failing when using `length()` on a relationship - semantic type validation not implemented",
-    () => {
-      // Original TCK:
-      // MATCH ()-[r]->()
-      // RETURN length(r)
-      //
-      // Expected: SyntaxError - InvalidArgumentType
-      //
-      // Limitations:
-      // - Unlabeled nodes not supported
-      // - Semantic type validation for function arguments not implemented
-      // - Error would be thrown at runtime, not at compile time
-      const graph = createTckGraph();
-      executeTckQuery(graph, "CREATE (:A)-[:REL]->(:B)");
-      expect(() => {
-        executeTckQuery(graph, "MATCH ()-[r]->() RETURN length(r)");
-      }).toThrow();
-    },
-  );
+  test.fails("[3] Failing when using `length()` on a relationship - semantic type validation not implemented", () => {
+    // Original TCK:
+    // MATCH ()-[r]->()
+    // RETURN length(r)
+    //
+    // Expected: SyntaxError - InvalidArgumentType
+    //
+    // Limitations:
+    // - Unlabeled nodes not supported
+    // - Semantic type validation for function arguments not implemented
+    // - Error would be thrown at runtime, not at compile time
+    const graph = createTckGraph();
+    executeTckQuery(graph, "CREATE (:A)-[:REL]->(:B)");
+    expect(() => {
+      executeTckQuery(graph, "MATCH ()-[r]->() RETURN length(r)");
+    }).toThrow();
+  });
 
   // Custom tests demonstrating path length calculations that ARE supported
 
   test("[Custom 1] Calculate path length by counting relationships", () => {
     const graph = createTckGraph();
-    executeTckQuery(
-      graph,
-      `CREATE (:A {name: 'a'})-[:T]->(:B {name: 'b'})-[:T]->(:C {name: 'c'})`,
-    );
+    executeTckQuery(graph, `CREATE (:A {name: 'a'})-[:T]->(:B {name: 'b'})-[:T]->(:C {name: 'c'})`);
 
     // Path length = number of relationships in the path
     // For A->B->C, the path length is 2
@@ -93,10 +84,7 @@ describe("Path3 - Length of a path", () => {
 
   test("[Custom 2] Determine path length by fixed pattern matching", () => {
     const graph = createTckGraph();
-    executeTckQuery(
-      graph,
-      `CREATE (:Start {name: 's'})-[:REL]->(:End {name: 'e'})`,
-    );
+    executeTckQuery(graph, `CREATE (:Start {name: 's'})-[:REL]->(:End {name: 'e'})`);
 
     // Path of length 1 (one relationship)
     const length1Results = executeTckQuery(
@@ -138,16 +126,10 @@ describe("Path3 - Length of a path", () => {
     const graph = createTckGraph();
     // Create two separate paths
     executeTckQuery(graph, `CREATE (:Start {id: 1})-[:T]->(:End {id: 1})`);
-    executeTckQuery(
-      graph,
-      `CREATE (:Start {id: 2})-[:T]->(:A {id: 2})-[:T]->(:End {id: 2})`,
-    );
+    executeTckQuery(graph, `CREATE (:Start {id: 2})-[:T]->(:A {id: 2})-[:T]->(:End {id: 2})`);
 
     // Path of length 1: Start -> End (direct)
-    const directPaths = executeTckQuery(
-      graph,
-      `MATCH (s:Start)-[:T]->(e:End) RETURN s.id`,
-    );
+    const directPaths = executeTckQuery(graph, `MATCH (s:Start)-[:T]->(e:End) RETURN s.id`);
     expect(directPaths).toHaveLength(1);
     expect(directPaths[0]).toBe(1);
 
@@ -183,17 +165,11 @@ describe("Path3 - Length of a path", () => {
     );
 
     // Single-hop path (length 1)
-    const hop1 = executeTckQuery(
-      graph,
-      `MATCH (a:A)-[r:T]->(b:B) RETURN a.name, b.name`,
-    );
+    const hop1 = executeTckQuery(graph, `MATCH (a:A)-[r:T]->(b:B) RETURN a.name, b.name`);
     expect(hop1).toHaveLength(1);
 
     // Two-hop path (length 2)
-    const hop2 = executeTckQuery(
-      graph,
-      `MATCH (a:A)-[:T]->(:B)-[:T]->(c:C) RETURN a.name, c.name`,
-    );
+    const hop2 = executeTckQuery(graph, `MATCH (a:A)-[:T]->(:B)-[:T]->(c:C) RETURN a.name, c.name`);
     expect(hop2).toHaveLength(1);
 
     // Three-hop path (length 3)

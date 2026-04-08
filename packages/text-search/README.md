@@ -27,7 +27,7 @@ import { createMatcher, rankDocuments } from "@codemix/text-search";
 // Score a single document against a query
 const match = createMatcher("quick brown fox");
 match("The quick brown fox jumps over the lazy dog"); // ~0.85
-match("A slow gray elephant");                        // 0.0
+match("A slow gray elephant"); // 0.0
 
 // Rank an array of strings by relevance
 const results = rankDocuments("database connection", [
@@ -48,8 +48,8 @@ Prepares a query and returns a scoring function. Creating the matcher does the e
 ```typescript
 const match = createMatcher("error handling");
 
-match("Always handle errors gracefully");    // > 0
-match("Cooking recipes for beginners");      // 0
+match("Always handle errors gracefully"); // > 0
+match("Cooking recipes for beginners"); // 0
 ```
 
 **Returns** `(text: string) => number` — a score in `[0, 1]`.
@@ -109,7 +109,7 @@ interface Article {
 
 const articles: Article[] = [
   { slug: "intro-react", title: "Introduction to React", content: "Learn React basics" },
-  { slug: "vue-guide",   title: "Vue.js Guide",          content: "Getting started with Vue" },
+  { slug: "vue-guide", title: "Vue.js Guide", content: "Getting started with Vue" },
 ];
 
 const results = rankDocuments(
@@ -155,9 +155,9 @@ Applies the Porter stemming algorithm to a single lowercase word.
 ```typescript
 import { stem } from "@codemix/text-search";
 
-stem("running")     // "run"
-stem("connections") // "connect"
-stem("happily")     // "happili"
+stem("running"); // "run"
+stem("connections"); // "connect"
+stem("happily"); // "happili"
 ```
 
 ---
@@ -197,24 +197,24 @@ All main functions accept a shared options object.
 
 ### Tokenization options (`TokenizeOptions`)
 
-| Option | Type | Default | Description |
-|---|---|---|---|
-| `stem` | `boolean` | `true` | Apply Porter stemming |
-| `removeStopwords` | `boolean` | `true` | Filter common English stopwords |
-| `minLength` | `number` | `1` | Minimum token length to keep |
+| Option            | Type      | Default | Description                     |
+| ----------------- | --------- | ------- | ------------------------------- |
+| `stem`            | `boolean` | `true`  | Apply Porter stemming           |
+| `removeStopwords` | `boolean` | `true`  | Filter common English stopwords |
+| `minLength`       | `number`  | `1`     | Minimum token length to keep    |
 
 ### Matcher options (`MatcherOptions`)
 
 Extends `TokenizeOptions` with BM25 tuning and bonus weights.
 
-| Option | Type | Default | Description |
-|---|---|---|---|
-| `k1` | `number` | `1.2` | BM25 term-frequency saturation. Higher = more weight on frequency |
-| `b` | `number` | `0.75` | BM25 length normalization. `0` = none, `1` = full |
-| `exactMatchBonus` | `number` | `0.15` | Added when query appears as a literal substring |
-| `prefixMatchBonus` | `number` | `0.1` | Added when document starts with query |
-| `consecutiveBonus` | `number` | `0.1` | Added proportionally for consecutive term matches |
-| `positionWeight` | `number` | `0.05` | Weight for position-based scoring |
+| Option             | Type     | Default | Description                                                       |
+| ------------------ | -------- | ------- | ----------------------------------------------------------------- |
+| `k1`               | `number` | `1.2`   | BM25 term-frequency saturation. Higher = more weight on frequency |
+| `b`                | `number` | `0.75`  | BM25 length normalization. `0` = none, `1` = full                 |
+| `exactMatchBonus`  | `number` | `0.15`  | Added when query appears as a literal substring                   |
+| `prefixMatchBonus` | `number` | `0.1`   | Added when document starts with query                             |
+| `consecutiveBonus` | `number` | `0.1`   | Added proportionally for consecutive term matches                 |
+| `positionWeight`   | `number` | `0.05`  | Weight for position-based scoring                                 |
 
 **Disabling all bonuses** gives you a pure BM25-style score capped at ~0.6:
 
@@ -235,13 +235,13 @@ The final score is the sum of five components, clamped to `[0, 1]`:
 score = termScore + exactBonus + prefixBonus + consecutiveBonus + positionScore
 ```
 
-| Component | Max contribution | Description |
-|---|---|---|
-| `termScore` | 0.60 | BM25-style term frequency + query term coverage |
-| `exactBonus` | 0.15 | Literal query string found in document |
-| `prefixBonus` | 0.10 | Document starts with query string |
-| `consecutiveBonus` | 0.10 | Fraction of adjacent query term pairs that appear consecutively |
-| `positionScore` | 0.05 | Earlier term positions score higher |
+| Component          | Max contribution | Description                                                     |
+| ------------------ | ---------------- | --------------------------------------------------------------- |
+| `termScore`        | 0.60             | BM25-style term frequency + query term coverage                 |
+| `exactBonus`       | 0.15             | Literal query string found in document                          |
+| `prefixBonus`      | 0.10             | Document starts with query string                               |
+| `consecutiveBonus` | 0.10             | Fraction of adjacent query term pairs that appear consecutively |
+| `positionScore`    | 0.05             | Earlier term positions score higher                             |
 
 ### Term score detail
 
@@ -270,11 +270,11 @@ Note: the Porter stemmer is a rule-based algorithm and does not handle irregular
 
 Benchmarks on 1000-word documents (Node.js, M-series Mac):
 
-| Operation | Time |
-|---|---|
-| Tokenize 1 document × 100 | < 500 ms |
-| Score 1 document × 100 | < 500 ms |
-| Rank 100 × 1000-word documents | < 1000 ms |
+| Operation                                    | Time      |
+| -------------------------------------------- | --------- |
+| Tokenize 1 document × 100                    | < 500 ms  |
+| Score 1 document × 100                       | < 500 ms  |
+| Rank 100 × 1000-word documents               | < 1000 ms |
 | 500 scoring operations (50 docs × 10 passes) | < 1000 ms |
 
 The matcher compiles the query once — reuse the function returned by `createMatcher` when scoring many documents against the same query.
@@ -306,7 +306,7 @@ const faq = [
 ];
 
 const match = createMatcher("cancel subscription");
-faq.filter(q => match(q) > 0.3);
+faq.filter((q) => match(q) > 0.3);
 // ["How to cancel my subscription"]
 ```
 
@@ -314,9 +314,9 @@ faq.filter(q => match(q) > 0.3);
 
 ```typescript
 const users = [
-  { id: 1, name: "John Doe",    bio: "Software engineer at TechCorp" },
-  { id: 2, name: "Jane Smith",  bio: "Product manager with engineering background" },
-  { id: 3, name: "Bob Wilson",  bio: "Marketing specialist" },
+  { id: 1, name: "John Doe", bio: "Software engineer at TechCorp" },
+  { id: 2, name: "Jane Smith", bio: "Product manager with engineering background" },
+  { id: 3, name: "Bob Wilson", bio: "Marketing specialist" },
 ];
 
 const results = rankDocuments(

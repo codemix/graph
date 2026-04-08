@@ -24,15 +24,9 @@ describe("Graph1 - Node and edge identifier - ID function", () => {
 
   test("[Custom 2] id() on relationship returns relationship ID", () => {
     const graph = createTckGraph();
-    executeTckQuery(
-      graph,
-      `CREATE (:A {name: 'Alice'})-[:KNOWS]->(:B {name: 'Bob'})`,
-    );
+    executeTckQuery(graph, `CREATE (:A {name: 'Alice'})-[:KNOWS]->(:B {name: 'Bob'})`);
 
-    const results = executeTckQuery(
-      graph,
-      "MATCH (:A)-[r:KNOWS]->(:B) RETURN id(r)",
-    );
+    const results = executeTckQuery(graph, "MATCH (:A)-[r:KNOWS]->(:B) RETURN id(r)");
 
     expect(results).toHaveLength(1);
     // In this implementation, id() returns the internal ElementId
@@ -59,10 +53,7 @@ describe("Graph1 - Node and edge identifier - ID function", () => {
     executeTckQuery(graph, `CREATE (:A {name: 'Alice'}), (:A {name: 'Bob'})`);
 
     // Self-join where a = a (identity comparison)
-    const results = executeTckQuery(
-      graph,
-      "MATCH (a:A), (b:A) WHERE a = b RETURN a.name",
-    );
+    const results = executeTckQuery(graph, "MATCH (a:A), (b:A) WHERE a = b RETURN a.name");
 
     // Should return 2 results (Alice matches Alice, Bob matches Bob)
     // Single return item comes back directly
@@ -77,10 +68,7 @@ describe("Graph1 - Node and edge identifier - ID function", () => {
     executeTckQuery(graph, `CREATE (:A {name: 'Alice'}), (:A {name: 'Bob'})`);
 
     // Cross-join where a <> b
-    const results = executeTckQuery(
-      graph,
-      "MATCH (a:A), (b:A) WHERE a <> b RETURN a.name, b.name",
-    );
+    const results = executeTckQuery(graph, "MATCH (a:A), (b:A) WHERE a <> b RETURN a.name, b.name");
 
     // Should return 2 results (Alice-Bob, Bob-Alice)
     expect(results).toHaveLength(2);

@@ -270,10 +270,7 @@ describe("Precedence1 - On boolean values", () => {
 
   test("[custom-5] NOT takes precedence over OR in WHERE clause", () => {
     const graph = createTckGraph();
-    executeTckQuery(
-      graph,
-      "CREATE (:A {val: 1}), (:A {val: 2}), (:A {val: 3})",
-    );
+    executeTckQuery(graph, "CREATE (:A {val: 1}), (:A {val: 2}), (:A {val: 3})");
 
     const results = executeTckQuery(
       graph,
@@ -286,10 +283,7 @@ describe("Precedence1 - On boolean values", () => {
 
   test("[custom-6] Comparison takes precedence over boolean operators", () => {
     const graph = createTckGraph();
-    executeTckQuery(
-      graph,
-      "CREATE (:A {num: 5}), (:A {num: 10}), (:A {num: 15})",
-    );
+    executeTckQuery(graph, "CREATE (:A {num: 5}), (:A {num: 10}), (:A {num: 15})");
 
     const results = executeTckQuery(
       graph,
@@ -301,10 +295,7 @@ describe("Precedence1 - On boolean values", () => {
 
   test("[custom-7] IN takes precedence over AND", () => {
     const graph = createTckGraph();
-    executeTckQuery(
-      graph,
-      "CREATE (:A {x: 1, y: 2}), (:A {x: 2, y: 3}), (:A {x: 3, y: 4})",
-    );
+    executeTckQuery(graph, "CREATE (:A {x: 1, y: 2}), (:A {x: 2, y: 3}), (:A {x: 3, y: 4})");
 
     const results = executeTckQuery(
       graph,
@@ -316,10 +307,7 @@ describe("Precedence1 - On boolean values", () => {
 
   test("[custom-8] NOT IN combination", () => {
     const graph = createTckGraph();
-    executeTckQuery(
-      graph,
-      "CREATE (:A {val: 1}), (:A {val: 2}), (:A {val: 3}), (:A {val: 4})",
-    );
+    executeTckQuery(graph, "CREATE (:A {val: 1}), (:A {val: 2}), (:A {val: 3}), (:A {val: 4})");
 
     const results = executeTckQuery(
       graph,
@@ -332,10 +320,7 @@ describe("Precedence1 - On boolean values", () => {
 
   test("[custom-9] IS NULL combined with AND/OR precedence", () => {
     const graph = createTckGraph();
-    executeTckQuery(
-      graph,
-      "CREATE (:A {a: 1}), (:A {a: 2, b: 3}), (:A {b: 4})",
-    );
+    executeTckQuery(graph, "CREATE (:A {a: 1}), (:A {a: 2, b: 3}), (:A {b: 4})");
 
     const results = executeTckQuery(
       graph,
@@ -346,10 +331,7 @@ describe("Precedence1 - On boolean values", () => {
 
   test("[custom-10] Complex precedence: NOT > AND > XOR > OR", () => {
     const graph = createTckGraph();
-    executeTckQuery(
-      graph,
-      "CREATE (:A {id: 1}), (:A {id: 2}), (:A {id: 3}), (:A {id: 4})",
-    );
+    executeTckQuery(graph, "CREATE (:A {id: 1}), (:A {id: 2}), (:A {id: 3}), (:A {id: 4})");
 
     const results = executeTckQuery(
       graph,

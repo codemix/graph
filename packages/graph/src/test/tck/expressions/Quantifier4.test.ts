@@ -23,10 +23,7 @@ describe("Quantifier4 - All quantifier", () => {
 
   test("[2] All quantifier on list literal containing booleans", () => {
     const graph = createTckGraph();
-    const results = executeTckQuery(
-      graph,
-      "RETURN all(x IN [true] WHERE x) AS result",
-    );
+    const results = executeTckQuery(graph, "RETURN all(x IN [true] WHERE x) AS result");
     expect(results).toHaveLength(1);
     // all(x IN [true] WHERE x) is true because all elements satisfy the predicate
     expect(results[0]).toBe(true);
@@ -35,10 +32,7 @@ describe("Quantifier4 - All quantifier", () => {
   test("[3] All quantifier on list literal containing integers", () => {
     const graph = createTckGraph();
     // all(x IN [1, 2, 3] WHERE x = 2) - not all elements equal 2
-    const results = executeTckQuery(
-      graph,
-      "RETURN all(x IN [1, 2, 3] WHERE x = 2) AS result",
-    );
+    const results = executeTckQuery(graph, "RETURN all(x IN [1, 2, 3] WHERE x = 2) AS result");
     expect(results).toHaveLength(1);
     expect(results[0]).toBe(false);
   });
@@ -117,10 +111,7 @@ describe("Quantifier4 - All quantifier", () => {
 
   test("[10] All quantifier on lists containing nulls", () => {
     const graph = createTckGraph();
-    const results = executeTckQuery(
-      graph,
-      "RETURN all(x IN [null, 2] WHERE x = 2) AS result",
-    );
+    const results = executeTckQuery(graph, "RETURN all(x IN [null, 2] WHERE x = 2) AS result");
     expect(results).toHaveLength(1);
     // all() is false because not all elements equal 2 (null doesn't)
     expect(results[0]).toBe(false);
@@ -128,10 +119,7 @@ describe("Quantifier4 - All quantifier", () => {
 
   test("[11] All quantifier with IS NULL predicate", () => {
     const graph = createTckGraph();
-    const results = executeTckQuery(
-      graph,
-      "RETURN all(x IN [0, null] WHERE x IS NULL) AS result",
-    );
+    const results = executeTckQuery(graph, "RETURN all(x IN [0, null] WHERE x IS NULL) AS result");
     expect(results).toHaveLength(1);
     // all() is false because not all elements are null
     expect(results[0]).toBe(false);
@@ -161,29 +149,20 @@ describe("Quantifier4 - All quantifier", () => {
 
   test("[14] All quantifier is true if predicate is statically true and list is not empty", () => {
     const graph = createTckGraph();
-    const results = executeTckQuery(
-      graph,
-      "RETURN all(x IN [1, null, true] WHERE true) AS result",
-    );
+    const results = executeTckQuery(graph, "RETURN all(x IN [1, null, true] WHERE true) AS result");
     expect(results).toHaveLength(1);
     // all() is true when all elements satisfy the predicate
     expect(results[0]).toBe(true);
   });
 
-  test.fails(
-    "[15] Fail all quantifier on type mismatch - semantic validation not implemented",
-    () => {
-      // Original: RETURN all(x IN ['Clara'] WHERE x % 2 = 0) AS result
-      // Expected: SyntaxError InvalidArgumentType
-      const graph = createTckGraph();
-      expect(() => {
-        executeTckQuery(
-          graph,
-          "RETURN all(x IN ['Clara'] WHERE x % 2 = 0) AS result",
-        );
-      }).toThrow();
-    },
-  );
+  test.fails("[15] Fail all quantifier on type mismatch - semantic validation not implemented", () => {
+    // Original: RETURN all(x IN ['Clara'] WHERE x % 2 = 0) AS result
+    // Expected: SyntaxError InvalidArgumentType
+    const graph = createTckGraph();
+    expect(() => {
+      executeTckQuery(graph, "RETURN all(x IN ['Clara'] WHERE x % 2 = 0) AS result");
+    }).toThrow();
+  });
 
   // Custom tests demonstrating all() functionality in WHERE clause
 

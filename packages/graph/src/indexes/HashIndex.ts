@@ -60,11 +60,7 @@ export class HashIndex implements Index {
     this.#reverse.delete(elementId);
   }
 
-  public update(
-    elementId: ElementId,
-    oldValue: unknown,
-    newValue: unknown,
-  ): void {
+  public update(elementId: ElementId, oldValue: unknown, newValue: unknown): void {
     this.remove(elementId, oldValue);
     this.add(elementId, newValue);
   }

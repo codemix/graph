@@ -21,10 +21,7 @@ function makeType<T>(_defaultValue: T): StandardSchemaV1<T> {
 }
 
 // Helper function to execute a query string against a graph
-function executeQuery(
-  graph: Graph<GraphSchema>,
-  queryString: string,
-): unknown[] {
+function executeQuery(graph: Graph<GraphSchema>, queryString: string): unknown[] {
   const ast = parse(queryString) as Query;
   const steps = astToSteps(ast);
   const traverser = createTraverser(steps);
@@ -1049,10 +1046,7 @@ test("New Features: Aggregates, XOR, Variable-length [*] - Aggregate Functions -
   graph.addEdge(laptop.id, "purchased", alice.id, { quantity: 1 });
   graph.addEdge(phone.id, "purchased", bob.id, { quantity: 2 });
 
-  const results = executeQuery(
-    graph,
-    "MATCH (p:Person) WHERE p.active = true RETURN COLLECT(p)",
-  );
+  const results = executeQuery(graph, "MATCH (p:Person) WHERE p.active = true RETURN COLLECT(p)");
   expect(results).toHaveLength(1);
   expect(Array.isArray(results[0])).toBe(true);
   expect((results[0] as unknown[]).length).toBe(3);

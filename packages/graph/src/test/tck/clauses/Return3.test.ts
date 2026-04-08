@@ -3,12 +3,7 @@
  * Translated from tmp/tck/features/clauses/return/Return3.feature
  */
 import { describe, test, expect } from "vitest";
-import {
-  createTckGraph,
-  executeTckQuery,
-  getLabel,
-  getType,
-} from "../tckHelpers.js";
+import { createTckGraph, executeTckQuery, getLabel, getType } from "../tckHelpers.js";
 
 describe("Return3 - Return multiple expressions", () => {
   test("[1] Returning multiple expressions - unlabeled nodes not supported", () => {
@@ -51,10 +46,7 @@ describe("Return3 - Return multiple expressions", () => {
       graph,
       "CREATE ({name: 'Philip J. Fry', age: 2046, seasons: [1, 2, 3, 4, 5, 6, 7]})",
     );
-    const results = executeTckQuery(
-      graph,
-      "MATCH (a) RETURN a.name, a.age, a.seasons",
-    );
+    const results = executeTckQuery(graph, "MATCH (a) RETURN a.name, a.age, a.seasons");
     expect(results).toHaveLength(1);
     const [name, age, seasons] = results[0] as [string, number, number[]];
     expect(name).toBe("Philip J. Fry");
@@ -64,15 +56,9 @@ describe("Return3 - Return multiple expressions", () => {
 
   test("[custom] Returning multiple node property values with labeled node", () => {
     const graph = createTckGraph();
-    executeTckQuery(
-      graph,
-      "CREATE (:Person {name: 'Philip J. Fry', age: 2046})",
-    );
+    executeTckQuery(graph, "CREATE (:Person {name: 'Philip J. Fry', age: 2046})");
 
-    const results = executeTckQuery(
-      graph,
-      "MATCH (a:Person) RETURN a.name, a.age",
-    );
+    const results = executeTckQuery(graph, "MATCH (a:Person) RETURN a.name, a.age");
     expect(results).toHaveLength(1);
     const [name, age] = results[0] as [string, number];
     expect(name).toBe("Philip J. Fry");
@@ -84,15 +70,9 @@ describe("Return3 - Return multiple expressions", () => {
     executeTckQuery(graph, "CREATE (:A), (:B)");
     executeTckQuery(graph, "MATCH (a:A), (b:B) CREATE (a)-[:T]->(b)");
 
-    const results = executeTckQuery(
-      graph,
-      "MATCH (a:A)-[r:T]->(:B) RETURN a AS foo, r AS bar",
-    );
+    const results = executeTckQuery(graph, "MATCH (a:A)-[r:T]->(:B) RETURN a AS foo, r AS bar");
     expect(results).toHaveLength(1);
-    const [foo, bar] = results[0] as [
-      Record<string, unknown>,
-      Record<string, unknown>,
-    ];
+    const [foo, bar] = results[0] as [Record<string, unknown>, Record<string, unknown>];
     expect(getLabel(foo)).toBe("A");
     expect(getType(bar)).toBe("T");
   });

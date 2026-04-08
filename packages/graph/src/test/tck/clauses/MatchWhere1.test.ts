@@ -3,51 +3,37 @@
  * Translated from tmp/tck/features/clauses/match-where/MatchWhere1.feature
  */
 import { describe, test, expect } from "vitest";
-import {
-  createTckGraph,
-  executeTckQuery,
-  getLabel,
-  getProperty,
-} from "../tckHelpers.js";
+import { createTckGraph, executeTckQuery, getLabel, getProperty } from "../tckHelpers.js";
 
 describe("MatchWhere1 - Filter single variable", () => {
-  test.fails(
-    "[1] Filter node with node label predicate - WHERE a:A syntax not supported",
-    () => {
-      const graph = createTckGraph();
-      executeTckQuery(graph, "CREATE (:A), (:B), (:C)");
-      const results = executeTckQuery(
-        graph,
-        `MATCH (a)
+  test.fails("[1] Filter node with node label predicate - WHERE a:A syntax not supported", () => {
+    const graph = createTckGraph();
+    executeTckQuery(graph, "CREATE (:A), (:B), (:C)");
+    const results = executeTckQuery(
+      graph,
+      `MATCH (a)
        WHERE a:A
        RETURN a`,
-      );
-      expect(results).toHaveLength(1);
-      const [a] = results[0] as [Record<string, unknown>];
-      expect(getLabel(a)).toBe("A");
-    },
-  );
+    );
+    expect(results).toHaveLength(1);
+    const [a] = results[0] as [Record<string, unknown>];
+    expect(getLabel(a)).toBe("A");
+  });
 
-  test.fails(
-    "[2] Filter node with node label predicate on multi variables without any bindings - WHERE a:A syntax not supported",
-    () => {
-      const graph = createTckGraph();
-      executeTckQuery(graph, "CREATE (:A), (:B), (:C)");
-      const results = executeTckQuery(
-        graph,
-        `MATCH (a), (b)
+  test.fails("[2] Filter node with node label predicate on multi variables without any bindings - WHERE a:A syntax not supported", () => {
+    const graph = createTckGraph();
+    executeTckQuery(graph, "CREATE (:A), (:B), (:C)");
+    const results = executeTckQuery(
+      graph,
+      `MATCH (a), (b)
        WHERE a:A AND b:B
        RETURN a, b`,
-      );
-      expect(results).toHaveLength(1);
-      const [a, b] = results[0] as [
-        Record<string, unknown>,
-        Record<string, unknown>,
-      ];
-      expect(getLabel(a)).toBe("A");
-      expect(getLabel(b)).toBe("B");
-    },
-  );
+    );
+    expect(results).toHaveLength(1);
+    const [a, b] = results[0] as [Record<string, unknown>, Record<string, unknown>];
+    expect(getLabel(a)).toBe("A");
+    expect(getLabel(b)).toBe("B");
+  });
 
   test("[3] Filter node with property predicate on single variable", () => {
     const graph = createTckGraph();
@@ -87,10 +73,7 @@ describe("MatchWhere1 - Filter single variable", () => {
 
   test("[5] Filter end node of relationship", () => {
     const graph = createTckGraph();
-    executeTckQuery(
-      graph,
-      "CREATE ({name: 'Someone'})<-[:X]-()-[:X]->({name: 'Andres'})",
-    );
+    executeTckQuery(graph, "CREATE ({name: 'Someone'})<-[:X]-()-[:X]->({name: 'Andres'})");
     const results = executeTckQuery(
       graph,
       `MATCH ()-[rel:X]->(x)
@@ -205,28 +188,25 @@ describe("MatchWhere1 - Filter single variable", () => {
     expect(labels).toContain("B");
   });
 
-  test.fails(
-    "[11] Filter relationship with disjunctive type predicate - requires unlabeled nodes",
-    () => {
-      const graph = createTckGraph();
-      executeTckQuery(
-        graph,
-        `CREATE ()-[:T1 {name: 'First'}]->(),
+  test.fails("[11] Filter relationship with disjunctive type predicate - requires unlabeled nodes", () => {
+    const graph = createTckGraph();
+    executeTckQuery(
+      graph,
+      `CREATE ()-[:T1 {name: 'First'}]->(),
              ()-[:T2 {name: 'Second'}]->(),
              ()-[:T3 {name: 'Third'}]->()`,
-      );
-      const results = executeTckQuery(
-        graph,
-        `MATCH ()-[r]->()
+    );
+    const results = executeTckQuery(
+      graph,
+      `MATCH ()-[r]->()
        WHERE type(r) = 'T1' OR type(r) = 'T2'
        RETURN r.name`,
-      );
-      expect(results).toHaveLength(2);
-      const names = results.map((r) => (r as [string])[0]);
-      expect(names).toContain("First");
-      expect(names).toContain("Second");
-    },
-  );
+    );
+    expect(results).toHaveLength(2);
+    const names = results.map((r) => (r as [string])[0]);
+    expect(names).toContain("First");
+    expect(names).toContain("Second");
+  });
 
   test("[12] Filter path with path length predicate", () => {
     const graph = createTckGraph();
@@ -252,29 +232,23 @@ describe("MatchWhere1 - Filter single variable", () => {
     expect(results).toHaveLength(0);
   });
 
-  test.fails(
-    "[14] Fail when filtering path with property predicate - named paths not supported",
-    () => {
-      const graph = createTckGraph();
-      executeTckQuery(graph, `CREATE (a:A)-[:T]->(b:B)`);
-      // This should fail at runtime because paths don't have properties
-      expect(() => {
-        executeTckQuery(
-          graph,
-          `MATCH p = (a:A)-[:T]->(b:B)
+  test.fails("[14] Fail when filtering path with property predicate - named paths not supported", () => {
+    const graph = createTckGraph();
+    executeTckQuery(graph, `CREATE (a:A)-[:T]->(b:B)`);
+    // This should fail at runtime because paths don't have properties
+    expect(() => {
+      executeTckQuery(
+        graph,
+        `MATCH p = (a:A)-[:T]->(b:B)
          WHERE p.name = 'foo'
          RETURN p`,
-        );
-      }).toThrow();
-    },
-  );
+      );
+    }).toThrow();
+  });
 
   test("[15] Fail on aggregation in WHERE", () => {
     const graph = createTckGraph();
-    executeTckQuery(
-      graph,
-      "CREATE (:A {num: 1}), (:A {num: 2}), (:A {num: 3})",
-    );
+    executeTckQuery(graph, "CREATE (:A {num: 1}), (:A {num: 2}), (:A {num: 3})");
     // Aggregation in WHERE should fail at compile time
     expect(() => {
       executeTckQuery(

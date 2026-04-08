@@ -68,9 +68,7 @@ const bob = graph.addVertex("Person", { name: "Bob", age: 25 });
 graph.addEdge(alice, "knows", bob, {});
 
 // 4. Query with Cypher
-const results = graph.query(
-  "MATCH (a:Person)-[:knows]->(b:Person) RETURN a.name, b.name",
-);
+const results = graph.query("MATCH (a:Person)-[:knows]->(b:Person) RETURN a.name, b.name");
 // [{ a: { name: "Alice" }, b: { name: "Bob" } }]
 ```
 
@@ -286,7 +284,7 @@ pnpm install
 | `pnpm typecheck`     | Type-check all packages                    |
 | `pnpm lint`          | Lint with oxlint                           |
 | `pnpm lint:fix`      | Lint and auto-fix                          |
-| `pnpm format`        | Format with Prettier                       |
+| `pnpm format`        | Format with oxfmt                          |
 | `pnpm format:check`  | Check formatting                           |
 
 ### Package-level commands

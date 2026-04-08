@@ -16,10 +16,7 @@ describe("Merge8 - Merge relationships - on match and on create", () => {
       graph,
       "MATCH (a:A), (b:B) MERGE (a)-[r:TYPE]->(b) ON CREATE SET r.name = 'Lola' ON MATCH SET r.name = 'RUN'",
     );
-    const results1 = executeTckQuery(
-      graph,
-      "MATCH ()-[r:TYPE]->() RETURN r.name",
-    );
+    const results1 = executeTckQuery(graph, "MATCH ()-[r:TYPE]->() RETURN r.name");
     expect(results1).toHaveLength(1);
     expect(results1[0]).toBe("Lola");
 
@@ -28,10 +25,7 @@ describe("Merge8 - Merge relationships - on match and on create", () => {
       graph,
       "MATCH (a:A), (b:B) MERGE (a)-[r:TYPE]->(b) ON CREATE SET r.name = 'Lola' ON MATCH SET r.name = 'RUN'",
     );
-    const results2 = executeTckQuery(
-      graph,
-      "MATCH ()-[r:TYPE]->() RETURN r.name",
-    );
+    const results2 = executeTckQuery(graph, "MATCH ()-[r:TYPE]->() RETURN r.name");
     expect(results2).toHaveLength(1);
     expect(results2[0]).toBe("RUN");
   });
@@ -46,10 +40,7 @@ describe("Merge8 - Merge relationships - on match and on create", () => {
       "CREATE (a:A), (b:B) MERGE (a)-[r:T]->(b) ON CREATE SET r.action = 'created' ON MATCH SET r.action = 'matched'",
     );
 
-    const results1 = executeTckQuery(
-      graph,
-      "MATCH (a:A)-[r:T]->(b:B) RETURN r.action",
-    );
+    const results1 = executeTckQuery(graph, "MATCH (a:A)-[r:T]->(b:B) RETURN r.action");
     expect(results1).toHaveLength(1);
     expect(results1[0]).toBe("created");
 
@@ -59,10 +50,7 @@ describe("Merge8 - Merge relationships - on match and on create", () => {
       "MERGE (a:A) MERGE (b:B) MERGE (a)-[r:T]->(b) ON CREATE SET r.action = 'created' ON MATCH SET r.action = 'matched'",
     );
 
-    const results2 = executeTckQuery(
-      graph,
-      "MATCH (a:A)-[r:T]->(b:B) RETURN r.action",
-    );
+    const results2 = executeTckQuery(graph, "MATCH (a:A)-[r:T]->(b:B) RETURN r.action");
     expect(results2).toHaveLength(1);
     expect(results2[0]).toBe("matched");
   });
@@ -76,15 +64,9 @@ describe("Merge8 - Merge relationships - on match and on create", () => {
       "CREATE (a:A), (b:B) MERGE (a)-[r:T]->(b) ON CREATE SET r.created = true ON MATCH SET r.matched = true",
     );
 
-    const results1 = executeTckQuery(
-      graph,
-      "MATCH (a:A)-[r:T]->(b:B) RETURN r.created, r.matched",
-    );
+    const results1 = executeTckQuery(graph, "MATCH (a:A)-[r:T]->(b:B) RETURN r.created, r.matched");
     expect(results1).toHaveLength(1);
-    const [created1, matched1] = results1[0] as [
-      boolean | undefined,
-      boolean | undefined,
-    ];
+    const [created1, matched1] = results1[0] as [boolean | undefined, boolean | undefined];
     expect(created1).toBe(true);
     expect(matched1).toBeUndefined();
 
@@ -94,10 +76,7 @@ describe("Merge8 - Merge relationships - on match and on create", () => {
       "MERGE (a:A) MERGE (b:B) MERGE (a)-[r:T]->(b) ON CREATE SET r.created = true ON MATCH SET r.matched = true",
     );
 
-    const results2 = executeTckQuery(
-      graph,
-      "MATCH (a:A)-[r:T]->(b:B) RETURN r.created, r.matched",
-    );
+    const results2 = executeTckQuery(graph, "MATCH (a:A)-[r:T]->(b:B) RETURN r.created, r.matched");
     expect(results2).toHaveLength(1);
     const [created2, matched2] = results2[0] as [boolean, boolean];
     expect(created2).toBe(true);
@@ -113,10 +92,7 @@ describe("Merge8 - Merge relationships - on match and on create", () => {
       "CREATE (a:A), (b:B) MERGE (a)<-[r:T]-(b) ON CREATE SET r.dir = 'in-created' ON MATCH SET r.dir = 'in-matched'",
     );
 
-    const results1 = executeTckQuery(
-      graph,
-      "MATCH (b:B)-[r:T]->(a:A) RETURN r.dir",
-    );
+    const results1 = executeTckQuery(graph, "MATCH (b:B)-[r:T]->(a:A) RETURN r.dir");
     expect(results1).toHaveLength(1);
     expect(results1[0]).toBe("in-created");
 
@@ -126,10 +102,7 @@ describe("Merge8 - Merge relationships - on match and on create", () => {
       "MERGE (a:A) MERGE (b:B) MERGE (a)<-[r:T]-(b) ON CREATE SET r.dir = 'in-created' ON MATCH SET r.dir = 'in-matched'",
     );
 
-    const results2 = executeTckQuery(
-      graph,
-      "MATCH (b:B)-[r:T]->(a:A) RETURN r.dir",
-    );
+    const results2 = executeTckQuery(graph, "MATCH (b:B)-[r:T]->(a:A) RETURN r.dir");
     expect(results2).toHaveLength(1);
     expect(results2[0]).toBe("in-matched");
   });

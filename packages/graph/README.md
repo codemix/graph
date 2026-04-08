@@ -66,12 +66,7 @@ pnpm add @codemix/graph
 ## Quick Start
 
 ```ts
-import {
-  Graph,
-  GraphSchema,
-  InMemoryGraphStorage,
-  GraphTraversal,
-} from "@codemix/graph";
+import { Graph, GraphSchema, InMemoryGraphStorage, GraphTraversal } from "@codemix/graph";
 import * as v from "valibot"; // any Standard Schema library
 
 const schema = {
@@ -229,12 +224,7 @@ graph.deleteEdge(edge);
 Use `parseQueryToSteps` to compile a Cypher string and get back executable steps plus a result mapper:
 
 ```ts
-import {
-  Graph,
-  InMemoryGraphStorage,
-  parseQueryToSteps,
-  GraphTraversal,
-} from "@codemix/graph";
+import { Graph, InMemoryGraphStorage, parseQueryToSteps, GraphTraversal } from "@codemix/graph";
 
 const { steps, postprocess } = parseQueryToSteps(
   "MATCH (p:Person)-[:ACTED_IN]->(m:Movie) WHERE p.name = $name RETURN p.name, m.title",
@@ -377,12 +367,7 @@ g.V()
 ### Labeling and Selection
 
 ```ts
-g.V()
-  .hasLabel("Person")
-  .as("actor")
-  .out("ACTED_IN")
-  .as("movie")
-  .select("actor", "movie");
+g.V().hasLabel("Person").as("actor").out("ACTED_IN").as("movie").select("actor", "movie");
 // yields { actor: TraversalPath, movie: TraversalPath }
 ```
 
@@ -510,11 +495,7 @@ Duplicate inserts into a unique-indexed property throw `UniqueConstraintViolatio
 **Server side:**
 
 ```ts
-import {
-  Graph,
-  InMemoryGraphStorage,
-  handleAsyncCommand,
-} from "@codemix/graph";
+import { Graph, InMemoryGraphStorage, handleAsyncCommand } from "@codemix/graph";
 
 const graph = new Graph({ schema, storage: new InMemoryGraphStorage() });
 
@@ -553,12 +534,7 @@ for await (const path of remote.query((g) => g.V().hasLabel("Person"))) {
 Implement the `GraphStorage` interface to plug in any backend:
 
 ```ts
-import {
-  GraphStorage,
-  StoredVertex,
-  StoredEdge,
-  ElementId,
-} from "@codemix/graph";
+import { GraphStorage, StoredVertex, StoredEdge, ElementId } from "@codemix/graph";
 
 class MyStorage implements GraphStorage {
   getVertexById(id: ElementId): StoredVertex | undefined {
@@ -612,10 +588,7 @@ const graph = new Graph({ schema, storage: new MyStorage() });
 Generate a human (or LLM) readable description of the query language and your schema for use in prompts or documentation:
 
 ```ts
-import {
-  generateGrammarDescription,
-  generateSchemaGuide,
-} from "@codemix/graph";
+import { generateGrammarDescription, generateSchemaGuide } from "@codemix/graph";
 
 // Language grammar description (schema-agnostic)
 const grammar = generateGrammarDescription();

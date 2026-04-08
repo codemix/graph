@@ -55,54 +55,48 @@ describe("WithSkipLimit3 - Skip and limit", () => {
 
   // [2] Get rows in the middle by param
   // Uses unlabeled nodes and parameters
-  test.fails(
-    "[2] Get rows in the middle by param - unlabeled nodes and parameters not supported",
-    () => {
-      const graph = createTckGraph();
-      executeTckQuery(
-        graph,
-        "CREATE ({name: 'A'}), ({name: 'B'}), ({name: 'C'}), ({name: 'D'}), ({name: 'E'})",
-      );
+  test.fails("[2] Get rows in the middle by param - unlabeled nodes and parameters not supported", () => {
+    const graph = createTckGraph();
+    executeTckQuery(
+      graph,
+      "CREATE ({name: 'A'}), ({name: 'B'}), ({name: 'C'}), ({name: 'D'}), ({name: 'E'})",
+    );
 
-      const results = executeTckQuery(
-        graph,
-        `MATCH (n)
+    const results = executeTckQuery(
+      graph,
+      `MATCH (n)
        WITH n
        ORDER BY n.name ASC
        SKIP $s
        LIMIT $l
        RETURN n`,
-        { s: 2, l: 2 },
-      );
-      expect(results).toHaveLength(2);
-      const names = results.map((r) => {
-        const [node] = r as [Record<string, unknown>];
-        return getProperty(node, "name");
-      });
-      expect(names).toEqual(["C", "D"]);
-    },
-  );
+      { s: 2, l: 2 },
+    );
+    expect(results).toHaveLength(2);
+    const names = results.map((r) => {
+      const [node] = r as [Record<string, unknown>];
+      return getProperty(node, "name");
+    });
+    expect(names).toEqual(["C", "D"]);
+  });
 
   // [3] Limiting amount of rows when there are fewer left than the LIMIT argument
   // Uses UNWIND
-  test.fails(
-    "[3] Limiting amount of rows when there are fewer left - unlabeled nodes (by design)",
-    () => {
-      const graph = createTckGraph();
-      executeTckQuery(graph, "UNWIND range(0, 15) AS i CREATE ({count: i})");
+  test.fails("[3] Limiting amount of rows when there are fewer left - unlabeled nodes (by design)", () => {
+    const graph = createTckGraph();
+    executeTckQuery(graph, "UNWIND range(0, 15) AS i CREATE ({count: i})");
 
-      const results = executeTckQuery(
-        graph,
-        `MATCH (a)
+    const results = executeTckQuery(
+      graph,
+      `MATCH (a)
        WITH a.count AS count
          ORDER BY a.count
          SKIP 10
          LIMIT 10
        RETURN count`,
-      );
-      expect(results).toEqual([10, 11, 12, 13, 14, 15]);
-    },
-  );
+    );
+    expect(results).toEqual([10, 11, 12, 13, 14, 15]);
+  });
 
   test("[3-custom] Limiting amount of rows when there are fewer left than the LIMIT argument", () => {
     const graph = createTckGraph();

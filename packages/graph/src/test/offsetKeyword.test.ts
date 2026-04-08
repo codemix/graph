@@ -45,8 +45,7 @@ describe("OFFSET keyword (synonym for SKIP)", () => {
     });
 
     test("parses OFFSET with ORDER BY and LIMIT", () => {
-      const query =
-        "MATCH (n:Person) RETURN n ORDER BY n.name DESC OFFSET 5 LIMIT 10";
+      const query = "MATCH (n:Person) RETURN n ORDER BY n.name DESC OFFSET 5 LIMIT 10";
       const ast = parse(query) as Query;
       expect(ast.orderBy).toBeDefined();
       expect(ast.skip).toEqual(5);
@@ -122,16 +121,12 @@ describe("OFFSET keyword (synonym for SKIP)", () => {
 
     test("OFFSET skips first N results", () => {
       // Get all persons ordered by name
-      const allResults = executeQuery(
-        "MATCH (n:Person) RETURN n.name ORDER BY n.name",
-      );
+      const allResults = executeQuery("MATCH (n:Person) RETURN n.name ORDER BY n.name");
       expect(allResults.length).toEqual(7);
       // First 3 names in alphabetical order: Alice, Bob, Charlie
 
       // Skip first 3 persons
-      const offsetResults = executeQuery(
-        "MATCH (n:Person) RETURN n.name ORDER BY n.name OFFSET 3",
-      );
+      const offsetResults = executeQuery("MATCH (n:Person) RETURN n.name ORDER BY n.name OFFSET 3");
       expect(offsetResults.length).toEqual(4);
 
       // First result should be Dave (4th person alphabetically)
@@ -140,33 +135,25 @@ describe("OFFSET keyword (synonym for SKIP)", () => {
 
     test("OFFSET with LIMIT for pagination", () => {
       // Page 1: first 2 persons
-      const page1 = executeQuery(
-        "MATCH (n:Person) RETURN n.name ORDER BY n.name OFFSET 0 LIMIT 2",
-      );
+      const page1 = executeQuery("MATCH (n:Person) RETURN n.name ORDER BY n.name OFFSET 0 LIMIT 2");
       expect(page1.length).toEqual(2);
       expect(page1[0]).toEqual("Alice");
       expect(page1[1]).toEqual("Bob");
 
       // Page 2: persons 3-4 (Charlie, Dave)
-      const page2 = executeQuery(
-        "MATCH (n:Person) RETURN n.name ORDER BY n.name OFFSET 2 LIMIT 2",
-      );
+      const page2 = executeQuery("MATCH (n:Person) RETURN n.name ORDER BY n.name OFFSET 2 LIMIT 2");
       expect(page2.length).toEqual(2);
       expect(page2[0]).toEqual("Charlie");
       expect(page2[1]).toEqual("Dave");
 
       // Page 3: persons 5-6 (Erin, Fiona)
-      const page3 = executeQuery(
-        "MATCH (n:Person) RETURN n.name ORDER BY n.name OFFSET 4 LIMIT 2",
-      );
+      const page3 = executeQuery("MATCH (n:Person) RETURN n.name ORDER BY n.name OFFSET 4 LIMIT 2");
       expect(page3.length).toEqual(2);
       expect(page3[0]).toEqual("Erin");
       expect(page3[1]).toEqual("Fiona");
 
       // Page 4: person 7 only (George)
-      const page4 = executeQuery(
-        "MATCH (n:Person) RETURN n.name ORDER BY n.name OFFSET 6 LIMIT 2",
-      );
+      const page4 = executeQuery("MATCH (n:Person) RETURN n.name ORDER BY n.name OFFSET 6 LIMIT 2");
       expect(page4.length).toEqual(1);
       expect(page4[0]).toEqual("George");
     });
@@ -198,8 +185,7 @@ describe("OFFSET keyword (synonym for SKIP)", () => {
     }
 
     test("OFFSET in WITH clause", () => {
-      const query =
-        "MATCH (n:Person) WITH n ORDER BY n.name OFFSET 4 RETURN n.name";
+      const query = "MATCH (n:Person) WITH n ORDER BY n.name OFFSET 4 RETURN n.name";
       const results = executeQuery(query);
 
       expect(results.length).toEqual(3); // Erin, Fiona, George
@@ -207,8 +193,7 @@ describe("OFFSET keyword (synonym for SKIP)", () => {
     });
 
     test("OFFSET with LIMIT in WITH clause", () => {
-      const query =
-        "MATCH (n:Person) WITH n ORDER BY n.name OFFSET 2 LIMIT 3 RETURN n.name";
+      const query = "MATCH (n:Person) WITH n ORDER BY n.name OFFSET 2 LIMIT 3 RETURN n.name";
       const results = executeQuery(query);
 
       expect(results.length).toEqual(3); // Charlie, Dave, Erin

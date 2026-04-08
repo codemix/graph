@@ -48,10 +48,7 @@ function createTestGraph() {
   return graph;
 }
 
-function executeQuery(
-  graph: Graph<GraphSchema>,
-  queryString: string,
-): unknown[] {
+function executeQuery(graph: Graph<GraphSchema>, queryString: string): unknown[] {
   const ast = parse(queryString) as Query | UnionQuery | MultiStatement;
   const steps = anyAstToSteps(ast);
   const traverser = createTraverser(steps);
@@ -159,23 +156,15 @@ describe("range() function", () => {
 
     test("UNWIND range(0, 10, 2) AS x returns even numbers", () => {
       const graph = createTestGraph();
-      const results = executeQuery(
-        graph,
-        "UNWIND range(0, 10, 2) AS x RETURN x",
-      );
+      const results = executeQuery(graph, "UNWIND range(0, 10, 2) AS x RETURN x");
 
       expect(results).toHaveLength(6);
-      expect(results.map((r) => (r as [number])[0])).toEqual([
-        0, 2, 4, 6, 8, 10,
-      ]);
+      expect(results.map((r) => (r as [number])[0])).toEqual([0, 2, 4, 6, 8, 10]);
     });
 
     test("UNWIND range(5, 1, -1) AS x returns descending numbers", () => {
       const graph = createTestGraph();
-      const results = executeQuery(
-        graph,
-        "UNWIND range(5, 1, -1) AS x RETURN x",
-      );
+      const results = executeQuery(graph, "UNWIND range(5, 1, -1) AS x RETURN x");
 
       expect(results).toHaveLength(5);
       expect(results.map((r) => (r as [number])[0])).toEqual([5, 4, 3, 2, 1]);
@@ -256,10 +245,7 @@ describe("reverse() function", () => {
   describe("query integration via UNWIND", () => {
     test("UNWIND reverse([1, 2, 3]) AS x returns reversed order", () => {
       const graph = createTestGraph();
-      const results = executeQuery(
-        graph,
-        "UNWIND reverse([1, 2, 3]) AS x RETURN x",
-      );
+      const results = executeQuery(graph, "UNWIND reverse([1, 2, 3]) AS x RETURN x");
 
       expect(results).toHaveLength(3);
       expect(results[0]).toEqual([3]);
@@ -269,10 +255,7 @@ describe("reverse() function", () => {
 
     test("UNWIND reverse(range(1, 5)) AS x combines range and reverse", () => {
       const graph = createTestGraph();
-      const results = executeQuery(
-        graph,
-        "UNWIND reverse(range(1, 5)) AS x RETURN x",
-      );
+      const results = executeQuery(graph, "UNWIND reverse(range(1, 5)) AS x RETURN x");
 
       expect(results).toHaveLength(5);
       expect(results.map((r) => (r as [number])[0])).toEqual([5, 4, 3, 2, 1]);

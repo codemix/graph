@@ -33,10 +33,7 @@ describe("Delete1 - Deleting nodes", () => {
     // Verify setup
     const beforeNodes = executeTckQuery(graph, "MATCH (n:X) RETURN n");
     expect(beforeNodes).toHaveLength(1);
-    const beforeRelations = executeTckQuery(
-      graph,
-      "MATCH (:X)-[r:R]->() RETURN r",
-    );
+    const beforeRelations = executeTckQuery(graph, "MATCH (:X)-[r:R]->() RETURN r");
     expect(beforeRelations).toHaveLength(3);
 
     // Execute: DETACH DELETE the X node
@@ -54,18 +51,12 @@ describe("Delete1 - Deleting nodes", () => {
     expect(results).toHaveLength(0);
   });
 
-  test.fails(
-    "[5] Ignore null when deleting node - OPTIONAL MATCH not fully supported",
-    () => {
-      const graph = createTckGraph();
-      const results = executeTckQuery(
-        graph,
-        "OPTIONAL MATCH (a:DoesNotExist) DELETE a RETURN a",
-      );
-      expect(results).toHaveLength(1);
-      expect(results[0]).toBeNull();
-    },
-  );
+  test.fails("[5] Ignore null when deleting node - OPTIONAL MATCH not fully supported", () => {
+    const graph = createTckGraph();
+    const results = executeTckQuery(graph, "OPTIONAL MATCH (a:DoesNotExist) DELETE a RETURN a");
+    expect(results).toHaveLength(1);
+    expect(results[0]).toBeNull();
+  });
 
   test("[6] Detach delete on null node - OPTIONAL MATCH not fully supported", () => {
     const graph = createTckGraph();
@@ -133,10 +124,7 @@ describe("Delete1 - Deleting nodes", () => {
 
   test("[custom] DETACH DELETE removes edges and node", () => {
     const graph = createTckGraph();
-    executeTckQuery(
-      graph,
-      "CREATE (a:A {name: 'center'})-[:T]->(b:B {name: 'target'})",
-    );
+    executeTckQuery(graph, "CREATE (a:A {name: 'center'})-[:T]->(b:B {name: 'target'})");
 
     // Verify setup
     const beforeNodes = executeTckQuery(graph, "MATCH (n:A) RETURN n");

@@ -275,9 +275,7 @@ test("compareObjects() - compares nested arrays", () => {
 
 test("compareObjects() - compares nested objects", () => {
   expect(compareObjects({ a: { b: 1 }, c: 2 }, { a: { b: 1 }, c: 2 })).toBe(0);
-  expect(
-    compareObjects({ a: { b: 1 }, c: 2 }, { a: { b: 2 }, c: 2 }),
-  ).toBeLessThan(0);
+  expect(compareObjects({ a: { b: 1 }, c: 2 }, { a: { b: 2 }, c: 2 })).toBeLessThan(0);
 });
 
 test("compareObjects() - handles complex nested structures", () => {

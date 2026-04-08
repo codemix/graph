@@ -2,25 +2,14 @@
  * Test WITH...MATCH chaining
  */
 import { describe, test, expect } from "vitest";
-import {
-  createTckGraph,
-  executeTckQuery,
-  getLabel,
-  getProperty,
-} from "./tck/tckHelpers.js";
+import { createTckGraph, executeTckQuery, getLabel, getProperty } from "./tck/tckHelpers.js";
 
 describe("WITH...MATCH chaining", () => {
   test("MATCH (a:A) WITH a MATCH (b:B) RETURN a, b", () => {
     const graph = createTckGraph();
-    executeTckQuery(
-      graph,
-      "CREATE (:A {name: 'test'})-[:REL]->(:B {name: 'other'})",
-    );
+    executeTckQuery(graph, "CREATE (:A {name: 'test'})-[:REL]->(:B {name: 'other'})");
 
-    const results = executeTckQuery(
-      graph,
-      "MATCH (a:A) WITH a MATCH (b:B) RETURN a, b",
-    );
+    const results = executeTckQuery(graph, "MATCH (a:A) WITH a MATCH (b:B) RETURN a, b");
 
     expect(results.length).toBe(1);
     const [a, b] = results[0] as [unknown, unknown];
@@ -30,10 +19,7 @@ describe("WITH...MATCH chaining", () => {
 
   test("WITH a MATCH using forwarded variable in pattern", () => {
     const graph = createTckGraph();
-    executeTckQuery(
-      graph,
-      "CREATE (:A {name: 'test'})-[:REL]->(:B {name: 'other'})",
-    );
+    executeTckQuery(graph, "CREATE (:A {name: 'test'})-[:REL]->(:B {name: 'other'})");
 
     // This is the key WITH...MATCH use case - using forwarded variable in MATCH
     const results = executeTckQuery(
@@ -61,9 +47,7 @@ describe("WITH...MATCH chaining", () => {
     const [person, b] = results[0] as [unknown, unknown];
     expect(getLabel(person as Record<string, unknown>)).toBe("A");
     expect(getLabel(b as Record<string, unknown>)).toBe("A");
-    expect(getProperty(person as Record<string, unknown>, "name")).toBe(
-      "Alice",
-    );
+    expect(getProperty(person as Record<string, unknown>, "name")).toBe("Alice");
   });
 
   test("WITH filtering before second MATCH", () => {
@@ -109,10 +93,7 @@ describe("WITH...MATCH chaining", () => {
     executeTckQuery(graph, "CREATE (:B {name: 'b2'})");
 
     // Should produce cartesian product: 2 A nodes x 2 B nodes = 4 results
-    const results = executeTckQuery(
-      graph,
-      "MATCH (a:A) WITH a MATCH (b:B) RETURN a, b",
-    );
+    const results = executeTckQuery(graph, "MATCH (a:A) WITH a MATCH (b:B) RETURN a, b");
 
     expect(results.length).toBe(4);
   });

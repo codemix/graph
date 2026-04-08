@@ -45,10 +45,7 @@ describe("ReturnOrderBy1 - Order by a single variable", () => {
 
   test("[5] ORDER BY should order ints in the expected order", () => {
     const graph = createTckGraph();
-    const results = executeTckQuery(
-      graph,
-      "UNWIND [1, 3, 2] AS ints RETURN ints ORDER BY ints",
-    );
+    const results = executeTckQuery(graph, "UNWIND [1, 3, 2] AS ints RETURN ints ORDER BY ints");
     expect(results).toEqual([[1], [2], [3]]);
   });
 
@@ -79,47 +76,41 @@ describe("ReturnOrderBy1 - Order by a single variable", () => {
     expect(results).toEqual([[999.99], [1.5], [1.3]]);
   });
 
-  test.fails(
-    "[9] ORDER BY should order lists in the expected order - list comparison not supported",
-    () => {
-      const graph = createTckGraph();
-      const results = executeTckQuery(
-        graph,
-        "UNWIND [[], ['a'], ['a', 1], [1], [1, 'a'], [1, null], [null, 1], [null, 2]] AS lists RETURN lists ORDER BY lists",
-      );
-      expect(results).toEqual([
-        [[]],
-        [["a"]],
-        [["a", 1]],
-        [[1]],
-        [[1, "a"]],
-        [[1, null]],
-        [[null, 1]],
-        [[null, 2]],
-      ]);
-    },
-  );
+  test.fails("[9] ORDER BY should order lists in the expected order - list comparison not supported", () => {
+    const graph = createTckGraph();
+    const results = executeTckQuery(
+      graph,
+      "UNWIND [[], ['a'], ['a', 1], [1], [1, 'a'], [1, null], [null, 1], [null, 2]] AS lists RETURN lists ORDER BY lists",
+    );
+    expect(results).toEqual([
+      [[]],
+      [["a"]],
+      [["a", 1]],
+      [[1]],
+      [[1, "a"]],
+      [[1, null]],
+      [[null, 1]],
+      [[null, 2]],
+    ]);
+  });
 
-  test.fails(
-    "[10] ORDER BY DESC should order lists in the expected order - list comparison not supported",
-    () => {
-      const graph = createTckGraph();
-      const results = executeTckQuery(
-        graph,
-        "UNWIND [[], ['a'], ['a', 1], [1], [1, 'a'], [1, null], [null, 1], [null, 2]] AS lists RETURN lists ORDER BY lists DESC",
-      );
-      expect(results).toEqual([
-        [[null, 2]],
-        [[null, 1]],
-        [[1, null]],
-        [[1, "a"]],
-        [[1]],
-        [["a", 1]],
-        [["a"]],
-        [[]],
-      ]);
-    },
-  );
+  test.fails("[10] ORDER BY DESC should order lists in the expected order - list comparison not supported", () => {
+    const graph = createTckGraph();
+    const results = executeTckQuery(
+      graph,
+      "UNWIND [[], ['a'], ['a', 1], [1], [1, 'a'], [1, null], [null, 1], [null, 2]] AS lists RETURN lists ORDER BY lists DESC",
+    );
+    expect(results).toEqual([
+      [[null, 2]],
+      [[null, 1]],
+      [[1, null]],
+      [[1, "a"]],
+      [[1]],
+      [["a", 1]],
+      [["a"]],
+      [[]],
+    ]);
+  });
 
   test("[11] ORDER BY should order distinct types in the expected order - named paths not supported", () => {
     const graph = createTckGraph();
@@ -148,10 +139,7 @@ describe("ReturnOrderBy1 - Order by a single variable", () => {
     executeTckQuery(graph, "CREATE (:A {num: 1})");
     executeTckQuery(graph, "CREATE (:A {num: 2})");
 
-    const results = executeTckQuery(
-      graph,
-      "MATCH (n:A) RETURN n.num ORDER BY n.num",
-    );
+    const results = executeTckQuery(graph, "MATCH (n:A) RETURN n.num ORDER BY n.num");
     expect(results).toEqual([1, 2, 3]);
   });
 
@@ -161,10 +149,7 @@ describe("ReturnOrderBy1 - Order by a single variable", () => {
     executeTckQuery(graph, "CREATE (:A {num: 1})");
     executeTckQuery(graph, "CREATE (:A {num: 2})");
 
-    const results = executeTckQuery(
-      graph,
-      "MATCH (n:A) RETURN n.num ORDER BY n.num DESC",
-    );
+    const results = executeTckQuery(graph, "MATCH (n:A) RETURN n.num ORDER BY n.num DESC");
     expect(results).toEqual([3, 2, 1]);
   });
 
@@ -174,10 +159,7 @@ describe("ReturnOrderBy1 - Order by a single variable", () => {
     executeTckQuery(graph, "CREATE (:A {name: 'alice'})");
     executeTckQuery(graph, "CREATE (:A {name: 'bob'})");
 
-    const results = executeTckQuery(
-      graph,
-      "MATCH (n:A) RETURN n.name ORDER BY n.name",
-    );
+    const results = executeTckQuery(graph, "MATCH (n:A) RETURN n.name ORDER BY n.name");
     expect(results).toEqual(["alice", "bob", "charlie"]);
   });
 
@@ -187,10 +169,7 @@ describe("ReturnOrderBy1 - Order by a single variable", () => {
     executeTckQuery(graph, "CREATE (:A {name: 'alice'})");
     executeTckQuery(graph, "CREATE (:A {name: 'bob'})");
 
-    const results = executeTckQuery(
-      graph,
-      "MATCH (n:A) RETURN n.name ORDER BY n.name DESC",
-    );
+    const results = executeTckQuery(graph, "MATCH (n:A) RETURN n.name ORDER BY n.name DESC");
     expect(results).toEqual(["charlie", "bob", "alice"]);
   });
 });

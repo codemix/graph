@@ -23,10 +23,7 @@ describe("Quantifier2 - Single quantifier", () => {
 
   test("[2] Single quantifier on list literal containing booleans", () => {
     const graph = createTckGraph();
-    const results = executeTckQuery(
-      graph,
-      "RETURN single(x IN [true] WHERE x) AS result",
-    );
+    const results = executeTckQuery(graph, "RETURN single(x IN [true] WHERE x) AS result");
     expect(results).toHaveLength(1);
     // single(x IN [true] WHERE x) is true because exactly one element is true
     expect(results[0]).toBe(true);
@@ -35,10 +32,7 @@ describe("Quantifier2 - Single quantifier", () => {
   test("[3] Single quantifier on list literal containing integers", () => {
     const graph = createTckGraph();
     // single(x IN [1, 2, 3] WHERE x = 2) - exactly one element equals 2
-    const results = executeTckQuery(
-      graph,
-      "RETURN single(x IN [1, 2, 3] WHERE x = 2) AS result",
-    );
+    const results = executeTckQuery(graph, "RETURN single(x IN [1, 2, 3] WHERE x = 2) AS result");
     expect(results).toHaveLength(1);
     expect(results[0]).toBe(true);
   });
@@ -117,10 +111,7 @@ describe("Quantifier2 - Single quantifier", () => {
 
   test("[10] Single quantifier on lists containing nulls", () => {
     const graph = createTckGraph();
-    const results = executeTckQuery(
-      graph,
-      "RETURN single(x IN [null, 2] WHERE x = 2) AS result",
-    );
+    const results = executeTckQuery(graph, "RETURN single(x IN [null, 2] WHERE x = 2) AS result");
     expect(results).toHaveLength(1);
     // single() is true because exactly one element equals 2
     expect(results[0]).toBe(true);
@@ -172,29 +163,20 @@ describe("Quantifier2 - Single quantifier", () => {
 
   test("[15] Single quantifier is true if predicate is statically true and list has exactly one element", () => {
     const graph = createTckGraph();
-    const results = executeTckQuery(
-      graph,
-      "RETURN single(x IN [1] WHERE true) AS result",
-    );
+    const results = executeTckQuery(graph, "RETURN single(x IN [1] WHERE true) AS result");
     expect(results).toHaveLength(1);
     // single() is true when exactly one element satisfies the predicate
     expect(results[0]).toBe(true);
   });
 
-  test.fails(
-    "[16] Fail single quantifier on type mismatch - semantic validation not implemented",
-    () => {
-      // Original: RETURN single(x IN ['Clara'] WHERE x % 2 = 0) AS result
-      // Expected: SyntaxError InvalidArgumentType
-      const graph = createTckGraph();
-      expect(() => {
-        executeTckQuery(
-          graph,
-          "RETURN single(x IN ['Clara'] WHERE x % 2 = 0) AS result",
-        );
-      }).toThrow();
-    },
-  );
+  test.fails("[16] Fail single quantifier on type mismatch - semantic validation not implemented", () => {
+    // Original: RETURN single(x IN ['Clara'] WHERE x % 2 = 0) AS result
+    // Expected: SyntaxError InvalidArgumentType
+    const graph = createTckGraph();
+    expect(() => {
+      executeTckQuery(graph, "RETURN single(x IN ['Clara'] WHERE x % 2 = 0) AS result");
+    }).toThrow();
+  });
 
   // Custom tests demonstrating single() functionality in WHERE clause
 

@@ -3,12 +3,7 @@
  * Translated from tmp/tck/features/clauses/match/Match1.feature
  */
 import { describe, test, expect } from "vitest";
-import {
-  createTckGraph,
-  executeTckQuery,
-  getLabel,
-  getProperty,
-} from "../tckHelpers.js";
+import { createTckGraph, executeTckQuery, getLabel, getProperty } from "../tckHelpers.js";
 
 describe("Match1 - Match nodes", () => {
   test("[1] Match non-existent nodes returns empty", () => {
@@ -43,30 +38,18 @@ describe("Match1 - Match nodes", () => {
     expect(getProperty(n, "name")).toBe("ab");
   });
 
-  test.fails(
-    "[4] Simple node inline property predicate - requires unlabeled node support",
-    () => {
-      // This test creates nodes without labels
-      const graph = createTckGraph();
-      executeTckQuery(
-        graph,
-        "CREATE ({name: 'bar'}), ({name: 'monkey'}), ({firstname: 'bar'})",
-      );
-      const results = executeTckQuery(
-        graph,
-        "MATCH (n {name: 'bar'}) RETURN n",
-      );
-      expect(results).toHaveLength(1);
-    },
-  );
+  test.fails("[4] Simple node inline property predicate - requires unlabeled node support", () => {
+    // This test creates nodes without labels
+    const graph = createTckGraph();
+    executeTckQuery(graph, "CREATE ({name: 'bar'}), ({name: 'monkey'}), ({firstname: 'bar'})");
+    const results = executeTckQuery(graph, "MATCH (n {name: 'bar'}) RETURN n");
+    expect(results).toHaveLength(1);
+  });
 
   test("[5] Use multiple MATCH clauses to do a Cartesian product - requires unlabeled node support", () => {
     const graph = createTckGraph();
     executeTckQuery(graph, "CREATE ({value: 1}), ({value: 2}), ({value: 3})");
-    const results = executeTckQuery(
-      graph,
-      "MATCH (n), (m) RETURN n.value, m.value",
-    );
+    const results = executeTckQuery(graph, "MATCH (n), (m) RETURN n.value, m.value");
     expect(results).toHaveLength(9);
     // Verify all combinations exist
     const pairs = results.map((r) => (r as [number, number]).join(","));
@@ -92,15 +75,10 @@ describe("Match1 - Match nodes", () => {
     const patterns = ["()-[r]-()", "()-[r]->()", "()<-[r]-()"];
 
     for (const pattern of patterns) {
-      test.fails(
-        `[7] Fail when relationship has same variable in preceding MATCH: ${pattern}`,
-        () => {
-          const graph = createTckGraph();
-          expect(() =>
-            executeTckQuery(graph, `MATCH ${pattern} MATCH (r) RETURN r`),
-          ).toThrow();
-        },
-      );
+      test.fails(`[7] Fail when relationship has same variable in preceding MATCH: ${pattern}`, () => {
+        const graph = createTckGraph();
+        expect(() => executeTckQuery(graph, `MATCH ${pattern} MATCH (r) RETURN r`)).toThrow();
+      });
     }
   });
 
@@ -110,9 +88,7 @@ describe("Match1 - Match nodes", () => {
     for (const pattern of patterns) {
       test(`[8] Fail when path has same variable in preceding MATCH: ${pattern}`, () => {
         const graph = createTckGraph();
-        expect(() =>
-          executeTckQuery(graph, `MATCH ${pattern} MATCH (r) RETURN r`),
-        ).toThrow();
+        expect(() => executeTckQuery(graph, `MATCH ${pattern} MATCH (r) RETURN r`)).toThrow();
       });
     }
   });

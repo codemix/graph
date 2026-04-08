@@ -19,10 +19,7 @@ describe("Mathematical11 - Signed numbers functions", () => {
     // Store the absolute value result computed externally
     executeTckQuery(graph, "CREATE (:A {num: 1})"); // abs(-1) = 1
 
-    const results = executeTckQuery(
-      graph,
-      "MATCH (n:A) WHERE n.num = 1 RETURN n.num",
-    );
+    const results = executeTckQuery(graph, "MATCH (n:A) WHERE n.num = 1 RETURN n.num");
 
     expect(results).toHaveLength(1);
     expect(results[0]).toBe(1);
@@ -30,24 +27,15 @@ describe("Mathematical11 - Signed numbers functions", () => {
 
   test("[custom-2] Filtering by sign in WHERE clause", () => {
     const graph = createTckGraph();
-    executeTckQuery(
-      graph,
-      "CREATE (:A {num: -5}), (:A {num: 5}), (:A {num: 0})",
-    );
+    executeTckQuery(graph, "CREATE (:A {num: -5}), (:A {num: 5}), (:A {num: 0})");
 
     // Get all negative numbers
-    const negResults = executeTckQuery(
-      graph,
-      "MATCH (n:A) WHERE n.num < 0 RETURN n.num",
-    );
+    const negResults = executeTckQuery(graph, "MATCH (n:A) WHERE n.num < 0 RETURN n.num");
     expect(negResults).toHaveLength(1);
     expect(negResults[0]).toBe(-5);
 
     // Get all non-negative numbers
-    const nonNegResults = executeTckQuery(
-      graph,
-      "MATCH (n:A) WHERE n.num >= 0 RETURN n.num",
-    );
+    const nonNegResults = executeTckQuery(graph, "MATCH (n:A) WHERE n.num >= 0 RETURN n.num");
     expect(nonNegResults).toHaveLength(2);
   });
 });

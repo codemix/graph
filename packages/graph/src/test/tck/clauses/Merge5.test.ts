@@ -57,10 +57,7 @@ describe("Merge5 - Merge relationships", () => {
     expect(results[0]).toBe(1);
 
     // Verify relationship was created
-    const rels = executeTckQuery(
-      graph,
-      "MATCH (a:A)-[r:X]->(b:B) RETURN count(r)",
-    );
+    const rels = executeTckQuery(graph, "MATCH (a:A)-[r:X]->(b:B) RETURN count(r)");
     expect(rels).toHaveLength(1);
     expect(rels[0]).toBe(1);
   });
@@ -127,87 +124,57 @@ describe("Merge5 - Merge relationships", () => {
     executeTckQuery(graph, "MERGE (a:A) MERGE (b:B) MERGE (a)-[:FOO]->(b)");
 
     // Verify relationship was created
-    const results = executeTckQuery(
-      graph,
-      "MATCH (a:A)-[r:FOO]->(b:B) RETURN count(r)",
-    );
+    const results = executeTckQuery(graph, "MATCH (a:A)-[r:FOO]->(b:B) RETURN count(r)");
     expect(results).toHaveLength(1);
     expect(results[0]).toBe(1);
   });
 
-  test.fails(
-    "[10] Merge should bind a path - unlabeled nodes (by design)",
-    () => {
-      // Original query: MERGE p = (a)-[:R]->(b) RETURN p
-      // Blocked: Uses unlabeled nodes (a) and (b) - unlabeled nodes not supported (by design)
-      // Note: Named paths ARE working in MATCH (see Match6 tests)
-      const graph = createTckGraph();
-      const results = executeTckQuery(
-        graph,
-        "MERGE p = (a:A)-[:R]->(b:B) RETURN p",
-      );
-      expect(results).toHaveLength(1);
-    },
-  );
+  test.fails("[10] Merge should bind a path - unlabeled nodes (by design)", () => {
+    // Original query: MERGE p = (a)-[:R]->(b) RETURN p
+    // Blocked: Uses unlabeled nodes (a) and (b) - unlabeled nodes not supported (by design)
+    // Note: Named paths ARE working in MATCH (see Match6 tests)
+    const graph = createTckGraph();
+    const results = executeTckQuery(graph, "MERGE p = (a:A)-[:R]->(b:B) RETURN p");
+    expect(results).toHaveLength(1);
+  });
 
-  test.fails(
-    "[11] Use outgoing direction when unspecified - undirected edge in MERGE not supported",
-    () => {
-      // Query: MERGE (a)-[r:KNOWS]-(b)
-      // Undirected relationships in MERGE not supported in grammar
-      const graph = createTckGraph();
-      executeTckQuery(graph, "MERGE (a:A)-[r:KNOWS]-(b:B)");
-      const results = executeTckQuery(
-        graph,
-        "MATCH (a:A)-[r:KNOWS]->(b:B) RETURN count(r)",
-      );
-      expect(results).toHaveLength(1);
-      expect(results[0]).toBe(1);
-    },
-  );
+  test.fails("[11] Use outgoing direction when unspecified - undirected edge in MERGE not supported", () => {
+    // Query: MERGE (a)-[r:KNOWS]-(b)
+    // Undirected relationships in MERGE not supported in grammar
+    const graph = createTckGraph();
+    executeTckQuery(graph, "MERGE (a:A)-[r:KNOWS]-(b:B)");
+    const results = executeTckQuery(graph, "MATCH (a:A)-[r:KNOWS]->(b:B) RETURN count(r)");
+    expect(results).toHaveLength(1);
+    expect(results[0]).toBe(1);
+  });
 
-  test.fails(
-    "[12] Match outgoing relationship when direction unspecified - undirected edge and MATCH...MERGE not supported",
-    () => {
-      // Query uses undirected relationship pattern
-      const graph = createTckGraph();
-      executeTckQuery(graph, "CREATE (:A)-[:KNOWS]->(:B)");
-      executeTckQuery(graph, "MATCH (a:A), (b:B) MERGE (a)-[r:KNOWS]-(b)");
-      const results = executeTckQuery(
-        graph,
-        "MATCH ()-[r:KNOWS]->() RETURN count(r)",
-      );
-      expect(results).toHaveLength(1);
-      expect(results[0]).toBe(1);
-    },
-  );
+  test.fails("[12] Match outgoing relationship when direction unspecified - undirected edge and MATCH...MERGE not supported", () => {
+    // Query uses undirected relationship pattern
+    const graph = createTckGraph();
+    executeTckQuery(graph, "CREATE (:A)-[:KNOWS]->(:B)");
+    executeTckQuery(graph, "MATCH (a:A), (b:B) MERGE (a)-[r:KNOWS]-(b)");
+    const results = executeTckQuery(graph, "MATCH ()-[r:KNOWS]->() RETURN count(r)");
+    expect(results).toHaveLength(1);
+    expect(results[0]).toBe(1);
+  });
 
-  test.fails(
-    "[13] Match both incoming and outgoing relationships when direction unspecified - undirected edges not supported",
-    () => {
-      // Query uses undirected relationship patterns
-      const graph = createTckGraph();
-      executeTckQuery(graph, "CREATE (:A)-[:KNOWS]->(:B), (:A)<-[:KNOWS]-(:B)");
-      executeTckQuery(graph, "MATCH (a:A), (b:B) MERGE (a)-[r:KNOWS]-(b)");
-      const results = executeTckQuery(
-        graph,
-        "MATCH ()-[r:KNOWS]->() RETURN count(r)",
-      );
-      expect(results).toHaveLength(1);
-    },
-  );
+  test.fails("[13] Match both incoming and outgoing relationships when direction unspecified - undirected edges not supported", () => {
+    // Query uses undirected relationship patterns
+    const graph = createTckGraph();
+    executeTckQuery(graph, "CREATE (:A)-[:KNOWS]->(:B), (:A)<-[:KNOWS]-(:B)");
+    executeTckQuery(graph, "MATCH (a:A), (b:B) MERGE (a)-[r:KNOWS]-(b)");
+    const results = executeTckQuery(graph, "MATCH ()-[r:KNOWS]->() RETURN count(r)");
+    expect(results).toHaveLength(1);
+  });
 
-  test.fails(
-    "[14] Using list properties via variable - split() function not supported",
-    () => {
-      // Blocked: split() function not implemented
-      // Note: UNWIND IS working (see Unwind1 tests)
-      const graph = createTckGraph();
-      executeTckQuery(graph, "CREATE (:A {tags: split('a,b,c', ',')})");
-      const results = executeTckQuery(graph, "MATCH (a:A) RETURN a.tags");
-      expect(results).toHaveLength(1);
-    },
-  );
+  test.fails("[14] Using list properties via variable - split() function not supported", () => {
+    // Blocked: split() function not implemented
+    // Note: UNWIND IS working (see Unwind1 tests)
+    const graph = createTckGraph();
+    executeTckQuery(graph, "CREATE (:A {tags: split('a,b,c', ',')})");
+    const results = executeTckQuery(graph, "MATCH (a:A) RETURN a.tags");
+    expect(results).toHaveLength(1);
+  });
 
   test("[15] Matching using list property - test not implemented", () => {
     // MATCH...MERGE chaining IS working (see tests [4], [9], [custom])
@@ -221,63 +188,42 @@ describe("Merge5 - Merge relationships", () => {
     expect(results).toHaveLength(1);
   });
 
-  test.fails(
-    "[16] Aliasing of existing nodes 1 - unlabeled nodes (by design)",
-    () => {
-      // Original query: MATCH (n) MATCH (m) WITH n AS a, m AS b MERGE (a)-[r:T]->(b)
-      // Blocked: Uses unlabeled nodes (n) and (m) - unlabeled nodes not supported (by design)
-      // Note: WITH...MERGE chaining likely works with labeled nodes
-      const graph = createTckGraph();
-      executeTckQuery(graph, "CREATE (:N), (:M)");
-      executeTckQuery(
-        graph,
-        "MATCH (n:N) MATCH (m:M) WITH n AS a, m AS b MERGE (a)-[r:T]->(b)",
-      );
-      const results = executeTckQuery(
-        graph,
-        "MATCH ()-[r:T]->() RETURN count(r)",
-      );
-      expect(results).toHaveLength(1);
-      expect(results[0]).toBe(1);
-    },
-  );
+  test.fails("[16] Aliasing of existing nodes 1 - unlabeled nodes (by design)", () => {
+    // Original query: MATCH (n) MATCH (m) WITH n AS a, m AS b MERGE (a)-[r:T]->(b)
+    // Blocked: Uses unlabeled nodes (n) and (m) - unlabeled nodes not supported (by design)
+    // Note: WITH...MERGE chaining likely works with labeled nodes
+    const graph = createTckGraph();
+    executeTckQuery(graph, "CREATE (:N), (:M)");
+    executeTckQuery(graph, "MATCH (n:N) MATCH (m:M) WITH n AS a, m AS b MERGE (a)-[r:T]->(b)");
+    const results = executeTckQuery(graph, "MATCH ()-[r:T]->() RETURN count(r)");
+    expect(results).toHaveLength(1);
+    expect(results[0]).toBe(1);
+  });
 
   test("[17] Aliasing of existing nodes 2 - unlabeled nodes (by design)", () => {
     // Similar to [16] - uses unlabeled nodes
     // Blocked: Uses unlabeled nodes - unlabeled nodes not supported (by design)
     const graph = createTckGraph();
     executeTckQuery(graph, "CREATE (:N {id: 1}), (:M {id: 2})");
-    executeTckQuery(
-      graph,
-      "MATCH (n:N), (m:M) WITH n AS a, m AS b MERGE (a)-[r:T]->(b)",
-    );
-    const results = executeTckQuery(
-      graph,
-      "MATCH ()-[r:T]->() RETURN count(r)",
-    );
+    executeTckQuery(graph, "MATCH (n:N), (m:M) WITH n AS a, m AS b MERGE (a)-[r:T]->(b)");
+    const results = executeTckQuery(graph, "MATCH ()-[r:T]->() RETURN count(r)");
     expect(results).toHaveLength(1);
     expect(results[0]).toBe(1);
   });
 
-  test.fails(
-    "[18] Double aliasing of existing nodes 1 - unlabeled nodes (by design)",
-    () => {
-      // Uses unlabeled nodes with complex chaining
-      // Blocked: Uses unlabeled nodes - unlabeled nodes not supported (by design)
-      const graph = createTckGraph();
-      executeTckQuery(graph, "CREATE (:N), (:M)");
-      executeTckQuery(
-        graph,
-        "MATCH (n:N) MATCH (m:M) WITH n AS a, m AS b WITH a AS x, b AS y MERGE (x)-[r:T]->(y)",
-      );
-      const results = executeTckQuery(
-        graph,
-        "MATCH ()-[r:T]->() RETURN count(r)",
-      );
-      expect(results).toHaveLength(1);
-      expect(results[0]).toBe(1);
-    },
-  );
+  test.fails("[18] Double aliasing of existing nodes 1 - unlabeled nodes (by design)", () => {
+    // Uses unlabeled nodes with complex chaining
+    // Blocked: Uses unlabeled nodes - unlabeled nodes not supported (by design)
+    const graph = createTckGraph();
+    executeTckQuery(graph, "CREATE (:N), (:M)");
+    executeTckQuery(
+      graph,
+      "MATCH (n:N) MATCH (m:M) WITH n AS a, m AS b WITH a AS x, b AS y MERGE (x)-[r:T]->(y)",
+    );
+    const results = executeTckQuery(graph, "MATCH ()-[r:T]->() RETURN count(r)");
+    expect(results).toHaveLength(1);
+    expect(results[0]).toBe(1);
+  });
 
   test("[19] Double aliasing of existing nodes 2 - unlabeled nodes (by design)", () => {
     // Similar to [18] - uses unlabeled nodes
@@ -288,45 +234,30 @@ describe("Merge5 - Merge relationships", () => {
       graph,
       "MATCH (n:N), (m:M) WITH n AS a, m AS b WITH a AS x, b AS y MERGE (x)-[r:T]->(y)",
     );
-    const results = executeTckQuery(
-      graph,
-      "MATCH ()-[r:T]->() RETURN count(r)",
-    );
+    const results = executeTckQuery(graph, "MATCH ()-[r:T]->() RETURN count(r)");
     expect(results).toHaveLength(1);
     expect(results[0]).toBe(1);
   });
 
-  test.fails(
-    "[20] Do not match on deleted entities - DELETE with MERGE not supported",
-    () => {
-      // Requires MATCH...DELETE...MERGE pattern
-      const graph = createTckGraph();
-      executeTckQuery(graph, "CREATE (:A {name: 'test'}), (:B)");
-      executeTckQuery(graph, "MATCH (a:A) DELETE a MERGE (b:B)-[:T]->(:A)");
-      const results = executeTckQuery(graph, "MATCH (a:A) RETURN count(a)");
-      expect(results).toHaveLength(1);
-      expect(results[0]).toBe(1);
-    },
-  );
+  test.fails("[20] Do not match on deleted entities - DELETE with MERGE not supported", () => {
+    // Requires MATCH...DELETE...MERGE pattern
+    const graph = createTckGraph();
+    executeTckQuery(graph, "CREATE (:A {name: 'test'}), (:B)");
+    executeTckQuery(graph, "MATCH (a:A) DELETE a MERGE (b:B)-[:T]->(:A)");
+    const results = executeTckQuery(graph, "MATCH (a:A) RETURN count(a)");
+    expect(results).toHaveLength(1);
+    expect(results[0]).toBe(1);
+  });
 
-  test.fails(
-    "[21] Do not match on deleted relationships - DELETE with MERGE not supported",
-    () => {
-      // Requires MATCH...DELETE...MERGE pattern
-      const graph = createTckGraph();
-      executeTckQuery(graph, "CREATE (:A)-[:T]->(:B)");
-      executeTckQuery(
-        graph,
-        "MATCH ()-[r:T]->() DELETE r MERGE (:A)-[:T]->(:B)",
-      );
-      const results = executeTckQuery(
-        graph,
-        "MATCH ()-[r:T]->() RETURN count(r)",
-      );
-      expect(results).toHaveLength(1);
-      expect(results[0]).toBe(1);
-    },
-  );
+  test.fails("[21] Do not match on deleted relationships - DELETE with MERGE not supported", () => {
+    // Requires MATCH...DELETE...MERGE pattern
+    const graph = createTckGraph();
+    executeTckQuery(graph, "CREATE (:A)-[:T]->(:B)");
+    executeTckQuery(graph, "MATCH ()-[r:T]->() DELETE r MERGE (:A)-[:T]->(:B)");
+    const results = executeTckQuery(graph, "MATCH ()-[r:T]->() RETURN count(r)");
+    expect(results).toHaveLength(1);
+    expect(results[0]).toBe(1);
+  });
 
   test("[22] Fail when imposing new predicates on a variable that is already bound - semantic validation not implemented", () => {
     // Query: CREATE (a:Foo) MERGE (a)-[r:KNOWS]->(a:Bar)
@@ -413,10 +344,7 @@ describe("Merge5 - Merge relationships", () => {
     executeTckQuery(graph, "CREATE (a:A), (b:B) MERGE (a)-[:T]->(b)");
 
     // Verify
-    const results = executeTckQuery(
-      graph,
-      "MATCH (a:A)-[r:T]->(b:B) RETURN count(r)",
-    );
+    const results = executeTckQuery(graph, "MATCH (a:A)-[r:T]->(b:B) RETURN count(r)");
     expect(results).toHaveLength(1);
     expect(results[0]).toBe(1);
   });
@@ -424,15 +352,9 @@ describe("Merge5 - Merge relationships", () => {
   test("[custom] MERGE relationship with properties", () => {
     const graph = createTckGraph();
 
-    executeTckQuery(
-      graph,
-      "CREATE (a:A), (b:B) MERGE (a)-[:T {name: 'test'}]->(b)",
-    );
+    executeTckQuery(graph, "CREATE (a:A), (b:B) MERGE (a)-[:T {name: 'test'}]->(b)");
 
-    const results = executeTckQuery(
-      graph,
-      "MATCH (a:A)-[r:T]->(b:B) RETURN r.name",
-    );
+    const results = executeTckQuery(graph, "MATCH (a:A)-[r:T]->(b:B) RETURN r.name");
     expect(results).toHaveLength(1);
     expect(results[0]).toBe("test");
   });
@@ -464,10 +386,7 @@ describe("Merge5 - Merge relationships", () => {
     executeTckQuery(graph, "MERGE (a:A) MERGE (b:B) MERGE (a)-[:T]->(b)");
 
     // Should still have only 1 relationship
-    const results = executeTckQuery(
-      graph,
-      "MATCH (a:A)-[r:T]->(b:B) RETURN count(r)",
-    );
+    const results = executeTckQuery(graph, "MATCH (a:A)-[r:T]->(b:B) RETURN count(r)");
     expect(results).toHaveLength(1);
     expect(results[0]).toBe(1);
   });
@@ -478,10 +397,7 @@ describe("Merge5 - Merge relationships", () => {
     executeTckQuery(graph, "CREATE (a:A), (b:B) MERGE (a)<-[:T]-(b)");
 
     // Verify direction
-    const results = executeTckQuery(
-      graph,
-      "MATCH (b:B)-[r:T]->(a:A) RETURN count(r)",
-    );
+    const results = executeTckQuery(graph, "MATCH (b:B)-[r:T]->(a:A) RETURN count(r)");
     expect(results).toHaveLength(1);
     expect(results[0]).toBe(1);
   });
@@ -493,10 +409,7 @@ describe("Merge5 - Merge relationships", () => {
     const graph = createTckGraph();
 
     // Create data types first
-    executeTckQuery(
-      graph,
-      "CREATE (:DataType {name: 'UUID'}), (:DataType {name: 'String'})",
-    );
+    executeTckQuery(graph, "CREATE (:DataType {name: 'UUID'}), (:DataType {name: 'String'})");
 
     // Execute the complex query that was failing:
     // MERGE creates a node, CREATE creates properties, WITH carries them forward,

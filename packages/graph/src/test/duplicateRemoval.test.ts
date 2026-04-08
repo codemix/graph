@@ -173,10 +173,7 @@ describe("Duplicate Removal Queries", () => {
       expect(result).toHaveLength(1);
 
       // Verify node was deleted - should have 2 nodes now (Alice + Bob)
-      const remaining = executeQuery(
-        graph,
-        "MATCH (n:Person) RETURN n.name AS name",
-      );
+      const remaining = executeQuery(graph, "MATCH (n:Person) RETURN n.name AS name");
       expect(remaining).toHaveLength(2);
     });
 
@@ -218,10 +215,7 @@ describe("Duplicate Removal Queries", () => {
       expect(result).toHaveLength(1);
 
       // Verify node was deleted - should have 2 nodes now
-      const remaining = executeQuery(
-        graph,
-        "MATCH (n:Person) RETURN n.name AS name",
-      );
+      const remaining = executeQuery(graph, "MATCH (n:Person) RETURN n.name AS name");
       expect(remaining).toHaveLength(2);
     });
   });
@@ -362,8 +356,7 @@ describe("Duplicate Removal Queries", () => {
           if (typeof node === "object" && node !== null) {
             if (node.name) return node.name;
             if (typeof node.get === "function") return node.get("name");
-            if (node.value && typeof node.value.get === "function")
-              return node.value.get("name");
+            if (node.value && typeof node.value.get === "function") return node.value.get("name");
           }
           return r;
         })

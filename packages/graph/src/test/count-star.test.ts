@@ -22,10 +22,7 @@ function createGraph() {
   return graph;
 }
 
-function executeQuery(
-  graph: Graph<typeof schema>,
-  queryString: string,
-): unknown[] {
+function executeQuery(graph: Graph<typeof schema>, queryString: string): unknown[] {
   const ast = parse(queryString) as Query;
   const steps = anyAstToSteps(ast);
   const traverser = createTraverser(steps);
@@ -41,10 +38,7 @@ describe("count(*) support", () => {
 
   test("count(*) with alias", () => {
     const graph = createGraph();
-    const results = executeQuery(
-      graph,
-      "MATCH (n:Person) RETURN count(*) AS total",
-    );
+    const results = executeQuery(graph, "MATCH (n:Person) RETURN count(*) AS total");
     expect(results).toEqual([3]);
   });
 
@@ -56,10 +50,7 @@ describe("count(*) support", () => {
 
   test("WITH count(*) should work", () => {
     const graph = createGraph();
-    const results = executeQuery(
-      graph,
-      "MATCH (n:Person) WITH count(*) AS total RETURN total",
-    );
+    const results = executeQuery(graph, "MATCH (n:Person) WITH count(*) AS total RETURN total");
     // The result format is [[3]] - the count wrapped
     expect(results.length).toBe(1);
     // Access the inner value - results is [[3]]

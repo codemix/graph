@@ -18,14 +18,8 @@ describe("Aggregation6 - Percentiles", () => {
     // - Parameter syntax ($param) not supported
     // - Unlabeled nodes not supported
     const graph = createTckGraph();
-    executeTckQuery(
-      graph,
-      "CREATE ({price: 10.0}), ({price: 20.0}), ({price: 30.0})",
-    );
-    const results = executeTckQuery(
-      graph,
-      "MATCH (n) RETURN percentileDisc(n.price, 0.0) AS p",
-    );
+    executeTckQuery(graph, "CREATE ({price: 10.0}), ({price: 20.0}), ({price: 30.0})");
+    const results = executeTckQuery(graph, "MATCH (n) RETURN percentileDisc(n.price, 0.0) AS p");
     expect(results).toHaveLength(1);
     expect((results[0] as Record<string, unknown>).p).toBe(10.0);
   });
@@ -34,14 +28,8 @@ describe("Aggregation6 - Percentiles", () => {
     // Same scenario with percentile = 0.5
     // Expected: 20.0
     const graph = createTckGraph();
-    executeTckQuery(
-      graph,
-      "CREATE ({price: 10.0}), ({price: 20.0}), ({price: 30.0})",
-    );
-    const results = executeTckQuery(
-      graph,
-      "MATCH (n) RETURN percentileDisc(n.price, 0.5) AS p",
-    );
+    executeTckQuery(graph, "CREATE ({price: 10.0}), ({price: 20.0}), ({price: 30.0})");
+    const results = executeTckQuery(graph, "MATCH (n) RETURN percentileDisc(n.price, 0.5) AS p");
     expect(results).toHaveLength(1);
     expect((results[0] as Record<string, unknown>).p).toBe(20.0);
   });
@@ -50,14 +38,8 @@ describe("Aggregation6 - Percentiles", () => {
     // Same scenario with percentile = 1.0
     // Expected: 30.0
     const graph = createTckGraph();
-    executeTckQuery(
-      graph,
-      "CREATE ({price: 10.0}), ({price: 20.0}), ({price: 30.0})",
-    );
-    const results = executeTckQuery(
-      graph,
-      "MATCH (n) RETURN percentileDisc(n.price, 1.0) AS p",
-    );
+    executeTckQuery(graph, "CREATE ({price: 10.0}), ({price: 20.0}), ({price: 30.0})");
+    const results = executeTckQuery(graph, "MATCH (n) RETURN percentileDisc(n.price, 1.0) AS p");
     expect(results).toHaveLength(1);
     expect((results[0] as Record<string, unknown>).p).toBe(30.0);
   });
@@ -74,14 +56,8 @@ describe("Aggregation6 - Percentiles", () => {
     // - Parameter syntax ($param) not supported
     // - Unlabeled nodes not supported
     const graph = createTckGraph();
-    executeTckQuery(
-      graph,
-      "CREATE ({price: 10.0}), ({price: 20.0}), ({price: 30.0})",
-    );
-    const results = executeTckQuery(
-      graph,
-      "MATCH (n) RETURN percentileCont(n.price, 0.0) AS p",
-    );
+    executeTckQuery(graph, "CREATE ({price: 10.0}), ({price: 20.0}), ({price: 30.0})");
+    const results = executeTckQuery(graph, "MATCH (n) RETURN percentileCont(n.price, 0.0) AS p");
     expect(results).toHaveLength(1);
     expect((results[0] as Record<string, unknown>).p).toBe(10.0);
   });
@@ -90,14 +66,8 @@ describe("Aggregation6 - Percentiles", () => {
     // Same scenario with percentile = 0.5
     // Expected: 20.0
     const graph = createTckGraph();
-    executeTckQuery(
-      graph,
-      "CREATE ({price: 10.0}), ({price: 20.0}), ({price: 30.0})",
-    );
-    const results = executeTckQuery(
-      graph,
-      "MATCH (n) RETURN percentileCont(n.price, 0.5) AS p",
-    );
+    executeTckQuery(graph, "CREATE ({price: 10.0}), ({price: 20.0}), ({price: 30.0})");
+    const results = executeTckQuery(graph, "MATCH (n) RETURN percentileCont(n.price, 0.5) AS p");
     expect(results).toHaveLength(1);
     expect((results[0] as Record<string, unknown>).p).toBe(20.0);
   });
@@ -106,14 +76,8 @@ describe("Aggregation6 - Percentiles", () => {
     // Same scenario with percentile = 1.0
     // Expected: 30.0
     const graph = createTckGraph();
-    executeTckQuery(
-      graph,
-      "CREATE ({price: 10.0}), ({price: 20.0}), ({price: 30.0})",
-    );
-    const results = executeTckQuery(
-      graph,
-      "MATCH (n) RETURN percentileCont(n.price, 1.0) AS p",
-    );
+    executeTckQuery(graph, "CREATE ({price: 10.0}), ({price: 20.0}), ({price: 30.0})");
+    const results = executeTckQuery(graph, "MATCH (n) RETURN percentileCont(n.price, 1.0) AS p");
     expect(results).toHaveLength(1);
     expect((results[0] as Record<string, unknown>).p).toBe(30.0);
   });
@@ -127,10 +91,7 @@ describe("Aggregation6 - Percentiles", () => {
     const graph = createTckGraph();
     executeTckQuery(graph, "CREATE ({price: 10.0})");
     expect(() => {
-      executeTckQuery(
-        graph,
-        "MATCH (n) RETURN percentileCont(n.price, 1000) AS p",
-      );
+      executeTckQuery(graph, "MATCH (n) RETURN percentileCont(n.price, 1000) AS p");
     }).toThrow();
   });
 
@@ -140,10 +101,7 @@ describe("Aggregation6 - Percentiles", () => {
     const graph = createTckGraph();
     executeTckQuery(graph, "CREATE ({price: 10.0})");
     expect(() => {
-      executeTckQuery(
-        graph,
-        "MATCH (n) RETURN percentileCont(n.price, -1) AS p",
-      );
+      executeTckQuery(graph, "MATCH (n) RETURN percentileCont(n.price, -1) AS p");
     }).toThrow();
   });
 
@@ -153,10 +111,7 @@ describe("Aggregation6 - Percentiles", () => {
     const graph = createTckGraph();
     executeTckQuery(graph, "CREATE ({price: 10.0})");
     expect(() => {
-      executeTckQuery(
-        graph,
-        "MATCH (n) RETURN percentileCont(n.price, 1.1) AS p",
-      );
+      executeTckQuery(graph, "MATCH (n) RETURN percentileCont(n.price, 1.1) AS p");
     }).toThrow();
   });
 
@@ -169,10 +124,7 @@ describe("Aggregation6 - Percentiles", () => {
     const graph = createTckGraph();
     executeTckQuery(graph, "CREATE ({price: 10.0})");
     expect(() => {
-      executeTckQuery(
-        graph,
-        "MATCH (n) RETURN percentileDisc(n.price, 1000) AS p",
-      );
+      executeTckQuery(graph, "MATCH (n) RETURN percentileDisc(n.price, 1000) AS p");
     }).toThrow();
   });
 
@@ -182,10 +134,7 @@ describe("Aggregation6 - Percentiles", () => {
     const graph = createTckGraph();
     executeTckQuery(graph, "CREATE ({price: 10.0})");
     expect(() => {
-      executeTckQuery(
-        graph,
-        "MATCH (n) RETURN percentileDisc(n.price, -1) AS p",
-      );
+      executeTckQuery(graph, "MATCH (n) RETURN percentileDisc(n.price, -1) AS p");
     }).toThrow();
   });
 
@@ -195,10 +144,7 @@ describe("Aggregation6 - Percentiles", () => {
     const graph = createTckGraph();
     executeTckQuery(graph, "CREATE ({price: 10.0})");
     expect(() => {
-      executeTckQuery(
-        graph,
-        "MATCH (n) RETURN percentileDisc(n.price, 1.1) AS p",
-      );
+      executeTckQuery(graph, "MATCH (n) RETURN percentileDisc(n.price, 1.1) AS p");
     }).toThrow();
   });
 
@@ -251,10 +197,7 @@ describe("Aggregation6 - Percentiles", () => {
     graph.addVertex("A", { price: 20.0 });
     graph.addVertex("A", { price: 30.0 });
 
-    const result = executeTckQuery(
-      graph,
-      "MATCH (n:A) RETURN percentileDisc(n.price, 0.0) AS p",
-    );
+    const result = executeTckQuery(graph, "MATCH (n:A) RETURN percentileDisc(n.price, 0.0) AS p");
     expect(result).toHaveLength(1);
     expect((result[0] as Record<string, unknown>).p).toBe(10.0);
   });
@@ -265,10 +208,7 @@ describe("Aggregation6 - Percentiles", () => {
     graph.addVertex("A", { price: 20.0 });
     graph.addVertex("A", { price: 30.0 });
 
-    const result = executeTckQuery(
-      graph,
-      "MATCH (n:A) RETURN percentileDisc(n.price, 0.5) AS p",
-    );
+    const result = executeTckQuery(graph, "MATCH (n:A) RETURN percentileDisc(n.price, 0.5) AS p");
     expect(result).toHaveLength(1);
     expect((result[0] as Record<string, unknown>).p).toBe(20.0);
   });
@@ -279,10 +219,7 @@ describe("Aggregation6 - Percentiles", () => {
     graph.addVertex("A", { price: 20.0 });
     graph.addVertex("A", { price: 30.0 });
 
-    const result = executeTckQuery(
-      graph,
-      "MATCH (n:A) RETURN percentileDisc(n.price, 1.0) AS p",
-    );
+    const result = executeTckQuery(graph, "MATCH (n:A) RETURN percentileDisc(n.price, 1.0) AS p");
     expect(result).toHaveLength(1);
     expect((result[0] as Record<string, unknown>).p).toBe(30.0);
   });
@@ -293,10 +230,7 @@ describe("Aggregation6 - Percentiles", () => {
     graph.addVertex("A", { price: 20.0 });
     graph.addVertex("A", { price: 30.0 });
 
-    const result = executeTckQuery(
-      graph,
-      "MATCH (n:A) RETURN percentileCont(n.price, 0.0) AS p",
-    );
+    const result = executeTckQuery(graph, "MATCH (n:A) RETURN percentileCont(n.price, 0.0) AS p");
     expect(result).toHaveLength(1);
     expect((result[0] as Record<string, unknown>).p).toBe(10.0);
   });
@@ -307,10 +241,7 @@ describe("Aggregation6 - Percentiles", () => {
     graph.addVertex("A", { price: 20.0 });
     graph.addVertex("A", { price: 30.0 });
 
-    const result = executeTckQuery(
-      graph,
-      "MATCH (n:A) RETURN percentileCont(n.price, 0.5) AS p",
-    );
+    const result = executeTckQuery(graph, "MATCH (n:A) RETURN percentileCont(n.price, 0.5) AS p");
     expect(result).toHaveLength(1);
     expect((result[0] as Record<string, unknown>).p).toBe(20.0);
   });
@@ -321,10 +252,7 @@ describe("Aggregation6 - Percentiles", () => {
     graph.addVertex("A", { price: 20.0 });
     graph.addVertex("A", { price: 30.0 });
 
-    const result = executeTckQuery(
-      graph,
-      "MATCH (n:A) RETURN percentileCont(n.price, 1.0) AS p",
-    );
+    const result = executeTckQuery(graph, "MATCH (n:A) RETURN percentileCont(n.price, 1.0) AS p");
     expect(result).toHaveLength(1);
     expect((result[0] as Record<string, unknown>).p).toBe(30.0);
   });
@@ -334,10 +262,7 @@ describe("Aggregation6 - Percentiles", () => {
     graph.addVertex("A", { price: 10.0 });
     graph.addVertex("A", { price: 20.0 });
 
-    const result = executeTckQuery(
-      graph,
-      "MATCH (n:A) RETURN percentileCont(n.price, 0.25) AS p",
-    );
+    const result = executeTckQuery(graph, "MATCH (n:A) RETURN percentileCont(n.price, 0.25) AS p");
     expect(result).toHaveLength(1);
     expect((result[0] as Record<string, unknown>).p).toBe(12.5);
   });
@@ -348,10 +273,7 @@ describe("Aggregation6 - Percentiles", () => {
     graph.addVertex("A", { price: 20.0 });
     graph.addVertex("A", { price: 30.0 });
 
-    const result = executeTckQuery(
-      graph,
-      "MATCH (n:A) RETURN stDev(n.price) AS s",
-    );
+    const result = executeTckQuery(graph, "MATCH (n:A) RETURN stDev(n.price) AS s");
     expect(result).toHaveLength(1);
     expect((result[0] as Record<string, unknown>).s).toBe(10);
   });
@@ -362,10 +284,7 @@ describe("Aggregation6 - Percentiles", () => {
     graph.addVertex("A", { price: 20.0 });
     graph.addVertex("A", { price: 30.0 });
 
-    const result = executeTckQuery(
-      graph,
-      "MATCH (n:A) RETURN stDevP(n.price) AS s",
-    );
+    const result = executeTckQuery(graph, "MATCH (n:A) RETURN stDevP(n.price) AS s");
     expect(result).toHaveLength(1);
     // Population stdev: sqrt(200/3) ≈ 8.165
     expect((result[0] as Record<string, unknown>).s).toBeCloseTo(8.165, 2);

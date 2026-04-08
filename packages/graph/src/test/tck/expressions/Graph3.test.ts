@@ -6,89 +6,65 @@ import { describe, test, expect } from "vitest";
 import { createTckGraph, executeTckQuery } from "../tckHelpers.js";
 
 describe("Graph3 - Node labels", () => {
-  test.fails(
-    "[1] Creating node without label - unlabeled nodes not supported",
-    () => {
-      // Original TCK:
-      // CREATE (node) RETURN labels(node)
-      // Expected: []
-      //
-      // Limitation: Unlabeled nodes not supported - all nodes require labels
-      const graph = createTckGraph();
-      const results = executeTckQuery(
-        graph,
-        "CREATE (node) RETURN labels(node)",
-      );
-      expect(results).toHaveLength(1);
-      expect(results[0]).toEqual([]);
-    },
-  );
+  test.fails("[1] Creating node without label - unlabeled nodes not supported", () => {
+    // Original TCK:
+    // CREATE (node) RETURN labels(node)
+    // Expected: []
+    //
+    // Limitation: Unlabeled nodes not supported - all nodes require labels
+    const graph = createTckGraph();
+    const results = executeTckQuery(graph, "CREATE (node) RETURN labels(node)");
+    expect(results).toHaveLength(1);
+    expect(results[0]).toEqual([]);
+  });
 
-  test.fails(
-    "[2] Creating node with two labels - multi-label not supported",
-    () => {
-      // Original TCK:
-      // CREATE (node:Foo:Bar {name: 'Mattias'}) RETURN labels(node)
-      // Expected: ['Foo', 'Bar']
-      //
-      // Limitation: Multi-label syntax (:Foo:Bar) not supported
-      const graph = createTckGraph();
-      const results = executeTckQuery(
-        graph,
-        "CREATE (node:Foo:Bar {name: 'Mattias'}) RETURN labels(node)",
-      );
-      expect(results).toHaveLength(1);
-      expect(results[0]).toEqual(["Foo", "Bar"]);
-    },
-  );
-
-  test.fails(
-    "[3] Ignore space when creating node with labels - multi-label not supported",
-    () => {
-      // Original TCK:
-      // CREATE (node :Foo:Bar) RETURN labels(node)
-      // Expected: ['Foo', 'Bar']
-      //
-      // Limitation: Multi-label syntax (:Foo:Bar) not supported
-      const graph = createTckGraph();
-      const results = executeTckQuery(
-        graph,
-        "CREATE (node :Foo:Bar) RETURN labels(node)",
-      );
-      expect(results).toHaveLength(1);
-      expect(results[0]).toEqual(["Foo", "Bar"]);
-    },
-  );
-
-  test("[4] Create node with label in pattern", () => {
+  test.fails("[2] Creating node with two labels - multi-label not supported", () => {
+    // Original TCK:
+    // CREATE (node:Foo:Bar {name: 'Mattias'}) RETURN labels(node)
+    // Expected: ['Foo', 'Bar']
+    //
+    // Limitation: Multi-label syntax (:Foo:Bar) not supported
     const graph = createTckGraph();
     const results = executeTckQuery(
       graph,
-      "CREATE (n:Person)-[:OWNS]->(:Dog) RETURN labels(n)",
+      "CREATE (node:Foo:Bar {name: 'Mattias'}) RETURN labels(node)",
     );
+    expect(results).toHaveLength(1);
+    expect(results[0]).toEqual(["Foo", "Bar"]);
+  });
+
+  test.fails("[3] Ignore space when creating node with labels - multi-label not supported", () => {
+    // Original TCK:
+    // CREATE (node :Foo:Bar) RETURN labels(node)
+    // Expected: ['Foo', 'Bar']
+    //
+    // Limitation: Multi-label syntax (:Foo:Bar) not supported
+    const graph = createTckGraph();
+    const results = executeTckQuery(graph, "CREATE (node :Foo:Bar) RETURN labels(node)");
+    expect(results).toHaveLength(1);
+    expect(results[0]).toEqual(["Foo", "Bar"]);
+  });
+
+  test("[4] Create node with label in pattern", () => {
+    const graph = createTckGraph();
+    const results = executeTckQuery(graph, "CREATE (n:Person)-[:OWNS]->(:Dog) RETURN labels(n)");
 
     expect(results).toHaveLength(1);
     const labels = results[0] as string[];
     expect(labels).toEqual(["Person"]);
   });
 
-  test.fails(
-    "[5] Using `labels()` in return clauses - unlabeled nodes not supported",
-    () => {
-      // Original TCK:
-      // CREATE () MATCH (n) RETURN labels(n)
-      // Expected: []
-      //
-      // Limitation: Unlabeled nodes not supported
-      const graph = createTckGraph();
-      const results = executeTckQuery(
-        graph,
-        "CREATE () MATCH (n) RETURN labels(n)",
-      );
-      expect(results).toHaveLength(1);
-      expect(results[0]).toEqual([]);
-    },
-  );
+  test.fails("[5] Using `labels()` in return clauses - unlabeled nodes not supported", () => {
+    // Original TCK:
+    // CREATE () MATCH (n) RETURN labels(n)
+    // Expected: []
+    //
+    // Limitation: Unlabeled nodes not supported
+    const graph = createTckGraph();
+    const results = executeTckQuery(graph, "CREATE () MATCH (n) RETURN labels(n)");
+    expect(results).toHaveLength(1);
+    expect(results[0]).toEqual([]);
+  });
 
   test("[6] `labels()` should accept type Any", () => {
     // Original TCK:
@@ -112,10 +88,7 @@ describe("Graph3 - Node labels", () => {
     // Expected: [null, null]
     // Note: We test with a single return item since labels(null) literal is not yet supported
     const graph = createTckGraph();
-    const results = executeTckQuery(
-      graph,
-      "OPTIONAL MATCH (n:DoesNotExist) RETURN labels(n)",
-    );
+    const results = executeTckQuery(graph, "OPTIONAL MATCH (n:DoesNotExist) RETURN labels(n)");
 
     expect(results).toHaveLength(1);
     // Single-item returns are not wrapped in an extra array
@@ -134,10 +107,7 @@ describe("Graph3 - Node labels", () => {
     const graph = createTckGraph();
     executeTckQuery(graph, "CREATE (:TestNode {name: 'test'})");
 
-    const results = executeTckQuery(
-      graph,
-      "MATCH p = (a:TestNode) RETURN labels(p) AS l",
-    );
+    const results = executeTckQuery(graph, "MATCH p = (a:TestNode) RETURN labels(p) AS l");
 
     expect(results).toHaveLength(1);
     const labels = results[0] as string[];
@@ -145,25 +115,19 @@ describe("Graph3 - Node labels", () => {
     expect(labels).toEqual(["TestNode"]);
   });
 
-  test.fails(
-    "[9] `labels()` failing on invalid arguments - TypeError not thrown",
-    () => {
-      // Original TCK:
-      // MATCH (a) WITH [a, 1] AS list RETURN labels(list[1]) AS l
-      // Expected: TypeError (since list[1] is an integer, not a node)
-      //
-      // Limitation: Our labels() returns empty array instead of throwing TypeError
-      // This is a semantic behavior deviation from the TCK spec
-      const graph = createTckGraph();
-      executeTckQuery(graph, "CREATE (:A {name: 'test'})");
-      expect(() => {
-        executeTckQuery(
-          graph,
-          "MATCH (a:A) WITH [a, 1] AS list RETURN labels(list[1]) AS l",
-        );
-      }).toThrow();
-    },
-  );
+  test.fails("[9] `labels()` failing on invalid arguments - TypeError not thrown", () => {
+    // Original TCK:
+    // MATCH (a) WITH [a, 1] AS list RETURN labels(list[1]) AS l
+    // Expected: TypeError (since list[1] is an integer, not a node)
+    //
+    // Limitation: Our labels() returns empty array instead of throwing TypeError
+    // This is a semantic behavior deviation from the TCK spec
+    const graph = createTckGraph();
+    executeTckQuery(graph, "CREATE (:A {name: 'test'})");
+    expect(() => {
+      executeTckQuery(graph, "MATCH (a:A) WITH [a, 1] AS list RETURN labels(list[1]) AS l");
+    }).toThrow();
+  });
 
   // Custom tests demonstrating labels() functionality that is supported
 
@@ -183,10 +147,7 @@ describe("Graph3 - Node labels", () => {
     executeTckQuery(graph, `CREATE (:Person {name: 'Alice'})`);
     executeTckQuery(graph, `CREATE (:Dog {name: 'Buddy'})`);
 
-    const personResults = executeTckQuery(
-      graph,
-      "MATCH (n:Person) RETURN labels(n)",
-    );
+    const personResults = executeTckQuery(graph, "MATCH (n:Person) RETURN labels(n)");
     const dogResults = executeTckQuery(graph, "MATCH (n:Dog) RETURN labels(n)");
 
     expect(personResults[0] as string[]).toEqual(["Person"]);
@@ -212,10 +173,7 @@ describe("Graph3 - Node labels", () => {
 
   test("[Custom 4] labels() on newly created node in same query", () => {
     const graph = createTckGraph();
-    const results = executeTckQuery(
-      graph,
-      "CREATE (n:Foo {name: 'test'}) RETURN labels(n)",
-    );
+    const results = executeTckQuery(graph, "CREATE (n:Foo {name: 'test'}) RETURN labels(n)");
 
     expect(results).toHaveLength(1);
     const labels = results[0] as string[];

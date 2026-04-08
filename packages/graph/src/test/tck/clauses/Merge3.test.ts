@@ -6,34 +6,28 @@ import { describe, test, expect } from "vitest";
 import { createTckGraph, executeTckQuery } from "../tckHelpers.js";
 
 describe("Merge3 - Merge node - on match", () => {
-  test.fails(
-    "[1] Merge should be able to set labels on match - unlabeled nodes and dynamic labels not supported",
-    () => {
-      // Query: CREATE () ... MERGE (a) ON MATCH SET a:L
-      // Uses unlabeled node and dynamic label setting
-      const graph = createTckGraph();
-      executeTckQuery(graph, "CREATE ()");
-      executeTckQuery(graph, "MERGE (a) ON MATCH SET a:L");
-      const results = executeTckQuery(graph, "MATCH (a:L) RETURN a");
-      expect(results).toHaveLength(1);
-    },
-  );
+  test.fails("[1] Merge should be able to set labels on match - unlabeled nodes and dynamic labels not supported", () => {
+    // Query: CREATE () ... MERGE (a) ON MATCH SET a:L
+    // Uses unlabeled node and dynamic label setting
+    const graph = createTckGraph();
+    executeTckQuery(graph, "CREATE ()");
+    executeTckQuery(graph, "MERGE (a) ON MATCH SET a:L");
+    const results = executeTckQuery(graph, "MATCH (a:L) RETURN a");
+    expect(results).toHaveLength(1);
+  });
 
-  test.fails(
-    "[2] Merge node with label add label on match when it exists - dynamic labels not supported",
-    () => {
-      // Query: MERGE (a:TheLabel) ON MATCH SET a:Foo
-      // Dynamic label setting (SET a:Label) not supported
-      const graph = createTckGraph();
-      executeTckQuery(graph, "CREATE (:TheLabel)");
-      const results = executeTckQuery(
-        graph,
-        "MERGE (a:TheLabel) ON MATCH SET a:Foo RETURN labels(a)",
-      );
-      expect(results).toHaveLength(1);
-      expect(results[0]).toContain("Foo");
-    },
-  );
+  test.fails("[2] Merge node with label add label on match when it exists - dynamic labels not supported", () => {
+    // Query: MERGE (a:TheLabel) ON MATCH SET a:Foo
+    // Dynamic label setting (SET a:Label) not supported
+    const graph = createTckGraph();
+    executeTckQuery(graph, "CREATE (:TheLabel)");
+    const results = executeTckQuery(
+      graph,
+      "MERGE (a:TheLabel) ON MATCH SET a:Foo RETURN labels(a)",
+    );
+    expect(results).toHaveLength(1);
+    expect(results[0]).toContain("Foo");
+  });
 
   test("[3] Merge node and set property on match", () => {
     const graph = createTckGraph();
@@ -80,29 +74,17 @@ describe("Merge3 - Merge node - on match", () => {
     const graph = createTckGraph();
 
     // First MERGE creates node, ON MATCH should NOT trigger
-    executeTckQuery(
-      graph,
-      "MERGE (a:A {name: 'test'}) ON MATCH SET a.matched = true",
-    );
+    executeTckQuery(graph, "MERGE (a:A {name: 'test'}) ON MATCH SET a.matched = true");
 
-    const results1 = executeTckQuery(
-      graph,
-      "MATCH (n:A {name: 'test'}) RETURN n.matched",
-    );
+    const results1 = executeTckQuery(graph, "MATCH (n:A {name: 'test'}) RETURN n.matched");
     expect(results1).toHaveLength(1);
     // Should be undefined since ON MATCH didn't trigger (was created)
     expect(results1[0]).toBeUndefined();
 
     // Second MERGE matches existing, ON MATCH should trigger
-    executeTckQuery(
-      graph,
-      "MERGE (a:A {name: 'test'}) ON MATCH SET a.matched = true",
-    );
+    executeTckQuery(graph, "MERGE (a:A {name: 'test'}) ON MATCH SET a.matched = true");
 
-    const results2 = executeTckQuery(
-      graph,
-      "MATCH (n:A {name: 'test'}) RETURN n.matched",
-    );
+    const results2 = executeTckQuery(graph, "MATCH (n:A {name: 'test'}) RETURN n.matched");
     expect(results2).toHaveLength(1);
     expect(results2[0]).toBe(true);
   });
@@ -114,15 +96,9 @@ describe("Merge3 - Merge node - on match", () => {
     executeTckQuery(graph, "CREATE (:A {name: 'update', value: 'old'})");
 
     // MERGE matches and ON MATCH updates the property
-    executeTckQuery(
-      graph,
-      "MERGE (a:A {name: 'update'}) ON MATCH SET a.value = 'new'",
-    );
+    executeTckQuery(graph, "MERGE (a:A {name: 'update'}) ON MATCH SET a.value = 'new'");
 
-    const results = executeTckQuery(
-      graph,
-      "MATCH (n:A {name: 'update'}) RETURN n.value",
-    );
+    const results = executeTckQuery(graph, "MATCH (n:A {name: 'update'}) RETURN n.value");
     expect(results).toHaveLength(1);
     expect(results[0]).toBe("new");
   });
@@ -131,15 +107,9 @@ describe("Merge3 - Merge node - on match", () => {
     const graph = createTckGraph();
 
     // MERGE creates new node, ON MATCH doesn't trigger
-    executeTckQuery(
-      graph,
-      "MERGE (a:A {name: 'new'}) ON MATCH SET a.found = true",
-    );
+    executeTckQuery(graph, "MERGE (a:A {name: 'new'}) ON MATCH SET a.found = true");
 
-    const results = executeTckQuery(
-      graph,
-      "MATCH (n:A {name: 'new'}) RETURN n.found",
-    );
+    const results = executeTckQuery(graph, "MATCH (n:A {name: 'new'}) RETURN n.found");
     expect(results).toHaveLength(1);
     expect(results[0]).toBeUndefined();
   });

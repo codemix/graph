@@ -7,37 +7,31 @@ import { createTckGraph, executeTckQuery, getProperty } from "../tckHelpers.js";
 
 describe("WithOrderBy2 - Order by a single expression", () => {
   // [1]-[2] Sort by boolean expression
-  test.fails(
-    "[1] Sort by a boolean expression in ascending order - complex boolean expression in ORDER BY not supported",
-    () => {
-      const graph = createTckGraph();
-      executeTckQuery(
-        graph,
-        "CREATE (:A {bool: true, bool2: true}), (:A {bool: false, bool2: true}), (:A {bool: true, bool2: false})",
-      );
-      const results = executeTckQuery(
-        graph,
-        "MATCH (a:A) WITH a ORDER BY NOT (a.bool AND a.bool2) LIMIT 2 RETURN a",
-      );
-      expect(results).toHaveLength(2);
-    },
-  );
+  test.fails("[1] Sort by a boolean expression in ascending order - complex boolean expression in ORDER BY not supported", () => {
+    const graph = createTckGraph();
+    executeTckQuery(
+      graph,
+      "CREATE (:A {bool: true, bool2: true}), (:A {bool: false, bool2: true}), (:A {bool: true, bool2: false})",
+    );
+    const results = executeTckQuery(
+      graph,
+      "MATCH (a:A) WITH a ORDER BY NOT (a.bool AND a.bool2) LIMIT 2 RETURN a",
+    );
+    expect(results).toHaveLength(2);
+  });
 
-  test.fails(
-    "[2] Sort by a boolean expression in descending order - complex boolean expression in ORDER BY not supported",
-    () => {
-      const graph = createTckGraph();
-      executeTckQuery(
-        graph,
-        "CREATE (:A {bool: true, bool2: true}), (:A {bool: false, bool2: true}), (:A {bool: true, bool2: false})",
-      );
-      const results = executeTckQuery(
-        graph,
-        "MATCH (a:A) WITH a ORDER BY NOT (a.bool AND a.bool2) DESC LIMIT 3 RETURN a",
-      );
-      expect(results).toHaveLength(3);
-    },
-  );
+  test.fails("[2] Sort by a boolean expression in descending order - complex boolean expression in ORDER BY not supported", () => {
+    const graph = createTckGraph();
+    executeTckQuery(
+      graph,
+      "CREATE (:A {bool: true, bool2: true}), (:A {bool: false, bool2: true}), (:A {bool: true, bool2: false})",
+    );
+    const results = executeTckQuery(
+      graph,
+      "MATCH (a:A) WITH a ORDER BY NOT (a.bool AND a.bool2) DESC LIMIT 3 RETURN a",
+    );
+    expect(results).toHaveLength(3);
+  });
 
   // [3]-[4] Sort by integer expression
   test("[3] Sort by an integer expression in ascending order - complex arithmetic in ORDER BY not supported", () => {
@@ -148,177 +142,135 @@ describe("WithOrderBy2 - Order by a single expression", () => {
   });
 
   // [11]-[20] Sort by date/time expressions - temporal types not supported
-  test.fails(
-    "[11] Sort by a date expression in ascending order - date/duration not supported",
-    () => {
-      const graph = createTckGraph();
-      executeTckQuery(
-        graph,
-        "CREATE (:A {d: date('2020-01-01')}), (:A {d: date('2019-01-01')})",
-      );
-      const results = executeTckQuery(
-        graph,
-        "MATCH (a:A) WITH a ORDER BY a.d + duration({days: 1}) LIMIT 2 RETURN a",
-      );
-      expect(results).toHaveLength(2);
-    },
-  );
+  test.fails("[11] Sort by a date expression in ascending order - date/duration not supported", () => {
+    const graph = createTckGraph();
+    executeTckQuery(graph, "CREATE (:A {d: date('2020-01-01')}), (:A {d: date('2019-01-01')})");
+    const results = executeTckQuery(
+      graph,
+      "MATCH (a:A) WITH a ORDER BY a.d + duration({days: 1}) LIMIT 2 RETURN a",
+    );
+    expect(results).toHaveLength(2);
+  });
 
-  test.fails(
-    "[12] Sort by a date expression in descending order - date/duration not supported",
-    () => {
-      const graph = createTckGraph();
-      executeTckQuery(
-        graph,
-        "CREATE (:A {d: date('2020-01-01')}), (:A {d: date('2019-01-01')})",
-      );
-      const results = executeTckQuery(
-        graph,
-        "MATCH (a:A) WITH a ORDER BY a.d + duration({days: 1}) DESC LIMIT 2 RETURN a",
-      );
-      expect(results).toHaveLength(2);
-    },
-  );
+  test.fails("[12] Sort by a date expression in descending order - date/duration not supported", () => {
+    const graph = createTckGraph();
+    executeTckQuery(graph, "CREATE (:A {d: date('2020-01-01')}), (:A {d: date('2019-01-01')})");
+    const results = executeTckQuery(
+      graph,
+      "MATCH (a:A) WITH a ORDER BY a.d + duration({days: 1}) DESC LIMIT 2 RETURN a",
+    );
+    expect(results).toHaveLength(2);
+  });
 
-  test.fails(
-    "[13] Sort by a local time expression ASC - localtime/duration not supported",
-    () => {
-      const graph = createTckGraph();
-      executeTckQuery(
-        graph,
-        "CREATE (:A {t: localtime('10:00:00')}), (:A {t: localtime('14:00:00')})",
-      );
-      const results = executeTckQuery(
-        graph,
-        "MATCH (a:A) WITH a ORDER BY a.t + duration({hours: 1}) LIMIT 2 RETURN a",
-      );
-      expect(results).toHaveLength(2);
-    },
-  );
+  test.fails("[13] Sort by a local time expression ASC - localtime/duration not supported", () => {
+    const graph = createTckGraph();
+    executeTckQuery(
+      graph,
+      "CREATE (:A {t: localtime('10:00:00')}), (:A {t: localtime('14:00:00')})",
+    );
+    const results = executeTckQuery(
+      graph,
+      "MATCH (a:A) WITH a ORDER BY a.t + duration({hours: 1}) LIMIT 2 RETURN a",
+    );
+    expect(results).toHaveLength(2);
+  });
 
-  test.fails(
-    "[14] Sort by a local time expression DESC - localtime/duration not supported",
-    () => {
-      const graph = createTckGraph();
-      executeTckQuery(
-        graph,
-        "CREATE (:A {t: localtime('10:00:00')}), (:A {t: localtime('14:00:00')})",
-      );
-      const results = executeTckQuery(
-        graph,
-        "MATCH (a:A) WITH a ORDER BY a.t + duration({hours: 1}) DESC LIMIT 2 RETURN a",
-      );
-      expect(results).toHaveLength(2);
-    },
-  );
+  test.fails("[14] Sort by a local time expression DESC - localtime/duration not supported", () => {
+    const graph = createTckGraph();
+    executeTckQuery(
+      graph,
+      "CREATE (:A {t: localtime('10:00:00')}), (:A {t: localtime('14:00:00')})",
+    );
+    const results = executeTckQuery(
+      graph,
+      "MATCH (a:A) WITH a ORDER BY a.t + duration({hours: 1}) DESC LIMIT 2 RETURN a",
+    );
+    expect(results).toHaveLength(2);
+  });
 
-  test.fails(
-    "[15] Sort by a time expression ASC - time/duration not supported",
-    () => {
-      const graph = createTckGraph();
-      executeTckQuery(
-        graph,
-        "CREATE (:A {t: time('10:00:00+01:00')}), (:A {t: time('14:00:00+01:00')})",
-      );
-      const results = executeTckQuery(
-        graph,
-        "MATCH (a:A) WITH a ORDER BY a.t + duration({hours: 1}) LIMIT 2 RETURN a",
-      );
-      expect(results).toHaveLength(2);
-    },
-  );
+  test.fails("[15] Sort by a time expression ASC - time/duration not supported", () => {
+    const graph = createTckGraph();
+    executeTckQuery(
+      graph,
+      "CREATE (:A {t: time('10:00:00+01:00')}), (:A {t: time('14:00:00+01:00')})",
+    );
+    const results = executeTckQuery(
+      graph,
+      "MATCH (a:A) WITH a ORDER BY a.t + duration({hours: 1}) LIMIT 2 RETURN a",
+    );
+    expect(results).toHaveLength(2);
+  });
 
-  test.fails(
-    "[16] Sort by a time expression DESC - time/duration not supported",
-    () => {
-      const graph = createTckGraph();
-      executeTckQuery(
-        graph,
-        "CREATE (:A {t: time('10:00:00+01:00')}), (:A {t: time('14:00:00+01:00')})",
-      );
-      const results = executeTckQuery(
-        graph,
-        "MATCH (a:A) WITH a ORDER BY a.t + duration({hours: 1}) DESC LIMIT 2 RETURN a",
-      );
-      expect(results).toHaveLength(2);
-    },
-  );
+  test.fails("[16] Sort by a time expression DESC - time/duration not supported", () => {
+    const graph = createTckGraph();
+    executeTckQuery(
+      graph,
+      "CREATE (:A {t: time('10:00:00+01:00')}), (:A {t: time('14:00:00+01:00')})",
+    );
+    const results = executeTckQuery(
+      graph,
+      "MATCH (a:A) WITH a ORDER BY a.t + duration({hours: 1}) DESC LIMIT 2 RETURN a",
+    );
+    expect(results).toHaveLength(2);
+  });
 
-  test.fails(
-    "[17] Sort by a local datetime expression ASC - localdatetime/duration not supported",
-    () => {
-      const graph = createTckGraph();
-      executeTckQuery(
-        graph,
-        "CREATE (:A {dt: localdatetime('2020-01-01T10:00:00')}), (:A {dt: localdatetime('2019-01-01T14:00:00')})",
-      );
-      const results = executeTckQuery(
-        graph,
-        "MATCH (a:A) WITH a ORDER BY a.dt + duration({days: 1}) LIMIT 2 RETURN a",
-      );
-      expect(results).toHaveLength(2);
-    },
-  );
+  test.fails("[17] Sort by a local datetime expression ASC - localdatetime/duration not supported", () => {
+    const graph = createTckGraph();
+    executeTckQuery(
+      graph,
+      "CREATE (:A {dt: localdatetime('2020-01-01T10:00:00')}), (:A {dt: localdatetime('2019-01-01T14:00:00')})",
+    );
+    const results = executeTckQuery(
+      graph,
+      "MATCH (a:A) WITH a ORDER BY a.dt + duration({days: 1}) LIMIT 2 RETURN a",
+    );
+    expect(results).toHaveLength(2);
+  });
 
-  test.fails(
-    "[18] Sort by a local datetime expression DESC - localdatetime/duration not supported",
-    () => {
-      const graph = createTckGraph();
-      executeTckQuery(
-        graph,
-        "CREATE (:A {dt: localdatetime('2020-01-01T10:00:00')}), (:A {dt: localdatetime('2019-01-01T14:00:00')})",
-      );
-      const results = executeTckQuery(
-        graph,
-        "MATCH (a:A) WITH a ORDER BY a.dt + duration({days: 1}) DESC LIMIT 2 RETURN a",
-      );
-      expect(results).toHaveLength(2);
-    },
-  );
+  test.fails("[18] Sort by a local datetime expression DESC - localdatetime/duration not supported", () => {
+    const graph = createTckGraph();
+    executeTckQuery(
+      graph,
+      "CREATE (:A {dt: localdatetime('2020-01-01T10:00:00')}), (:A {dt: localdatetime('2019-01-01T14:00:00')})",
+    );
+    const results = executeTckQuery(
+      graph,
+      "MATCH (a:A) WITH a ORDER BY a.dt + duration({days: 1}) DESC LIMIT 2 RETURN a",
+    );
+    expect(results).toHaveLength(2);
+  });
 
-  test.fails(
-    "[19] Sort by a datetime expression ASC - datetime/duration not supported",
-    () => {
-      const graph = createTckGraph();
-      executeTckQuery(
-        graph,
-        "CREATE (:A {dt: datetime('2020-01-01T10:00:00+01:00')}), (:A {dt: datetime('2019-01-01T14:00:00+01:00')})",
-      );
-      const results = executeTckQuery(
-        graph,
-        "MATCH (a:A) WITH a ORDER BY a.dt + duration({days: 1}) LIMIT 2 RETURN a",
-      );
-      expect(results).toHaveLength(2);
-    },
-  );
+  test.fails("[19] Sort by a datetime expression ASC - datetime/duration not supported", () => {
+    const graph = createTckGraph();
+    executeTckQuery(
+      graph,
+      "CREATE (:A {dt: datetime('2020-01-01T10:00:00+01:00')}), (:A {dt: datetime('2019-01-01T14:00:00+01:00')})",
+    );
+    const results = executeTckQuery(
+      graph,
+      "MATCH (a:A) WITH a ORDER BY a.dt + duration({days: 1}) LIMIT 2 RETURN a",
+    );
+    expect(results).toHaveLength(2);
+  });
 
-  test.fails(
-    "[20] Sort by a datetime expression DESC - datetime/duration not supported",
-    () => {
-      const graph = createTckGraph();
-      executeTckQuery(
-        graph,
-        "CREATE (:A {dt: datetime('2020-01-01T10:00:00+01:00')}), (:A {dt: datetime('2019-01-01T14:00:00+01:00')})",
-      );
-      const results = executeTckQuery(
-        graph,
-        "MATCH (a:A) WITH a ORDER BY a.dt + duration({days: 1}) DESC LIMIT 2 RETURN a",
-      );
-      expect(results).toHaveLength(2);
-    },
-  );
+  test.fails("[20] Sort by a datetime expression DESC - datetime/duration not supported", () => {
+    const graph = createTckGraph();
+    executeTckQuery(
+      graph,
+      "CREATE (:A {dt: datetime('2020-01-01T10:00:00+01:00')}), (:A {dt: datetime('2019-01-01T14:00:00+01:00')})",
+    );
+    const results = executeTckQuery(
+      graph,
+      "MATCH (a:A) WITH a ORDER BY a.dt + duration({days: 1}) DESC LIMIT 2 RETURN a",
+    );
+    expect(results).toHaveLength(2);
+  });
 
   // [21]-[24] use unlabeled nodes or complex expressions
   test("[21] Sort by expression partially orderable - unlabeled nodes not supported", () => {
     const graph = createTckGraph();
-    executeTckQuery(
-      graph,
-      "CREATE ({name: 'A'}), ({name: 'B'}), ({name: 'C'})",
-    );
-    const results = executeTckQuery(
-      graph,
-      "MATCH (a) WITH a ORDER BY a.name LIMIT 3 RETURN a",
-    );
+    executeTckQuery(graph, "CREATE ({name: 'A'}), ({name: 'B'}), ({name: 'C'})");
+    const results = executeTckQuery(graph, "MATCH (a) WITH a ORDER BY a.name LIMIT 3 RETURN a");
     expect(results).toHaveLength(3);
   });
 
@@ -345,37 +297,25 @@ describe("WithOrderBy2 - Order by a single expression", () => {
   test("[24] Sort by expression with DISTINCT - unlabeled nodes and RETURN * not supported", () => {
     const graph = createTckGraph();
     executeTckQuery(graph, "CREATE ({x: 1}), ({x: 1}), ({x: 2})");
-    const results = executeTckQuery(
-      graph,
-      "MATCH (a) WITH DISTINCT a.x AS x ORDER BY x RETURN *",
-    );
+    const results = executeTckQuery(graph, "MATCH (a) WITH DISTINCT a.x AS x ORDER BY x RETURN *");
     expect(results).toHaveLength(2);
   });
 
   // [25] Fail on sorting by an aggregation - error tests
-  test.fails(
-    "[25] Fail on sorting by an aggregation - semantic validation not implemented",
-    () => {
-      const graph = createTckGraph();
-      executeTckQuery(graph, "CREATE (:A {num: 1}), (:A {num: 2})");
-      expect(() => {
-        executeTckQuery(graph, "MATCH (a:A) WITH a ORDER BY count(a) RETURN a");
-      }).toThrow();
-    },
-  );
+  test.fails("[25] Fail on sorting by an aggregation - semantic validation not implemented", () => {
+    const graph = createTckGraph();
+    executeTckQuery(graph, "CREATE (:A {num: 1}), (:A {num: 2})");
+    expect(() => {
+      executeTckQuery(graph, "MATCH (a:A) WITH a ORDER BY count(a) RETURN a");
+    }).toThrow();
+  });
 
   // Custom tests for supported patterns
   test("[custom-1] WITH ORDER BY property expression", () => {
     const graph = createTckGraph();
-    executeTckQuery(
-      graph,
-      `CREATE (:A {num: 3}), (:A {num: 1}), (:A {num: 2})`,
-    );
+    executeTckQuery(graph, `CREATE (:A {num: 3}), (:A {num: 1}), (:A {num: 2})`);
 
-    const results = executeTckQuery(
-      graph,
-      `MATCH (a:A) WITH a ORDER BY a.num LIMIT 2 RETURN a`,
-    );
+    const results = executeTckQuery(graph, `MATCH (a:A) WITH a ORDER BY a.num LIMIT 2 RETURN a`);
     expect(results.length).toBe(2);
     const nums = results.map((r) => {
       const [node] = r as [Record<string, unknown>];
@@ -386,10 +326,7 @@ describe("WithOrderBy2 - Order by a single expression", () => {
 
   test("[custom-2] WITH ORDER BY property expression DESC", () => {
     const graph = createTckGraph();
-    executeTckQuery(
-      graph,
-      `CREATE (:A {num: 3}), (:A {num: 1}), (:A {num: 2})`,
-    );
+    executeTckQuery(graph, `CREATE (:A {num: 3}), (:A {num: 1}), (:A {num: 2})`);
 
     const results = executeTckQuery(
       graph,
@@ -410,10 +347,7 @@ describe("WithOrderBy2 - Order by a single expression", () => {
       `CREATE (:A {name: 'charlie'}), (:A {name: 'alice'}), (:A {name: 'bob'})`,
     );
 
-    const results = executeTckQuery(
-      graph,
-      `MATCH (a:A) WITH a ORDER BY a.name RETURN a`,
-    );
+    const results = executeTckQuery(graph, `MATCH (a:A) WITH a ORDER BY a.name RETURN a`);
     expect(results.length).toBe(3);
     const names = results.map((r) => {
       const [node] = r as [Record<string, unknown>];

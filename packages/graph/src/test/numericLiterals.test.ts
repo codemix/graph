@@ -217,9 +217,7 @@ test("NumericLiterals - Arithmetic - octal in multiplication", () => {
 });
 
 test("NumericLiterals - Arithmetic - scientific in division", () => {
-  const result = parse(
-    "MATCH (n) WHERE n.value = 1e6 / 1000 RETURN n",
-  ) as Query;
+  const result = parse("MATCH (n) WHERE n.value = 1e6 / 1000 RETURN n") as Query;
   const condition = result.matches[0]!.where!.condition as any;
   expect(condition.value.type).toBe("ArithmeticExpression");
   expect(condition.value.operator).toBe("/");
@@ -228,9 +226,7 @@ test("NumericLiterals - Arithmetic - scientific in division", () => {
 });
 
 test("NumericLiterals - Arithmetic - mixed formats in expression", () => {
-  const result = parse(
-    "MATCH (n) WHERE n.value = 0xFF + 0o77 + 1e2 RETURN n",
-  ) as Query;
+  const result = parse("MATCH (n) WHERE n.value = 0xFF + 0o77 + 1e2 RETURN n") as Query;
   const condition = result.matches[0]!.where!.condition as any;
   // Should parse as ((0xFF + 0o77) + 1e2) due to left associativity
   expect(condition.value.type).toBe("ArithmeticExpression");
@@ -259,9 +255,7 @@ describe("NumericLiterals - Execution", () => {
   });
 
   test("should filter using hex literal", () => {
-    const steps = astToSteps(
-      parse("MATCH (n:Test) WHERE n.value = 0xFF RETURN n.id") as Query,
-    );
+    const steps = astToSteps(parse("MATCH (n:Test) WHERE n.value = 0xFF RETURN n.id") as Query);
     const traverser = createTraverser(steps);
     const results = Array.from(traverser.traverse(graph, [undefined]));
     expect(results).toHaveLength(1);
@@ -269,9 +263,7 @@ describe("NumericLiterals - Execution", () => {
   });
 
   test("should filter using octal literal", () => {
-    const steps = astToSteps(
-      parse("MATCH (n:Test) WHERE n.value = 0o755 RETURN n.id") as Query,
-    );
+    const steps = astToSteps(parse("MATCH (n:Test) WHERE n.value = 0o755 RETURN n.id") as Query);
     const traverser = createTraverser(steps);
     const results = Array.from(traverser.traverse(graph, [undefined]));
     expect(results).toHaveLength(1);
@@ -279,9 +271,7 @@ describe("NumericLiterals - Execution", () => {
   });
 
   test("should filter using scientific notation", () => {
-    const steps = astToSteps(
-      parse("MATCH (n:Test) WHERE n.value = 1e6 RETURN n.id") as Query,
-    );
+    const steps = astToSteps(parse("MATCH (n:Test) WHERE n.value = 1e6 RETURN n.id") as Query);
     const traverser = createTraverser(steps);
     const results = Array.from(traverser.traverse(graph, [undefined]));
     expect(results).toHaveLength(1);
@@ -290,9 +280,7 @@ describe("NumericLiterals - Execution", () => {
 
   test("should filter using hex in arithmetic", () => {
     // 0xFE + 1 = 255 (matches t1)
-    const steps = astToSteps(
-      parse("MATCH (n:Test) WHERE n.value = 0xFE + 1 RETURN n.id") as Query,
-    );
+    const steps = astToSteps(parse("MATCH (n:Test) WHERE n.value = 0xFE + 1 RETURN n.id") as Query);
     const traverser = createTraverser(steps);
     const results = Array.from(traverser.traverse(graph, [undefined]));
     expect(results).toHaveLength(1);
@@ -301,9 +289,7 @@ describe("NumericLiterals - Execution", () => {
 
   test("should filter using comparison with scientific notation", () => {
     // Find values greater than 1e5 (100000)
-    const steps = astToSteps(
-      parse("MATCH (n:Test) WHERE n.value > 1e5 RETURN n.id") as Query,
-    );
+    const steps = astToSteps(parse("MATCH (n:Test) WHERE n.value > 1e5 RETURN n.id") as Query);
     const traverser = createTraverser(steps);
     const results = Array.from(traverser.traverse(graph, [undefined]));
     expect(results).toHaveLength(1);
@@ -352,9 +338,7 @@ test("NumericLiterals - EdgeCases - zero in different formats", () => {
 
 test("NumericLiterals - EdgeCases - max safe integer in hex", () => {
   // Number.MAX_SAFE_INTEGER = 9007199254740991 = 0x1FFFFFFFFFFFFF
-  const result = parse(
-    "MATCH (n) WHERE n.value = 0x1FFFFFFFFFFFFF RETURN n",
-  ) as Query;
+  const result = parse("MATCH (n) WHERE n.value = 0x1FFFFFFFFFFFFF RETURN n") as Query;
   const condition = result.matches[0]!.where!.condition as any;
   expect(condition.value).toBe(Number.MAX_SAFE_INTEGER);
 });

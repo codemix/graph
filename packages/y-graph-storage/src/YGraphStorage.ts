@@ -58,11 +58,7 @@ export class YGraphStorage implements GraphStorage {
     return this.#doc.getMap(`E:${label}`);
   }
 
-  protected getVertexProperties(
-    label: string,
-    uuid: string,
-    map: Y.Map<unknown>,
-  ): object {
+  protected getVertexProperties(label: string, uuid: string, map: Y.Map<unknown>): object {
     const schema = this.#config.schema.vertices[label];
     if (schema == null) {
       throw new LabelNotFoundError(label);
@@ -70,11 +66,7 @@ export class YGraphStorage implements GraphStorage {
     return createLazyPropertyDictionary(schema, map);
   }
 
-  protected getEdgeProperties(
-    label: string,
-    uuid: string,
-    map: Y.Map<unknown>,
-  ): object {
+  protected getEdgeProperties(label: string, uuid: string, map: Y.Map<unknown>): object {
     const schema = this.#config.schema.edges[label];
     if (schema == null) {
       throw new LabelNotFoundError(label);
@@ -287,9 +279,9 @@ export class YGraphStorage implements GraphStorage {
           if (sourceV == null) {
             continue;
           }
-          const sourceOutgoingEdges = this.getVertexMap(sourceV)?.get(
-            $OutEKey,
-          ) as undefined | Y.Map<unknown>;
+          const sourceOutgoingEdges = this.getVertexMap(sourceV)?.get($OutEKey) as
+            | undefined
+            | Y.Map<unknown>;
           if (sourceOutgoingEdges != null) {
             sourceOutgoingEdges.delete(edgeId);
           }
@@ -310,9 +302,9 @@ export class YGraphStorage implements GraphStorage {
           // Get the target vertex (inV) and remove from its incoming edges
           const targetV = edgeData.get($InVKey) as ElementId | undefined;
           if (targetV != null) {
-            const targetIncomingEdges = this.getVertexMap(targetV)?.get(
-              $InEKey,
-            ) as undefined | Y.Map<unknown>;
+            const targetIncomingEdges = this.getVertexMap(targetV)?.get($InEKey) as
+              | undefined
+              | Y.Map<unknown>;
             if (targetIncomingEdges != null) {
               targetIncomingEdges.delete(edgeId);
             }

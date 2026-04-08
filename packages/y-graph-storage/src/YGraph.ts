@@ -87,9 +87,7 @@ export class YGraph<const TSchema extends GraphSchema> extends Graph<TSchema> {
   }
 }
 
-function createGraphObserver<TSchema extends GraphSchema>(
-  graph: YGraph<TSchema>,
-) {
+function createGraphObserver<TSchema extends GraphSchema>(graph: YGraph<TSchema>) {
   const { schema, storage } = graph;
   return new Observable<YGraphChange>((o) => {
     const unsubscribers: (() => void)[] = [];
@@ -299,34 +297,21 @@ export class LiveQuery<
 
 type QueryPredicate = (change: YGraphChange) => KnownSteps | undefined;
 
-function createPredicatesForTraversalSteps(
-  steps: readonly KnownSteps[],
-): QueryPredicate {
+function createPredicatesForTraversalSteps(steps: readonly KnownSteps[]): QueryPredicate {
   const predicates: QueryPredicate[] = [];
   for (const step of steps) {
     if (step instanceof FetchVerticesStep) {
       if (step.config.ids && step.config.ids.length > 0) {
         predicates.push((change) => {
-          if (
-            change.kind === "vertex.added" ||
-            change.kind === "vertex.deleted"
-          ) {
+          if (change.kind === "vertex.added" || change.kind === "vertex.deleted") {
             return step.config.ids!.includes(change.id) ? step : undefined;
           }
           return undefined;
         });
-      } else if (
-        step.config.vertexLabels &&
-        step.config.vertexLabels.length > 0
-      ) {
+      } else if (step.config.vertexLabels && step.config.vertexLabels.length > 0) {
         predicates.push((change) => {
-          if (
-            change.kind === "vertex.added" ||
-            change.kind === "vertex.deleted"
-          ) {
-            return step.config.vertexLabels!.includes(
-              getLabelFromElementId(change.id),
-            )
+          if (change.kind === "vertex.added" || change.kind === "vertex.deleted") {
+            return step.config.vertexLabels!.includes(getLabelFromElementId(change.id))
               ? step
               : undefined;
           }
@@ -334,10 +319,7 @@ function createPredicatesForTraversalSteps(
         });
       } else {
         predicates.push((change) => {
-          if (
-            change.kind === "vertex.added" ||
-            change.kind === "vertex.deleted"
-          ) {
+          if (change.kind === "vertex.added" || change.kind === "vertex.deleted") {
             return step ? step : undefined;
           }
           return undefined;
@@ -354,9 +336,7 @@ function createPredicatesForTraversalSteps(
       } else if (step.config.edgeLabels && step.config.edgeLabels.length > 0) {
         predicates.push((change) => {
           if (change.kind === "edge.added" || change.kind === "edge.deleted") {
-            return step.config.edgeLabels!.includes(
-              getLabelFromElementId(change.id),
-            )
+            return step.config.edgeLabels!.includes(getLabelFromElementId(change.id))
               ? step
               : undefined;
           }
@@ -372,10 +352,7 @@ function createPredicatesForTraversalSteps(
       }
     } else if (step instanceof FilterElementsStep) {
       predicates.push((change) => {
-        if (
-          change.kind === "vertex.property.set" ||
-          change.kind === "edge.property.set"
-        ) {
+        if (change.kind === "vertex.property.set" || change.kind === "edge.property.set") {
           // todo make this smarter
           return step;
         }
@@ -385,9 +362,7 @@ function createPredicatesForTraversalSteps(
       if (step.config.edgeLabels.length > 0) {
         predicates.push((change) => {
           if (change.kind === "edge.added" || change.kind === "edge.deleted") {
-            return step.config.edgeLabels!.includes(
-              getLabelFromElementId(change.id),
-            )
+            return step.config.edgeLabels!.includes(getLabelFromElementId(change.id))
               ? step
               : undefined;
           }

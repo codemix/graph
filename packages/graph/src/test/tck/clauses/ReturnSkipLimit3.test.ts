@@ -12,10 +12,7 @@ describe("ReturnSkipLimit3 - Skip and limit", () => {
       graph,
       "CREATE ({name: 'A'}), ({name: 'B'}), ({name: 'C'}), ({name: 'D'}), ({name: 'E'})",
     );
-    const results = executeTckQuery(
-      graph,
-      "MATCH (n) RETURN n ORDER BY n.name ASC SKIP 2 LIMIT 2",
-    );
+    const results = executeTckQuery(graph, "MATCH (n) RETURN n ORDER BY n.name ASC SKIP 2 LIMIT 2");
     expect(results.length).toBe(2);
     const names = results.map((r) => {
       const [node] = r as [Record<string, unknown>];
@@ -45,27 +42,24 @@ describe("ReturnSkipLimit3 - Skip and limit", () => {
     expect(names).toEqual(["C", "D"]);
   });
 
-  test.fails(
-    "[2] Get rows in the middle by param - unlabeled nodes and parameter in SKIP/LIMIT not supported",
-    () => {
-      const graph = createTckGraph();
-      executeTckQuery(
-        graph,
-        "CREATE ({name: 'A'}), ({name: 'B'}), ({name: 'C'}), ({name: 'D'}), ({name: 'E'})",
-      );
-      const results = executeTckQuery(
-        graph,
-        "MATCH (n) RETURN n ORDER BY n.name ASC SKIP $s LIMIT $l",
-        { s: 2, l: 2 },
-      );
-      expect(results.length).toBe(2);
-      const names = results.map((r) => {
-        const [node] = r as [Record<string, unknown>];
-        return getProperty(node, "name");
-      });
-      expect(names).toEqual(["C", "D"]);
-    },
-  );
+  test.fails("[2] Get rows in the middle by param - unlabeled nodes and parameter in SKIP/LIMIT not supported", () => {
+    const graph = createTckGraph();
+    executeTckQuery(
+      graph,
+      "CREATE ({name: 'A'}), ({name: 'B'}), ({name: 'C'}), ({name: 'D'}), ({name: 'E'})",
+    );
+    const results = executeTckQuery(
+      graph,
+      "MATCH (n) RETURN n ORDER BY n.name ASC SKIP $s LIMIT $l",
+      { s: 2, l: 2 },
+    );
+    expect(results.length).toBe(2);
+    const names = results.map((r) => {
+      const [node] = r as [Record<string, unknown>];
+      return getProperty(node, "name");
+    });
+    expect(names).toEqual(["C", "D"]);
+  });
 
   test("[3] Limiting amount of rows when there are fewer left than the LIMIT argument - unlabeled nodes (by design)", () => {
     const graph = createTckGraph();

@@ -8,10 +8,7 @@ import { createTckGraph, executeTckQuery, getLabel } from "../tckHelpers.js";
 describe("Union2 - Union All", () => {
   test("[1] Two elements, both unique, not distinct", () => {
     const graph = createTckGraph();
-    const results = executeTckQuery(
-      graph,
-      "RETURN 1 AS x UNION ALL RETURN 2 AS x",
-    );
+    const results = executeTckQuery(graph, "RETURN 1 AS x UNION ALL RETURN 2 AS x");
     // UNION ALL keeps all rows
     expect(results).toHaveLength(2);
     expect(results).toContainEqual(1);
@@ -72,18 +69,13 @@ describe("Union2 - Union All", () => {
     expect(labels).toContain("B");
   });
 
-  test.fails(
-    "[5] Failing when UNION ALL has different columns - semantic validation not implemented",
-    () => {
-      // Original TCK:
-      // Query: RETURN 1 AS a UNION ALL RETURN 2 AS b
-      // Should raise SyntaxError: DifferentColumnsInUnion
-      const graph = createTckGraph();
-      expect(() =>
-        executeTckQuery(graph, "RETURN 1 AS a UNION ALL RETURN 2 AS b"),
-      ).toThrow();
-    },
-  );
+  test.fails("[5] Failing when UNION ALL has different columns - semantic validation not implemented", () => {
+    // Original TCK:
+    // Query: RETURN 1 AS a UNION ALL RETURN 2 AS b
+    // Should raise SyntaxError: DifferentColumnsInUnion
+    const graph = createTckGraph();
+    expect(() => executeTckQuery(graph, "RETURN 1 AS a UNION ALL RETURN 2 AS b")).toThrow();
+  });
 
   // Custom tests for supported UNION ALL scenarios
   test("[custom-1] UNION ALL keeps duplicate results", () => {
@@ -112,10 +104,7 @@ describe("Union2 - Union All", () => {
 
   test("[custom-2] UNION ALL with three queries", () => {
     const graph = createTckGraph();
-    executeTckQuery(
-      graph,
-      "CREATE (:A {num: 1}), (:B {num: 1}), (:C {num: 1})",
-    );
+    executeTckQuery(graph, "CREATE (:A {num: 1}), (:B {num: 1}), (:C {num: 1})");
 
     const results = executeTckQuery(
       graph,
@@ -136,10 +125,7 @@ describe("Union2 - Union All", () => {
 
   test("[custom-3] UNION ALL with overlapping WHERE clauses", () => {
     const graph = createTckGraph();
-    executeTckQuery(
-      graph,
-      "CREATE (:A {num: 1}), (:A {num: 2}), (:A {num: 3}), (:A {num: 4})",
-    );
+    executeTckQuery(graph, "CREATE (:A {num: 1}), (:A {num: 2}), (:A {num: 3}), (:A {num: 4})");
 
     const results = executeTckQuery(
       graph,

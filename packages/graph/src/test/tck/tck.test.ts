@@ -65,10 +65,7 @@ test("TCK - getLabel extracts node label", () => {
 test("TCK - can create relationships", () => {
   const graph = createTckGraph();
   executeTckQuery(graph, "CREATE (:A {name: 'a'})-[:KNOWS]->(:B {name: 'b'})");
-  const results = executeTckQuery(
-    graph,
-    "MATCH (a:A)-[:KNOWS]->(b:B) RETURN a.name, b.name",
-  );
+  const results = executeTckQuery(graph, "MATCH (a:A)-[:KNOWS]->(b:B) RETURN a.name, b.name");
   // Multiple return items come back as arrays
   expect(results).toEqual([["a", "b"]]);
 });

@@ -26,20 +26,14 @@ describe("Literals4 - Octal integer", () => {
     expect(results[0]).toBe(372036854);
   });
 
-  test.fails(
-    "[3] Return the largest octal integer - JS precision limits",
-    () => {
-      // Query: RETURN 0o777777777777777777777 AS literal
-      // Expected: 9223372036854775807
-      const graph = createTckGraph();
-      const results = executeTckQuery(
-        graph,
-        "RETURN 0o777777777777777777777 AS literal",
-      );
-      expect(results).toHaveLength(1);
-      expect(results[0]).toBe(9223372036854775807n);
-    },
-  );
+  test.fails("[3] Return the largest octal integer - JS precision limits", () => {
+    // Query: RETURN 0o777777777777777777777 AS literal
+    // Expected: 9223372036854775807
+    const graph = createTckGraph();
+    const results = executeTckQuery(graph, "RETURN 0o777777777777777777777 AS literal");
+    expect(results).toHaveLength(1);
+    expect(results[0]).toBe(9223372036854775807n);
+  });
 
   test("[4] Return a positive octal zero", () => {
     const graph = createTckGraph();
@@ -70,44 +64,32 @@ describe("Literals4 - Octal integer", () => {
     expect(results[0]).toBe(-372036854);
   });
 
-  test.fails(
-    "[8] Return the smallest octal integer - JS precision limits",
-    () => {
-      // Query: RETURN -0o1000000000000000000000 AS literal
-      // Expected: -9223372036854775808
-      const graph = createTckGraph();
-      const results = executeTckQuery(
-        graph,
-        "RETURN -0o1000000000000000000000 AS literal",
-      );
-      expect(results).toHaveLength(1);
-      expect(results[0]).toBe(-9223372036854775808n);
-    },
-  );
+  test.fails("[8] Return the smallest octal integer - JS precision limits", () => {
+    // Query: RETURN -0o1000000000000000000000 AS literal
+    // Expected: -9223372036854775808
+    const graph = createTckGraph();
+    const results = executeTckQuery(graph, "RETURN -0o1000000000000000000000 AS literal");
+    expect(results).toHaveLength(1);
+    expect(results[0]).toBe(-9223372036854775808n);
+  });
 
-  test.fails(
-    "[9] Fail on a too large octal integer - validation not implemented",
-    () => {
-      // Query: RETURN 0o1000000000000000000000 AS literal
-      // Expected: SyntaxError IntegerOverflow
-      const graph = createTckGraph();
-      expect(() => {
-        executeTckQuery(graph, "RETURN 0o1000000000000000000000 AS literal");
-      }).toThrow();
-    },
-  );
+  test.fails("[9] Fail on a too large octal integer - validation not implemented", () => {
+    // Query: RETURN 0o1000000000000000000000 AS literal
+    // Expected: SyntaxError IntegerOverflow
+    const graph = createTckGraph();
+    expect(() => {
+      executeTckQuery(graph, "RETURN 0o1000000000000000000000 AS literal");
+    }).toThrow();
+  });
 
-  test.fails(
-    "[10] Fail on a too small octal integer - validation not implemented",
-    () => {
-      // Query: RETURN -0o1000000000000000000001 AS literal
-      // Expected: SyntaxError IntegerOverflow
-      const graph = createTckGraph();
-      expect(() => {
-        executeTckQuery(graph, "RETURN -0o1000000000000000000001 AS literal");
-      }).toThrow();
-    },
-  );
+  test.fails("[10] Fail on a too small octal integer - validation not implemented", () => {
+    // Query: RETURN -0o1000000000000000000001 AS literal
+    // Expected: SyntaxError IntegerOverflow
+    const graph = createTckGraph();
+    expect(() => {
+      executeTckQuery(graph, "RETURN -0o1000000000000000000001 AS literal");
+    }).toThrow();
+  });
 
   // Custom tests demonstrating octal integer literals in supported contexts
 
@@ -115,10 +97,7 @@ describe("Literals4 - Octal integer", () => {
     const graph = createTckGraph();
     executeTckQuery(graph, "CREATE (:A {name: 'oct', num: 0o1})");
 
-    const results = executeTckQuery(
-      graph,
-      "MATCH (a:A) WHERE a.num = 1 RETURN a.name",
-    );
+    const results = executeTckQuery(graph, "MATCH (a:A) WHERE a.num = 1 RETURN a.name");
 
     expect(results).toHaveLength(1);
     expect(results[0]).toBe("oct");
@@ -128,10 +107,7 @@ describe("Literals4 - Octal integer", () => {
     const graph = createTckGraph();
     executeTckQuery(graph, "CREATE (:A {name: 'oct', num: 0o10})");
 
-    const results = executeTckQuery(
-      graph,
-      "MATCH (a:A) WHERE a.num = 8 RETURN a.name",
-    );
+    const results = executeTckQuery(graph, "MATCH (a:A) WHERE a.num = 8 RETURN a.name");
 
     expect(results).toHaveLength(1);
     expect(results[0]).toBe("oct");
@@ -142,10 +118,7 @@ describe("Literals4 - Octal integer", () => {
     executeTckQuery(graph, "CREATE (:A {name: 'oct', num: 0o77})");
 
     // 0o77 = 7*8 + 7 = 63
-    const results = executeTckQuery(
-      graph,
-      "MATCH (a:A) WHERE a.num = 63 RETURN a.name",
-    );
+    const results = executeTckQuery(graph, "MATCH (a:A) WHERE a.num = 63 RETURN a.name");
 
     expect(results).toHaveLength(1);
     expect(results[0]).toBe("oct");
@@ -153,15 +126,9 @@ describe("Literals4 - Octal integer", () => {
 
   test("[custom-4] Octal integer in WHERE clause", () => {
     const graph = createTckGraph();
-    executeTckQuery(
-      graph,
-      "CREATE (:A {name: 'a', num: 63}), (:A {name: 'b', num: 64})",
-    );
+    executeTckQuery(graph, "CREATE (:A {name: 'a', num: 63}), (:A {name: 'b', num: 64})");
 
-    const results = executeTckQuery(
-      graph,
-      "MATCH (a:A) WHERE a.num = 0o77 RETURN a.name",
-    );
+    const results = executeTckQuery(graph, "MATCH (a:A) WHERE a.num = 0o77 RETURN a.name");
 
     expect(results).toHaveLength(1);
     expect(results[0]).toBe("a");
@@ -171,10 +138,7 @@ describe("Literals4 - Octal integer", () => {
     const graph = createTckGraph();
     executeTckQuery(graph, "CREATE (:A {name: 'zero', num: 0})");
 
-    const results = executeTckQuery(
-      graph,
-      "MATCH (a:A) WHERE a.num = 0o0 RETURN a.name",
-    );
+    const results = executeTckQuery(graph, "MATCH (a:A) WHERE a.num = 0o0 RETURN a.name");
 
     expect(results).toHaveLength(1);
     expect(results[0]).toBe("zero");
@@ -184,10 +148,7 @@ describe("Literals4 - Octal integer", () => {
     const graph = createTckGraph();
     executeTckQuery(graph, "CREATE (:A {name: 'neg-oct', num: -0o10})");
 
-    const results = executeTckQuery(
-      graph,
-      "MATCH (a:A) WHERE a.num = -8 RETURN a.name",
-    );
+    const results = executeTckQuery(graph, "MATCH (a:A) WHERE a.num = -8 RETURN a.name");
 
     expect(results).toHaveLength(1);
     expect(results[0]).toBe("neg-oct");
@@ -198,10 +159,7 @@ describe("Literals4 - Octal integer", () => {
     executeTckQuery(graph, "CREATE (:A {name: 'oct100', num: 0o100})");
 
     // 0o100 = 1*64 = 64
-    const results = executeTckQuery(
-      graph,
-      "MATCH (a:A) WHERE a.num = 64 RETURN a.name",
-    );
+    const results = executeTckQuery(graph, "MATCH (a:A) WHERE a.num = 64 RETURN a.name");
 
     expect(results).toHaveLength(1);
     expect(results[0]).toBe("oct100");
@@ -210,10 +168,7 @@ describe("Literals4 - Octal integer", () => {
   test("[custom-8] Octal integer in UNWIND list", () => {
     const graph = createTckGraph();
 
-    const results = executeTckQuery(
-      graph,
-      "UNWIND [0o1, 0o10, 0o100] AS num RETURN num",
-    );
+    const results = executeTckQuery(graph, "UNWIND [0o1, 0o10, 0o100] AS num RETURN num");
 
     expect(results).toHaveLength(3);
     expect(results[0]).toEqual([1]);
@@ -223,10 +178,7 @@ describe("Literals4 - Octal integer", () => {
 
   test("[custom-9] Comparing octal and decimal", () => {
     const graph = createTckGraph();
-    executeTckQuery(
-      graph,
-      "CREATE (:A {name: 'oct', num: 0o77}), (:A {name: 'dec', num: 63})",
-    );
+    executeTckQuery(graph, "CREATE (:A {name: 'oct', num: 0o77}), (:A {name: 'dec', num: 63})");
 
     // Both should have the same value (63), so both should match
     const results = executeTckQuery(
@@ -244,10 +196,7 @@ describe("Literals4 - Octal integer", () => {
     executeTckQuery(graph, "CREATE (:A {name: 'oct', num: 0o777})");
 
     // 0o777 = 7*64 + 7*8 + 7 = 448 + 56 + 7 = 511
-    const results = executeTckQuery(
-      graph,
-      "MATCH (a:A) WHERE a.num = 511 RETURN a.name",
-    );
+    const results = executeTckQuery(graph, "MATCH (a:A) WHERE a.num = 511 RETURN a.name");
 
     expect(results).toHaveLength(1);
     expect(results[0]).toBe("oct");

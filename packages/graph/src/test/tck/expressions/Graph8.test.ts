@@ -47,25 +47,16 @@ describe("Graph8 - Property keys function", () => {
   test("[4] Using `keys()` on an optionally matched node", () => {
     // OPTIONAL MATCH implementation needed
     const graph = createTckGraph();
-    const results = executeTckQuery(
-      graph,
-      "OPTIONAL MATCH (n:NonExistent) RETURN keys(n)",
-    );
+    const results = executeTckQuery(graph, "OPTIONAL MATCH (n:NonExistent) RETURN keys(n)");
     expect(results).toHaveLength(1);
     expect(results[0]).toBeNull();
   });
 
   test("[5] Using `keys()` on a relationship", () => {
     const graph = createTckGraph();
-    executeTckQuery(
-      graph,
-      `CREATE (:A)-[:KNOWS {since: 2020, strength: 5}]->(:B)`,
-    );
+    executeTckQuery(graph, `CREATE (:A)-[:KNOWS {since: 2020, strength: 5}]->(:B)`);
 
-    const results = executeTckQuery(
-      graph,
-      "MATCH (:A)-[r:KNOWS]->(:B) RETURN keys(r)",
-    );
+    const results = executeTckQuery(graph, "MATCH (:A)-[r:KNOWS]->(:B) RETURN keys(r)");
 
     expect(results).toHaveLength(1);
     const keys = results[0] as string[];
@@ -77,10 +68,7 @@ describe("Graph8 - Property keys function", () => {
     const graph = createTckGraph();
     executeTckQuery(graph, `CREATE (:A)-[:KNOWS]->(:B)`);
 
-    const results = executeTckQuery(
-      graph,
-      "MATCH (:A)-[r:KNOWS]->(:B) RETURN keys(r)",
-    );
+    const results = executeTckQuery(graph, "MATCH (:A)-[r:KNOWS]->(:B) RETURN keys(r)");
 
     expect(results).toHaveLength(1);
     const keys = results[0] as string[];
@@ -103,10 +91,7 @@ describe("Graph8 - Property keys function", () => {
     // Need list IN expression support in WHERE
     const graph = createTckGraph();
     executeTckQuery(graph, "CREATE (:A {name: 'Alice', age: 30})");
-    const results = executeTckQuery(
-      graph,
-      "MATCH (n:A) WHERE 'name' IN keys(n) RETURN n.name",
-    );
+    const results = executeTckQuery(graph, "MATCH (n:A) WHERE 'name' IN keys(n) RETURN n.name");
     expect(results).toHaveLength(1);
     expect(results[0]).toBe("Alice");
   });
@@ -127,15 +112,9 @@ describe("Graph8 - Property keys function", () => {
 
   test("[Custom 2] Relationship properties can be accessed via r.propertyName", () => {
     const graph = createTckGraph();
-    executeTckQuery(
-      graph,
-      `CREATE (:A)-[:KNOWS {since: 2020, strength: 5}]->(:B)`,
-    );
+    executeTckQuery(graph, `CREATE (:A)-[:KNOWS {since: 2020, strength: 5}]->(:B)`);
 
-    const results = executeTckQuery(
-      graph,
-      "MATCH (:A)-[r:KNOWS]->(:B) RETURN r.since, r.strength",
-    );
+    const results = executeTckQuery(graph, "MATCH (:A)-[r:KNOWS]->(:B) RETURN r.since, r.strength");
 
     expect(results).toHaveLength(1);
     const [since, strength] = results[0] as [number, number];
@@ -147,10 +126,7 @@ describe("Graph8 - Property keys function", () => {
     const graph = createTckGraph();
     executeTckQuery(graph, `CREATE (:A {name: 'Test'})`);
 
-    const results = executeTckQuery(
-      graph,
-      "MATCH (n:A) RETURN n.name, n.missing",
-    );
+    const results = executeTckQuery(graph, "MATCH (n:A) RETURN n.name, n.missing");
 
     expect(results).toHaveLength(1);
     const [name, missing] = results[0] as [string, unknown];

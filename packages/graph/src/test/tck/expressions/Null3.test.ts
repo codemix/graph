@@ -45,18 +45,12 @@ describe("Null3 - Null evaluation", () => {
     expect(results1[0]).toBe(null);
 
     // null IN [1, 2, 3] = null
-    const results2 = executeTckQuery(
-      graph,
-      "RETURN null IN [1, 2, 3] AS result",
-    );
+    const results2 = executeTckQuery(graph, "RETURN null IN [1, 2, 3] AS result");
     expect(results2).toHaveLength(1);
     expect(results2[0]).toBe(null);
 
     // null IN [1, 2, 3, null] = null
-    const results3 = executeTckQuery(
-      graph,
-      "RETURN null IN [1, 2, 3, null] AS result",
-    );
+    const results3 = executeTckQuery(graph, "RETURN null IN [1, 2, 3, null] AS result");
     expect(results3).toHaveLength(1);
     expect(results3[0]).toBe(null);
 
@@ -66,10 +60,7 @@ describe("Null3 - Null evaluation", () => {
     expect(results4[0]).toBe(false);
 
     // 1 IN [1, 2, 3, null] = true
-    const results5 = executeTckQuery(
-      graph,
-      "RETURN 1 IN [1, 2, 3, null] AS result",
-    );
+    const results5 = executeTckQuery(graph, "RETURN 1 IN [1, 2, 3, null] AS result");
     expect(results5).toHaveLength(1);
     expect(results5[0]).toBe(true);
 
@@ -79,10 +70,7 @@ describe("Null3 - Null evaluation", () => {
     expect(results6[0]).toBe(true);
 
     // 5 IN [1, 2, 3, null] = null
-    const results7 = executeTckQuery(
-      graph,
-      "RETURN 5 IN [1, 2, 3, null] AS result",
-    );
+    const results7 = executeTckQuery(graph, "RETURN 5 IN [1, 2, 3, null] AS result");
     expect(results7).toHaveLength(1);
     expect(results7[0]).toBe(null);
   });
@@ -90,16 +78,10 @@ describe("Null3 - Null evaluation", () => {
   // Custom tests demonstrating null behavior that can be tested via WHERE clause
   test("[custom-1] Null property comparison - missing property in condition is handled", () => {
     const graph = createTckGraph();
-    executeTckQuery(
-      graph,
-      "CREATE (:A {name: 'has-num', num: 5}), (:A {name: 'no-num'})",
-    );
+    executeTckQuery(graph, "CREATE (:A {name: 'has-num', num: 5}), (:A {name: 'no-num'})");
 
     // Comparing missing property to a value returns false/unknown (filters out the row)
-    const results = executeTckQuery(
-      graph,
-      "MATCH (n:A) WHERE n.num > 3 RETURN n.name",
-    );
+    const results = executeTckQuery(graph, "MATCH (n:A) WHERE n.num > 3 RETURN n.name");
 
     expect(results).toHaveLength(1);
     expect(results[0]).toBe("has-num");
@@ -107,16 +89,10 @@ describe("Null3 - Null evaluation", () => {
 
   test("[custom-2] Null property equality - missing property never equals anything", () => {
     const graph = createTckGraph();
-    executeTckQuery(
-      graph,
-      "CREATE (:A {name: 'has-num', num: 5}), (:A {name: 'no-num'})",
-    );
+    executeTckQuery(graph, "CREATE (:A {name: 'has-num', num: 5}), (:A {name: 'no-num'})");
 
     // null = 5 is unknown/null, so the row doesn't match
-    const results = executeTckQuery(
-      graph,
-      "MATCH (n:A) WHERE n.num = 5 RETURN n.name",
-    );
+    const results = executeTckQuery(graph, "MATCH (n:A) WHERE n.num = 5 RETURN n.name");
 
     expect(results).toHaveLength(1);
     expect(results[0]).toBe("has-num");
@@ -124,10 +100,7 @@ describe("Null3 - Null evaluation", () => {
 
   test("[custom-3] Null handling in AND - false takes precedence over null", () => {
     const graph = createTckGraph();
-    executeTckQuery(
-      graph,
-      "CREATE (:A {name: 'a', x: 1}), (:A {name: 'b', x: 2})",
-    );
+    executeTckQuery(graph, "CREATE (:A {name: 'a', x: 1}), (:A {name: 'b', x: 2})");
 
     // false AND null = false (row should not match)
     // For node with x=2: (x = 1) AND (y IS NOT NULL) = false AND null = false
@@ -141,10 +114,7 @@ describe("Null3 - Null evaluation", () => {
 
   test("[custom-4] Null handling in OR - true takes precedence over null", () => {
     const graph = createTckGraph();
-    executeTckQuery(
-      graph,
-      "CREATE (:A {name: 'a', x: 1}), (:A {name: 'b', x: 2})",
-    );
+    executeTckQuery(graph, "CREATE (:A {name: 'a', x: 1}), (:A {name: 'b', x: 2})");
 
     // true OR null = true (row should match)
     // For node 'a': (x = 1) OR (y IS NOT NULL) = true OR null = true

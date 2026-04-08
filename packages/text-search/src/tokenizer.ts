@@ -87,11 +87,7 @@ export interface Token {
  * tokenize("running dogs", { stem: true }) // ["run", "dog"]
  */
 export function tokenize(text: string, options: TokenizeOptions = {}): Token[] {
-  const {
-    stem: applyStem = true,
-    removeStopwords = true,
-    minLength = 1,
-  } = options;
+  const { stem: applyStem = true, removeStopwords = true, minLength = 1 } = options;
 
   // Convert to lowercase and extract words
   const words = text
@@ -133,10 +129,7 @@ export function tokenize(text: string, options: TokenizeOptions = {}): Token[] {
  * @param options - Tokenization options
  * @returns Array of stemmed term strings
  */
-export function extractTerms(
-  text: string,
-  options: TokenizeOptions = {},
-): string[] {
+export function extractTerms(text: string, options: TokenizeOptions = {}): string[] {
   return tokenize(text, options).map((t) => t.stemmed);
 }
 

@@ -111,47 +111,35 @@ describe("Map2 - Dynamic Value Access", () => {
     expect(results).toEqual(["NULLVALUE"]);
   });
 
-  test.fails(
-    "[6] Fail indexing map with Int - semantic validation not implemented",
-    () => {
-      const graph = createTckGraph();
-      expect(() => {
-        executeTckQuery(
-          graph,
-          "WITH $expr AS expr, $idx AS idx RETURN expr[idx]",
-          { expr: { name: "Apa" }, idx: 0 },
-        );
-      }).toThrow();
-    },
-  );
+  test.fails("[6] Fail indexing map with Int - semantic validation not implemented", () => {
+    const graph = createTckGraph();
+    expect(() => {
+      executeTckQuery(graph, "WITH $expr AS expr, $idx AS idx RETURN expr[idx]", {
+        expr: { name: "Apa" },
+        idx: 0,
+      });
+    }).toThrow();
+  });
 
-  test.fails(
-    "[7] Fail indexing map with non-string - semantic validation not implemented",
-    () => {
-      const graph = createTckGraph();
-      expect(() => {
-        executeTckQuery(
-          graph,
-          "WITH $expr AS expr, $idx AS idx RETURN expr[idx]",
-          { expr: { name: "Apa" }, idx: 12.3 },
-        );
-      }).toThrow();
-    },
-  );
+  test.fails("[7] Fail indexing map with non-string - semantic validation not implemented", () => {
+    const graph = createTckGraph();
+    expect(() => {
+      executeTckQuery(graph, "WITH $expr AS expr, $idx AS idx RETURN expr[idx]", {
+        expr: { name: "Apa" },
+        idx: 12.3,
+      });
+    }).toThrow();
+  });
 
-  test.fails(
-    "[8] Fail indexing non-map type - semantic validation not implemented",
-    () => {
-      const graph = createTckGraph();
-      expect(() => {
-        executeTckQuery(
-          graph,
-          "WITH $expr AS expr, $idx AS idx RETURN expr[idx]",
-          { expr: 100, idx: 0 },
-        );
-      }).toThrow();
-    },
-  );
+  test.fails("[8] Fail indexing non-map type - semantic validation not implemented", () => {
+    const graph = createTckGraph();
+    expect(() => {
+      executeTckQuery(graph, "WITH $expr AS expr, $idx AS idx RETURN expr[idx]", {
+        expr: 100,
+        idx: 0,
+      });
+    }).toThrow();
+  });
 
   // Custom tests demonstrating property access patterns that work
   test("[Custom 1] Access node properties dynamically via RETURN expressions", () => {
@@ -173,10 +161,7 @@ describe("Map2 - Dynamic Value Access", () => {
     );
 
     // Use WHERE to filter by a "key" property instead of dynamic map access
-    const results = executeTckQuery(
-      graph,
-      "MATCH (n:A) WHERE n.key = 'name' RETURN n.value",
-    );
+    const results = executeTckQuery(graph, "MATCH (n:A) WHERE n.key = 'name' RETURN n.value");
 
     expect(results).toHaveLength(1);
     expect(results[0]).toBe("Alice");
@@ -189,10 +174,7 @@ describe("Map2 - Dynamic Value Access", () => {
       `CREATE (:A {name: 'Alice'})-[:KNOWS {since: 2020, trust: 'high'}]->(:B {name: 'Bob'})`,
     );
 
-    const results = executeTckQuery(
-      graph,
-      "MATCH ()-[r:KNOWS]->() RETURN r.since, r.trust",
-    );
+    const results = executeTckQuery(graph, "MATCH ()-[r:KNOWS]->() RETURN r.since, r.trust");
 
     expect(results).toHaveLength(1);
     expect(results[0]).toEqual([2020, "high"]);
@@ -200,10 +182,7 @@ describe("Map2 - Dynamic Value Access", () => {
 
   test("[Custom 4] Property access with WHERE comparison", () => {
     const graph = createTckGraph();
-    executeTckQuery(
-      graph,
-      `CREATE (:A {name: 'Alice', score: 90}), (:A {name: 'Bob', score: 75})`,
-    );
+    executeTckQuery(graph, `CREATE (:A {name: 'Alice', score: 90}), (:A {name: 'Bob', score: 75})`);
 
     const results = executeTckQuery(
       graph,

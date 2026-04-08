@@ -70,9 +70,7 @@ test("RepeatStep", () => {
   expect(serialized.length).toBe(steps.length);
 
   // Verify deserialized steps produce same string representation
-  expect(stringifySteps(createStepsFromJSON(serialized))).toBe(
-    stringifySteps(steps),
-  );
+  expect(stringifySteps(createStepsFromJSON(serialized))).toBe(stringifySteps(steps));
 });
 
 describe("DedupStep", () => {

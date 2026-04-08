@@ -35,12 +35,8 @@ test("CREATE clause - Grammar parsing - should parse CREATE with multiple patter
   const ast = parse(query) as Query;
 
   expect(ast.create!.patterns).toHaveLength(2);
-  expect((ast.create!.patterns[0] as CreateNodePattern).labels).toEqual([
-    "User",
-  ]);
-  expect((ast.create!.patterns[1] as CreateNodePattern).labels).toEqual([
-    "Post",
-  ]);
+  expect((ast.create!.patterns[0] as CreateNodePattern).labels).toEqual(["User"]);
+  expect((ast.create!.patterns[1] as CreateNodePattern).labels).toEqual(["Post"]);
 });
 
 test("CREATE clause - AST to Steps conversion - should convert CREATE clause to CreateStep", () => {
@@ -105,10 +101,7 @@ test("CREATE clause - Query execution - should add vertices to the graph", () =>
 
   const initialCount = Array.from(graph.getVertices("User")).length;
 
-  executeQuery(
-    graph,
-    `MATCH (x:User) CREATE (u:User {name: "NewUser"}) RETURN u`,
-  );
+  executeQuery(graph, `MATCH (x:User) CREATE (u:User {name: "NewUser"}) RETURN u`);
 
   const finalCount = Array.from(graph.getVertices("User")).length;
   expect(finalCount).toBe(initialCount + 1);

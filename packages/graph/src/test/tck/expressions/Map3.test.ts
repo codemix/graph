@@ -62,10 +62,7 @@ describe("Map3 - Keys function", () => {
 
   test("[4d] keys() on map with null and non-null values", () => {
     const graph = createTckGraph();
-    const results = executeTckQuery(
-      graph,
-      "RETURN keys({k: null, l: 1}) AS keys",
-    );
+    const results = executeTckQuery(graph, "RETURN keys({k: null, l: 1}) AS keys");
     const keys = results[0] as string[];
     expect(keys).toHaveLength(2);
     expect(keys).toContain("k");
@@ -85,17 +82,11 @@ describe("Map3 - Keys function", () => {
   // Custom tests demonstrating alternative patterns for key-related operations
   test("[Custom 1] Check if property exists via WHERE comparison", () => {
     const graph = createTckGraph();
-    executeTckQuery(
-      graph,
-      `CREATE (:A {name: 'Alice', city: 'London'}), (:A {name: 'Bob'})`,
-    );
+    executeTckQuery(graph, `CREATE (:A {name: 'Alice', city: 'London'}), (:A {name: 'Bob'})`);
 
     // Filter nodes that have a specific property set
     // Note: This checks if property is NOT undefined, not if key exists
-    const results = executeTckQuery(
-      graph,
-      "MATCH (n:A) WHERE n.city = 'London' RETURN n.name",
-    );
+    const results = executeTckQuery(graph, "MATCH (n:A) WHERE n.city = 'London' RETURN n.name");
 
     expect(results).toHaveLength(1);
     expect(results[0]).toBe("Alice");
@@ -106,10 +97,7 @@ describe("Map3 - Keys function", () => {
     executeTckQuery(graph, `CREATE (:A {name: 'Alice', age: 30, city: 'NYC'})`);
 
     // We can access specific known properties
-    const results = executeTckQuery(
-      graph,
-      "MATCH (n:A) RETURN n.name, n.age, n.city",
-    );
+    const results = executeTckQuery(graph, "MATCH (n:A) RETURN n.name, n.age, n.city");
 
     expect(results).toHaveLength(1);
     expect(results[0]).toEqual(["Alice", 30, "NYC"]);
@@ -143,19 +131,12 @@ describe("Map3 - Keys function", () => {
 
     // Filter for nodes where email property is set (not undefined)
     // Note: In this implementation, missing properties return undefined
-    const results = executeTckQuery(
-      graph,
-      "MATCH (n:A) RETURN n.name, n.email",
-    );
+    const results = executeTckQuery(graph, "MATCH (n:A) RETURN n.name, n.email");
 
     expect(results).toHaveLength(2);
     // Results are: ['Alice', 'alice@test.com'], ['Bob', undefined]
-    const aliceResult = results.find(
-      (r) => Array.isArray(r) && r[0] === "Alice",
-    ) as unknown[];
-    const bobResult = results.find(
-      (r) => Array.isArray(r) && r[0] === "Bob",
-    ) as unknown[];
+    const aliceResult = results.find((r) => Array.isArray(r) && r[0] === "Alice") as unknown[];
+    const bobResult = results.find((r) => Array.isArray(r) && r[0] === "Bob") as unknown[];
 
     expect(aliceResult[1]).toBe("alice@test.com");
     expect(bobResult[1]).toBeUndefined();

@@ -100,12 +100,7 @@ export function parseProperties<T extends Record<string, unknown>>(
 
   const result: Record<string, unknown> = {};
   for (const key of Object.keys(properties)) {
-    result[key] = parsePropertyValue(
-      key,
-      label,
-      properties[key],
-      schemaProperties,
-    );
+    result[key] = parsePropertyValue(key, label, properties[key], schemaProperties);
   }
   return result as T;
 }
@@ -187,9 +182,7 @@ export interface GraphSource<TSchema extends GraphSchema> {
  * the ability to modify the graph. This provides compile-time type safety
  * for mutation operations instead of runtime duck-typing checks.
  */
-export interface MutableGraphSource<
-  TSchema extends GraphSchema,
-> extends GraphSource<TSchema> {
+export interface MutableGraphSource<TSchema extends GraphSchema> extends GraphSource<TSchema> {
   /**
    * Add a vertex to the graph.
    */
@@ -227,9 +220,7 @@ export interface EmptyGraphSourceConfig<TSchema extends GraphSchema> {
   schema: TSchema;
 }
 
-export class EmptyGraphSource<
-  const TSchema extends GraphSchema,
-> implements GraphSource<TSchema> {
+export class EmptyGraphSource<const TSchema extends GraphSchema> implements GraphSource<TSchema> {
   #config: EmptyGraphSourceConfig<TSchema>;
   public constructor(config: EmptyGraphSourceConfig<TSchema>) {
     this.#config = config;
@@ -313,9 +304,7 @@ export interface GraphConfig<TSchema extends GraphSchema> {
   validateProperties?: boolean;
 }
 
-export class Graph<
-  TSchema extends GraphSchema,
-> implements GraphSource<TSchema> {
+export class Graph<TSchema extends GraphSchema> implements GraphSource<TSchema> {
   #config: GraphConfig<TSchema>;
 
   #vertexIdentities: WeakMap<StoredVertex, Vertex<TSchema, any>>;
@@ -369,9 +358,7 @@ export class Graph<
   public getElementById<TLabel extends EdgeLabel<TSchema>>(
     id: ElementId<TLabel>,
   ): Edge<TSchema, TLabel>;
-  public getElementById<TLabel extends AnyLabel<TSchema>>(
-    id: ElementId<TLabel>,
-  ) {
+  public getElementById<TLabel extends AnyLabel<TSchema>>(id: ElementId<TLabel>) {
     const label = getLabelFromElementId<TLabel>(id);
     if (label in this.#config.schema.vertices) {
       return this.getVertexById<TLabel>(id);
@@ -548,16 +535,10 @@ export class Graph<
     };
 
     // Ensure unique indexes are built before checking constraints
-    this.#indexManager.ensureUniqueIndexesBuilt(
-      label,
-      this.#config.storage.getVertices([label]),
-    );
+    this.#indexManager.ensureUniqueIndexesBuilt(label, this.#config.storage.getVertices([label]));
 
     // Check unique constraints before adding (throws if violated)
-    this.#indexManager.checkAllUniqueConstraints(
-      label,
-      data.properties as Record<string, unknown>,
-    );
+    this.#indexManager.checkAllUniqueConstraints(label, data.properties as Record<string, unknown>);
 
     // Add to storage
     this.#config.storage.addVertex(data);
@@ -627,10 +608,8 @@ export class Graph<
 
     const id = this.generateElementId(label);
 
-    const outV =
-      typeof rawOutV === "object" ? rawOutV : this.getVertexById(rawOutV);
-    const inV =
-      typeof rawInV === "object" ? rawInV : this.getVertexById(rawInV);
+    const outV = typeof rawOutV === "object" ? rawOutV : this.getVertexById(rawOutV);
+    const inV = typeof rawInV === "object" ? rawInV : this.getVertexById(rawInV);
 
     if (outV == null) {
       throw new VertexNotFoundError(rawOutV as ElementId);
@@ -647,10 +626,7 @@ export class Graph<
     };
 
     // Ensure unique indexes are built before checking constraints
-    this.#indexManager.ensureUniqueIndexesBuilt(
-      label,
-      this.#config.storage.getEdges([label]),
-    );
+    this.#indexManager.ensureUniqueIndexesBuilt(label, this.#config.storage.getEdges([label]));
 
     // Check unique constraints before adding (throws if violated)
     this.#indexManager.checkAllUniqueConstraints(label, properties);
@@ -733,9 +709,7 @@ export class Graph<
       : isEdge
         ? this.#config.storage.getEdgeById(id)
         : undefined;
-    const oldValue = element
-      ? (element.properties as Record<string, unknown>)[key]
-      : undefined;
+    const oldValue = element ? (element.properties as Record<string, unknown>)[key] : undefined;
     // Store the parsed/transformed value, not the raw input
     this.#config.storage.updateProperty(id, key, parsedValue);
     if (element) {
@@ -791,9 +765,7 @@ export abstract class Element<
    */
   public get label(): TLabel {
     if (this.#parsedId == null) {
-      this.#parsedId = parseElementId<TLabel & string>(
-        this[$StoredElement].id as any,
-      );
+      this.#parsedId = parseElementId<TLabel & string>(this[$StoredElement].id as any);
     }
     return this.#parsedId[0];
   }
@@ -803,9 +775,7 @@ export abstract class Element<
    */
   public get uuid(): string {
     if (this.#parsedId == null) {
-      this.#parsedId = parseElementId<TLabel & string>(
-        this[$StoredElement].id as any,
-      );
+      this.#parsedId = parseElementId<TLabel & string>(this[$StoredElement].id as any);
     }
     return this.#parsedId[1];
   }
@@ -825,12 +795,7 @@ export abstract class Element<
    */
   public hasProperty<TKey extends string>(
     key: TKey,
-  ): this is Element<
-    TSchema,
-    TLabel,
-    TProperties & { [K in TKey]: any },
-    TStoredElement
-  >;
+  ): this is Element<TSchema, TLabel, TProperties & { [K in TKey]: any }, TStoredElement>;
   /**
    * Check if the element has a specific property with a specific value.
    * @param key The key of the property.
@@ -865,10 +830,7 @@ export abstract class Element<
    * @param key The key of the property.
    * @param value The value of the property.
    */
-  public set<TKey extends keyof TProperties>(
-    key: TKey,
-    value: TProperties[TKey],
-  ): void {
+  public set<TKey extends keyof TProperties>(key: TKey, value: TProperties[TKey]): void {
     this.#graph.updateProperty(this.id, key as string, value);
   }
 
@@ -885,10 +847,7 @@ export abstract class Element<
   public abstract toJSON(): object;
 }
 
-type VertexLabelsWithProperty<
-  TSchema extends GraphSchema,
-  TProperty extends string,
-> = keyof {
+type VertexLabelsWithProperty<TSchema extends GraphSchema, TProperty extends string> = keyof {
   [K in keyof TSchema["vertices"] as TProperty extends keyof TSchema["vertices"][K]["properties"]
     ? K
     : never]: true;
@@ -897,12 +856,7 @@ type VertexLabelsWithProperty<
 export class Vertex<
   const TSchema extends GraphSchema,
   const TVertexLabel extends VertexLabel<TSchema> = VertexLabel<TSchema>,
-> extends Element<
-  TSchema,
-  TVertexLabel,
-  VertexProperties<TSchema, TVertexLabel>,
-  StoredVertex
-> {
+> extends Element<TSchema, TVertexLabel, VertexProperties<TSchema, TVertexLabel>, StoredVertex> {
   public toJSON(): StoredVertex {
     return this[$StoredElement];
   }
@@ -924,15 +878,10 @@ export class Vertex<
    * @param key The key of the property.
    * @param value The value of the property.
    */
-  public hasProperty<
-    const TKey extends keyof VertexProperties<TSchema, TVertexLabel>,
-  >(
+  public hasProperty<const TKey extends keyof VertexProperties<TSchema, TVertexLabel>>(
     key: TKey,
     value: VertexProperties<TSchema, TVertexLabel>[TKey],
-  ): this is Vertex<
-    TSchema,
-    TVertexLabel & VertexLabelsWithProperty<TSchema, TKey>
-  >;
+  ): this is Vertex<TSchema, TVertexLabel & VertexLabelsWithProperty<TSchema, TKey>>;
   public hasProperty(key: string, value: any = undefined) {
     if (value === undefined) {
       return this[$StoredElement].properties[key as keyof object] !== undefined;
@@ -948,12 +897,7 @@ export class Vertex<
 export class Edge<
   const TSchema extends GraphSchema,
   const TEdgeLabel extends EdgeLabel<TSchema> = EdgeLabel<TSchema>,
-> extends Element<
-  TSchema,
-  TEdgeLabel,
-  EdgeProperties<TSchema, TEdgeLabel>,
-  StoredEdge
-> {
+> extends Element<TSchema, TEdgeLabel, EdgeProperties<TSchema, TEdgeLabel>, StoredEdge> {
   /**
    * The vertex that the edge points to (target).
    * Named "inV" because this is the vertex the edge goes INTO.
@@ -961,9 +905,7 @@ export class Edge<
   public get inV(): Vertex<TSchema, any> {
     const vertex = this.graph.getVertexById(this[$StoredElement].inV);
     if (vertex == null) {
-      throw new GraphConsistencyError(
-        `Vertex with id ${this[$StoredElement].inV} not found`,
-      );
+      throw new GraphConsistencyError(`Vertex with id ${this[$StoredElement].inV} not found`);
     }
     return vertex;
   }
@@ -975,9 +917,7 @@ export class Edge<
   public get outV(): Vertex<TSchema, any> {
     const vertex = this.graph.getVertexById(this[$StoredElement].outV);
     if (vertex == null) {
-      throw new GraphConsistencyError(
-        `Vertex with id ${this[$StoredElement].outV} not found`,
-      );
+      throw new GraphConsistencyError(`Vertex with id ${this[$StoredElement].outV} not found`);
     }
     return vertex;
   }

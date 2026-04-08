@@ -60,8 +60,7 @@ function makeIntegerType(): StandardSchemaV1<string | number, number> {
       version: 1,
       vendor: "test",
       validate: (value) => {
-        const num =
-          typeof value === "number" ? value : parseInt(String(value), 10);
+        const num = typeof value === "number" ? value : parseInt(String(value), 10);
         if (isNaN(num)) {
           return {
             issues: [{ message: "Expected integer" }],
@@ -175,22 +174,12 @@ describe("parsePropertyValue", () => {
   const schemaProperties = transformingSchema.vertices.Person.properties;
 
   test("transforms value through schema validator", () => {
-    const result = parsePropertyValue(
-      "name",
-      "Person",
-      "alice",
-      schemaProperties,
-    );
+    const result = parsePropertyValue("name", "Person", "alice", schemaProperties);
     expect(result).toBe("ALICE");
   });
 
   test("trims whitespace from string values", () => {
-    const result = parsePropertyValue(
-      "bio",
-      "Person",
-      "  hello world  ",
-      schemaProperties,
-    );
+    const result = parsePropertyValue("bio", "Person", "  hello world  ", schemaProperties);
     expect(result).toBe("hello world");
   });
 
@@ -201,20 +190,15 @@ describe("parsePropertyValue", () => {
 
   test("returns value unchanged for unknown property key", () => {
     // Unknown properties are allowed without validation
-    const result = parsePropertyValue(
-      "unknownProp",
-      "Person",
-      "value",
-      schemaProperties,
-    );
+    const result = parsePropertyValue("unknownProp", "Person", "value", schemaProperties);
     expect(result).toBe("value");
   });
 
   test("throws PropertyTypeError for validation failure", () => {
     const failingProps = failingSchema.vertices.User.properties;
-    expect(() =>
-      parsePropertyValue("email", "User", "invalid", failingProps),
-    ).toThrow(PropertyTypeError);
+    expect(() => parsePropertyValue("email", "User", "invalid", failingProps)).toThrow(
+      PropertyTypeError,
+    );
 
     try {
       parsePropertyValue("email", "User", "invalid", failingProps);
@@ -227,9 +211,9 @@ describe("parsePropertyValue", () => {
 
   test("throws AsyncValidationError for async validation", () => {
     const asyncProps = asyncSchema.vertices.User.properties;
-    expect(() =>
-      parsePropertyValue("data", "User", "test", asyncProps),
-    ).toThrow(AsyncValidationError);
+    expect(() => parsePropertyValue("data", "User", "test", asyncProps)).toThrow(
+      AsyncValidationError,
+    );
 
     try {
       parsePropertyValue("data", "User", "test", asyncProps);
@@ -576,9 +560,7 @@ describe("Graph.updateProperty with validateProperties", () => {
     });
 
     // name expects string, pass number
-    expect(() => graph.updateProperty(vertex.id, "name", 123)).toThrow(
-      PropertyTypeError,
-    );
+    expect(() => graph.updateProperty(vertex.id, "name", 123)).toThrow(PropertyTypeError);
   });
 });
 
@@ -634,9 +616,7 @@ describe("AsyncValidationError", () => {
       validateProperties: true,
     });
 
-    expect(() => graph.addVertex("User", { data: "test" })).toThrow(
-      AsyncValidationError,
-    );
+    expect(() => graph.addVertex("User", { data: "test" })).toThrow(AsyncValidationError);
   });
 
   test("is thrown for async validation in updateProperty", () => {
@@ -644,9 +624,9 @@ describe("AsyncValidationError", () => {
     // but we'll test async validation directly with parsePropertyValue
     const asyncProps = asyncSchema.vertices.User.properties;
 
-    expect(() =>
-      parsePropertyValue("data", "User", "test", asyncProps),
-    ).toThrow(AsyncValidationError);
+    expect(() => parsePropertyValue("data", "User", "test", asyncProps)).toThrow(
+      AsyncValidationError,
+    );
   });
 
   test("AsyncValidationError has correct properties", () => {
@@ -673,12 +653,7 @@ describe("Edge cases", () => {
       },
     } as unknown as Record<string, { type: StandardSchemaV1<unknown> }>;
 
-    const result = parsePropertyValue(
-      "value",
-      "Simple",
-      "test",
-      schemaPropsWithoutValidate,
-    );
+    const result = parsePropertyValue("value", "Simple", "test", schemaPropsWithoutValidate);
     expect(result).toBe("test");
   });
 
@@ -696,12 +671,7 @@ describe("Edge cases", () => {
       },
     } as unknown as Record<string, { type: StandardSchemaV1<unknown> }>;
 
-    const result = parsePropertyValue(
-      "field",
-      "Weird",
-      "original",
-      schemaPropsWithWeirdResult,
-    );
+    const result = parsePropertyValue("field", "Weird", "original", schemaPropsWithWeirdResult);
     expect(result).toBe("original");
   });
 
@@ -720,12 +690,7 @@ describe("Edge cases", () => {
     } as unknown as Record<string, { type: StandardSchemaV1<unknown> }>;
 
     // Empty issues array should not throw
-    const result = parsePropertyValue(
-      "data",
-      "Test",
-      "test",
-      schemaPropsWithEmptyIssues,
-    );
+    const result = parsePropertyValue("data", "Test", "test", schemaPropsWithEmptyIssues);
     expect(result).toBe("test");
   });
 });
@@ -756,8 +721,6 @@ describe("Transformation with unique constraints", () => {
     graph.addVertex("User", { email: "  test@example.com  " });
 
     // Trying to add another user with same email (after trimming) should fail
-    expect(() =>
-      graph.addVertex("User", { email: "test@example.com" }),
-    ).toThrow();
+    expect(() => graph.addVertex("User", { email: "test@example.com" })).toThrow();
   });
 });

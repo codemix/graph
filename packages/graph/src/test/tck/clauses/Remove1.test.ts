@@ -57,10 +57,7 @@ describe("Remove1 - Remove a Property", () => {
 
   test("[4] Remove multiple relationship properties - unlabeled nodes not supported", () => {
     const graph = createTckGraph();
-    executeTckQuery(
-      graph,
-      "CREATE (a), (b), (a)-[:X {num: 42, a: 'a', b: 'B'}]->(b)",
-    );
+    executeTckQuery(graph, "CREATE (a), (b), (a)-[:X {num: 42, a: 'a', b: 'B'}]->(b)");
     executeTckQuery(
       graph,
       `MATCH ()-[r:X]->()
@@ -74,31 +71,19 @@ describe("Remove1 - Remove a Property", () => {
     expect(getProperty(rel, "b")).toBe("B");
   });
 
-  test.fails(
-    "[5] Ignore null when removing property from a node - OPTIONAL MATCH not supported",
-    () => {
-      const graph = createTckGraph();
-      const results = executeTckQuery(
-        graph,
-        "OPTIONAL MATCH (a:DoesNotExist) REMOVE a.num RETURN a",
-      );
-      expect(results).toHaveLength(1);
-      expect(results[0]).toBeNull();
-    },
-  );
+  test.fails("[5] Ignore null when removing property from a node - OPTIONAL MATCH not supported", () => {
+    const graph = createTckGraph();
+    const results = executeTckQuery(graph, "OPTIONAL MATCH (a:DoesNotExist) REMOVE a.num RETURN a");
+    expect(results).toHaveLength(1);
+    expect(results[0]).toBeNull();
+  });
 
-  test.fails(
-    "[6] Ignore null when removing property from a relationship - OPTIONAL MATCH not supported",
-    () => {
-      const graph = createTckGraph();
-      const results = executeTckQuery(
-        graph,
-        "OPTIONAL MATCH (n)-[r]->() REMOVE r.num RETURN n",
-      );
-      expect(results).toHaveLength(1);
-      expect(results[0]).toBeNull();
-    },
-  );
+  test.fails("[6] Ignore null when removing property from a relationship - OPTIONAL MATCH not supported", () => {
+    const graph = createTckGraph();
+    const results = executeTckQuery(graph, "OPTIONAL MATCH (n)-[r]->() REMOVE r.num RETURN n");
+    expect(results).toHaveLength(1);
+    expect(results[0]).toBeNull();
+  });
 
   test("[7] Remove a missing node property - unlabeled nodes not supported", () => {
     const graph = createTckGraph();
@@ -129,10 +114,7 @@ describe("Remove1 - Remove a Property", () => {
 
   test("[custom-2] Remove multiple relationship properties with labeled nodes", () => {
     const graph = createTckGraph();
-    executeTckQuery(
-      graph,
-      "CREATE (:A)-[:X {num: 42, name: 'edge', prop: 'keep'}]->(:B)",
-    );
+    executeTckQuery(graph, "CREATE (:A)-[:X {num: 42, name: 'edge', prop: 'keep'}]->(:B)");
 
     executeTckQuery(
       graph,

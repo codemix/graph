@@ -144,9 +144,7 @@ describe("Grammar Parsing", () => {
   });
 
   test("parses IS with parenthesized expression", () => {
-    const ast = parse(
-      "MATCH (n) WHERE n IS :(Person|Admin)&!Employee RETURN n",
-    ) as Query;
+    const ast = parse("MATCH (n) WHERE n IS :(Person|Admin)&!Employee RETURN n") as Query;
     expect(ast.matches[0]!.where).toBeDefined();
     const condition = ast.matches[0]!.where!.condition as IsLabeledCondition;
     expect(condition.type).toBe("IsLabeledCondition");
@@ -156,18 +154,14 @@ describe("Grammar Parsing", () => {
   });
 
   test("parses IS combined with AND condition", () => {
-    const ast = parse(
-      "MATCH (n) WHERE n IS :Person AND n.age > 20 RETURN n",
-    ) as Query;
+    const ast = parse("MATCH (n) WHERE n IS :Person AND n.age > 20 RETURN n") as Query;
     expect(ast.matches[0]!.where).toBeDefined();
     const condition = ast.matches[0]!.where!.condition as any;
     expect(condition.type).toBe("AndCondition");
     expect(condition.left.type).toBe("IsLabeledCondition");
     // The right side is a PropertyCondition (property comparison)
     // n.age > 20 parses as PropertyCondition or ExpressionCondition depending on grammar
-    expect(["PropertyCondition", "ExpressionCondition"]).toContain(
-      condition.right.type,
-    );
+    expect(["PropertyCondition", "ExpressionCondition"]).toContain(condition.right.type);
   });
 });
 

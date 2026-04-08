@@ -66,9 +66,7 @@ export class InvalidComparisonError extends GraphError {
   public readonly valueB: unknown;
 
   public constructor(valueA: unknown, valueB: unknown) {
-    super(
-      `Cannot compare values of incompatible types: ${typeof valueA} and ${typeof valueB}`,
-    );
+    super(`Cannot compare values of incompatible types: ${typeof valueA} and ${typeof valueB}`);
     this.name = "InvalidComparisonError";
     this.valueA = valueA;
     this.valueB = valueB;
@@ -135,16 +133,9 @@ export class PropertyTypeError extends GraphError {
   public readonly value: unknown;
   public readonly issues: readonly string[];
 
-  public constructor(
-    key: string,
-    label: string,
-    value: unknown,
-    issues: readonly string[],
-  ) {
+  public constructor(key: string, label: string, value: unknown, issues: readonly string[]) {
     const issueText = issues.join("; ");
-    super(
-      `Property '${key}' on label '${label}' failed validation: ${issueText}`,
-    );
+    super(`Property '${key}' on label '${label}' failed validation: ${issueText}`);
     this.name = "PropertyTypeError";
     this.key = key;
     this.label = label;
@@ -190,9 +181,7 @@ export class AsyncValidationError extends GraphError {
   public readonly label: string;
 
   public constructor(key: string, label: string) {
-    super(
-      `Property '${key}' on label '${label}' returned async validation result (not supported)`,
-    );
+    super(`Property '${key}' on label '${label}' returned async validation result (not supported)`);
     this.name = "AsyncValidationError";
     this.key = key;
     this.label = label;
@@ -207,9 +196,7 @@ export class ReadonlyGraphError extends GraphError {
   public readonly stepName: string;
 
   public constructor(stepName: string) {
-    super(
-      `Query contains mutation step '${stepName}' but readonly mode is enabled`,
-    );
+    super(`Query contains mutation step '${stepName}' but readonly mode is enabled`);
     this.name = "ReadonlyGraphError";
     this.stepName = stepName;
   }

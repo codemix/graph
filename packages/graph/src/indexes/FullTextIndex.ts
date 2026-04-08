@@ -1,10 +1,6 @@
 import type { ElementId } from "../GraphStorage.js";
 import type { Index, IndexStatistics } from "./types.js";
-import {
-  createMatcher,
-  extractTerms,
-  type MatcherOptions,
-} from "@codemix/text-search";
+import { createMatcher, extractTerms, type MatcherOptions } from "@codemix/text-search";
 
 /**
  * Result of a full-text search.
@@ -50,11 +46,7 @@ export class FullTextIndex implements Index {
    */
   #documents: Map<ElementId, string> = new Map();
 
-  public constructor(
-    label: string,
-    property: string,
-    options?: MatcherOptions,
-  ) {
+  public constructor(label: string, property: string, options?: MatcherOptions) {
     this.label = label;
     this.property = property;
     this.#options = options ?? {};
@@ -103,11 +95,7 @@ export class FullTextIndex implements Index {
     this.#documents.delete(elementId);
   }
 
-  public update(
-    elementId: ElementId,
-    oldValue: unknown,
-    newValue: unknown,
-  ): void {
+  public update(elementId: ElementId, oldValue: unknown, newValue: unknown): void {
     this.remove(elementId, oldValue);
     this.add(elementId, newValue);
   }
@@ -121,11 +109,7 @@ export class FullTextIndex implements Index {
    * @param minScore Minimum score threshold (0-1).
    * @returns Array of results with scores, sorted by relevance.
    */
-  public search(
-    query: string,
-    limit: number = 0,
-    minScore: number = 0,
-  ): FullTextSearchResult[] {
+  public search(query: string, limit: number = 0, minScore: number = 0): FullTextSearchResult[] {
     if (!query || query.trim().length === 0) {
       return [];
     }

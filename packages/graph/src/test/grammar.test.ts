@@ -63,8 +63,7 @@ test("Graph Query Language Parser - Edge traversal - should parse outgoing edge 
 
   expect((ast.matches[0]!.pattern as Pattern).elements).toHaveLength(3);
 
-  const sourceNode = (ast.matches[0]!.pattern as Pattern)
-    .elements[0] as NodePattern;
+  const sourceNode = (ast.matches[0]!.pattern as Pattern).elements[0] as NodePattern;
   expect(sourceNode.type).toBe("NodePattern");
   expect(sourceNode.variable).toBe("u");
   expect(sourceNode.labels).toEqual(["User"]);
@@ -74,8 +73,7 @@ test("Graph Query Language Parser - Edge traversal - should parse outgoing edge 
   expect(edge.direction).toBe("out");
   expect(edge.labels).toEqual(["follows"]);
 
-  const targetNode = (ast.matches[0]!.pattern as Pattern)
-    .elements[2] as NodePattern;
+  const targetNode = (ast.matches[0]!.pattern as Pattern).elements[2] as NodePattern;
   expect(targetNode.type).toBe("NodePattern");
   expect(targetNode.variable).toBe("f");
 });
@@ -156,8 +154,7 @@ test("Graph Query Language Parser - Edge traversal - should parse edge with vari
   // Outgoing
   const query1 = "MATCH (a)-[e]->(b) RETURN a, e, b";
   const ast1 = parse(query1) as Query;
-  const edge1 = (ast1.matches[0]!.pattern as Pattern)
-    .elements[1] as EdgePattern;
+  const edge1 = (ast1.matches[0]!.pattern as Pattern).elements[1] as EdgePattern;
   expect(edge1.variable).toBe("e");
   expect(edge1.labels).toEqual([]);
   expect(edge1.direction).toBe("out");
@@ -165,8 +162,7 @@ test("Graph Query Language Parser - Edge traversal - should parse edge with vari
   // Incoming
   const query2 = "MATCH (a)<-[e]-(b) RETURN a, e, b";
   const ast2 = parse(query2) as Query;
-  const edge2 = (ast2.matches[0]!.pattern as Pattern)
-    .elements[1] as EdgePattern;
+  const edge2 = (ast2.matches[0]!.pattern as Pattern).elements[1] as EdgePattern;
   expect(edge2.variable).toBe("e");
   expect(edge2.labels).toEqual([]);
   expect(edge2.direction).toBe("in");
@@ -174,8 +170,7 @@ test("Graph Query Language Parser - Edge traversal - should parse edge with vari
   // Bidirectional
   const query3 = "MATCH (a)-[e]-(b) RETURN a, e, b";
   const ast3 = parse(query3) as Query;
-  const edge3 = (ast3.matches[0]!.pattern as Pattern)
-    .elements[1] as EdgePattern;
+  const edge3 = (ast3.matches[0]!.pattern as Pattern).elements[1] as EdgePattern;
   expect(edge3.variable).toBe("e");
   expect(edge3.labels).toEqual([]);
   expect(edge3.direction).toBe("both");
@@ -236,24 +231,19 @@ test("Graph Query Language Parser - Multi-hop traversal - should parse MATCH (u:
 
   expect((ast.matches[0]!.pattern as Pattern).elements).toHaveLength(5);
 
-  const firstNode = (ast.matches[0]!.pattern as Pattern)
-    .elements[0] as NodePattern;
+  const firstNode = (ast.matches[0]!.pattern as Pattern).elements[0] as NodePattern;
   expect(firstNode.variable).toBe("u");
 
-  const firstEdge = (ast.matches[0]!.pattern as Pattern)
-    .elements[1] as EdgePattern;
+  const firstEdge = (ast.matches[0]!.pattern as Pattern).elements[1] as EdgePattern;
   expect(firstEdge.labels).toEqual(["follows"]);
 
-  const secondNode = (ast.matches[0]!.pattern as Pattern)
-    .elements[2] as NodePattern;
+  const secondNode = (ast.matches[0]!.pattern as Pattern).elements[2] as NodePattern;
   expect(secondNode.variable).toBe("f");
 
-  const secondEdge = (ast.matches[0]!.pattern as Pattern)
-    .elements[3] as EdgePattern;
+  const secondEdge = (ast.matches[0]!.pattern as Pattern).elements[3] as EdgePattern;
   expect(secondEdge.labels).toEqual(["likes"]);
 
-  const thirdNode = (ast.matches[0]!.pattern as Pattern)
-    .elements[4] as NodePattern;
+  const thirdNode = (ast.matches[0]!.pattern as Pattern).elements[4] as NodePattern;
   expect(thirdNode.variable).toBe("p");
   expect(thirdNode.labels).toEqual(["Post"]);
 });
@@ -317,8 +307,7 @@ test("Graph Query Language Parser - WHERE clause - should parse OR condition", (
 });
 
 test("Graph Query Language Parser - WHERE clause - should parse nested conditions with parentheses", () => {
-  const query =
-    "MATCH (u:User) WHERE (u.age > 18 AND u.age < 65) OR u.verified = true RETURN u";
+  const query = "MATCH (u:User) WHERE (u.age > 18 AND u.age < 65) OR u.verified = true RETURN u";
   const ast = parse(query) as Query;
 
   const condition = ast.matches[0]!.where!.condition as OrCondition;
@@ -371,8 +360,7 @@ test("Graph Query Language Parser - ORDER BY clause - should parse ORDER BY DESC
 });
 
 test("Graph Query Language Parser - ORDER BY clause - should parse multiple ORDER BY clauses", () => {
-  const query =
-    "MATCH (u:User) RETURN u ORDER BY u.lastName ASC, u.firstName ASC";
+  const query = "MATCH (u:User) RETURN u ORDER BY u.lastName ASC, u.firstName ASC";
   const ast = parse(query) as Query;
 
   expect(ast.orderBy!.orders).toHaveLength(2);
@@ -540,8 +528,7 @@ test("Graph Query Language Parser - Multiple MATCH clauses - should parse multip
   expect(secondMatch.type).toBe("MatchClause");
   expect((secondMatch.pattern as Pattern).elements).toHaveLength(3);
 
-  const secondEdge = (secondMatch.pattern as Pattern)
-    .elements[1] as EdgePattern;
+  const secondEdge = (secondMatch.pattern as Pattern).elements[1] as EdgePattern;
   expect(secondEdge.variable).toBe("r");
   expect(secondEdge.labels).toEqual(["related"]);
 });
@@ -649,8 +636,7 @@ test("Graph Query Language Parser - Multiple MATCH clauses - should parse multip
 });
 
 test("Graph Query Language Parser - Inline property filtering - should parse node with single inline property", () => {
-  const query =
-    "MATCH (c:Concept {name:'Group'})-[:HasAttribute]->(a:Property) RETURN a";
+  const query = "MATCH (c:Concept {name:'Group'})-[:HasAttribute]->(a:Property) RETURN a";
   const ast = parse(query) as Query;
 
   expect(ast.type).toBe("Query");
@@ -741,8 +727,7 @@ test("Graph Query Language Parser - Inline property filtering - should parse nod
 });
 
 test("Graph Query Language Parser - Inline property filtering - should parse inline properties on multiple nodes in pattern", () => {
-  const query =
-    "MATCH (a:Person {name: 'Alice'})-[:KNOWS]->(b:Person {name: 'Bob'}) RETURN a, b";
+  const query = "MATCH (a:Person {name: 'Alice'})-[:KNOWS]->(b:Person {name: 'Bob'}) RETURN a, b";
   const ast = parse(query) as Query;
 
   const nodeA = (ast.matches[0]!.pattern as Pattern).elements[0] as NodePattern;
@@ -844,8 +829,7 @@ test("Graph Query Language Parser - @-prefixed property identifiers - should par
 });
 
 test("Graph Query Language Parser - @-prefixed property identifiers - should parse mix of @-prefixed and regular properties in WHERE AND", () => {
-  const query =
-    'MATCH (s:Screen) WHERE s.@id = "test-id" AND s.name = "TestScreen" RETURN s';
+  const query = 'MATCH (s:Screen) WHERE s.@id = "test-id" AND s.name = "TestScreen" RETURN s';
   const ast = parse(query) as Query;
 
   const condition = ast.matches[0]!.where!.condition as AndCondition;

@@ -70,10 +70,7 @@ function createTestGraph() {
   return graph;
 }
 
-function executeQuery(
-  graph: Graph<GraphSchema>,
-  queryString: string,
-): unknown[] {
+function executeQuery(graph: Graph<GraphSchema>, queryString: string): unknown[] {
   const ast = parse(queryString) as Query | UnionQuery | MultiStatement;
   const steps = anyAstToSteps(ast);
   const traverser = createTraverser(steps);
@@ -90,10 +87,7 @@ describe("type() function support", () => {
 
   test("type() function - should execute and return labels", () => {
     const graph = createTestGraph();
-    const results = executeQuery(
-      graph,
-      "MATCH (n:Person) RETURN type(n) AS nodeType",
-    );
+    const results = executeQuery(graph, "MATCH (n:Person) RETURN type(n) AS nodeType");
 
     expect(results.length).toBeGreaterThan(0);
     // type() returns the label as a string (unlike labels() which returns an array)
@@ -104,10 +98,7 @@ describe("type() function support", () => {
 
   test("DISTINCT type() - should return unique types", () => {
     const graph = createTestGraph();
-    const results = executeQuery(
-      graph,
-      "MATCH (n) RETURN DISTINCT type(n) AS nodeType",
-    );
+    const results = executeQuery(graph, "MATCH (n) RETURN DISTINCT type(n) AS nodeType");
 
     // Should have unique labels: Person, Animal, Repository, Directory
     expect(results).toHaveLength(4);
@@ -140,9 +131,7 @@ describe("type() function support", () => {
 
 describe("Multiple aggregates without GROUP BY", () => {
   test("Multiple COUNT aggregates - should parse correctly", () => {
-    const result = parse(
-      "MATCH (n) RETURN COUNT(n) AS total1, COUNT(n) AS total2",
-    ) as Query;
+    const result = parse("MATCH (n) RETURN COUNT(n) AS total1, COUNT(n) AS total2") as Query;
     expect(result.return).toBeDefined();
     expect(result.return!.items).toHaveLength(2);
     expect(result.return!.items[0]!.aggregate).toBe("COUNT");
@@ -151,10 +140,7 @@ describe("Multiple aggregates without GROUP BY", () => {
 
   test("Multiple COUNT aggregates - should execute correctly", () => {
     const graph = createTestGraph();
-    const results = executeQuery(
-      graph,
-      "MATCH (n) RETURN COUNT(n) AS total1, COUNT(n) AS total2",
-    );
+    const results = executeQuery(graph, "MATCH (n) RETURN COUNT(n) AS total1, COUNT(n) AS total2");
 
     expect(results).toHaveLength(1);
     const result = results[0] as Record<string, unknown>;
@@ -301,19 +287,13 @@ describe("Combined features - user's original query scenario", () => {
     );
 
     expect(statement0Results).toHaveLength(1);
-    expect(
-      (statement0Results[0] as Record<string, unknown>)["totalNodes"],
-    ).toBe(9);
+    expect((statement0Results[0] as Record<string, unknown>)["totalNodes"]).toBe(9);
 
     expect(statement1Results).toHaveLength(1);
-    expect((statement1Results[0] as Record<string, unknown>)["repoCount"]).toBe(
-      2,
-    );
+    expect((statement1Results[0] as Record<string, unknown>)["repoCount"]).toBe(2);
 
     expect(statement2Results).toHaveLength(1);
-    expect((statement2Results[0] as Record<string, unknown>)["dirCount"]).toBe(
-      2,
-    );
+    expect((statement2Results[0] as Record<string, unknown>)["dirCount"]).toBe(2);
   });
 
   test("Multi-statement with mixed aggregates", () => {

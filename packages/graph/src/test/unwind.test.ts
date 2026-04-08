@@ -1,12 +1,7 @@
 import { expect, test, describe } from "vitest";
 import { parse } from "../grammar.js";
 import { astToSteps } from "../astToSteps.js";
-import {
-  createTraverser,
-  UnwindStep,
-  setQueryParams,
-  clearQueryParams,
-} from "../Steps.js";
+import { createTraverser, UnwindStep, setQueryParams, clearQueryParams } from "../Steps.js";
 import { createDemoGraph } from "../getDemoGraph.js";
 import type { Query } from "../AST.js";
 
@@ -295,8 +290,7 @@ describe("UNWIND clause execution", () => {
 
 describe("UNWIND with WITH clause", () => {
   test("UNWIND after MATCH and WITH", () => {
-    const query =
-      "MATCH (p:Person) WHERE p.name = 'Alice' WITH p UNWIND [1, 2] AS x RETURN p, x";
+    const query = "MATCH (p:Person) WHERE p.name = 'Alice' WITH p UNWIND [1, 2] AS x RETURN p, x";
     const ast = parse(query) as Query;
     const steps = astToSteps(ast);
     const traverser = createTraverser(steps);
@@ -306,8 +300,7 @@ describe("UNWIND with WITH clause", () => {
   });
 
   test("UNWIND with parameter after WITH", () => {
-    const query =
-      "MATCH (p:Person) WHERE p.name = 'Alice' WITH p UNWIND $nums AS x RETURN p, x";
+    const query = "MATCH (p:Person) WHERE p.name = 'Alice' WITH p UNWIND $nums AS x RETURN p, x";
     const ast = parse(query) as Query;
     const steps = astToSteps(ast);
     const traverser = createTraverser(steps);

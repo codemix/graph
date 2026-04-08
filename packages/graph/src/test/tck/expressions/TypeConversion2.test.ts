@@ -11,10 +11,7 @@ describe("TypeConversion2 - To Integer", () => {
 
   test("[1] toInteger() on float", () => {
     const graph = createTckGraph();
-    const results = executeTckQuery(
-      graph,
-      "WITH 82.9 AS weight RETURN toInteger(weight)",
-    );
+    const results = executeTckQuery(graph, "WITH 82.9 AS weight RETURN toInteger(weight)");
     expect(results).toHaveLength(1);
     expect(results[0]).toBe(82);
   });
@@ -54,20 +51,17 @@ describe("TypeConversion2 - To Integer", () => {
     expect(results[0]).toBe(null);
   });
 
-  test.fails(
-    "[2] toInteger() returning null on non-numerical string - WITH multiple vars not supported",
-    () => {
-      // Original: WITH 'foo' AS foo_string, '' AS empty_string
-      //           RETURN toInteger(foo_string) AS foo, toInteger(empty_string) AS empty
-      const graph = createTckGraph();
-      const results = executeTckQuery(
-        graph,
-        "WITH 'foo' AS foo_string, '' AS empty_string RETURN toInteger(foo_string) AS foo, toInteger(empty_string) AS empty",
-      );
-      expect(results).toHaveLength(1);
-      expect(results[0]).toEqual({ foo: null, empty: null });
-    },
-  );
+  test.fails("[2] toInteger() returning null on non-numerical string - WITH multiple vars not supported", () => {
+    // Original: WITH 'foo' AS foo_string, '' AS empty_string
+    //           RETURN toInteger(foo_string) AS foo, toInteger(empty_string) AS empty
+    const graph = createTckGraph();
+    const results = executeTckQuery(
+      graph,
+      "WITH 'foo' AS foo_string, '' AS empty_string RETURN toInteger(foo_string) AS foo, toInteger(empty_string) AS empty",
+    );
+    expect(results).toHaveLength(1);
+    expect(results[0]).toEqual({ foo: null, empty: null });
+  });
 
   test("[3] toInteger() handling mixed number types", () => {
     const graph = createTckGraph();
@@ -104,11 +98,9 @@ describe("TypeConversion2 - To Integer", () => {
   test("[6] toInteger() on complex expression with parameter", () => {
     // Parameter syntax now supported
     const graph = createTckGraph();
-    const results = executeTckQuery(
-      graph,
-      "RETURN toInteger(1 - $param) AS result",
-      { param: 0.5 },
-    );
+    const results = executeTckQuery(graph, "RETURN toInteger(1 - $param) AS result", {
+      param: 0.5,
+    });
     expect(results).toHaveLength(1);
     expect(results[0]).toBe(0);
   });
@@ -188,10 +180,7 @@ describe("TypeConversion2 - To Integer", () => {
 
   test("[Custom 1] toInteger() works in WHERE clause on string property", () => {
     const graph = createTckGraph();
-    executeTckQuery(
-      graph,
-      `CREATE (:A {numStr: '42'}), (:A {numStr: '100'}), (:A {numStr: '7'})`,
-    );
+    executeTckQuery(graph, `CREATE (:A {numStr: '42'}), (:A {numStr: '100'}), (:A {numStr: '7'})`);
 
     // Filter using toInteger() comparison
     const results = executeTckQuery(
@@ -212,10 +201,7 @@ describe("TypeConversion2 - To Integer", () => {
     );
 
     // toInteger() truncates (does not round)
-    const results = executeTckQuery(
-      graph,
-      `MATCH (n:A) WHERE toInteger(n.num) = 5 RETURN n.name`,
-    );
+    const results = executeTckQuery(graph, `MATCH (n:A) WHERE toInteger(n.num) = 5 RETURN n.name`);
 
     expect(results).toHaveLength(2);
     expect(results).toContain("b");
@@ -230,10 +216,7 @@ describe("TypeConversion2 - To Integer", () => {
     );
 
     // Non-numeric string returns null, which won't match > 0
-    const results = executeTckQuery(
-      graph,
-      `MATCH (n:A) WHERE toInteger(n.val) > 0 RETURN n.name`,
-    );
+    const results = executeTckQuery(graph, `MATCH (n:A) WHERE toInteger(n.val) > 0 RETURN n.name`);
 
     expect(results).toHaveLength(1);
     expect(results[0]).toBe("valid");
@@ -241,15 +224,9 @@ describe("TypeConversion2 - To Integer", () => {
 
   test("[Custom 4] toInteger() on integer returns same value", () => {
     const graph = createTckGraph();
-    executeTckQuery(
-      graph,
-      `CREATE (:A {num: 42, name: 'a'}), (:A {num: 7, name: 'b'})`,
-    );
+    executeTckQuery(graph, `CREATE (:A {num: 42, name: 'a'}), (:A {num: 7, name: 'b'})`);
 
-    const results = executeTckQuery(
-      graph,
-      `MATCH (n:A) WHERE toInteger(n.num) = 42 RETURN n.name`,
-    );
+    const results = executeTckQuery(graph, `MATCH (n:A) WHERE toInteger(n.num) = 42 RETURN n.name`);
 
     expect(results).toHaveLength(1);
     expect(results[0]).toBe("a");
@@ -273,16 +250,10 @@ describe("TypeConversion2 - To Integer", () => {
 
   test("[Custom 6] toInteger() on boolean converts correctly", () => {
     const graph = createTckGraph();
-    executeTckQuery(
-      graph,
-      `CREATE (:A {flag: true, name: 'yes'}), (:A {flag: false, name: 'no'})`,
-    );
+    executeTckQuery(graph, `CREATE (:A {flag: true, name: 'yes'}), (:A {flag: false, name: 'no'})`);
 
     // toInteger(true) = 1, toInteger(false) = 0
-    const results = executeTckQuery(
-      graph,
-      `MATCH (n:A) WHERE toInteger(n.flag) = 1 RETURN n.name`,
-    );
+    const results = executeTckQuery(graph, `MATCH (n:A) WHERE toInteger(n.flag) = 1 RETURN n.name`);
 
     expect(results).toHaveLength(1);
     expect(results[0]).toBe("yes");
@@ -298,10 +269,7 @@ describe("TypeConversion2 - To Integer", () => {
 
   test("[Custom 8] toIntegerOrNull() returns null for invalid string", () => {
     const graph = createTckGraph();
-    const results = executeTckQuery(
-      graph,
-      "RETURN toIntegerOrNull('abc') AS i",
-    );
+    const results = executeTckQuery(graph, "RETURN toIntegerOrNull('abc') AS i");
     expect(results).toHaveLength(1);
     expect(results[0]).toBe(null);
   });

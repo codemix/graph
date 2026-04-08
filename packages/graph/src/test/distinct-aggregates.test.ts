@@ -36,10 +36,7 @@ function createGraph() {
   return new Graph({ schema, storage: new InMemoryGraphStorage() });
 }
 
-function executeQuery(
-  graph: Graph<typeof schema>,
-  queryString: string,
-): unknown[] {
+function executeQuery(graph: Graph<typeof schema>, queryString: string): unknown[] {
   const parsed = parse(queryString);
   // Handle MultiStatement (for CREATE, etc)
   if (parsed.type === "MultiStatement") {
@@ -73,10 +70,7 @@ describe("DISTINCT in aggregate functions", () => {
       graph.addVertex("Person", { name: "Alice" });
 
       // count(DISTINCT n.name) should only count unique names
-      const results = executeQuery(
-        graph,
-        "MATCH (n:Person) RETURN count(DISTINCT n.name) AS cnt",
-      );
+      const results = executeQuery(graph, "MATCH (n:Person) RETURN count(DISTINCT n.name) AS cnt");
 
       expect(results).toEqual([{ cnt: 2 }]); // Alice and Bob
     });
@@ -102,10 +96,7 @@ describe("DISTINCT in aggregate functions", () => {
       graph.addVertex("Person", { name: "Bob" });
       graph.addVertex("Person", {}); // missing name = undefined
 
-      const results = executeQuery(
-        graph,
-        "MATCH (n:Person) RETURN count(DISTINCT n.name) AS cnt",
-      );
+      const results = executeQuery(graph, "MATCH (n:Person) RETURN count(DISTINCT n.name) AS cnt");
 
       // Only Alice and Bob count (null and undefined are not counted)
       expect(results).toEqual([{ cnt: 2 }]);
@@ -118,10 +109,7 @@ describe("DISTINCT in aggregate functions", () => {
       graph.addVertex("Person", { name: "Alice" }); // Different node, same name
 
       // count(DISTINCT n) should count all 4 unique nodes
-      const results = executeQuery(
-        graph,
-        "MATCH (n:Person) RETURN count(DISTINCT n) AS nodeCount",
-      );
+      const results = executeQuery(graph, "MATCH (n:Person) RETURN count(DISTINCT n) AS nodeCount");
 
       expect(results).toEqual([{ nodeCount: 4 }]);
     });
@@ -171,10 +159,7 @@ describe("DISTINCT in aggregate functions", () => {
       graph.addVertex("Item", { price: 30 });
 
       // sum(DISTINCT price) = 10 + 20 + 30 = 60 (not 70)
-      const results = executeQuery(
-        graph,
-        "MATCH (i:Item) RETURN sum(DISTINCT i.price) AS total",
-      );
+      const results = executeQuery(graph, "MATCH (i:Item) RETURN sum(DISTINCT i.price) AS total");
 
       expect(results).toEqual([{ total: 60 }]);
     });
@@ -188,10 +173,7 @@ describe("DISTINCT in aggregate functions", () => {
       graph.addVertex("Item", { score: 30 });
 
       // avg(DISTINCT score) = (10 + 20 + 30) / 3 = 20
-      const results = executeQuery(
-        graph,
-        "MATCH (i:Item) RETURN avg(DISTINCT i.score) AS average",
-      );
+      const results = executeQuery(graph, "MATCH (i:Item) RETURN avg(DISTINCT i.score) AS average");
 
       expect(results).toEqual([{ average: 20 }]);
     });
@@ -204,10 +186,7 @@ describe("DISTINCT in aggregate functions", () => {
       graph.addVertex("Item", { value: 10 }); // duplicate
       graph.addVertex("Item", { value: 20 });
 
-      const results = executeQuery(
-        graph,
-        "MATCH (i:Item) RETURN min(DISTINCT i.value) AS minVal",
-      );
+      const results = executeQuery(graph, "MATCH (i:Item) RETURN min(DISTINCT i.value) AS minVal");
 
       expect(results).toEqual([{ minVal: 5 }]);
     });
@@ -218,10 +197,7 @@ describe("DISTINCT in aggregate functions", () => {
       graph.addVertex("Item", { value: 10 }); // duplicate
       graph.addVertex("Item", { value: 20 });
 
-      const results = executeQuery(
-        graph,
-        "MATCH (i:Item) RETURN max(DISTINCT i.value) AS maxVal",
-      );
+      const results = executeQuery(graph, "MATCH (i:Item) RETURN max(DISTINCT i.value) AS maxVal");
 
       expect(results).toEqual([{ maxVal: 20 }]);
     });

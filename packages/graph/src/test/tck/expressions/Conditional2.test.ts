@@ -161,10 +161,7 @@ describe("Conditional2 - Case Expression", () => {
 
   test("[custom-2] Simple CASE expression with ELSE fallback", () => {
     const graph = createTckGraph();
-    executeTckQuery(
-      graph,
-      "CREATE (:A {name: 'a', num: 100}), (:A {name: 'b', num: 1})",
-    );
+    executeTckQuery(graph, "CREATE (:A {name: 'a', num: 100}), (:A {name: 'b', num: 1})");
 
     // Test that unmatched values fall through to ELSE
     const results = executeTckQuery(

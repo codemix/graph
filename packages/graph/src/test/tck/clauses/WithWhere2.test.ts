@@ -6,62 +6,47 @@ import { describe, test, expect } from "vitest";
 import { createTckGraph, executeTckQuery, getProperty } from "../tckHelpers.js";
 
 describe("WithWhere2 - Filter multiple variables", () => {
-  test.fails(
-    "[1] Filter nodes with conjunctive two-part property predicate on multi variables with multiple bindings - unlabeled edge pattern not supported",
-    () => {
-      // Original test uses: MATCH (a)--(b)--(c)--(d)--(a), (b)--(d)
-      // Undirected edge patterns not well supported
-      // Also requires multiple comma-separated patterns
-      // WITH a, c, d WHERE a.id = 1 AND c.id = 2 RETURN d
-      const graph = createTckGraph();
-      executeTckQuery(
-        graph,
-        "CREATE (a:N {id: 1}), (b:N {id: 2}), (c:N {id: 2}), (d:N {id: 3})",
-      );
-      executeTckQuery(
-        graph,
-        "MATCH (a:N {id: 1}), (b:N {id: 2}), (c:N {id: 2}), (d:N {id: 3}) CREATE (a)-[:R]->(b), (b)-[:R]->(c), (c)-[:R]->(d), (d)-[:R]->(a), (b)-[:R]->(d)",
-      );
+  test.fails("[1] Filter nodes with conjunctive two-part property predicate on multi variables with multiple bindings - unlabeled edge pattern not supported", () => {
+    // Original test uses: MATCH (a)--(b)--(c)--(d)--(a), (b)--(d)
+    // Undirected edge patterns not well supported
+    // Also requires multiple comma-separated patterns
+    // WITH a, c, d WHERE a.id = 1 AND c.id = 2 RETURN d
+    const graph = createTckGraph();
+    executeTckQuery(graph, "CREATE (a:N {id: 1}), (b:N {id: 2}), (c:N {id: 2}), (d:N {id: 3})");
+    executeTckQuery(
+      graph,
+      "MATCH (a:N {id: 1}), (b:N {id: 2}), (c:N {id: 2}), (d:N {id: 3}) CREATE (a)-[:R]->(b), (b)-[:R]->(c), (c)-[:R]->(d), (d)-[:R]->(a), (b)-[:R]->(d)",
+    );
 
-      const results = executeTckQuery(
-        graph,
-        "MATCH (a)--(b)--(c)--(d)--(a), (b)--(d) WITH a, c, d WHERE a.id = 1 AND c.id = 2 RETURN d",
-      );
-      expect(results.length).toBe(1);
-      const node = Array.isArray(results[0]) ? results[0][0] : results[0];
-      expect(getProperty(node as Record<string, unknown>, "id")).toBe(3);
-    },
-  );
+    const results = executeTckQuery(
+      graph,
+      "MATCH (a)--(b)--(c)--(d)--(a), (b)--(d) WITH a, c, d WHERE a.id = 1 AND c.id = 2 RETURN d",
+    );
+    expect(results.length).toBe(1);
+    const node = Array.isArray(results[0]) ? results[0][0] : results[0];
+    expect(getProperty(node as Record<string, unknown>, "id")).toBe(3);
+  });
 
-  test.fails(
-    "[2] Filter node with conjunctive multi-part property predicates on multi variables with multiple bindings - undirected edges not supported",
-    () => {
-      // Original test uses: MATCH (advertiser)--(a)--(b)--(advertiser)
-      // Parameters ($1, $2) ARE supported, but undirected edges not supported
-      const graph = createTckGraph();
-      executeTckQuery(
-        graph,
-        "CREATE (adv:Advertiser {id: 1}), (a:N {id: 2}), (b:N {id: 3})",
-      );
-      executeTckQuery(
-        graph,
-        "MATCH (adv:Advertiser), (a:N {id: 2}), (b:N {id: 3}) CREATE (adv)-[:R]->(a), (a)-[:R]->(b), (b)-[:R]->(adv)",
-      );
+  test.fails("[2] Filter node with conjunctive multi-part property predicates on multi variables with multiple bindings - undirected edges not supported", () => {
+    // Original test uses: MATCH (advertiser)--(a)--(b)--(advertiser)
+    // Parameters ($1, $2) ARE supported, but undirected edges not supported
+    const graph = createTckGraph();
+    executeTckQuery(graph, "CREATE (adv:Advertiser {id: 1}), (a:N {id: 2}), (b:N {id: 3})");
+    executeTckQuery(
+      graph,
+      "MATCH (adv:Advertiser), (a:N {id: 2}), (b:N {id: 3}) CREATE (adv)-[:R]->(a), (a)-[:R]->(b), (b)-[:R]->(adv)",
+    );
 
-      const results = executeTckQuery(
-        graph,
-        "MATCH (advertiser)--(a)--(b)--(advertiser) WITH a, b WHERE a.id = $1 AND b.id = $2 RETURN a, b",
-        { params: { 1: 2, 2: 3 } },
-      );
-      expect(results.length).toBe(1);
-      const [aNode, bNode] = results[0] as [
-        Record<string, unknown>,
-        Record<string, unknown>,
-      ];
-      expect(getProperty(aNode, "id")).toBe(2);
-      expect(getProperty(bNode, "id")).toBe(3);
-    },
-  );
+    const results = executeTckQuery(
+      graph,
+      "MATCH (advertiser)--(a)--(b)--(advertiser) WITH a, b WHERE a.id = $1 AND b.id = $2 RETURN a, b",
+      { params: { 1: 2, 2: 3 } },
+    );
+    expect(results.length).toBe(1);
+    const [aNode, bNode] = results[0] as [Record<string, unknown>, Record<string, unknown>];
+    expect(getProperty(aNode, "id")).toBe(2);
+    expect(getProperty(bNode, "id")).toBe(3);
+  });
 
   // Custom tests for WITH WHERE with multiple variables
   test("[custom-1] Filter on multiple variables with AND", () => {
@@ -83,10 +68,7 @@ describe("WithWhere2 - Filter multiple variables", () => {
 
   test("[custom-2] Filter on multiple related variables", () => {
     const graph = createTckGraph();
-    executeTckQuery(
-      graph,
-      "CREATE (:A {id: 1})-[:T]->(:B {id: 2})-[:T]->(:C {id: 3})",
-    );
+    executeTckQuery(graph, "CREATE (:A {id: 1})-[:T]->(:B {id: 2})-[:T]->(:C {id: 3})");
 
     const results = executeTckQuery(
       graph,

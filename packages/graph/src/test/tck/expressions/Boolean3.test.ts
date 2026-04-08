@@ -112,23 +112,20 @@ describe("Boolean3 - XOR logical operations", () => {
     }
   });
 
-  test.fails(
-    "[5] Exclusive disjunction is commutative on null - UNWIND with null and complex expressions not supported",
-    () => {
-      const graph = createTckGraph();
-      const results = executeTckQuery(
-        graph,
-        `UNWIND [true, false, null] AS a
+  test.fails("[5] Exclusive disjunction is commutative on null - UNWIND with null and complex expressions not supported", () => {
+    const graph = createTckGraph();
+    const results = executeTckQuery(
+      graph,
+      `UNWIND [true, false, null] AS a
        UNWIND [true, false, null] AS b
        WITH a, b WHERE a IS NULL OR b IS NULL
        RETURN a, b, (a XOR b) IS NULL = (b XOR a) IS NULL AS result`,
-      );
-      for (const r of results) {
-        const result = (r as unknown[])[2];
-        expect(result).toBe(true);
-      }
-    },
-  );
+    );
+    for (const r of results) {
+      const result = (r as unknown[])[2];
+      expect(result).toBe(true);
+    }
+  });
 
   test("[6] Exclusive disjunction is associative on non-null", () => {
     // Original TCK:
@@ -152,32 +149,26 @@ describe("Boolean3 - XOR logical operations", () => {
     }
   });
 
-  test.fails(
-    "[7] Exclusive disjunction is associative on null - UNWIND with null and complex expressions not supported",
-    () => {
-      const graph = createTckGraph();
-      const results = executeTckQuery(
-        graph,
-        `UNWIND [true, false, null] AS a
+  test.fails("[7] Exclusive disjunction is associative on null - UNWIND with null and complex expressions not supported", () => {
+    const graph = createTckGraph();
+    const results = executeTckQuery(
+      graph,
+      `UNWIND [true, false, null] AS a
        UNWIND [true, false, null] AS b
        UNWIND [true, false, null] AS c
        WITH a, b, c WHERE a IS NULL OR b IS NULL OR c IS NULL
        RETURN a, b, c, (a XOR (b XOR c)) IS NULL = ((a XOR b) XOR c) IS NULL AS result`,
-      );
-      for (const r of results) {
-        const result = (r as unknown[])[3];
-        expect(result).toBe(true);
-      }
-    },
-  );
+    );
+    for (const r of results) {
+      const result = (r as unknown[])[3];
+      expect(result).toBe(true);
+    }
+  });
 
-  test.fails(
-    "[8] Fail on exclusive disjunction of at least one non-booleans - error validation not implemented",
-    () => {
-      const graph = createTckGraph();
-      expect(() => executeTckQuery(graph, "RETURN 123 XOR true")).toThrow();
-    },
-  );
+  test.fails("[8] Fail on exclusive disjunction of at least one non-booleans - error validation not implemented", () => {
+    const graph = createTckGraph();
+    expect(() => executeTckQuery(graph, "RETURN 123 XOR true")).toThrow();
+  });
 
   // Custom tests demonstrating XOR behavior in WHERE clause
   test("[custom-1] XOR in WHERE clause - basic exclusive or", () => {
@@ -214,10 +205,7 @@ describe("Boolean3 - XOR logical operations", () => {
     executeTckQuery(graph, "CREATE (:A {a: 2, b: 2})"); // Both false
 
     // XOR: (a=1) XOR (b=1) - true when exactly one is true
-    const results = executeTckQuery(
-      graph,
-      "MATCH (n:A) WHERE n.a = 1 XOR n.b = 1 RETURN n.a, n.b",
-    );
+    const results = executeTckQuery(graph, "MATCH (n:A) WHERE n.a = 1 XOR n.b = 1 RETURN n.a, n.b");
 
     expect(results).toHaveLength(2);
     // Should match (1,2) and (2,1)
@@ -228,10 +216,7 @@ describe("Boolean3 - XOR logical operations", () => {
 
   test("[custom-3] XOR with OR and AND - operator precedence", () => {
     const graph = createTckGraph();
-    executeTckQuery(
-      graph,
-      "CREATE (:A {num: 1}), (:A {num: 2}), (:A {num: 3}), (:A {num: 4})",
-    );
+    executeTckQuery(graph, "CREATE (:A {num: 1}), (:A {num: 2}), (:A {num: 3}), (:A {num: 4})");
 
     // XOR has lower precedence than AND, higher than OR
     // n.num = 1 XOR n.num = 2 should match nodes where exactly one condition is true

@@ -4,11 +4,7 @@ import { astToSteps } from "../astToSteps.js";
 import { createTraverser, CallStep } from "../Steps.js";
 import { Graph } from "../Graph.js";
 import { InMemoryGraphStorage } from "../GraphStorage.js";
-import {
-  ProcedureRegistry,
-  procedureRegistry,
-  isBuiltinProcedure,
-} from "../ProcedureRegistry.js";
+import { ProcedureRegistry, procedureRegistry, isBuiltinProcedure } from "../ProcedureRegistry.js";
 import type { Query } from "../AST.js";
 import type { GraphSchema } from "../GraphSchema.js";
 
@@ -92,15 +88,11 @@ describe("CALL procedure support", () => {
       expect(callClause.arguments).toHaveLength(2);
       // First argument is an arithmetic expression
       const firstArg = callClause.arguments[0];
-      expect(
-        typeof firstArg === "object" && firstArg !== null && "type" in firstArg,
-      ).toBe(true);
+      expect(typeof firstArg === "object" && firstArg !== null && "type" in firstArg).toBe(true);
     });
 
     it("should parse CALL in combination with MATCH", () => {
-      const ast = parse(
-        "MATCH (n:Person) CALL db.labels() YIELD label RETURN n, label",
-      ) as Query;
+      const ast = parse("MATCH (n:Person) CALL db.labels() YIELD label RETURN n, label") as Query;
       expect(ast.matches).toHaveLength(1);
       expect(ast.call).toHaveLength(1);
       expect(ast.return).toBeDefined();
@@ -282,9 +274,7 @@ describe("CALL procedure support", () => {
 
     describe("db.propertyKeys", () => {
       it("should return all property keys", () => {
-        const ast = parse(
-          "CALL db.propertyKeys() YIELD propertyKey RETURN propertyKey",
-        ) as Query;
+        const ast = parse("CALL db.propertyKeys() YIELD propertyKey RETURN propertyKey") as Query;
         const steps = astToSteps(ast);
         const traverser = createTraverser(steps);
         const results = Array.from(traverser.traverse(graph, []));
@@ -329,9 +319,7 @@ describe("CALL procedure support", () => {
 
     describe("CALL with YIELD alias", () => {
       it("should bind results to aliases", () => {
-        const ast = parse(
-          "CALL db.labels() YIELD label AS nodeLabel RETURN nodeLabel",
-        ) as Query;
+        const ast = parse("CALL db.labels() YIELD label AS nodeLabel RETURN nodeLabel") as Query;
         const steps = astToSteps(ast);
         const traverser = createTraverser(steps);
         const results = Array.from(traverser.traverse(graph, []));
@@ -366,9 +354,7 @@ describe("CALL procedure support", () => {
 
         // Should have property info for Person and Company
         expect(results.length).toBeGreaterThan(0);
-        const nodeTypes = results.map((r) =>
-          Array.isArray(r) ? r[0] : undefined,
-        );
+        const nodeTypes = results.map((r) => (Array.isArray(r) ? r[0] : undefined));
         expect(nodeTypes).toContain("Person");
         expect(nodeTypes).toContain("Company");
       });
@@ -385,9 +371,7 @@ describe("CALL procedure support", () => {
 
         // Should have property info for knows and worksAt
         expect(results.length).toBeGreaterThan(0);
-        const relTypes = results.map((r) =>
-          Array.isArray(r) ? r[0] : undefined,
-        );
+        const relTypes = results.map((r) => (Array.isArray(r) ? r[0] : undefined));
         expect(relTypes).toContain("knows");
         expect(relTypes).toContain("worksAt");
       });
@@ -410,9 +394,7 @@ describe("CALL procedure support", () => {
 
       expect(customRegistry.has("custom.echo")).toBe(true);
 
-      const results = Array.from(
-        customRegistry.invoke("custom.echo", ["hello"], {}),
-      );
+      const results = Array.from(customRegistry.invoke("custom.echo", ["hello"], {}));
       expect(results).toEqual([{ output: "hello" }]);
     });
 
@@ -436,9 +418,7 @@ describe("CALL procedure support", () => {
         },
       });
 
-      const results = Array.from(
-        customRegistry.invoke("custom.range", [1, 5], {}),
-      );
+      const results = Array.from(customRegistry.invoke("custom.range", [1, 5], {}));
       expect(results).toEqual([
         { value: 1 },
         { value: 2 },

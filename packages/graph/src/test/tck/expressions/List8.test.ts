@@ -23,10 +23,7 @@ describe("List8 - List Last", () => {
     // Grammar limitation: List literals cannot be used as property values in CREATE
     const graph = createTckGraph();
     executeTckQuery(graph, "CREATE (:A {items: [10, 20, 30]})");
-    const results = executeTckQuery(
-      graph,
-      "MATCH (n:A) RETURN last(n.items) AS r",
-    );
+    const results = executeTckQuery(graph, "MATCH (n:A) RETURN last(n.items) AS r");
     expect(results).toHaveLength(1);
     expect(results[0]).toBe(30);
   });
@@ -41,16 +38,10 @@ describe("List8 - List Last", () => {
 
   test("[Custom 3] Access nodes and use ORDER BY DESC with LIMIT", () => {
     const graph = createTckGraph();
-    executeTckQuery(
-      graph,
-      `CREATE (:A {num: 1}), (:A {num: 2}), (:A {num: 3})`,
-    );
+    executeTckQuery(graph, `CREATE (:A {num: 1}), (:A {num: 2}), (:A {num: 3})`);
 
     // Get the "last" node when ordered by num
-    const results = executeTckQuery(
-      graph,
-      "MATCH (n:A) RETURN n.num ORDER BY n.num DESC LIMIT 1",
-    );
+    const results = executeTckQuery(graph, "MATCH (n:A) RETURN n.num ORDER BY n.num DESC LIMIT 1");
 
     expect(results).toHaveLength(1);
     expect(results[0]).toBe(3);

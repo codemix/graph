@@ -21,10 +21,7 @@ describe("Call4 - Null Arguments", () => {
   // [2] In-query call to procedure with null argument
   test.fails("[2] In-query call to procedure with null argument", () => {
     const graph = createTckGraph();
-    const results = executeTckQuery(
-      graph,
-      "CALL test.my.proc(null) YIELD out RETURN out",
-    );
+    const results = executeTckQuery(graph, "CALL test.my.proc(null) YIELD out RETURN out");
     expect(results).toEqual([["nix"]]);
   });
 });

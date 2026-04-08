@@ -23,16 +23,10 @@ describe("Pattern2 - Pattern Comprehension", () => {
     // Pattern comprehension [p = pattern | expr] not supported in grammar
     const graph = createTckGraph();
     executeTckQuery(graph, `CREATE (:A {name: 'a'}), (:B {name: 'b'})`);
-    executeTckQuery(
-      graph,
-      `MATCH (a:A), (b:B) CREATE (a)-[:T]->(b), (b)-[:T]->(:C {name: 'c'})`,
-    );
+    executeTckQuery(graph, `MATCH (a:A), (b:B) CREATE (a)-[:T]->(b), (b)-[:T]->(:C {name: 'c'})`);
 
     // Pattern comprehension syntax
-    const results = executeTckQuery(
-      graph,
-      `MATCH (n) RETURN [p = (n)-->() | p] AS list`,
-    );
+    const results = executeTckQuery(graph, `MATCH (n) RETURN [p = (n)-->() | p] AS list`);
     expect(results.length).toBeGreaterThan(0);
   });
 
@@ -43,10 +37,7 @@ describe("Pattern2 - Pattern Comprehension", () => {
     executeTckQuery(graph, `CREATE (:A {name: 'a'})-[:T]->(:B {name: 'b'})`);
 
     // Pattern comprehension with label predicate
-    const results = executeTckQuery(
-      graph,
-      `MATCH (n:A) RETURN [p = (n)-->(:B) | p] AS list`,
-    );
+    const results = executeTckQuery(graph, `MATCH (n:A) RETURN [p = (n)-->(:B) | p] AS list`);
     expect(results.length).toBeGreaterThan(0);
   });
 
@@ -57,10 +48,7 @@ describe("Pattern2 - Pattern Comprehension", () => {
     executeTckQuery(graph, `CREATE (:A {name: 'a'})-[:T]->(:B {name: 'b'})`);
 
     // Pattern comprehension with bound nodes
-    const results = executeTckQuery(
-      graph,
-      `MATCH (a:A), (b:B) RETURN [p = (a)-->(b) | p] AS list`,
-    );
+    const results = executeTckQuery(graph, `MATCH (a:A), (b:B) RETURN [p = (a)-->(b) | p] AS list`);
     expect(results.length).toBeGreaterThan(0);
   });
 
@@ -72,10 +60,7 @@ describe("Pattern2 - Pattern Comprehension", () => {
     executeTckQuery(graph, `CREATE (:A {name: 'a'})-[:T]->(:B {name: 'b'})`);
 
     // Pattern comprehension with new node variable
-    const results = executeTckQuery(
-      graph,
-      `MATCH (n) RETURN [(n)-[:T]->(b) | b.name] AS list`,
-    );
+    const results = executeTckQuery(graph, `MATCH (n) RETURN [(n)-[:T]->(b) | b.name] AS list`);
     expect(results.length).toBeGreaterThan(0);
   });
 
@@ -84,16 +69,10 @@ describe("Pattern2 - Pattern Comprehension", () => {
     // MATCH (n) RETURN [(n)-[r:T]->() | r.name] AS list
     // Also uses unlabeled nodes
     const graph = createTckGraph();
-    executeTckQuery(
-      graph,
-      `CREATE (:A {name: 'a'})-[:T {name: 'rel'}]->(:B {name: 'b'})`,
-    );
+    executeTckQuery(graph, `CREATE (:A {name: 'a'})-[:T {name: 'rel'}]->(:B {name: 'b'})`);
 
     // Pattern comprehension with new relationship variable
-    const results = executeTckQuery(
-      graph,
-      `MATCH (n) RETURN [(n)-[r:T]->() | r.name] AS list`,
-    );
+    const results = executeTckQuery(graph, `MATCH (n) RETURN [(n)-[r:T]->() | r.name] AS list`);
     expect(results.length).toBeGreaterThan(0);
   });
 
@@ -164,10 +143,7 @@ describe("Pattern2 - Pattern Comprehension", () => {
     executeTckQuery(graph, `CREATE (:A {name: 'a'})-[:HAS]->(:B {name: 'b'})`);
 
     // Pattern comprehension in RETURN clause
-    const results = executeTckQuery(
-      graph,
-      `MATCH (n:A) RETURN [p = (n)-[:HAS]->() | p] AS ps`,
-    );
+    const results = executeTckQuery(graph, `MATCH (n:A) RETURN [p = (n)-[:HAS]->() | p] AS ps`);
     expect(results.length).toBeGreaterThan(0);
   });
 
@@ -176,10 +152,7 @@ describe("Pattern2 - Pattern Comprehension", () => {
     // MATCH (liker) RETURN [p = (liker)--() | p] AS isNew ORDER BY liker.time
     // Also uses unlabeled nodes
     const graph = createTckGraph();
-    executeTckQuery(
-      graph,
-      `CREATE (:A {name: 'a', num: 1})-[:T]->(:B {name: 'b'})`,
-    );
+    executeTckQuery(graph, `CREATE (:A {name: 'a', num: 1})-[:T]->(:B {name: 'b'})`);
 
     // Pattern comprehension with ORDER BY
     const results = executeTckQuery(
@@ -199,10 +172,7 @@ describe("Pattern2 - Pattern Comprehension", () => {
     executeTckQuery(graph, `MATCH (a:A) CREATE (a)-[:T]->(:B {name: 'b2'})`);
 
     // Find all B nodes connected to A via T
-    const results = executeTckQuery(
-      graph,
-      `MATCH (:A)-[:T]->(b:B) RETURN b.name`,
-    );
+    const results = executeTckQuery(graph, `MATCH (:A)-[:T]->(b:B) RETURN b.name`);
 
     expect(results).toHaveLength(2);
     const names = results as string[];
@@ -212,20 +182,11 @@ describe("Pattern2 - Pattern Comprehension", () => {
 
   test("[Custom 2] Use collect() to aggregate connected nodes", () => {
     const graph = createTckGraph();
-    executeTckQuery(
-      graph,
-      `CREATE (:A {name: 'source'})-[:T]->(:B {name: 'target1'})`,
-    );
-    executeTckQuery(
-      graph,
-      `MATCH (a:A) CREATE (a)-[:T]->(:B {name: 'target2'})`,
-    );
+    executeTckQuery(graph, `CREATE (:A {name: 'source'})-[:T]->(:B {name: 'target1'})`);
+    executeTckQuery(graph, `MATCH (a:A) CREATE (a)-[:T]->(:B {name: 'target2'})`);
 
     // Collect all connected B nodes
-    const results = executeTckQuery(
-      graph,
-      `MATCH (:A)-[:T]->(b:B) RETURN collect(b)`,
-    );
+    const results = executeTckQuery(graph, `MATCH (:A)-[:T]->(b:B) RETURN collect(b)`);
 
     expect(results).toHaveLength(1);
     const collected = results[0] as Array<Record<string, unknown>>;
@@ -239,16 +200,10 @@ describe("Pattern2 - Pattern Comprehension", () => {
     executeTckQuery(graph, `CREATE (:A {name: 'a1'})`);
     executeTckQuery(graph, `CREATE (:A {name: 'a2'})`);
     executeTckQuery(graph, `CREATE (:A {name: 'a3'})`);
-    executeTckQuery(
-      graph,
-      `MATCH (a:A) WHERE a.name = 'a1' CREATE (a)-[:HAS]->(:B {name: 'b1'})`,
-    );
+    executeTckQuery(graph, `MATCH (a:A) WHERE a.name = 'a1' CREATE (a)-[:HAS]->(:B {name: 'b1'})`);
 
     // Count nodes that have HAS relationships
-    const withHas = executeTckQuery(
-      graph,
-      `MATCH (n:A)-[:HAS]->() RETURN count(n)`,
-    );
+    const withHas = executeTckQuery(graph, `MATCH (n:A)-[:HAS]->() RETURN count(n)`);
     expect(withHas).toHaveLength(1);
     expect(withHas[0]).toBe(1);
 
@@ -260,20 +215,11 @@ describe("Pattern2 - Pattern Comprehension", () => {
 
   test("[Custom 4] Return relationship and node pairs from pattern", () => {
     const graph = createTckGraph();
-    executeTckQuery(
-      graph,
-      `CREATE (:A {name: 'a'})-[:T {num: 1}]->(:B {name: 'b1'})`,
-    );
-    executeTckQuery(
-      graph,
-      `MATCH (a:A) CREATE (a)-[:T {num: 2}]->(:B {name: 'b2'})`,
-    );
+    executeTckQuery(graph, `CREATE (:A {name: 'a'})-[:T {num: 1}]->(:B {name: 'b1'})`);
+    executeTckQuery(graph, `MATCH (a:A) CREATE (a)-[:T {num: 2}]->(:B {name: 'b2'})`);
 
     // Get both relationship and target node
-    const results = executeTckQuery(
-      graph,
-      `MATCH (:A)-[r:T]->(b:B) RETURN r.num, b.name`,
-    );
+    const results = executeTckQuery(graph, `MATCH (:A)-[r:T]->(b:B) RETURN r.num, b.name`);
 
     expect(results).toHaveLength(2);
     const pairs = results as Array<[number, string]>;
@@ -283,10 +229,7 @@ describe("Pattern2 - Pattern Comprehension", () => {
 
   test("[Custom 5] Multi-hop pattern matching", () => {
     const graph = createTckGraph();
-    executeTckQuery(
-      graph,
-      `CREATE (:A {name: 'a'})-[:T]->(:B {name: 'b'})-[:T]->(:C {name: 'c'})`,
-    );
+    executeTckQuery(graph, `CREATE (:A {name: 'a'})-[:T]->(:B {name: 'b'})-[:T]->(:C {name: 'c'})`);
 
     // Get all nodes in a 2-hop chain
     const results = executeTckQuery(
@@ -309,10 +252,7 @@ describe("Pattern2 - Pattern Comprehension", () => {
     executeTckQuery(graph, `CREATE (:A {name: 'b', num: 1})`);
     executeTckQuery(graph, `CREATE (:A {name: 'c', num: 2})`);
 
-    const results = executeTckQuery(
-      graph,
-      `MATCH (n:A) RETURN n.name ORDER BY n.num`,
-    );
+    const results = executeTckQuery(graph, `MATCH (n:A) RETURN n.name ORDER BY n.num`);
 
     expect(results).toEqual(["b", "c", "a"]);
   });

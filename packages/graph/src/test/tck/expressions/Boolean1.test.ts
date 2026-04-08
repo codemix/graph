@@ -123,24 +123,21 @@ describe("Boolean1 - And logical operations", () => {
     }
   });
 
-  test.fails(
-    "[5] Conjunction is commutative on null - UNWIND with null and IS NULL in expressions not supported",
-    () => {
-      const graph = createTckGraph();
-      const results = executeTckQuery(
-        graph,
-        `UNWIND [true, false, null] AS a
+  test.fails("[5] Conjunction is commutative on null - UNWIND with null and IS NULL in expressions not supported", () => {
+    const graph = createTckGraph();
+    const results = executeTckQuery(
+      graph,
+      `UNWIND [true, false, null] AS a
        UNWIND [true, false, null] AS b
        WITH a, b WHERE a IS NULL OR b IS NULL
        RETURN a, b, (a AND b) IS NULL = (b AND a) IS NULL AS result`,
-      );
-      // All combinations with null should return true for IS NULL comparison
-      for (const r of results) {
-        const result = (r as unknown[])[2];
-        expect(result).toBe(true);
-      }
-    },
-  );
+    );
+    // All combinations with null should return true for IS NULL comparison
+    for (const r of results) {
+      const result = (r as unknown[])[2];
+      expect(result).toBe(true);
+    }
+  });
 
   test("[6] Conjunction is associative on non-null", () => {
     // Original TCK:
@@ -164,46 +161,34 @@ describe("Boolean1 - And logical operations", () => {
     }
   });
 
-  test.fails(
-    "[7] Conjunction is associative on null - UNWIND with null and complex expressions not supported",
-    () => {
-      const graph = createTckGraph();
-      const results = executeTckQuery(
-        graph,
-        `UNWIND [true, false, null] AS a
+  test.fails("[7] Conjunction is associative on null - UNWIND with null and complex expressions not supported", () => {
+    const graph = createTckGraph();
+    const results = executeTckQuery(
+      graph,
+      `UNWIND [true, false, null] AS a
        UNWIND [true, false, null] AS b
        UNWIND [true, false, null] AS c
        WITH a, b, c WHERE a IS NULL OR b IS NULL OR c IS NULL
        RETURN a, b, c, (a AND (b AND c)) IS NULL = ((a AND b) AND c) IS NULL AS result`,
-      );
-      for (const r of results) {
-        const result = (r as unknown[])[3];
-        expect(result).toBe(true);
-      }
-    },
-  );
+    );
+    for (const r of results) {
+      const result = (r as unknown[])[3];
+      expect(result).toBe(true);
+    }
+  });
 
-  test.fails(
-    "[8] Fail on conjunction of at least one non-booleans - error validation not implemented",
-    () => {
-      const graph = createTckGraph();
-      // Should fail with InvalidArgumentType
-      expect(() => executeTckQuery(graph, "RETURN 123 AND true")).toThrow();
-    },
-  );
+  test.fails("[8] Fail on conjunction of at least one non-booleans - error validation not implemented", () => {
+    const graph = createTckGraph();
+    // Should fail with InvalidArgumentType
+    expect(() => executeTckQuery(graph, "RETURN 123 AND true")).toThrow();
+  });
 
   // Custom tests demonstrating AND behavior in WHERE clause (the only supported context)
   test("[custom-1] AND in WHERE clause with property comparisons", () => {
     const graph = createTckGraph();
-    executeTckQuery(
-      graph,
-      "CREATE (:A {x: 1, y: 2}), (:A {x: 1, y: 3}), (:A {x: 2, y: 2})",
-    );
+    executeTckQuery(graph, "CREATE (:A {x: 1, y: 2}), (:A {x: 1, y: 3}), (:A {x: 2, y: 2})");
 
-    const results = executeTckQuery(
-      graph,
-      "MATCH (n:A) WHERE n.x = 1 AND n.y = 2 RETURN n.x, n.y",
-    );
+    const results = executeTckQuery(graph, "MATCH (n:A) WHERE n.x = 1 AND n.y = 2 RETURN n.x, n.y");
 
     expect(results).toHaveLength(1);
     expect(results[0]).toEqual([1, 2]);
@@ -224,10 +209,7 @@ describe("Boolean1 - And logical operations", () => {
 
   test("[custom-3] Multiple AND conditions", () => {
     const graph = createTckGraph();
-    executeTckQuery(
-      graph,
-      "CREATE (:A {a: 1, b: 2, c: 3}), (:A {a: 1, b: 2, c: 4})",
-    );
+    executeTckQuery(graph, "CREATE (:A {a: 1, b: 2, c: 3}), (:A {a: 1, b: 2, c: 4})");
 
     const results = executeTckQuery(
       graph,

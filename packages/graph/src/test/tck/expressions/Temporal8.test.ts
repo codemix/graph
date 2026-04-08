@@ -4,19 +4,12 @@
  */
 import { describe, test, expect } from "vitest";
 import { createTckGraph, executeTckQuery } from "../tckHelpers.js";
-import {
-  DateValue,
-  DurationValue,
-  LocalTimeValue,
-} from "../../../TemporalTypes.js";
+import { DateValue, DurationValue, LocalTimeValue } from "../../../TemporalTypes.js";
 
 describe("Temporal8 - Compute Arithmetic Operations on Temporal Values", () => {
   test("[1] Should add duration to date", () => {
     const graph = createTckGraph();
-    const results = executeTckQuery(
-      graph,
-      "RETURN date('1984-10-11') + duration('P1D') AS result",
-    );
+    const results = executeTckQuery(graph, "RETURN date('1984-10-11') + duration('P1D') AS result");
     expect(results).toHaveLength(1);
     const result = results[0] as DateValue;
     expect(result).toBeInstanceOf(DateValue);
@@ -25,10 +18,7 @@ describe("Temporal8 - Compute Arithmetic Operations on Temporal Values", () => {
 
   test("[2] Should subtract duration from date", () => {
     const graph = createTckGraph();
-    const results = executeTckQuery(
-      graph,
-      "RETURN date('1984-10-11') - duration('P1D') AS result",
-    );
+    const results = executeTckQuery(graph, "RETURN date('1984-10-11') - duration('P1D') AS result");
     expect(results).toHaveLength(1);
     const result = results[0] as DateValue;
     expect(result).toBeInstanceOf(DateValue);
@@ -81,42 +71,27 @@ describe("Temporal8 - Compute Arithmetic Operations on Temporal Values", () => {
     expect(result.toString()).toBe("11:31:14");
   });
 
-  test.fails(
-    "[7] Should add durations together - duration + duration not fully supported",
-    () => {
-      const graph = createTckGraph();
-      const results = executeTckQuery(
-        graph,
-        "RETURN duration('P1D') + duration('P1D') AS result",
-      );
-      expect(results).toHaveLength(1);
-      const result = results[0] as DurationValue;
-      expect(result).toBeInstanceOf(DurationValue);
-      expect(result.days).toBe(2);
-    },
-  );
+  test.fails("[7] Should add durations together - duration + duration not fully supported", () => {
+    const graph = createTckGraph();
+    const results = executeTckQuery(graph, "RETURN duration('P1D') + duration('P1D') AS result");
+    expect(results).toHaveLength(1);
+    const result = results[0] as DurationValue;
+    expect(result).toBeInstanceOf(DurationValue);
+    expect(result.days).toBe(2);
+  });
 
-  test.fails(
-    "[8] Should subtract durations - duration - duration not fully supported",
-    () => {
-      const graph = createTckGraph();
-      const results = executeTckQuery(
-        graph,
-        "RETURN duration('P2D') - duration('P1D') AS result",
-      );
-      expect(results).toHaveLength(1);
-      const result = results[0] as DurationValue;
-      expect(result).toBeInstanceOf(DurationValue);
-      expect(result.days).toBe(1);
-    },
-  );
+  test.fails("[8] Should subtract durations - duration - duration not fully supported", () => {
+    const graph = createTckGraph();
+    const results = executeTckQuery(graph, "RETURN duration('P2D') - duration('P1D') AS result");
+    expect(results).toHaveLength(1);
+    const result = results[0] as DurationValue;
+    expect(result).toBeInstanceOf(DurationValue);
+    expect(result.days).toBe(1);
+  });
 
   test("[9] Should multiply duration by scalar", () => {
     const graph = createTckGraph();
-    const results = executeTckQuery(
-      graph,
-      "RETURN duration('P1D') * 2 AS result",
-    );
+    const results = executeTckQuery(graph, "RETURN duration('P1D') * 2 AS result");
     expect(results).toHaveLength(1);
     const result = results[0] as DurationValue;
     expect(result).toBeInstanceOf(DurationValue);
@@ -125,10 +100,7 @@ describe("Temporal8 - Compute Arithmetic Operations on Temporal Values", () => {
 
   test("[10] Should divide duration by scalar", () => {
     const graph = createTckGraph();
-    const results = executeTckQuery(
-      graph,
-      "RETURN duration('P2D') / 2 AS result",
-    );
+    const results = executeTckQuery(graph, "RETURN duration('P2D') / 2 AS result");
     expect(results).toHaveLength(1);
     const result = results[0] as DurationValue;
     expect(result).toBeInstanceOf(DurationValue);
@@ -147,20 +119,14 @@ describe("Temporal8 - Compute Arithmetic Operations on Temporal Values", () => {
     expect(result.toString()).toBe("1985-12-11");
   });
 
-  test.fails(
-    "[12] Should handle duration arithmetic with mixed signs - duration - duration not fully supported",
-    () => {
-      const graph = createTckGraph();
-      const results = executeTckQuery(
-        graph,
-        "RETURN duration('P1M') - duration('P2M') AS result",
-      );
-      expect(results).toHaveLength(1);
-      const result = results[0] as DurationValue;
-      expect(result).toBeInstanceOf(DurationValue);
-      expect(result.months).toBe(-1);
-    },
-  );
+  test.fails("[12] Should handle duration arithmetic with mixed signs - duration - duration not fully supported", () => {
+    const graph = createTckGraph();
+    const results = executeTckQuery(graph, "RETURN duration('P1M') - duration('P2M') AS result");
+    expect(results).toHaveLength(1);
+    const result = results[0] as DurationValue;
+    expect(result).toBeInstanceOf(DurationValue);
+    expect(result.months).toBe(-1);
+  });
 
   test("[13] Should add time duration to time", () => {
     const graph = createTckGraph();

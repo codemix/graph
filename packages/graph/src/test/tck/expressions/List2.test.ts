@@ -10,80 +10,56 @@ import { createTckGraph, executeTckQuery } from "../tckHelpers.js";
 describe("List2 - List Slicing", () => {
   test("[1] List slice", () => {
     const graph = createTckGraph();
-    const results = executeTckQuery(
-      graph,
-      "WITH [1, 2, 3, 4, 5] AS list RETURN list[1..3] AS r",
-    );
+    const results = executeTckQuery(graph, "WITH [1, 2, 3, 4, 5] AS list RETURN list[1..3] AS r");
     expect(results).toHaveLength(1);
     expect(results[0]).toEqual([2, 3]);
   });
 
   test("[2] List slice with implicit end", () => {
     const graph = createTckGraph();
-    const results = executeTckQuery(
-      graph,
-      "WITH [1, 2, 3] AS list RETURN list[1..] AS r",
-    );
+    const results = executeTckQuery(graph, "WITH [1, 2, 3] AS list RETURN list[1..] AS r");
     expect(results).toHaveLength(1);
     expect(results[0]).toEqual([2, 3]);
   });
 
   test("[3] List slice with implicit start", () => {
     const graph = createTckGraph();
-    const results = executeTckQuery(
-      graph,
-      "WITH [1, 2, 3] AS list RETURN list[..2] AS r",
-    );
+    const results = executeTckQuery(graph, "WITH [1, 2, 3] AS list RETURN list[..2] AS r");
     expect(results).toHaveLength(1);
     expect(results[0]).toEqual([1, 2]);
   });
 
   test("[4] List slice with singleton range", () => {
     const graph = createTckGraph();
-    const results = executeTckQuery(
-      graph,
-      "WITH [1, 2, 3] AS list RETURN list[0..1] AS r",
-    );
+    const results = executeTckQuery(graph, "WITH [1, 2, 3] AS list RETURN list[0..1] AS r");
     expect(results).toHaveLength(1);
     expect(results[0]).toEqual([1]);
   });
 
   test("[5] List slice with empty range", () => {
     const graph = createTckGraph();
-    const results = executeTckQuery(
-      graph,
-      "WITH [1, 2, 3] AS list RETURN list[0..0] AS r",
-    );
+    const results = executeTckQuery(graph, "WITH [1, 2, 3] AS list RETURN list[0..0] AS r");
     expect(results).toHaveLength(1);
     expect(results[0]).toEqual([]);
   });
 
   test("[6] List slice with negative range", () => {
     const graph = createTckGraph();
-    const results = executeTckQuery(
-      graph,
-      "WITH [1, 2, 3] AS list RETURN list[-3..-1] AS r",
-    );
+    const results = executeTckQuery(graph, "WITH [1, 2, 3] AS list RETURN list[-3..-1] AS r");
     expect(results).toHaveLength(1);
     expect(results[0]).toEqual([1, 2]);
   });
 
   test("[7] List slice with invalid range", () => {
     const graph = createTckGraph();
-    const results = executeTckQuery(
-      graph,
-      "WITH [1, 2, 3] AS list RETURN list[3..1] AS r",
-    );
+    const results = executeTckQuery(graph, "WITH [1, 2, 3] AS list RETURN list[3..1] AS r");
     expect(results).toHaveLength(1);
     expect(results[0]).toEqual([]);
   });
 
   test("[8] List slice with exceeding range", () => {
     const graph = createTckGraph();
-    const results = executeTckQuery(
-      graph,
-      "WITH [1, 2, 3] AS list RETURN list[-5..5] AS r",
-    );
+    const results = executeTckQuery(graph, "WITH [1, 2, 3] AS list RETURN list[-5..5] AS r");
     expect(results).toHaveLength(1);
     expect(results[0]).toEqual([1, 2, 3]);
   });
@@ -92,26 +68,17 @@ describe("List2 - List Slicing", () => {
     const graph = createTckGraph();
 
     // list[null..2] should return null
-    let results = executeTckQuery(
-      graph,
-      "WITH [1, 2, 3] AS list RETURN list[null..2] AS r",
-    );
+    let results = executeTckQuery(graph, "WITH [1, 2, 3] AS list RETURN list[null..2] AS r");
     expect(results).toHaveLength(1);
     expect(results[0]).toBe(null);
 
     // list[1..null] should return null
-    results = executeTckQuery(
-      graph,
-      "WITH [1, 2, 3] AS list RETURN list[1..null] AS r",
-    );
+    results = executeTckQuery(graph, "WITH [1, 2, 3] AS list RETURN list[1..null] AS r");
     expect(results).toHaveLength(1);
     expect(results[0]).toBe(null);
 
     // list[null..null] should return null
-    results = executeTckQuery(
-      graph,
-      "WITH [1, 2, 3] AS list RETURN list[null..null] AS r",
-    );
+    results = executeTckQuery(graph, "WITH [1, 2, 3] AS list RETURN list[null..null] AS r");
     expect(results).toHaveLength(1);
     expect(results[0]).toBe(null);
   });
@@ -123,11 +90,10 @@ describe("List2 - List Slicing", () => {
     // Parameters: from = 1, to = 3
     // Expected: [2, 3]
     const graph = createTckGraph();
-    const results = executeTckQuery(
-      graph,
-      "WITH [1, 2, 3] AS list RETURN list[$from..$to] AS r",
-      { from: 1, to: 3 },
-    );
+    const results = executeTckQuery(graph, "WITH [1, 2, 3] AS list RETURN list[$from..$to] AS r", {
+      from: 1,
+      to: 3,
+    });
     expect(results).toHaveLength(1);
     expect(results[0]).toEqual([2, 3]);
   });
@@ -139,11 +105,10 @@ describe("List2 - List Slicing", () => {
     // Parameters: from = 3, to = 1
     // Expected: []
     const graph = createTckGraph();
-    const results = executeTckQuery(
-      graph,
-      "WITH [1, 2, 3] AS list RETURN list[$from..$to] AS r",
-      { from: 3, to: 1 },
-    );
+    const results = executeTckQuery(graph, "WITH [1, 2, 3] AS list RETURN list[$from..$to] AS r", {
+      from: 3,
+      to: 1,
+    });
     expect(results).toHaveLength(1);
     expect(results[0]).toEqual([]);
   });
@@ -154,10 +119,7 @@ describe("List2 - List Slicing", () => {
 
     // UNWIND gives access to all elements - filtering can simulate slicing
     // Note: Results are wrapped in arrays
-    const results = executeTckQuery(
-      graph,
-      "UNWIND [1, 2, 3, 4, 5] AS x RETURN x",
-    );
+    const results = executeTckQuery(graph, "UNWIND [1, 2, 3, 4, 5] AS x RETURN x");
 
     expect(results).toHaveLength(5);
     expect(results[0]).toEqual([1]);
@@ -171,10 +133,7 @@ describe("List2 - List Slicing", () => {
     // Grammar limitation: List literals cannot be used as property values in CREATE
     const graph = createTckGraph();
     executeTckQuery(graph, "CREATE (:A {items: [1, 2, 3]})");
-    const results = executeTckQuery(
-      graph,
-      "MATCH (n:A) RETURN n.items[1..3] AS r",
-    );
+    const results = executeTckQuery(graph, "MATCH (n:A) RETURN n.items[1..3] AS r");
     expect(results).toHaveLength(1);
     expect(results[0]).toEqual([2, 3]);
   });

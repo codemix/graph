@@ -1,12 +1,7 @@
 import { test, expect, describe } from "vitest";
 import { Vertex } from "../Graph.js";
 import { parse } from "../grammar.js";
-import type {
-  Query,
-  CreateNodePattern,
-  CreateChainPattern,
-  CreateVariableRef,
-} from "../AST.js";
+import type { Query, CreateNodePattern, CreateChainPattern, CreateVariableRef } from "../AST.js";
 import { executeQuery, createComprehensiveGraph } from "./testHelpers.js";
 
 /**
@@ -234,10 +229,7 @@ describe("Combined CREATE scenarios", () => {
     const graph = createComprehensiveGraph();
 
     // CREATE with RETURN should still work
-    const results = executeQuery(
-      graph,
-      `CREATE (a:Property {name: 'Test'}) RETURN a`,
-    );
+    const results = executeQuery(graph, `CREATE (a:Property {name: 'Test'}) RETURN a`);
 
     expect(results).toHaveLength(1);
     const created = (results[0] as any[])[0];
@@ -269,10 +261,7 @@ describe("DELETE without RETURN", () => {
     expect([...graph.getVertices("User")]).toHaveLength(2);
 
     // Execute DELETE without RETURN
-    const results = executeQuery(
-      graph,
-      `MATCH (u:User) WHERE u.name = 'Alice' DELETE u`,
-    );
+    const results = executeQuery(graph, `MATCH (u:User) WHERE u.name = 'Alice' DELETE u`);
 
     // No results returned
     expect(results).toHaveLength(0);
@@ -293,10 +282,7 @@ describe("DELETE without RETURN", () => {
     expect([...graph.getEdges("follows")]).toHaveLength(1);
 
     // Execute DETACH DELETE without RETURN
-    const results = executeQuery(
-      graph,
-      `MATCH (u:User) WHERE u.name = 'Alice' DETACH DELETE u`,
-    );
+    const results = executeQuery(graph, `MATCH (u:User) WHERE u.name = 'Alice' DETACH DELETE u`);
 
     // No results returned
     expect(results).toHaveLength(0);
@@ -315,10 +301,7 @@ describe("SET without RETURN", () => {
     graph.addVertex("User", { name: "Alice", age: 25 });
 
     // Execute SET without RETURN
-    const results = executeQuery(
-      graph,
-      `MATCH (u:User) WHERE u.name = 'Alice' SET u.age = 30`,
-    );
+    const results = executeQuery(graph, `MATCH (u:User) WHERE u.name = 'Alice' SET u.age = 30`);
 
     // No results returned
     expect(results).toHaveLength(0);
@@ -335,10 +318,7 @@ describe("REMOVE without RETURN", () => {
     graph.addVertex("User", { name: "Alice", age: 25 });
 
     // Execute REMOVE without RETURN
-    const results = executeQuery(
-      graph,
-      `MATCH (u:User) WHERE u.name = 'Alice' REMOVE u.age`,
-    );
+    const results = executeQuery(graph, `MATCH (u:User) WHERE u.name = 'Alice' REMOVE u.age`);
 
     // No results returned
     expect(results).toHaveLength(0);
@@ -417,8 +397,8 @@ describe("Error cases", () => {
   test("CREATE with ORDER BY without RETURN throws error", () => {
     const graph = createComprehensiveGraph();
 
-    expect(() =>
-      executeQuery(graph, `CREATE (u:User {name: 'Alice'}) ORDER BY u.name`),
-    ).toThrow("ORDER BY, SKIP, and LIMIT require a RETURN clause");
+    expect(() => executeQuery(graph, `CREATE (u:User {name: 'Alice'}) ORDER BY u.name`)).toThrow(
+      "ORDER BY, SKIP, and LIMIT require a RETURN clause",
+    );
   });
 });

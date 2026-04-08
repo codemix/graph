@@ -1,9 +1,5 @@
 import { test, expect } from "vitest";
-import {
-  createMatcher,
-  createDetailedMatcher,
-  rankDocuments,
-} from "./matcher.js";
+import { createMatcher, createDetailedMatcher, rankDocuments } from "./matcher.js";
 
 test("Matcher createMatcher should return a function", () => {
   const matcher = createMatcher("test");
@@ -254,11 +250,7 @@ test("Matcher rankDocuments object-based ranking should return the specified key
     { id: 4, name: "Alice Brown", bio: "Senior software developer" },
   ];
 
-  const results = rankDocuments(
-    "developer",
-    { key: "name", text: (u) => u.bio },
-    users,
-  );
+  const results = rankDocuments("developer", { key: "name", text: (u) => u.bio }, users);
 
   expect(results[0]).toHaveProperty("key");
   expect(results[0]).toHaveProperty("score");
@@ -272,11 +264,7 @@ test("Matcher rankDocuments object-based ranking should handle empty array", () 
     bio: string;
   }
 
-  const results = rankDocuments(
-    "test",
-    { key: "id", text: (u: User) => u.name },
-    [],
-  );
+  const results = rankDocuments("test", { key: "id", text: (u: User) => u.name }, []);
   expect(results).toEqual([]);
 });
 
@@ -574,9 +562,7 @@ test("Matcher English language examples edge cases should handle very long queri
   const longQuery =
     "how to implement a database connection pool with automatic retry and exponential backoff";
   const matcher = createMatcher(longQuery);
-  expect(
-    matcher("Database connection pooling with retry logic"),
-  ).toBeGreaterThan(0.2);
+  expect(matcher("Database connection pooling with retry logic")).toBeGreaterThan(0.2);
 });
 
 test("Matcher English language examples edge cases should handle very short documents", () => {

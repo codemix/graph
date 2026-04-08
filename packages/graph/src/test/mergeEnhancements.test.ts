@@ -53,8 +53,7 @@ describe("MERGE with parameter properties - Grammar parsing", () => {
   });
 
   test("parses MERGE relationship with parameter properties", () => {
-    const query =
-      "MATCH (a:Person), (b:Person) MERGE (a)-[r:knows {since: $year}]->(b) RETURN r";
+    const query = "MATCH (a:Person), (b:Person) MERGE (a)-[r:knows {since: $year}]->(b) RETURN r";
     const ast = parse(query) as Query;
 
     expect(ast.merge).toHaveLength(1);
@@ -244,9 +243,7 @@ describe("MERGE with parameter properties - Query execution", () => {
     const traverser = createTraverser(steps);
 
     // Count existing knows edges from Alice before MERGE
-    const aliceVertex = [...graph.getVertices("Person")].find(
-      (v) => v.get("name") === "Alice",
-    )!;
+    const aliceVertex = [...graph.getVertices("Person")].find((v) => v.get("name") === "Alice")!;
     const initialEdges = [...graph.getOutgoingEdges(aliceVertex.id)];
     const initialKnowsEdges = initialEdges.filter((e) => e.label === "knows");
     const initialKnowsCount = initialKnowsEdges.length;
@@ -280,9 +277,7 @@ describe("MERGE with parameter properties - Query execution", () => {
     const traverser = createTraverser(steps);
 
     // Count existing knows edges from Alice before MERGE
-    const aliceVertex = [...graph.getVertices("Person")].find(
-      (v) => v.get("name") === "Alice",
-    )!;
+    const aliceVertex = [...graph.getVertices("Person")].find((v) => v.get("name") === "Alice")!;
     const initialEdges = [...graph.getOutgoingEdges(aliceVertex.id)];
     const initialKnowsEdges = initialEdges.filter((e) => e.label === "knows");
     const initialKnowsCount = initialKnowsEdges.length;
@@ -304,8 +299,7 @@ describe("MERGE with parameter properties - Query execution", () => {
 
     setQueryParams({ name: "Eve", age: 28, city: "NYC" });
 
-    const query =
-      "MERGE (u:Person {name: $name, age: $age, city: $city}) RETURN u";
+    const query = "MERGE (u:Person {name: $name, age: $age, city: $city}) RETURN u";
     const ast = parse(query) as Query;
     const steps = astToSteps(ast);
     const traverser = createTraverser(steps);
@@ -370,8 +364,7 @@ describe("MERGE with ON CREATE/ON MATCH and parameters", () => {
 
     setQueryParams({ name: "Henry", createdBy: "system" });
 
-    const query =
-      "MERGE (u:Person {name: $name}) ON CREATE SET u.createdBy = $createdBy RETURN u";
+    const query = "MERGE (u:Person {name: $name}) ON CREATE SET u.createdBy = $createdBy RETURN u";
     const ast = parse(query) as Query;
     const steps = astToSteps(ast);
     const traverser = createTraverser(steps);
@@ -389,8 +382,7 @@ describe("MERGE with ON CREATE/ON MATCH and parameters", () => {
 
     setQueryParams({ name: "Alice", updatedAt: "2024-01-01" });
 
-    const query =
-      "MERGE (u:Person {name: $name}) ON MATCH SET u.updatedAt = $updatedAt RETURN u";
+    const query = "MERGE (u:Person {name: $name}) ON MATCH SET u.updatedAt = $updatedAt RETURN u";
     const ast = parse(query) as Query;
     const steps = astToSteps(ast);
     const traverser = createTraverser(steps);

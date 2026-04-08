@@ -1,11 +1,7 @@
 import { StandardSchemaV1 } from "@standard-schema/spec";
 import { Graph } from "../Graph.js";
 import { GraphSchema } from "../GraphSchema.js";
-import {
-  InMemoryGraphStorage,
-  StoredEdge,
-  StoredVertex,
-} from "../GraphStorage.js";
+import { InMemoryGraphStorage, StoredEdge, StoredVertex } from "../GraphStorage.js";
 
 function makeType<T>(_defaultValue: T): StandardSchemaV1<T> {
   return {
@@ -193,8 +189,7 @@ const data = {
       id: "Concept:cfb8a9a9-5158-426f-9ed0-423df7a73eba",
       properties: {
         name: "Industrial Robot",
-        description:
-          "Machine that can be programmed to perform various manufacturing tasks",
+        description: "Machine that can be programmed to perform various manufacturing tasks",
       },
     },
     {
@@ -226,8 +221,7 @@ const data = {
       id: "Concept:7f8f1033-63a8-42f5-b4bb-c0a83490833d",
       properties: {
         name: "Sensor Device ",
-        description:
-          "A device that detects and responds to physical parameters",
+        description: "A device that detects and responds to physical parameters",
       },
     },
     {
@@ -235,8 +229,7 @@ const data = {
       id: "Concept:e4ae01dd-039a-4c22-9ff1-a0c578dd5f74",
       properties: {
         name: "Temperature Sensor",
-        description:
-          "A device that detects and responds to temperature changes",
+        description: "A device that detects and responds to temperature changes",
       },
     },
     {
@@ -244,8 +237,7 @@ const data = {
       id: "Concept:bc75f407-5ad9-4930-9396-1a68500d654b",
       properties: {
         name: "Motion Sensor ",
-        description:
-          "A device that detects and responds to movement and motion",
+        description: "A device that detects and responds to movement and motion",
       },
     },
     {
@@ -303,8 +295,7 @@ const data = {
       id: "Concept:1e2392d0-f244-45f7-b89e-c8bc5210d616",
       properties: {
         name: "Supply Chain Management",
-        description:
-          "Process for managing the flow of goods, services, and information",
+        description: "Process for managing the flow of goods, services, and information",
       },
     },
     {

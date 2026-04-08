@@ -2,11 +2,7 @@ import { describe, it, expect, beforeEach } from "vitest";
 import { Graph, Vertex, Edge } from "../Graph.js";
 import { InMemoryGraphStorage } from "../GraphStorage.js";
 import { clearQueryParams } from "../Steps.js";
-import {
-  functionRegistry,
-  evaluateFunction,
-  functionArgExpectsPath,
-} from "../FunctionRegistry.js";
+import { functionRegistry, evaluateFunction, functionArgExpectsPath } from "../FunctionRegistry.js";
 import { TraversalPath, GraphTraversal } from "../Traversals.js";
 import type { GraphSchema } from "../GraphSchema.js";
 import { StandardSchemaV1 } from "@standard-schema/spec";
@@ -84,9 +80,7 @@ describe("FunctionRegistry: Path Functions", () => {
       Object.setPrototypeOf(v2, Vertex.prototype);
       Object.setPrototypeOf(e1, Edge.prototype);
 
-      const path = new TraversalPath(undefined, v1, [])
-        .with(e1, [])
-        .with(v2, ["p"]);
+      const path = new TraversalPath(undefined, v1, []).with(e1, []).with(v2, ["p"]);
 
       expect(evaluateFunction("length", [path], path)).toBe(1);
     });
@@ -219,9 +213,7 @@ describe("FunctionRegistry: Path Functions", () => {
     it("should return null for invalid input", () => {
       const path = new TraversalPath(undefined, undefined, []);
       expect(evaluateFunction("relationships", [null], path)).toBe(null);
-      expect(evaluateFunction("relationships", ["not a path"], path)).toBe(
-        null,
-      );
+      expect(evaluateFunction("relationships", ["not a path"], path)).toBe(null);
     });
   });
 });
@@ -257,13 +249,7 @@ describe("Query Execution: Path Functions with Traversal API", () => {
       const g = new GraphTraversal(graph);
       // out() gives us the target vertex of outgoing edges directly
       const results = [
-        ...g
-          .V(alice.id)
-          .as("start")
-          .out("KNOWS")
-          .as("end")
-          .select("start", "end")
-          .values(),
+        ...g.V(alice.id).as("start").out("KNOWS").as("end").select("start", "end").values(),
       ];
 
       expect(results).toHaveLength(1);
@@ -325,9 +311,7 @@ describe("Path Functions: Edge Cases", () => {
     expect(evaluateFunction("nodes", [emptyPath], emptyPath)).toEqual([]);
 
     // relationships of empty path should be empty
-    expect(evaluateFunction("relationships", [emptyPath], emptyPath)).toEqual(
-      [],
-    );
+    expect(evaluateFunction("relationships", [emptyPath], emptyPath)).toEqual([]);
   });
 
   it("should handle paths with only edges (unusual but possible)", () => {
@@ -372,10 +356,7 @@ describe("Path Functions: Edge Cases", () => {
     const nodes = evaluateFunction("nodes", [path], path) as Vertex<any, any>[];
     expect(nodes.map((n) => n.id)).toEqual(["v1", "v2", "v3"]);
 
-    const rels = evaluateFunction("relationships", [path], path) as Edge<
-      any,
-      any
-    >[];
+    const rels = evaluateFunction("relationships", [path], path) as Edge<any, any>[];
     expect(rels.map((r) => r.id)).toEqual(["e1", "e2"]);
   });
 });
@@ -384,11 +365,7 @@ describe("TraversalPath depth caching", () => {
   it("should have O(1) depth access for deeply nested paths", () => {
     // Build a deeply nested path (1000 levels)
     const depth = 1000;
-    let path: TraversalPath<any, any, any> = new TraversalPath(
-      undefined,
-      { id: "0" },
-      [],
-    );
+    let path: TraversalPath<any, any, any> = new TraversalPath(undefined, { id: "0" }, []);
     for (let i = 1; i < depth; i++) {
       path = path.with({ id: String(i) }, []);
     }

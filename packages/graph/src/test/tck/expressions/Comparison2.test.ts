@@ -41,24 +41,22 @@ describe("Comparison2 - Half-bounded Range", () => {
     expect(results).toContain(undefined);
   });
 
-  test.fails(
-    "[3] Comparing across types yields null, except numbers - named paths and complex expressions not supported",
-    () => {
-      // Original TCK Scenario Outline:
-      // MATCH p = (n)-[r]->()
-      // WITH [n, r, p, '', 1, 3.14, true, null, [], {}] AS types
-      // UNWIND range(0, size(types) - 1) AS i
-      // UNWIND range(0, size(types) - 1) AS j
-      // WITH types[i] AS lhs, types[j] AS rhs
-      // WHERE i <> j
-      // WITH lhs, rhs, lhs < rhs AS result
-      // WHERE result
-      // RETURN lhs, rhs
-      const graph = createTckGraph();
-      executeTckQuery(graph, "CREATE (:A)-[:R]->(:B)");
-      const results = executeTckQuery(
-        graph,
-        `MATCH p = (n)-[r]->()
+  test.fails("[3] Comparing across types yields null, except numbers - named paths and complex expressions not supported", () => {
+    // Original TCK Scenario Outline:
+    // MATCH p = (n)-[r]->()
+    // WITH [n, r, p, '', 1, 3.14, true, null, [], {}] AS types
+    // UNWIND range(0, size(types) - 1) AS i
+    // UNWIND range(0, size(types) - 1) AS j
+    // WITH types[i] AS lhs, types[j] AS rhs
+    // WHERE i <> j
+    // WITH lhs, rhs, lhs < rhs AS result
+    // WHERE result
+    // RETURN lhs, rhs
+    const graph = createTckGraph();
+    executeTckQuery(graph, "CREATE (:A)-[:R]->(:B)");
+    const results = executeTckQuery(
+      graph,
+      `MATCH p = (n)-[r]->()
        WITH [n, r, p, '', 1, 3.14, true, null, [], {}] AS types
        UNWIND range(0, size(types) - 1) AS i
        UNWIND range(0, size(types) - 1) AS j
@@ -67,12 +65,11 @@ describe("Comparison2 - Half-bounded Range", () => {
        WITH lhs, rhs, lhs < rhs AS result
        WHERE result
        RETURN lhs, rhs`,
-      );
-      // Only numbers should be comparable: 1 < 3.14
-      expect(results).toHaveLength(1);
-      expect(results[0]).toEqual([1, 3.14]);
-    },
-  );
+    );
+    // Only numbers should be comparable: 1 < 3.14
+    expect(results).toHaveLength(1);
+    expect(results[0]).toEqual([1, 3.14]);
+  });
 
   test("[4] Comparing lists", () => {
     const graph = createTckGraph();
@@ -149,10 +146,7 @@ describe("Comparison2 - Half-bounded Range", () => {
       "CREATE (:A {num: 1}), (:A {num: 2}), (:A {num: 3}), (:A {num: 4}), (:A {num: 5})",
     );
 
-    const results = executeTckQuery(
-      graph,
-      "MATCH (n:A) WHERE n.num > 3 RETURN n.num",
-    );
+    const results = executeTckQuery(graph, "MATCH (n:A) WHERE n.num > 3 RETURN n.num");
 
     expect(results).toHaveLength(2);
     expect(results).toContainEqual(4);
@@ -166,10 +160,7 @@ describe("Comparison2 - Half-bounded Range", () => {
       "CREATE (:A {num: 1}), (:A {num: 2}), (:A {num: 3}), (:A {num: 4}), (:A {num: 5})",
     );
 
-    const results = executeTckQuery(
-      graph,
-      "MATCH (n:A) WHERE n.num < 3 RETURN n.num",
-    );
+    const results = executeTckQuery(graph, "MATCH (n:A) WHERE n.num < 3 RETURN n.num");
 
     expect(results).toHaveLength(2);
     expect(results).toContainEqual(1);
@@ -183,10 +174,7 @@ describe("Comparison2 - Half-bounded Range", () => {
       "CREATE (:A {num: 1}), (:A {num: 2}), (:A {num: 3}), (:A {num: 4}), (:A {num: 5})",
     );
 
-    const results = executeTckQuery(
-      graph,
-      "MATCH (n:A) WHERE n.num >= 3 RETURN n.num",
-    );
+    const results = executeTckQuery(graph, "MATCH (n:A) WHERE n.num >= 3 RETURN n.num");
 
     expect(results).toHaveLength(3);
     expect(results).toContainEqual(3);
@@ -201,10 +189,7 @@ describe("Comparison2 - Half-bounded Range", () => {
       "CREATE (:A {num: 1}), (:A {num: 2}), (:A {num: 3}), (:A {num: 4}), (:A {num: 5})",
     );
 
-    const results = executeTckQuery(
-      graph,
-      "MATCH (n:A) WHERE n.num <= 3 RETURN n.num",
-    );
+    const results = executeTckQuery(graph, "MATCH (n:A) WHERE n.num <= 3 RETURN n.num");
 
     expect(results).toHaveLength(3);
     expect(results).toContainEqual(1);
@@ -219,10 +204,7 @@ describe("Comparison2 - Half-bounded Range", () => {
       "CREATE (:A {name: 'apple'}), (:A {name: 'banana'}), (:A {name: 'cherry'})",
     );
 
-    const results = executeTckQuery(
-      graph,
-      "MATCH (n:A) WHERE n.name > 'banana' RETURN n.name",
-    );
+    const results = executeTckQuery(graph, "MATCH (n:A) WHERE n.name > 'banana' RETURN n.name");
 
     expect(results).toHaveLength(1);
     expect(results[0]).toBe("cherry");
@@ -235,10 +217,7 @@ describe("Comparison2 - Half-bounded Range", () => {
       "CREATE (:A {name: 'apple'}), (:A {name: 'banana'}), (:A {name: 'cherry'})",
     );
 
-    const results = executeTckQuery(
-      graph,
-      "MATCH (n:A) WHERE n.name >= 'banana' RETURN n.name",
-    );
+    const results = executeTckQuery(graph, "MATCH (n:A) WHERE n.name >= 'banana' RETURN n.name");
 
     expect(results).toHaveLength(2);
     expect(results).toContainEqual("banana");
@@ -247,15 +226,9 @@ describe("Comparison2 - Half-bounded Range", () => {
 
   test("[custom-7] Float comparison with >", () => {
     const graph = createTckGraph();
-    executeTckQuery(
-      graph,
-      "CREATE (:A {num: 1.5}), (:A {num: 2.5}), (:A {num: 3.14})",
-    );
+    executeTckQuery(graph, "CREATE (:A {num: 1.5}), (:A {num: 2.5}), (:A {num: 3.14})");
 
-    const results = executeTckQuery(
-      graph,
-      "MATCH (n:A) WHERE n.num > 2.0 RETURN n.num",
-    );
+    const results = executeTckQuery(graph, "MATCH (n:A) WHERE n.num > 2.0 RETURN n.num");
 
     expect(results).toHaveLength(2);
     expect(results).toContainEqual(2.5);
@@ -264,15 +237,9 @@ describe("Comparison2 - Half-bounded Range", () => {
 
   test("[custom-8] Integer and float comparison (1 < 1.5)", () => {
     const graph = createTckGraph();
-    executeTckQuery(
-      graph,
-      "CREATE (:A {num: 1}), (:A {num: 2}), (:A {num: 3})",
-    );
+    executeTckQuery(graph, "CREATE (:A {num: 1}), (:A {num: 2}), (:A {num: 3})");
 
-    const results = executeTckQuery(
-      graph,
-      "MATCH (n:A) WHERE n.num < 1.5 RETURN n.num",
-    );
+    const results = executeTckQuery(graph, "MATCH (n:A) WHERE n.num < 1.5 RETURN n.num");
 
     expect(results).toHaveLength(1);
     expect(results[0]).toBe(1);
@@ -297,15 +264,9 @@ describe("Comparison2 - Half-bounded Range", () => {
 
   test("[custom-10] Comparison with property on both sides", () => {
     const graph = createTckGraph();
-    executeTckQuery(
-      graph,
-      "CREATE (:A {x: 1, y: 5}), (:A {x: 3, y: 2}), (:A {x: 4, y: 4})",
-    );
+    executeTckQuery(graph, "CREATE (:A {x: 1, y: 5}), (:A {x: 3, y: 2}), (:A {x: 4, y: 4})");
 
-    const results = executeTckQuery(
-      graph,
-      "MATCH (n:A) WHERE n.x < n.y RETURN n.x, n.y",
-    );
+    const results = executeTckQuery(graph, "MATCH (n:A) WHERE n.x < n.y RETURN n.x, n.y");
 
     expect(results).toHaveLength(1);
     expect(results[0]).toEqual([1, 5]);

@@ -8,11 +8,7 @@ import type {
   CreateChainPattern,
   CreateVariableRef,
 } from "../AST.js";
-import {
-  executeQuery,
-  createFlexibleGraph,
-  createComprehensiveGraph,
-} from "./testHelpers.js";
+import { executeQuery, createFlexibleGraph, createComprehensiveGraph } from "./testHelpers.js";
 
 // ============================================================================
 // Functional exists() Syntax Tests
@@ -21,9 +17,7 @@ import {
 describe("Functional exists() syntax", () => {
   describe("Grammar parsing", () => {
     test("parses exists(n.property) in WHERE clause", () => {
-      const ast = parse(
-        "MATCH (n:User) WHERE exists(n.email) RETURN n",
-      ) as Query;
+      const ast = parse("MATCH (n:User) WHERE exists(n.email) RETURN n") as Query;
 
       expect(ast.matches).toHaveLength(1);
       const condition = ast.matches[0]!.where!.condition as ExistsCondition;
@@ -33,9 +27,7 @@ describe("Functional exists() syntax", () => {
     });
 
     test("parses NOT exists(n.property) in WHERE clause", () => {
-      const ast = parse(
-        "MATCH (n:User) WHERE NOT exists(n.email) RETURN n",
-      ) as Query;
+      const ast = parse("MATCH (n:User) WHERE NOT exists(n.email) RETURN n") as Query;
 
       expect(ast.matches).toHaveLength(1);
       const condition = ast.matches[0]!.where!.condition as NotCondition;
@@ -48,18 +40,14 @@ describe("Functional exists() syntax", () => {
     });
 
     test("parses exists() with @property syntax", () => {
-      const ast = parse(
-        "MATCH (n:User) WHERE exists(n.@label) RETURN n",
-      ) as Query;
+      const ast = parse("MATCH (n:User) WHERE exists(n.@label) RETURN n") as Query;
 
       const condition = ast.matches[0]!.where!.condition as ExistsCondition;
       expect(condition.property).toBe("@label");
     });
 
     test("parses exists() combined with AND", () => {
-      const ast = parse(
-        "MATCH (n:User) WHERE exists(n.email) AND n.age > 0 RETURN n",
-      ) as Query;
+      const ast = parse("MATCH (n:User) WHERE exists(n.email) AND n.age > 0 RETURN n") as Query;
 
       const condition = ast.matches[0]!.where!.condition;
       expect(condition.type).toBe("AndCondition");
@@ -81,10 +69,7 @@ describe("Functional exists() syntax", () => {
       graph.addVertex("User", { name: "Alice", email: "alice@test.com" });
       graph.addVertex("User", { name: "Bob" }); // No email
 
-      const results = executeQuery(
-        graph,
-        "MATCH (n:User) WHERE exists(n.email) RETURN n",
-      );
+      const results = executeQuery(graph, "MATCH (n:User) WHERE exists(n.email) RETURN n");
 
       expect(results).toHaveLength(1);
       const user = (results[0] as any[])[0];
@@ -96,10 +81,7 @@ describe("Functional exists() syntax", () => {
       graph.addVertex("User", { name: "Alice", email: "alice@test.com" });
       graph.addVertex("User", { name: "Bob" }); // No email
 
-      const results = executeQuery(
-        graph,
-        "MATCH (n:User) WHERE NOT exists(n.email) RETURN n",
-      );
+      const results = executeQuery(graph, "MATCH (n:User) WHERE NOT exists(n.email) RETURN n");
 
       expect(results).toHaveLength(1);
       const user = (results[0] as any[])[0];
@@ -111,10 +93,7 @@ describe("Functional exists() syntax", () => {
       graph.addVertex("User", { name: "Alice", email: "alice@test.com" });
       graph.addVertex("User", { name: "Bob" });
 
-      const results = executeQuery(
-        graph,
-        "MATCH (n:User) WHERE n.email EXISTS RETURN n",
-      );
+      const results = executeQuery(graph, "MATCH (n:User) WHERE n.email EXISTS RETURN n");
 
       expect(results).toHaveLength(1);
       expect((results[0] as any[])[0].get("name")).toBe("Alice");
@@ -125,10 +104,7 @@ describe("Functional exists() syntax", () => {
       graph.addVertex("User", { name: "Alice", email: "alice@test.com" });
       graph.addVertex("User", { name: "Bob" });
 
-      const results = executeQuery(
-        graph,
-        "MATCH (n:User) WHERE NOT n.email EXISTS RETURN n",
-      );
+      const results = executeQuery(graph, "MATCH (n:User) WHERE NOT n.email EXISTS RETURN n");
 
       expect(results).toHaveLength(1);
       expect((results[0] as any[])[0].get("name")).toBe("Bob");
@@ -385,10 +361,7 @@ describe("Comma-separated MATCH patterns", () => {
       graph.addVertex("Post", { title: "World" });
 
       // This should match all combinations: Alice+Hello, Alice+World, Bob+Hello, Bob+World
-      const results = executeQuery(
-        graph,
-        "MATCH (u:User), (p:Post) RETURN u, p",
-      );
+      const results = executeQuery(graph, "MATCH (u:User), (p:Post) RETURN u, p");
 
       // Expect 2 users x 2 posts = 4 combinations
       expect(results).toHaveLength(4);
@@ -523,9 +496,7 @@ describe("Full query examples from user requests", () => {
 
 describe("Edge cases", () => {
   test("exists() with nested NOT NOT", () => {
-    const ast = parse(
-      "MATCH (n:User) WHERE NOT NOT exists(n.email) RETURN n",
-    ) as Query;
+    const ast = parse("MATCH (n:User) WHERE NOT NOT exists(n.email) RETURN n") as Query;
 
     const condition = ast.matches[0]!.where!.condition as NotCondition;
     expect(condition.type).toBe("NotCondition");
@@ -539,10 +510,7 @@ describe("Edge cases", () => {
     const graph = createFlexibleGraph();
     graph.addVertex("User", { name: "Alice" });
 
-    executeQuery(
-      graph,
-      "MATCH (u:User) CREATE (u)-[:knows]->(:User {name: 'Bob'}) RETURN u",
-    );
+    executeQuery(graph, "MATCH (u:User) CREATE (u)-[:knows]->(:User {name: 'Bob'}) RETURN u");
 
     const users = [...graph.getVertices("User")];
     expect(users).toHaveLength(2);
@@ -553,10 +521,7 @@ describe("Edge cases", () => {
     graph.addVertex("Config", { setting_name: "value" });
     graph.addVertex("Config", { other: "value" });
 
-    const results = executeQuery(
-      graph,
-      "MATCH (c:Config) WHERE exists(c.setting_name) RETURN c",
-    );
+    const results = executeQuery(graph, "MATCH (c:Config) WHERE exists(c.setting_name) RETURN c");
 
     expect(results).toHaveLength(1);
   });
@@ -566,12 +531,7 @@ describe("Edge cases", () => {
 
     // Patterns with edges should throw an error
     expect(() => {
-      executeQuery(
-        graph,
-        "MATCH (a:User)-[:FOLLOWS]->(b:User), (c:Post) RETURN a, c",
-      );
-    }).toThrow(
-      /Comma-separated MATCH patterns only support simple node patterns/,
-    );
+      executeQuery(graph, "MATCH (a:User)-[:FOLLOWS]->(b:User), (c:Post) RETURN a, c");
+    }).toThrow(/Comma-separated MATCH patterns only support simple node patterns/);
   });
 });

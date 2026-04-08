@@ -86,15 +86,9 @@ describe("Path1 - Nodes of a path", () => {
 
   test("[Custom 3] Retrieve endpoint nodes of a relationship", () => {
     const graph = createTckGraph();
-    executeTckQuery(
-      graph,
-      `CREATE (:A {name: 'Alice'})-[:T]->(:B {name: 'Bob'})`,
-    );
+    executeTckQuery(graph, `CREATE (:A {name: 'Alice'})-[:T]->(:B {name: 'Bob'})`);
 
-    const results = executeTckQuery(
-      graph,
-      `MATCH (s:A)-[:T]->(e:B) RETURN s.name, e.name`,
-    );
+    const results = executeTckQuery(graph, `MATCH (s:A)-[:T]->(e:B) RETURN s.name, e.name`);
 
     expect(results).toHaveLength(1);
     const [startName, endName] = results[0] as [string, string];

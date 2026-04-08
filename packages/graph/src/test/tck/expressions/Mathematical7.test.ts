@@ -22,10 +22,7 @@ describe("Mathematical7 - Power", () => {
     // Create nodes with values that represent power results
     executeTckQuery(graph, "CREATE (:A {num: 8})"); // 2 ^ 3 = 8 computed externally
 
-    const results = executeTckQuery(
-      graph,
-      "MATCH (n:A) WHERE n.num = 8 RETURN n.num",
-    );
+    const results = executeTckQuery(graph, "MATCH (n:A) WHERE n.num = 8 RETURN n.num");
 
     expect(results).toHaveLength(1);
     expect(results[0]).toBe(8);

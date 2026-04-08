@@ -302,8 +302,7 @@ test("AST to Steps Converter - Variable-length paths - should convert open-ended
 });
 
 test("AST to Steps Converter - Variable-length paths - should apply WHERE filter before variable-length path traversal", () => {
-  const query =
-    'MATCH (u:User)-[:follows*2]->(f) WHERE u.name = "Alice" RETURN f';
+  const query = 'MATCH (u:User)-[:follows*2]->(f) WHERE u.name = "Alice" RETURN f';
   const ast = parse(query) as Query;
   const steps = astToSteps(ast);
 
@@ -399,12 +398,7 @@ test("AST to Steps Converter - WHERE clause - should convert AND condition", () 
   expect(filterStep.config.condition).toEqual([
     "and",
     ["expr", ">", { type: "propertyRef", variable: "u", property: "age" }, 18],
-    [
-      "expr",
-      "=",
-      { type: "propertyRef", variable: "u", property: "active" },
-      true,
-    ],
+    ["expr", "=", { type: "propertyRef", variable: "u", property: "active" }, true],
   ]);
 });
 
@@ -423,18 +417,12 @@ test("AST to Steps Converter - WHERE clause - should convert OR condition", () =
   expect(filterStep.config.condition).toEqual([
     "or",
     ["expr", "<", { type: "propertyRef", variable: "u", property: "age" }, 25],
-    [
-      "expr",
-      "=",
-      { type: "propertyRef", variable: "u", property: "verified" },
-      true,
-    ],
+    ["expr", "=", { type: "propertyRef", variable: "u", property: "verified" }, true],
   ]);
 });
 
 test("AST to Steps Converter - WHERE clause - should convert nested conditions", () => {
-  const query =
-    "MATCH (u:User) WHERE (u.age > 18 AND u.age < 65) OR u.verified = true RETURN u";
+  const query = "MATCH (u:User) WHERE (u.age > 18 AND u.age < 65) OR u.verified = true RETURN u";
   const ast = parse(query) as Query;
   const steps = astToSteps(ast);
   expect(dumpSteps(steps)).toMatchInlineSnapshot(`
@@ -499,9 +487,7 @@ test("AST to Steps Converter - ORDER BY clause - should convert ORDER BY to Orde
   expect(steps[3]).toBeInstanceOf(ValuesStep);
 
   const orderStep = steps[1] as OrderStep;
-  expect(orderStep.config.directions).toEqual([
-    { key: "name", direction: "asc" },
-  ]);
+  expect(orderStep.config.directions).toEqual([{ key: "name", direction: "asc" }]);
 });
 
 test("AST to Steps Converter - ORDER BY clause - should handle DESC direction", () => {
@@ -520,8 +506,7 @@ test("AST to Steps Converter - ORDER BY clause - should handle DESC direction", 
 });
 
 test("AST to Steps Converter - ORDER BY clause - should handle multiple order clauses", () => {
-  const query =
-    "MATCH (u:User) RETURN u ORDER BY u.lastName ASC, u.firstName ASC";
+  const query = "MATCH (u:User) RETURN u ORDER BY u.lastName ASC, u.firstName ASC";
   const ast = parse(query) as Query;
   const steps = astToSteps(ast);
   expect(dumpSteps(steps)).toMatchInlineSnapshot(`

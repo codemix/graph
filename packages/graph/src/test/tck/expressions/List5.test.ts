@@ -14,10 +14,7 @@ describe("List5 - List Membership Validation - IN Operator", () => {
     // RETURN 3 IN list[0] AS r
     // Grammar limitation: WITH list literals not supported
     const graph = createTckGraph();
-    const results = executeTckQuery(
-      graph,
-      "WITH [[1, 2, 3]] AS list RETURN 3 IN list[0] AS r",
-    );
+    const results = executeTckQuery(graph, "WITH [[1, 2, 3]] AS list RETURN 3 IN list[0] AS r");
     expect(results).toEqual([true]);
   });
 
@@ -33,10 +30,7 @@ describe("List5 - List Membership Validation - IN Operator", () => {
     // RETURN 3 IN list[0..1] AS r
     // Grammar limitation: WITH list literals not supported
     const graph = createTckGraph();
-    const results = executeTckQuery(
-      graph,
-      "WITH [1, 2, 3] AS list RETURN 3 IN list[0..1] AS r",
-    );
+    const results = executeTckQuery(graph, "WITH [1, 2, 3] AS list RETURN 3 IN list[0..1] AS r");
     // [0..1] gives [1, 2], so 3 is not in it
     expect(results).toEqual([false]);
   });
@@ -98,28 +92,22 @@ describe("List5 - List Membership Validation - IN Operator", () => {
     expect(results).toEqual([false]);
   });
 
-  test.fails(
-    "[36] null IN empty list - implementation returns null instead of false",
-    () => {
-      // In standard Cypher, null IN [] should return false
-      // Our implementation returns null due to null propagation
-      const graph = createTckGraph();
-      const results = executeTckQuery(graph, "RETURN null IN [] AS r");
-      expect(results).toEqual([false]);
-    },
-  );
+  test.fails("[36] null IN empty list - implementation returns null instead of false", () => {
+    // In standard Cypher, null IN [] should return false
+    // Our implementation returns null due to null propagation
+    const graph = createTckGraph();
+    const results = executeTckQuery(graph, "RETURN null IN [] AS r");
+    expect(results).toEqual([false]);
+  });
 
-  test.fails(
-    "[42] Failing when using IN on a non-list literal - error handling not tested",
-    () => {
-      // Original TCK (Scenario Outline):
-      // RETURN 1 IN <invalid>
-      // Expected: SyntaxError for boolean, integer, float, string, map
-      const graph = createTckGraph();
-      // Should throw SyntaxError when using IN on a non-list
-      expect(() => executeTckQuery(graph, "RETURN 1 IN true")).toThrow();
-    },
-  );
+  test.fails("[42] Failing when using IN on a non-list literal - error handling not tested", () => {
+    // Original TCK (Scenario Outline):
+    // RETURN 1 IN <invalid>
+    // Expected: SyntaxError for boolean, integer, float, string, map
+    const graph = createTckGraph();
+    // Should throw SyntaxError when using IN on a non-list
+    expect(() => executeTckQuery(graph, "RETURN 1 IN true")).toThrow();
+  });
 
   // Custom tests demonstrating IN operator in WHERE clause
   test("[Custom 1] IN operator filters nodes by property value", () => {
@@ -129,10 +117,7 @@ describe("List5 - List Membership Validation - IN Operator", () => {
       `CREATE (:A {num: 1}), (:A {num: 2}), (:A {num: 3}), (:A {num: 4}), (:A {num: 5})`,
     );
 
-    const results = executeTckQuery(
-      graph,
-      "MATCH (n:A) WHERE n.num IN [2, 4] RETURN n.num",
-    );
+    const results = executeTckQuery(graph, "MATCH (n:A) WHERE n.num IN [2, 4] RETURN n.num");
 
     expect(results).toHaveLength(2);
     expect(results).toContain(2);
@@ -160,25 +145,16 @@ describe("List5 - List Membership Validation - IN Operator", () => {
     const graph = createTckGraph();
     executeTckQuery(graph, `CREATE (:A {num: 1}), (:A {num: 2})`);
 
-    const results = executeTckQuery(
-      graph,
-      "MATCH (n:A) WHERE n.num IN [] RETURN n.num",
-    );
+    const results = executeTckQuery(graph, "MATCH (n:A) WHERE n.num IN [] RETURN n.num");
 
     expect(results).toHaveLength(0);
   });
 
   test("[Custom 4] NOT IN operator", () => {
     const graph = createTckGraph();
-    executeTckQuery(
-      graph,
-      `CREATE (:A {num: 1}), (:A {num: 2}), (:A {num: 3})`,
-    );
+    executeTckQuery(graph, `CREATE (:A {num: 1}), (:A {num: 2}), (:A {num: 3})`);
 
-    const results = executeTckQuery(
-      graph,
-      "MATCH (n:A) WHERE NOT n.num IN [1, 3] RETURN n.num",
-    );
+    const results = executeTckQuery(graph, "MATCH (n:A) WHERE NOT n.num IN [1, 3] RETURN n.num");
 
     expect(results).toHaveLength(1);
     expect(results[0]).toBe(2);
@@ -202,15 +178,9 @@ describe("List5 - List Membership Validation - IN Operator", () => {
 
   test("[Custom 6] IN operator with single-element list", () => {
     const graph = createTckGraph();
-    executeTckQuery(
-      graph,
-      `CREATE (:A {num: 1}), (:A {num: 2}), (:A {num: 3})`,
-    );
+    executeTckQuery(graph, `CREATE (:A {num: 1}), (:A {num: 2}), (:A {num: 3})`);
 
-    const results = executeTckQuery(
-      graph,
-      "MATCH (n:A) WHERE n.num IN [2] RETURN n.num",
-    );
+    const results = executeTckQuery(graph, "MATCH (n:A) WHERE n.num IN [2] RETURN n.num");
 
     expect(results).toHaveLength(1);
     expect(results[0]).toBe(2);

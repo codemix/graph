@@ -158,9 +158,7 @@ test("Arithmetic - Precedence - should respect * over +", () => {
 
 test("Arithmetic - Precedence - should respect / over -", () => {
   // 10 - 6 / 2 should be parsed as 10 - (6 / 2) = 7
-  const result = parse(
-    "MATCH (n) WHERE n.value = 10 - 6 / 2 RETURN n",
-  ) as Query;
+  const result = parse("MATCH (n) WHERE n.value = 10 - 6 / 2 RETURN n") as Query;
   const condition = result.matches[0]!.where!.condition as any;
   expect(condition.value.operator).toBe("-");
   expect(condition.value.right.operator).toBe("/");
@@ -176,9 +174,7 @@ test("Arithmetic - Precedence - should respect ^ over *", () => {
 
 test("Arithmetic - Precedence - should handle parentheses override precedence", () => {
   // (2 + 3) * 4 should be parsed as addition first
-  const result = parse(
-    "MATCH (n) WHERE n.value = (2 + 3) * 4 RETURN n",
-  ) as Query;
+  const result = parse("MATCH (n) WHERE n.value = (2 + 3) * 4 RETURN n") as Query;
   const condition = result.matches[0]!.where!.condition as any;
   expect(condition.value.operator).toBe("*");
   expect(condition.value.left.type).toBe("ArithmeticExpression");
@@ -201,9 +197,7 @@ test("Arithmetic - Precedence - power should be right-associative", () => {
 // ============================================================================
 
 test("Arithmetic - Property Refs - should parse property + literal", () => {
-  const result = parse(
-    "MATCH (n) WHERE n.total > n.base + 10 RETURN n",
-  ) as Query;
+  const result = parse("MATCH (n) WHERE n.total > n.base + 10 RETURN n") as Query;
   const condition = result.matches[0]!.where!.condition as any;
   expect(condition.value.type).toBe("ArithmeticExpression");
   expect(condition.value.left.type).toBe("PropertyAccess");
@@ -220,9 +214,7 @@ test("Arithmetic - Property Refs - should parse property + property", () => {
 });
 
 test("Arithmetic - Property Refs - should parse complex expression with properties", () => {
-  const result = parse(
-    "MATCH (n) WHERE n.price > n.cost * 1.5 + 10 RETURN n",
-  ) as Query;
+  const result = parse("MATCH (n) WHERE n.price > n.cost * 1.5 + 10 RETURN n") as Query;
   const condition = result.matches[0]!.where!.condition as any;
   // n.cost * 1.5 + 10 => (n.cost * 1.5) + 10
   expect(condition.value.operator).toBe("+");
@@ -251,9 +243,7 @@ test("Arithmetic - astToSteps - should convert arithmetic expressions to steps",
   const steps = astToSteps(ast);
   expect(steps.length).toBeGreaterThan(0);
   // Should have a filter step with the condition
-  const filterStep = steps.find(
-    (s) => s.constructor.name === "FilterElementsStep",
-  );
+  const filterStep = steps.find((s) => s.constructor.name === "FilterElementsStep");
   expect(filterStep).toBeDefined();
 });
 
@@ -295,9 +285,7 @@ describe("Arithmetic - Execution", () => {
 
   test("should evaluate multiplication in WHERE", () => {
     // Find users where score > 20 * 5 (i.e., score > 100)
-    const ast = parse(
-      "MATCH (n:User) WHERE n.score > 20 * 5 RETURN n",
-    ) as Query;
+    const ast = parse("MATCH (n:User) WHERE n.score > 20 * 5 RETURN n") as Query;
     const steps = astToSteps(ast);
     const traverser = createTraverser(steps);
     const results = [...traverser.traverse(graph, [undefined])];
@@ -337,9 +325,7 @@ describe("Arithmetic - Execution", () => {
 
   test("should evaluate power in WHERE", () => {
     // Find users where score > 10 ^ 2 (i.e., score > 100)
-    const ast = parse(
-      "MATCH (n:User) WHERE n.score > 10 ^ 2 RETURN n",
-    ) as Query;
+    const ast = parse("MATCH (n:User) WHERE n.score > 10 ^ 2 RETURN n") as Query;
     const steps = astToSteps(ast);
     const traverser = createTraverser(steps);
     const results = [...traverser.traverse(graph, [undefined])];
@@ -350,9 +336,7 @@ describe("Arithmetic - Execution", () => {
 
   test("should evaluate complex expression with precedence", () => {
     // Find users where score > 10 + 20 * 5 (= 10 + 100 = 110)
-    const ast = parse(
-      "MATCH (n:User) WHERE n.score > 10 + 20 * 5 RETURN n",
-    ) as Query;
+    const ast = parse("MATCH (n:User) WHERE n.score > 10 + 20 * 5 RETURN n") as Query;
     const steps = astToSteps(ast);
     const traverser = createTraverser(steps);
     const results = [...traverser.traverse(graph, [undefined])];
@@ -366,9 +350,7 @@ describe("Arithmetic - Execution", () => {
 
   test("should evaluate parenthesized expressions", () => {
     // Find users where score > (10 + 20) * 5 (= 30 * 5 = 150)
-    const ast = parse(
-      "MATCH (n:User) WHERE n.score > (10 + 20) * 5 RETURN n",
-    ) as Query;
+    const ast = parse("MATCH (n:User) WHERE n.score > (10 + 20) * 5 RETURN n") as Query;
     const steps = astToSteps(ast);
     const traverser = createTraverser(steps);
     const results = [...traverser.traverse(graph, [undefined])];
@@ -385,9 +367,7 @@ describe("Arithmetic - Execution", () => {
     graph.addVertex("Item", { id: "item3", price: 200, cost: 100 });
 
     // Find items where price > cost * 1.5 (i.e., price > cost * 1.5)
-    const ast = parse(
-      "MATCH (n:Item) WHERE n.price > n.cost * 1.5 RETURN n",
-    ) as Query;
+    const ast = parse("MATCH (n:Item) WHERE n.price > n.cost * 1.5 RETURN n") as Query;
     const steps = astToSteps(ast);
     const traverser = createTraverser(steps);
     const results = [...traverser.traverse(graph, [undefined])];
@@ -403,9 +383,7 @@ describe("Arithmetic - Execution", () => {
     setQueryParams({ minAge: 20 });
 
     // Find users where age > $minAge + 5 (i.e., age > 25)
-    const ast = parse(
-      "MATCH (n:User) WHERE n.age > $minAge + 5 RETURN n",
-    ) as Query;
+    const ast = parse("MATCH (n:User) WHERE n.age > $minAge + 5 RETURN n") as Query;
     const steps = astToSteps(ast);
     const traverser = createTraverser(steps);
     const results = [...traverser.traverse(graph, [undefined])];
@@ -423,9 +401,7 @@ describe("Arithmetic - Execution", () => {
     graph.addVertex("Account", { id: "acc2", balance: 100 });
 
     // Find accounts where balance < -25
-    const ast = parse(
-      "MATCH (n:Account) WHERE n.balance < -25 RETURN n",
-    ) as Query;
+    const ast = parse("MATCH (n:Account) WHERE n.balance < -25 RETURN n") as Query;
     const steps = astToSteps(ast);
     const traverser = createTraverser(steps);
     const results = [...traverser.traverse(graph, [undefined])];

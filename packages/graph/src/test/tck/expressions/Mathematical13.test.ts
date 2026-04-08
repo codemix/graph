@@ -18,10 +18,7 @@ describe("Mathematical13 - Square root", () => {
     const graph = createTckGraph();
     executeTckQuery(graph, "CREATE (:A {num: 3.6})"); // sqrt(12.96) = 3.6 computed externally
 
-    const results = executeTckQuery(
-      graph,
-      "MATCH (n:A) WHERE n.num = 3.6 RETURN n.num",
-    );
+    const results = executeTckQuery(graph, "MATCH (n:A) WHERE n.num = 3.6 RETURN n.num");
 
     expect(results).toHaveLength(1);
     expect(results[0]).toBe(3.6);
@@ -31,10 +28,7 @@ describe("Mathematical13 - Square root", () => {
     const graph = createTckGraph();
     executeTckQuery(graph, "CREATE (:A {num: 4})"); // sqrt(16) = 4 computed externally
 
-    const results = executeTckQuery(
-      graph,
-      "MATCH (n:A) WHERE n.num = 4 RETURN n.num",
-    );
+    const results = executeTckQuery(graph, "MATCH (n:A) WHERE n.num = 4 RETURN n.num");
 
     expect(results).toHaveLength(1);
     expect(results[0]).toBe(4);

@@ -80,9 +80,7 @@ describe("HashIndex", () => {
     index.add("User:2", "bob@example.com");
     index.add("User:3", "alice@example.com"); // Duplicate value
 
-    expect(index.lookup("alice@example.com")).toEqual(
-      new Set(["User:1", "User:3"]),
-    );
+    expect(index.lookup("alice@example.com")).toEqual(new Set(["User:1", "User:3"]));
     expect(index.lookup("bob@example.com")).toEqual(new Set(["User:2"]));
     expect(index.lookup("unknown@example.com")).toEqual(new Set());
   });
@@ -181,9 +179,7 @@ describe("BTreeIndex", () => {
     index.add("User:2", 25);
     index.add("User:3", 30);
 
-    expect(index.lookupLessThanOrEqual(25)).toEqual(
-      new Set(["User:1", "User:2"]),
-    );
+    expect(index.lookupLessThanOrEqual(25)).toEqual(new Set(["User:1", "User:2"]));
   });
 
   it("should handle range queries - greater than", () => {
@@ -200,9 +196,7 @@ describe("BTreeIndex", () => {
     index.add("User:2", 25);
     index.add("User:3", 30);
 
-    expect(index.lookupGreaterThanOrEqual(25)).toEqual(
-      new Set(["User:2", "User:3"]),
-    );
+    expect(index.lookupGreaterThanOrEqual(25)).toEqual(new Set(["User:2", "User:3"]));
   });
 
   it("should handle range queries - between", () => {
@@ -212,19 +206,13 @@ describe("BTreeIndex", () => {
     index.add("User:4", 40);
 
     // Inclusive on both ends
-    expect(index.lookupRange(20, 30, true, true)).toEqual(
-      new Set(["User:2", "User:3"]),
-    );
+    expect(index.lookupRange(20, 30, true, true)).toEqual(new Set(["User:2", "User:3"]));
 
     // Exclusive on both ends
-    expect(index.lookupRange(20, 40, false, false)).toEqual(
-      new Set(["User:3"]),
-    );
+    expect(index.lookupRange(20, 40, false, false)).toEqual(new Set(["User:3"]));
 
     // Mixed
-    expect(index.lookupRange(20, 40, true, false)).toEqual(
-      new Set(["User:2", "User:3"]),
-    );
+    expect(index.lookupRange(20, 40, true, false)).toEqual(new Set(["User:2", "User:3"]));
   });
 
   it("should work with string values", () => {
@@ -336,11 +324,7 @@ describe("FullTextIndex", () => {
   it("should update documents", () => {
     index.add("Document:1", "original content about cats");
 
-    index.update(
-      "Document:1",
-      "original content about cats",
-      "new content about dogs",
-    );
+    index.update("Document:1", "original content about cats", "new content about dogs");
 
     expect(index.searchContains("cats")).toEqual(new Set());
     expect(index.searchContains("dogs")).toEqual(new Set(["Document:1"]));
@@ -489,16 +473,12 @@ describe("IndexManager", () => {
     // Should have configs for User (4) + Document (3) + authored (1)
     expect(configs.length).toBe(8);
 
-    const userEmailConfig = configs.find(
-      (c) => c.label === "User" && c.property === "email",
-    );
+    const userEmailConfig = configs.find((c) => c.label === "User" && c.property === "email");
     expect(userEmailConfig).toBeDefined();
     expect(userEmailConfig!.config.type).toBe("hash");
     expect(userEmailConfig!.elementType).toBe("vertex");
 
-    const authoredRoleConfig = configs.find(
-      (c) => c.label === "authored" && c.property === "role",
-    );
+    const authoredRoleConfig = configs.find((c) => c.label === "authored" && c.property === "role");
     expect(authoredRoleConfig).toBeDefined();
     expect(authoredRoleConfig!.elementType).toBe("edge");
   });
@@ -510,12 +490,8 @@ describe("QueryPlanner", () => {
     const hints = analyzeCondition(condition);
 
     expect(hints.length).toBe(2); // hash and btree both support equality
-    expect(
-      hints.some((h) => h.type === "hash" && h.operation === "equals"),
-    ).toBe(true);
-    expect(
-      hints.some((h) => h.type === "btree" && h.operation === "equals"),
-    ).toBe(true);
+    expect(hints.some((h) => h.type === "hash" && h.operation === "equals")).toBe(true);
+    expect(hints.some((h) => h.type === "btree" && h.operation === "equals")).toBe(true);
   });
 
   it("should analyze IN conditions", () => {
@@ -535,13 +511,9 @@ describe("QueryPlanner", () => {
     const gteCondition: Condition = [">=", "age", 30];
 
     expect(analyzeCondition(ltCondition)[0]!.operation).toBe("lessThan");
-    expect(analyzeCondition(lteCondition)[0]!.operation).toBe(
-      "lessThanOrEqual",
-    );
+    expect(analyzeCondition(lteCondition)[0]!.operation).toBe("lessThanOrEqual");
     expect(analyzeCondition(gtCondition)[0]!.operation).toBe("greaterThan");
-    expect(analyzeCondition(gteCondition)[0]!.operation).toBe(
-      "greaterThanOrEqual",
-    );
+    expect(analyzeCondition(gteCondition)[0]!.operation).toBe("greaterThanOrEqual");
   });
 
   it("should analyze fulltext conditions", () => {
@@ -559,11 +531,7 @@ describe("QueryPlanner", () => {
   });
 
   it("should analyze compound AND conditions", () => {
-    const condition: Condition = [
-      "and",
-      ["=", "status", "active"],
-      [">", "age", 25],
-    ];
+    const condition: Condition = ["and", ["=", "status", "active"], [">", "age", 25]];
     const hints = analyzeCondition(condition);
 
     // Should find hints for both sub-conditions
@@ -776,9 +744,7 @@ describe("Query execution with index integration", () => {
     const g = new GraphTraversal(graph);
 
     // Query using equality filter on indexed property
-    const results = Array.from(
-      g.V().hasLabel("User").has("email", "alice@example.com").values(),
-    );
+    const results = Array.from(g.V().hasLabel("User").has("email", "alice@example.com").values());
 
     expect(results.length).toBe(1);
     expect(results[0]!.get("name")).toBe("Alice Smith");
@@ -788,9 +754,7 @@ describe("Query execution with index integration", () => {
     const g = new GraphTraversal(graph);
 
     // Query using range filter on indexed property
-    const results = Array.from(
-      g.V().hasLabel("User").has("age", ">", 28).values(),
-    );
+    const results = Array.from(g.V().hasLabel("User").has("age", ">", 28).values());
 
     expect(results.length).toBe(2);
     const names = results.map((r) => r.get("name")).sort();
@@ -814,9 +778,7 @@ describe("Query execution with index integration", () => {
     const g = new GraphTraversal(graph);
 
     // Query using startsWith on indexed property
-    const results = Array.from(
-      g.V().hasLabel("User").startsWith("name", "Ali").values(),
-    );
+    const results = Array.from(g.V().hasLabel("User").startsWith("name", "Ali").values());
 
     expect(results.length).toBe(1);
     expect(results[0]!.get("email")).toBe("alice@example.com");
@@ -826,9 +788,7 @@ describe("Query execution with index integration", () => {
     const g = new GraphTraversal(graph);
 
     // Query using contains on indexed property
-    const results = Array.from(
-      g.V().hasLabel("User").containing("name", "Jones").values(),
-    );
+    const results = Array.from(g.V().hasLabel("User").containing("name", "Jones").values());
 
     expect(results.length).toBe(1);
     expect(results[0]!.get("email")).toBe("bob@example.com");
@@ -840,12 +800,7 @@ describe("Query execution with index integration", () => {
     // Query with compound condition: age > 25 AND status = 'active'
     // Index will handle age > 25, post-filter will handle status = 'active'
     const results = Array.from(
-      g
-        .V()
-        .hasLabel("User")
-        .has("age", ">", 25)
-        .has("status", "active")
-        .values(),
+      g.V().hasLabel("User").has("age", ">", 25).has("status", "active").values(),
     );
 
     expect(results.length).toBe(1);
@@ -879,9 +834,7 @@ describe("Query execution with index integration", () => {
     const g = new GraphTraversal(noIndexGraph);
 
     // This should work but fall back to full scan
-    const results = Array.from(
-      g.V().hasLabel("Person").has("email", "test@example.com").values(),
-    );
+    const results = Array.from(g.V().hasLabel("Person").has("email", "test@example.com").values());
 
     expect(results.length).toBe(1);
     expect(results[0]!.get("name")).toBe("Test");

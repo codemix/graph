@@ -77,10 +77,7 @@ export function analyzeCondition(condition: Condition): IndexHint[] {
 /**
  * Recursively analyze a condition tree.
  */
-function analyzeConditionRecursive(
-  condition: Condition,
-  hints: IndexHint[],
-): void {
+function analyzeConditionRecursive(condition: Condition, hints: IndexHint[]): void {
   const [operator, ...args] = condition;
 
   switch (operator) {
@@ -177,9 +174,7 @@ export function selectBestIndexHint(
   hasIndex: (property: string, type: IndexConfig["type"]) => boolean,
 ): IndexHint | undefined {
   // Filter to hints where we have the required index
-  const usableHints = hints.filter((hint) =>
-    hasIndex(hint.property, hint.type),
-  );
+  const usableHints = hints.filter((hint) => hasIndex(hint.property, hint.type));
 
   if (usableHints.length === 0) {
     return undefined;
@@ -203,8 +198,7 @@ export function selectBestIndexHint(
 
   // Sort by priority descending
   usableHints.sort((a, b) => {
-    const priorityDiff =
-      (priority[b.operation] ?? 0) - (priority[a.operation] ?? 0);
+    const priorityDiff = (priority[b.operation] ?? 0) - (priority[a.operation] ?? 0);
     if (priorityDiff !== 0) return priorityDiff;
 
     // Prefer hash over btree for equality
@@ -229,10 +223,7 @@ export function selectBestIndexHint(
  * @param hint The index hint being used.
  * @returns True if the condition is fully covered by the index.
  */
-export function isConditionFullyCovered(
-  condition: Condition,
-  hint: IndexHint,
-): boolean {
+export function isConditionFullyCovered(condition: Condition, hint: IndexHint): boolean {
   // Only simple conditions can be fully covered
   const [operator] = condition;
 

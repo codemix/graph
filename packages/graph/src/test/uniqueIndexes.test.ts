@@ -101,9 +101,7 @@ describe("Unique Indexes", () => {
 
       expect(configs.length).toBe(4); // email, username, slug, inviteCode
 
-      const emailConfig = configs.find(
-        (c) => c.label === "User" && c.property === "email",
-      );
+      const emailConfig = configs.find((c) => c.label === "User" && c.property === "email");
       expect(emailConfig).toBeDefined();
       expect(emailConfig!.config.type).toBe("hash");
       expect(emailConfig!.elementType).toBe("vertex");
@@ -496,11 +494,7 @@ describe("Unique Indexes", () => {
 
       // Building the index should throw due to duplicates
       expect(() => {
-        uniqueGraph.indexManager.buildIndex(
-          "User",
-          "email",
-          storage.getVertices(["User"]),
-        );
+        uniqueGraph.indexManager.buildIndex("User", "email", storage.getVertices(["User"]));
       }).toThrow(UniqueConstraintViolationError);
     });
   });
@@ -517,23 +511,12 @@ describe("Unique Indexes", () => {
       const manager = graph.indexManager;
 
       // Ensure index is built
-      manager.ensureUniqueIndexesBuilt(
-        "User",
-        graph.storage.getVertices(["User"]),
-      );
+      manager.ensureUniqueIndexesBuilt("User", graph.storage.getVertices(["User"]));
 
-      const foundId = manager.lookupUnique(
-        "User",
-        "email",
-        "alice@example.com",
-      );
+      const foundId = manager.lookupUnique("User", "email", "alice@example.com");
       expect(foundId).toBe(user.id);
 
-      const notFoundId = manager.lookupUnique(
-        "User",
-        "email",
-        "nonexistent@example.com",
-      );
+      const notFoundId = manager.lookupUnique("User", "email", "nonexistent@example.com");
       expect(notFoundId).toBeUndefined();
     });
 

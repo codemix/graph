@@ -10,15 +10,12 @@ import type { Query } from "../AST.js";
 import { StandardSchemaV1 } from "@standard-schema/spec";
 import type { GraphSchema } from "../GraphSchema.js";
 
-const { graph, alice, bob, charlie, dave, erin, fiona, george } =
-  createDemoGraph();
+const { graph, alice, bob, charlie, dave, erin, fiona, george } = createDemoGraph();
 const g = new GraphTraversal(graph);
 
 test("Shortest Path - Fluent API (Gremlin-style) - shortestPath().to() with target ID - finds direct path (1 hop)", () => {
   // Alice -> Bob is a direct connection
-  const results = Array.from(
-    g.V(alice.id).shortestPath().to(bob.id).through("knows").values(),
-  );
+  const results = Array.from(g.V(alice.id).shortestPath().to(bob.id).through("knows").values());
 
   expect(results.length).toBe(1);
   expect(results[0]!).toBeInstanceOf(Vertex);
@@ -27,9 +24,7 @@ test("Shortest Path - Fluent API (Gremlin-style) - shortestPath().to() with targ
 
 test("Shortest Path - Fluent API (Gremlin-style) - shortestPath().to() with target ID - finds path through multiple hops", () => {
   // Alice -> Charlie -> Dave (2 hops via knows)
-  const results = Array.from(
-    g.V(alice.id).shortestPath().to(dave.id).through("knows").values(),
-  );
+  const results = Array.from(g.V(alice.id).shortestPath().to(dave.id).through("knows").values());
 
   expect(results.length).toBe(1);
   expect(results[0]!.id).toBe(dave.id);
@@ -37,9 +32,7 @@ test("Shortest Path - Fluent API (Gremlin-style) - shortestPath().to() with targ
 
 test("Shortest Path - Fluent API (Gremlin-style) - shortestPath().to() with target ID - finds longer paths", () => {
   // Alice -> ... -> Fiona
-  const results = Array.from(
-    g.V(alice.id).shortestPath().to(fiona.id).through("knows").values(),
-  );
+  const results = Array.from(g.V(alice.id).shortestPath().to(fiona.id).through("knows").values());
 
   expect(results.length).toBe(1);
   expect(results[0]!.id).toBe(fiona.id);
@@ -58,22 +51,14 @@ test("Shortest Path - Fluent API (Gremlin-style) - shortestPath().to() with targ
 
   const g2 = new GraphTraversal(testGraph);
   const results = Array.from(
-    g2
-      .V(a.id)
-      .shortestPath()
-      .to(b.id)
-      .through("knows")
-      .direction("out")
-      .values(),
+    g2.V(a.id).shortestPath().to(b.id).through("knows").direction("out").values(),
   );
 
   expect(results.length).toBe(0);
 });
 
 test("Shortest Path - Fluent API (Gremlin-style) - shortestPath().to() with target ID - handles same source and target", () => {
-  const results = Array.from(
-    g.V(alice.id).shortestPath().to(alice.id).through("knows").values(),
-  );
+  const results = Array.from(g.V(alice.id).shortestPath().to(alice.id).through("knows").values());
 
   // Path of length 0 - same vertex
   expect(results.length).toBe(1);
@@ -82,12 +67,7 @@ test("Shortest Path - Fluent API (Gremlin-style) - shortestPath().to() with targ
 
 test("Shortest Path - Fluent API (Gremlin-style) - shortestPath().to() with condition - finds path to vertex matching property condition", () => {
   const results = Array.from(
-    g
-      .V(alice.id)
-      .shortestPath()
-      .to(["=", "name", "Dave"])
-      .through("knows")
-      .values(),
+    g.V(alice.id).shortestPath().to(["=", "name", "Dave"]).through("knows").values(),
   );
 
   expect(results.length).toBe(1);
@@ -136,13 +116,7 @@ test("Shortest Path - Fluent API (Gremlin-style) - shortestPath().to() with trav
 
 test("Shortest Path - Fluent API (Gremlin-style) - shortestPath().direction() - finds path using outgoing edges", () => {
   const results = Array.from(
-    g
-      .V(alice.id)
-      .shortestPath()
-      .to(dave.id)
-      .through("knows")
-      .direction("out")
-      .values(),
+    g.V(alice.id).shortestPath().to(dave.id).through("knows").direction("out").values(),
   );
 
   expect(results.length).toBe(1);
@@ -151,13 +125,7 @@ test("Shortest Path - Fluent API (Gremlin-style) - shortestPath().direction() - 
 test("Shortest Path - Fluent API (Gremlin-style) - shortestPath().direction() - finds path using incoming edges", () => {
   // Erin -> Alice (incoming edge)
   const results = Array.from(
-    g
-      .V(alice.id)
-      .shortestPath()
-      .to(erin.id)
-      .through("knows")
-      .direction("in")
-      .values(),
+    g.V(alice.id).shortestPath().to(erin.id).through("knows").direction("in").values(),
   );
 
   expect(results.length).toBe(1);
@@ -166,13 +134,7 @@ test("Shortest Path - Fluent API (Gremlin-style) - shortestPath().direction() - 
 
 test("Shortest Path - Fluent API (Gremlin-style) - shortestPath().direction() - finds path using both directions", () => {
   const results = Array.from(
-    g
-      .V(charlie.id)
-      .shortestPath()
-      .to(alice.id)
-      .through("knows")
-      .direction("both")
-      .values(),
+    g.V(charlie.id).shortestPath().to(alice.id).through("knows").direction("both").values(),
   );
 
   expect(results.length).toBe(1);
@@ -181,13 +143,7 @@ test("Shortest Path - Fluent API (Gremlin-style) - shortestPath().direction() - 
 test("Shortest Path - Fluent API (Gremlin-style) - shortestPath().maxDepth() - respects maxDepth limit", () => {
   // With maxDepth=1, can only reach direct neighbors
   const results = Array.from(
-    g
-      .V(alice.id)
-      .shortestPath()
-      .to(dave.id)
-      .through("knows")
-      .maxDepth(1)
-      .values(),
+    g.V(alice.id).shortestPath().to(dave.id).through("knows").maxDepth(1).values(),
   );
 
   // Dave is 2 hops away, so with maxDepth=1, no path should be found
@@ -196,13 +152,7 @@ test("Shortest Path - Fluent API (Gremlin-style) - shortestPath().maxDepth() - r
 
 test("Shortest Path - Fluent API (Gremlin-style) - shortestPath().maxDepth() - finds path within maxDepth", () => {
   const results = Array.from(
-    g
-      .V(alice.id)
-      .shortestPath()
-      .to(dave.id)
-      .through("knows")
-      .maxDepth(3)
-      .values(),
+    g.V(alice.id).shortestPath().to(dave.id).through("knows").maxDepth(3).values(),
   );
 
   expect(results.length).toBe(1);
@@ -210,13 +160,7 @@ test("Shortest Path - Fluent API (Gremlin-style) - shortestPath().maxDepth() - f
 
 test("Shortest Path - Fluent API (Gremlin-style) - shortestPath() path tracking - tracks full path from source to target", () => {
   const results = Array.from(
-    g
-      .V(alice.id)
-      .as("source")
-      .shortestPath()
-      .to(dave.id)
-      .through("knows")
-      .as("target"),
+    g.V(alice.id).as("source").shortestPath().to(dave.id).through("knows").as("target"),
   );
 
   expect(results.length).toBe(1);
@@ -234,9 +178,7 @@ test("Shortest Path - Fluent API (Gremlin-style) - shortestPath() path tracking 
 });
 
 test("Shortest Path - Fluent API (Gremlin-style) - shortestPath() path tracking - path includes intermediate vertices and edges", () => {
-  const results = Array.from(
-    g.V(alice.id).shortestPath().to(dave.id).through("knows"),
-  );
+  const results = Array.from(g.V(alice.id).shortestPath().to(dave.id).through("knows"));
 
   expect(results.length).toBe(1);
   const path = results[0]!;
@@ -371,9 +313,7 @@ test("Shortest Path - Algorithm Correctness - BFS finds optimal path in unweight
 
   const g2 = new GraphTraversal(testGraph);
 
-  const results = Array.from(
-    g2.V(a.id).shortestPath().to(d.id).through("knows"),
-  );
+  const results = Array.from(g2.V(a.id).shortestPath().to(d.id).through("knows"));
 
   expect(results.length).toBe(1);
 
@@ -407,9 +347,7 @@ test("Shortest Path - Algorithm Correctness - handles cyclic graphs correctly", 
   const g2 = new GraphTraversal(testGraph);
 
   // Find shortest path from A to C
-  const results = Array.from(
-    g2.V(a.id).shortestPath().to(c.id).through("knows").values(),
-  );
+  const results = Array.from(g2.V(a.id).shortestPath().to(c.id).through("knows").values());
 
   expect(results.length).toBe(1);
   expect(results[0]!.id).toBe(c.id);
@@ -433,9 +371,7 @@ test("Shortest Path - Algorithm Correctness - handles disconnected components", 
   const g2 = new GraphTraversal(testGraph);
 
   // Try to find path from A to D (unreachable)
-  const results = Array.from(
-    g2.V(a.id).shortestPath().to(d.id).through("knows").values(),
-  );
+  const results = Array.from(g2.V(a.id).shortestPath().to(d.id).through("knows").values());
 
   expect(results.length).toBe(0);
 });
@@ -459,9 +395,7 @@ test("Shortest Path - Algorithm Correctness - finds shortest among multiple path
 
   const g2 = new GraphTraversal(testGraph);
 
-  const results = Array.from(
-    g2.V(a.id).shortestPath().to(d.id).through("knows"),
-  );
+  const results = Array.from(g2.V(a.id).shortestPath().to(d.id).through("knows"));
 
   expect(results.length).toBe(1);
 
@@ -486,9 +420,7 @@ test("Shortest Path - Performance - handles large graphs efficiently", () => {
   // Create a chain of 100 vertices
   const vertices: Vertex<any, any>[] = [];
   for (let i = 0; i < 100; i++) {
-    vertices.push(
-      testGraph.addVertex("Person", { name: `Person${i}`, age: i }),
-    );
+    vertices.push(testGraph.addVertex("Person", { name: `Person${i}`, age: i }));
   }
 
   // Connect them in a chain
@@ -500,12 +432,7 @@ test("Shortest Path - Performance - handles large graphs efficiently", () => {
   const start = Date.now();
 
   const results = Array.from(
-    g2
-      .V(vertices[0]!.id)
-      .shortestPath()
-      .to(vertices[99]!.id)
-      .through("knows")
-      .values(),
+    g2.V(vertices[0]!.id).shortestPath().to(vertices[99]!.id).through("knows").values(),
   );
 
   const duration = Date.now() - start;
@@ -751,13 +678,7 @@ test("Shortest Path - Weighted Graphs (Dijkstra) - handles zero-weight edges", (
   const g2 = new GraphTraversal(testGraph);
 
   const results = Array.from(
-    g2
-      .V(a.id)
-      .shortestPath()
-      .to(c.id)
-      .through("connects")
-      .weightedBy("weight")
-      .values(),
+    g2.V(a.id).shortestPath().to(c.id).through("connects").weightedBy("weight").values(),
   );
 
   expect(results.length).toBe(1);
@@ -834,9 +755,7 @@ test("Shortest Path - Edge Cases - handles self-loop edge", () => {
   testGraph.addEdge(a, "knows", b, {});
   const g2 = new GraphTraversal(testGraph);
 
-  const results = Array.from(
-    g2.V(a.id).shortestPath().to(b.id).through("knows").values(),
-  );
+  const results = Array.from(g2.V(a.id).shortestPath().to(b.id).through("knows").values());
 
   expect(results.length).toBe(1);
   expect(results[0]!.id).toBe(b.id);
@@ -855,18 +774,14 @@ test("Shortest Path - Edge Cases - handles multiple edges between same vertices"
   testGraph.addEdge(a, "likes", b, {}); // Different label
   const g2 = new GraphTraversal(testGraph);
 
-  const results = Array.from(
-    g2.V(a.id).shortestPath().to(b.id).through("knows").values(),
-  );
+  const results = Array.from(g2.V(a.id).shortestPath().to(b.id).through("knows").values());
 
   expect(results.length).toBe(1);
   expect(results[0]!.id).toBe(b.id);
 });
 
 test("Shortest Path - Edge Cases - handles maxDepth of 0", () => {
-  const results = Array.from(
-    g.V(alice.id).shortestPath().to(bob.id).maxDepth(0).values(),
-  );
+  const results = Array.from(g.V(alice.id).shortestPath().to(bob.id).maxDepth(0).values());
 
   // maxDepth 0 means only source can match
   expect(results.length).toBe(0);
@@ -874,12 +789,7 @@ test("Shortest Path - Edge Cases - handles maxDepth of 0", () => {
 
 test("Shortest Path - Edge Cases - handles condition that matches no vertices", () => {
   const results = Array.from(
-    g
-      .V(alice.id)
-      .shortestPath()
-      .to(["=", "name", "NonexistentPerson"])
-      .through("knows")
-      .values(),
+    g.V(alice.id).shortestPath().to(["=", "name", "NonexistentPerson"]).through("knows").values(),
   );
 
   expect(results.length).toBe(0);
@@ -921,12 +831,7 @@ test("Shortest Path - Edge Cases - handles empty edge labels filter", () => {
 
 test("Shortest Path - Edge Cases - handles multiple edge label filters", () => {
   const results = Array.from(
-    g
-      .V(alice.id)
-      .shortestPath()
-      .to(["=", "name", "Banana"])
-      .through("knows", "likes")
-      .values(),
+    g.V(alice.id).shortestPath().to(["=", "name", "Banana"]).through("knows", "likes").values(),
   );
 
   // Alice -> Bob -> Banana (via knows and likes)
@@ -936,13 +841,7 @@ test("Shortest Path - Edge Cases - handles multiple edge label filters", () => {
 
 test("Shortest Path - Boundary Conditions - maxDepth = 1 finds only direct neighbors", () => {
   const results = Array.from(
-    g
-      .V(alice.id)
-      .shortestPath()
-      .to(bob.id)
-      .through("knows")
-      .maxDepth(1)
-      .values(),
+    g.V(alice.id).shortestPath().to(bob.id).through("knows").maxDepth(1).values(),
   );
 
   // Bob is direct neighbor of Alice
@@ -953,13 +852,7 @@ test("Shortest Path - Boundary Conditions - maxDepth = 1 finds only direct neigh
 test("Shortest Path - Boundary Conditions - maxDepth exactly matches path length", () => {
   // Alice -> Charlie -> Dave (2 hops)
   const results = Array.from(
-    g
-      .V(alice.id)
-      .shortestPath()
-      .to(dave.id)
-      .through("knows")
-      .maxDepth(2)
-      .values(),
+    g.V(alice.id).shortestPath().to(dave.id).through("knows").maxDepth(2).values(),
   );
 
   expect(results.length).toBe(1);
@@ -986,13 +879,7 @@ test("Shortest Path - Boundary Conditions - maxDepth one less than path length r
 
 test("Shortest Path - Boundary Conditions - very large maxDepth does not cause issues", () => {
   const results = Array.from(
-    g
-      .V(alice.id)
-      .shortestPath()
-      .to(dave.id)
-      .through("knows")
-      .maxDepth(1000000)
-      .values(),
+    g.V(alice.id).shortestPath().to(dave.id).through("knows").maxDepth(1000000).values(),
   );
 
   expect(results.length).toBe(1);
@@ -1003,13 +890,7 @@ test("Shortest Path - Direction Combinations - direction out - cannot traverse i
   // George -> Charlie is an edge in the graph
   // From Charlie with direction="out", we cannot reach George
   const results = Array.from(
-    g
-      .V(charlie.id)
-      .shortestPath()
-      .to(george.id)
-      .through("knows")
-      .direction("out")
-      .values(),
+    g.V(charlie.id).shortestPath().to(george.id).through("knows").direction("out").values(),
   );
 
   expect(results.length).toBe(0);
@@ -1019,13 +900,7 @@ test("Shortest Path - Direction Combinations - direction in - can traverse incom
   // George -> Charlie is an edge
   // From Charlie with direction="in", we can reach George
   const results = Array.from(
-    g
-      .V(charlie.id)
-      .shortestPath()
-      .to(george.id)
-      .through("knows")
-      .direction("in")
-      .values(),
+    g.V(charlie.id).shortestPath().to(george.id).through("knows").direction("in").values(),
   );
 
   expect(results.length).toBe(1);
@@ -1035,13 +910,7 @@ test("Shortest Path - Direction Combinations - direction in - can traverse incom
 test("Shortest Path - Direction Combinations - direction both - can use any edge", () => {
   // Should find paths in either direction
   const results = Array.from(
-    g
-      .V(charlie.id)
-      .shortestPath()
-      .to(alice.id)
-      .through("knows")
-      .direction("both")
-      .values(),
+    g.V(charlie.id).shortestPath().to(alice.id).through("knows").direction("both").values(),
   );
 
   expect(results.length).toBe(1);
@@ -1069,12 +938,7 @@ test("Shortest Path - Complex Conditions - finds vertex with NOT condition", () 
     g
       .V(alice.id)
       .shortestPath()
-      .to([
-        "and",
-        ["!=", "name", "Alice"],
-        ["!=", "name", "Bob"],
-        ["!=", "name", "Charlie"],
-      ])
+      .to(["and", ["!=", "name", "Alice"], ["!=", "name", "Bob"], ["!=", "name", "Charlie"]])
       .through("knows")
       .values(),
   );
@@ -1101,9 +965,7 @@ test("Shortest Path - Complex Conditions - finds vertex with numeric range condi
 });
 
 test("Shortest Path - Path Content Validation - path alternates between vertices and edges", () => {
-  const results = Array.from(
-    g.V(alice.id).shortestPath().to(dave.id).through("knows"),
-  );
+  const results = Array.from(g.V(alice.id).shortestPath().to(dave.id).through("knows"));
 
   expect(results.length).toBe(1);
   const path = results[0]!;
@@ -1133,9 +995,7 @@ test("Shortest Path - Path Content Validation - path alternates between vertices
 });
 
 test("Shortest Path - Path Content Validation - path edges have correct labels", () => {
-  const results = Array.from(
-    g.V(alice.id).shortestPath().to(dave.id).through("knows"),
-  );
+  const results = Array.from(g.V(alice.id).shortestPath().to(dave.id).through("knows"));
 
   expect(results.length).toBe(1);
   const path = results[0]!;
@@ -1148,9 +1008,7 @@ test("Shortest Path - Path Content Validation - path edges have correct labels",
 });
 
 test("Shortest Path - Path Content Validation - path edges connect consecutive vertices", () => {
-  const results = Array.from(
-    g.V(alice.id).shortestPath().to(dave.id).through("knows"),
-  );
+  const results = Array.from(g.V(alice.id).shortestPath().to(dave.id).through("knows"));
 
   expect(results.length).toBe(1);
   const path = results[0]!;
@@ -1220,12 +1078,7 @@ test("Shortest Path - Query Language Extended - handles incoming edge direction 
 
 test("Shortest Path - Multiple Sources - finds paths from all source vertices", () => {
   const results = Array.from(
-    g
-      .V(alice.id, bob.id, charlie.id)
-      .shortestPath()
-      .to(dave.id)
-      .through("knows")
-      .values(),
+    g.V(alice.id, bob.id, charlie.id).shortestPath().to(dave.id).through("knows").values(),
   );
 
   // Each source should find a path
@@ -1235,13 +1088,9 @@ test("Shortest Path - Multiple Sources - finds paths from all source vertices", 
 
 test("Shortest Path - Multiple Sources - finds paths with different lengths from different sources", () => {
   // Alice is farther from Fiona than Erin
-  const resultsFromAlice = Array.from(
-    g.V(alice.id).shortestPath().to(fiona.id).through("knows"),
-  );
+  const resultsFromAlice = Array.from(g.V(alice.id).shortestPath().to(fiona.id).through("knows"));
 
-  const resultsFromErin = Array.from(
-    g.V(erin.id).shortestPath().to(fiona.id).through("knows"),
-  );
+  const resultsFromErin = Array.from(g.V(erin.id).shortestPath().to(fiona.id).through("knows"));
 
   // Count path lengths
   let alicePathLength = 0;
@@ -1276,12 +1125,7 @@ test("Shortest Path - Multiple Sources - handles mixed reachable and unreachable
   const g2 = new GraphTraversal(testGraph);
 
   const results = Array.from(
-    g2
-      .V(a.id, b.id, c.id)
-      .shortestPath()
-      .to(target.id)
-      .through("knows")
-      .values(),
+    g2.V(a.id, b.id, c.id).shortestPath().to(target.id).through("knows").values(),
   );
 
   // Only a can reach target
@@ -1292,9 +1136,7 @@ test("Shortest Path - Multiple Sources - handles mixed reachable and unreachable
 test("Shortest Path - Type Safety - through() accepts valid edge labels from schema", () => {
   // This test verifies type safety at compile time
   // Using "knows" and "likes" which are valid edge labels
-  const results = Array.from(
-    g.V(alice.id).shortestPath().to(bob.id).through("knows").values(),
-  );
+  const results = Array.from(g.V(alice.id).shortestPath().to(bob.id).through("knows").values());
 
   expect(results.length).toBe(1);
 });
@@ -1313,23 +1155,11 @@ test("Shortest Path - Type Safety - weightedBy() works with valid edge property"
 
   // Both "weight" and "cost" are valid properties on "connects" edges
   const resultsWeight = Array.from(
-    g2
-      .V(a.id)
-      .shortestPath()
-      .to(b.id)
-      .through("connects")
-      .weightedBy("weight")
-      .values(),
+    g2.V(a.id).shortestPath().to(b.id).through("connects").weightedBy("weight").values(),
   );
 
   const resultsCost = Array.from(
-    g2
-      .V(a.id)
-      .shortestPath()
-      .to(b.id)
-      .through("connects")
-      .weightedBy("cost")
-      .values(),
+    g2.V(a.id).shortestPath().to(b.id).through("connects").weightedBy("cost").values(),
   );
 
   expect(resultsWeight.length).toBe(1);
@@ -1433,13 +1263,7 @@ test("Shortest Path - Error Handling - negative weight handling - skips edges wi
   const g2 = new GraphTraversal(graph2);
 
   const results = Array.from(
-    g2
-      .V(v1.id)
-      .shortestPath()
-      .to(v2.id)
-      .through("connects")
-      .weightedBy("weight")
-      .values(),
+    g2.V(v1.id).shortestPath().to(v2.id).through("connects").weightedBy("weight").values(),
   );
 
   // Should find the path through C (total weight 5) instead of direct negative weight
@@ -1464,13 +1288,7 @@ test("Shortest Path - Error Handling - negative weight handling - handles zero w
   const g2 = new GraphTraversal(graph2);
 
   const results = Array.from(
-    g2
-      .V(v1.id)
-      .shortestPath()
-      .to(v2.id)
-      .through("connects")
-      .weightedBy("weight")
-      .values(),
+    g2.V(v1.id).shortestPath().to(v2.id).through("connects").weightedBy("weight").values(),
   );
 
   expect(results.length).toBe(1);
@@ -1493,13 +1311,7 @@ test("Shortest Path - Error Handling - invalid weight handling - defaults to wei
   const g2 = new GraphTraversal(graph2);
 
   const results = Array.from(
-    g2
-      .V(v1.id)
-      .shortestPath()
-      .to(v2.id)
-      .through("connects")
-      .weightedBy("weight")
-      .values(),
+    g2.V(v1.id).shortestPath().to(v2.id).through("connects").weightedBy("weight").values(),
   );
 
   // Should find path with default weight of 1
@@ -1528,13 +1340,7 @@ test("Shortest Path - Error Handling - invalid weight handling - skips edges wit
   const g2 = new GraphTraversal(graph2);
 
   const results = Array.from(
-    g2
-      .V(v1.id)
-      .shortestPath()
-      .to(v2.id)
-      .through("connects")
-      .weightedBy("weight")
-      .values(),
+    g2.V(v1.id).shortestPath().to(v2.id).through("connects").weightedBy("weight").values(),
   );
 
   // Should find the path through C instead of the edge with invalid weight

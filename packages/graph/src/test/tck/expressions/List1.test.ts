@@ -45,11 +45,9 @@ describe("List1 - Dynamic Element Access", () => {
     // Parameters: idx = 0
     // Expected: 'Apa'
     const graph = createTckGraph();
-    const results = executeTckQuery(
-      graph,
-      "WITH ['Apa'] AS expr RETURN expr[$idx] AS value",
-      { idx: 0 },
-    );
+    const results = executeTckQuery(graph, "WITH ['Apa'] AS expr RETURN expr[$idx] AS value", {
+      idx: 0,
+    });
     expect(results).toHaveLength(1);
     expect(results[0]).toBe("Apa");
   });
@@ -70,80 +68,61 @@ describe("List1 - Dynamic Element Access", () => {
     expect(results[0]).toBe("Apa");
   });
 
-  test.fails(
-    "[6] Fail when indexing a non-list - semantic validation not implemented",
-    () => {
-      // Original TCK (Scenario Outline with examples):
-      // WITH <expr> AS list, 0 AS idx
-      // RETURN list[idx]
-      // Expected: TypeError for boolean, integer, float, string
-      // Actual: Returns null instead of throwing TypeError
-      const graph = createTckGraph();
-      // Should throw TypeError when indexing a boolean
-      expect(() =>
-        executeTckQuery(graph, "WITH true AS list, 0 AS idx RETURN list[idx]"),
-      ).toThrow();
-    },
-  );
+  test.fails("[6] Fail when indexing a non-list - semantic validation not implemented", () => {
+    // Original TCK (Scenario Outline with examples):
+    // WITH <expr> AS list, 0 AS idx
+    // RETURN list[idx]
+    // Expected: TypeError for boolean, integer, float, string
+    // Actual: Returns null instead of throwing TypeError
+    const graph = createTckGraph();
+    // Should throw TypeError when indexing a boolean
+    expect(() => executeTckQuery(graph, "WITH true AS list, 0 AS idx RETURN list[idx]")).toThrow();
+  });
 
-  test.fails(
-    "[7] Fail when indexing a non-list given by parameter - semantic validation not implemented",
-    () => {
-      // Original TCK (Scenario Outline):
-      // WITH $expr AS list, $idx AS idx
-      // RETURN list[idx]
-      // Expected: TypeError for boolean, integer, float, string
-      // Actual: Returns null instead of throwing TypeError
-      const graph = createTckGraph();
-      // Should throw TypeError when indexing a boolean from parameter
-      expect(() =>
-        executeTckQuery(
-          graph,
-          "WITH $expr AS list, $idx AS idx RETURN list[idx]",
-          { expr: true, idx: 0 },
-        ),
-      ).toThrow();
-    },
-  );
+  test.fails("[7] Fail when indexing a non-list given by parameter - semantic validation not implemented", () => {
+    // Original TCK (Scenario Outline):
+    // WITH $expr AS list, $idx AS idx
+    // RETURN list[idx]
+    // Expected: TypeError for boolean, integer, float, string
+    // Actual: Returns null instead of throwing TypeError
+    const graph = createTckGraph();
+    // Should throw TypeError when indexing a boolean from parameter
+    expect(() =>
+      executeTckQuery(graph, "WITH $expr AS list, $idx AS idx RETURN list[idx]", {
+        expr: true,
+        idx: 0,
+      }),
+    ).toThrow();
+  });
 
-  test.fails(
-    "[8] Fail when indexing with a non-integer - semantic validation not implemented",
-    () => {
-      // Original TCK (Scenario Outline):
-      // WITH [1, 2, 3, 4, 5] AS list, <idx> AS idx
-      // RETURN list[idx]
-      // Expected: TypeError for boolean, float, string, list, map
-      // Actual: Returns null instead of throwing TypeError
-      const graph = createTckGraph();
-      // Should throw TypeError when indexing with a boolean
-      expect(() =>
-        executeTckQuery(
-          graph,
-          "WITH [1, 2, 3, 4, 5] AS list, true AS idx RETURN list[idx]",
-        ),
-      ).toThrow();
-    },
-  );
+  test.fails("[8] Fail when indexing with a non-integer - semantic validation not implemented", () => {
+    // Original TCK (Scenario Outline):
+    // WITH [1, 2, 3, 4, 5] AS list, <idx> AS idx
+    // RETURN list[idx]
+    // Expected: TypeError for boolean, float, string, list, map
+    // Actual: Returns null instead of throwing TypeError
+    const graph = createTckGraph();
+    // Should throw TypeError when indexing with a boolean
+    expect(() =>
+      executeTckQuery(graph, "WITH [1, 2, 3, 4, 5] AS list, true AS idx RETURN list[idx]"),
+    ).toThrow();
+  });
 
-  test.fails(
-    "[9] Fail when indexing with a non-integer given by parameter - semantic validation not implemented",
-    () => {
-      // Original TCK (Scenario Outline):
-      // WITH $expr AS list, $idx AS idx
-      // RETURN list[idx]
-      // Expected: TypeError for boolean, float, string, list, map
-      // Actual: Returns null instead of throwing TypeError
-      const graph = createTckGraph();
-      // Should throw TypeError when indexing with a boolean from parameter
-      expect(() =>
-        executeTckQuery(
-          graph,
-          "WITH $expr AS list, $idx AS idx RETURN list[idx]",
-          { expr: [1, 2, 3], idx: true },
-        ),
-      ).toThrow();
-    },
-  );
+  test.fails("[9] Fail when indexing with a non-integer given by parameter - semantic validation not implemented", () => {
+    // Original TCK (Scenario Outline):
+    // WITH $expr AS list, $idx AS idx
+    // RETURN list[idx]
+    // Expected: TypeError for boolean, float, string, list, map
+    // Actual: Returns null instead of throwing TypeError
+    const graph = createTckGraph();
+    // Should throw TypeError when indexing with a boolean from parameter
+    expect(() =>
+      executeTckQuery(graph, "WITH $expr AS list, $idx AS idx RETURN list[idx]", {
+        expr: [1, 2, 3],
+        idx: true,
+      }),
+    ).toThrow();
+  });
 
   // Custom tests demonstrating list access via stored properties
   test("[Custom 1] List element access via stored list property", () => {
@@ -170,16 +149,10 @@ describe("List1 - Dynamic Element Access", () => {
 
   test("[Custom 3] Filter unwound list elements", () => {
     const graph = createTckGraph();
-    executeTckQuery(
-      graph,
-      `CREATE (:A {num: 1}), (:A {num: 2}), (:A {num: 3})`,
-    );
+    executeTckQuery(graph, `CREATE (:A {num: 1}), (:A {num: 2}), (:A {num: 3})`);
 
     // Filter using WHERE with unwound values
-    const results = executeTckQuery(
-      graph,
-      "MATCH (n:A) WHERE n.num = 2 RETURN n.num",
-    );
+    const results = executeTckQuery(graph, "MATCH (n:A) WHERE n.num = 2 RETURN n.num");
 
     expect(results).toHaveLength(1);
     expect(results[0]).toBe(2);

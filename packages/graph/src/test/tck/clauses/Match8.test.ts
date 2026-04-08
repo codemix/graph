@@ -10,10 +10,7 @@ describe("Match8 - Match clause interoperation with other clauses", () => {
     // Parser doesn't support MATCH on new line after WITH
     const graph = createTckGraph();
     executeTckQuery(graph, "CREATE (:A), (:B)");
-    const results = executeTckQuery(
-      graph,
-      "MATCH (a) WITH a MATCH (b) RETURN a, b",
-    );
+    const results = executeTckQuery(graph, "MATCH (a) WITH a MATCH (b) RETURN a, b");
     expect(results).toHaveLength(4);
     // Verify all combinations exist (A,A), (A,B), (B,A), (B,B)
     const labelPairs = results.map((row) => {
@@ -50,14 +47,12 @@ describe("Match8 - Match clause interoperation with other clauses", () => {
     expect(results).toEqual([6]);
   });
 
-  test.fails(
-    "[3] Matching and disregarding output, then matching again - requires unlabeled nodes",
-    () => {
-      // Creates unlabeled nodes with type and times properties
-      const graph = createTckGraph();
-      executeTckQuery(
-        graph,
-        `
+  test.fails("[3] Matching and disregarding output, then matching again - requires unlabeled nodes", () => {
+    // Creates unlabeled nodes with type and times properties
+    const graph = createTckGraph();
+    executeTckQuery(
+      graph,
+      `
       CREATE (andres {name: 'Andres'}),
              (michael {name: 'Michael'}),
              (peter {name: 'Peter'}),
@@ -73,17 +68,16 @@ describe("Match8 - Match clause interoperation with other clauses", () => {
              (peter)-[:ATE {times: 7}]->(bread),
              (peter)-[:ATE {times: 4}]->(meat)
     `,
-      );
-      const results = executeTckQuery(
-        graph,
-        `
+    );
+    const results = executeTckQuery(
+      graph,
+      `
       MATCH ()-->()
       WITH 1 AS x
       MATCH ()-[r1]->()<--()
       RETURN sum(r1.times)
     `,
-      );
-      expect(results).toEqual([776]);
-    },
-  );
+    );
+    expect(results).toEqual([776]);
+  });
 });

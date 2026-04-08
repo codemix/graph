@@ -15,9 +15,7 @@ test("ValueTraversal Operations - values() extraction - values() extracts vertex
 });
 
 test("ValueTraversal Operations - values() extraction - values() after select extracts tuple", () => {
-  const results = Array.from(
-    g.V(alice.id).as("a").out("knows").as("b").select("a", "b").values(),
-  );
+  const results = Array.from(g.V(alice.id).as("a").out("knows").as("b").select("a", "b").values());
 
   expect(results.length).toBeGreaterThan(0);
 
@@ -29,17 +27,13 @@ test("ValueTraversal Operations - values() extraction - values() after select ex
 });
 
 test("ValueTraversal Operations - values() extraction - values() after single select extracts single value", () => {
-  const results = Array.from(
-    g.V(alice.id).as("person").out("knows").select("person").values(),
-  );
+  const results = Array.from(g.V(alice.id).as("person").out("knows").select("person").values());
 
   expect(results.length).toBeGreaterThan(0);
   // Select returns values in an array for each path
   if (Array.isArray(results[0])) {
     // Flattened array of tuples
-    expect(
-      results.every((r) => Array.isArray(r) && r[0] instanceof Vertex),
-    ).toBe(true);
+    expect(results.every((r) => Array.isArray(r) && r[0] instanceof Vertex)).toBe(true);
     expect(results.every((r) => (r as any)[0].id === alice.id)).toBe(true);
   } else {
     // Direct vertices
@@ -207,14 +201,7 @@ test("ValueTraversal Operations - unfold() operation - unfold() with subsequent 
 
 test("ValueTraversal Operations - Combined values() and unfold() operations - Select multiple labels, unfold, and extract values", () => {
   const results = Array.from(
-    g
-      .V(alice.id)
-      .as("a")
-      .out("knows")
-      .as("b")
-      .select("a", "b")
-      .unfold()
-      .values(),
+    g.V(alice.id).as("a").out("knows").as("b").select("a", "b").unfold().values(),
   );
 
   // Should unfold the tuple and then extract values
@@ -259,13 +246,7 @@ test("ValueTraversal Operations - Combined values() and unfold() operations - Ma
 
 test("ValueTraversal Operations - Combined values() and unfold() operations - Complex pipeline with multiple transformations", () => {
   const results = Array.from(
-    g
-      .V(alice.id)
-      .out("knows")
-      .as("friend")
-      .select("all:friend")
-      .unfold()
-      .values(),
+    g.V(alice.id).out("knows").as("friend").select("all:friend").unfold().values(),
   );
 
   expect(results.length).toBeGreaterThan(0);
@@ -284,9 +265,7 @@ test("ValueTraversal Operations - Value extraction with aggregation - Count then
 });
 
 test("ValueTraversal Operations - Value extraction with aggregation - values() after order preserves order", () => {
-  const results = Array.from(
-    g.V().hasLabel("Person").order().by("name").values(),
-  );
+  const results = Array.from(g.V().hasLabel("Person").order().by("name").values());
 
   expect(results.length).toBeGreaterThan(0);
 
@@ -311,9 +290,7 @@ test("ValueTraversal Operations - Value extraction with aggregation - values() a
 });
 
 test("ValueTraversal Operations - Value extraction with aggregation - values() after dedup", () => {
-  const results = Array.from(
-    g.union(g.V(alice.id), g.V(alice.id)).dedup().values(),
-  );
+  const results = Array.from(g.union(g.V(alice.id), g.V(alice.id)).dedup().values());
 
   expect(results).toHaveLength(1);
   expect(results[0]!.id).toBe(alice.id);
@@ -358,22 +335,14 @@ test("ValueTraversal Operations - Value extraction with complex types - Extract 
 
 test("ValueTraversal Operations - Value extraction with complex types - Extract nested structures", () => {
   const results = Array.from(
-    g
-      .V(alice.id)
-      .as("person")
-      .out("knows")
-      .as("friend")
-      .select("person", "friend")
-      .values(),
+    g.V(alice.id).as("person").out("knows").as("friend").select("person", "friend").values(),
   ) as unknown as [Vertex<DemoSchema>, Vertex<DemoSchema>][];
 
   expect(results.length).toBeGreaterThan(0);
   expect(
     results.every(
       ([person, friend]) =>
-        person instanceof Vertex &&
-        friend instanceof Vertex &&
-        person.get("name") === "Alice",
+        person instanceof Vertex && friend instanceof Vertex && person.get("name") === "Alice",
     ),
   ).toBe(true);
 });
@@ -407,11 +376,9 @@ test("ValueTraversal Operations - ValueTraversal edge cases - values() with unde
 
   expect(results.length).toBeGreaterThan(0);
   // Select with non-existent label returns array with undefined
-  expect(
-    results.every(
-      (r) => r === undefined || (Array.isArray(r) && r[0] === undefined),
-    ),
-  ).toBe(true);
+  expect(results.every((r) => r === undefined || (Array.isArray(r) && r[0] === undefined))).toBe(
+    true,
+  );
 });
 
 test("ValueTraversal Operations - ValueTraversal edge cases - unfold() on non-iterable values", () => {

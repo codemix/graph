@@ -44,10 +44,7 @@ describe("Literals6 - String", () => {
     // Query: RETURN 'a\\bcn5t\'"\\//\\"\'' AS literal
     // Complex escape sequences may differ between implementations
     const graph = createTckGraph();
-    const results = executeTckQuery(
-      graph,
-      "RETURN 'a\\\\bcn5t\\'\"\\\\//\\\\\"\\'' AS literal",
-    );
+    const results = executeTckQuery(graph, "RETURN 'a\\\\bcn5t\\'\"\\\\//\\\\\"\\'' AS literal");
     expect(results).toHaveLength(1);
     expect(results[0]).toBe("a\\bcn5t'\"\\//\\\"'");
   });
@@ -73,17 +70,14 @@ describe("Literals6 - String", () => {
     expect(results[0]).toBe("a");
   });
 
-  test.fails(
-    "[11] Accept valid Unicode literal - unicode escape not supported",
-    () => {
-      // Query: RETURN '\u01FF' AS a
-      // Expected: 'ǿ'
-      const graph = createTckGraph();
-      const results = executeTckQuery(graph, "RETURN '\\u01FF' AS a");
-      expect(results).toHaveLength(1);
-      expect(results[0]).toBe("\u01FF");
-    },
-  );
+  test.fails("[11] Accept valid Unicode literal - unicode escape not supported", () => {
+    // Query: RETURN '\u01FF' AS a
+    // Expected: 'ǿ'
+    const graph = createTckGraph();
+    const results = executeTckQuery(graph, "RETURN '\\u01FF' AS a");
+    expect(results).toHaveLength(1);
+    expect(results[0]).toBe("\u01FF");
+  });
 
   test("[13] Failing on incorrect unicode literal - validation not implemented", () => {
     // Query: RETURN '\uH'
@@ -100,10 +94,7 @@ describe("Literals6 - String", () => {
     const graph = createTckGraph();
     executeTckQuery(graph, "CREATE (:A {name: 'hello'})");
 
-    const results = executeTckQuery(
-      graph,
-      "MATCH (a:A) WHERE a.name = 'hello' RETURN a.name",
-    );
+    const results = executeTckQuery(graph, "MATCH (a:A) WHERE a.name = 'hello' RETURN a.name");
 
     expect(results).toHaveLength(1);
     expect(results[0]).toBe("hello");
@@ -113,10 +104,7 @@ describe("Literals6 - String", () => {
     const graph = createTckGraph();
     executeTckQuery(graph, 'CREATE (:A {name: "world"})');
 
-    const results = executeTckQuery(
-      graph,
-      "MATCH (a:A) WHERE a.name = 'world' RETURN a.name",
-    );
+    const results = executeTckQuery(graph, "MATCH (a:A) WHERE a.name = 'world' RETURN a.name");
 
     expect(results).toHaveLength(1);
     expect(results[0]).toBe("world");
@@ -126,10 +114,7 @@ describe("Literals6 - String", () => {
     const graph = createTckGraph();
     executeTckQuery(graph, "CREATE (:A {name: 'test', value: ''})");
 
-    const results = executeTckQuery(
-      graph,
-      "MATCH (a:A) WHERE a.value = '' RETURN a.name",
-    );
+    const results = executeTckQuery(graph, "MATCH (a:A) WHERE a.value = '' RETURN a.name");
 
     expect(results).toHaveLength(1);
     expect(results[0]).toBe("test");
@@ -152,10 +137,7 @@ describe("Literals6 - String", () => {
     const graph = createTckGraph();
     executeTckQuery(graph, "CREATE (:A {name: 'user123'})");
 
-    const results = executeTckQuery(
-      graph,
-      "MATCH (a:A) WHERE a.name = 'user123' RETURN a.name",
-    );
+    const results = executeTckQuery(graph, "MATCH (a:A) WHERE a.name = 'user123' RETURN a.name");
 
     expect(results).toHaveLength(1);
     expect(results[0]).toBe("user123");
@@ -163,10 +145,7 @@ describe("Literals6 - String", () => {
 
   test("[custom-6] String comparison with STARTS WITH", () => {
     const graph = createTckGraph();
-    executeTckQuery(
-      graph,
-      "CREATE (:A {name: 'prefix_test'}), (:A {name: 'other'})",
-    );
+    executeTckQuery(graph, "CREATE (:A {name: 'prefix_test'}), (:A {name: 'other'})");
 
     const results = executeTckQuery(
       graph,
@@ -179,10 +158,7 @@ describe("Literals6 - String", () => {
 
   test("[custom-7] String comparison with ENDS WITH", () => {
     const graph = createTckGraph();
-    executeTckQuery(
-      graph,
-      "CREATE (:A {name: 'test_suffix'}), (:A {name: 'other'})",
-    );
+    executeTckQuery(graph, "CREATE (:A {name: 'test_suffix'}), (:A {name: 'other'})");
 
     const results = executeTckQuery(
       graph,
@@ -195,10 +171,7 @@ describe("Literals6 - String", () => {
 
   test("[custom-8] String comparison with CONTAINS", () => {
     const graph = createTckGraph();
-    executeTckQuery(
-      graph,
-      "CREATE (:A {name: 'hello_world_test'}), (:A {name: 'other'})",
-    );
+    executeTckQuery(graph, "CREATE (:A {name: 'hello_world_test'}), (:A {name: 'other'})");
 
     const results = executeTckQuery(
       graph,
@@ -212,10 +185,7 @@ describe("Literals6 - String", () => {
   test("[custom-9] String in UNWIND list", () => {
     const graph = createTckGraph();
 
-    const results = executeTckQuery(
-      graph,
-      "UNWIND ['a', 'b', 'c'] AS letter RETURN letter",
-    );
+    const results = executeTckQuery(graph, "UNWIND ['a', 'b', 'c'] AS letter RETURN letter");
 
     expect(results).toHaveLength(3);
     expect(results[0]).toEqual(["a"]);
@@ -230,10 +200,7 @@ describe("Literals6 - String", () => {
       "CREATE (:A {name: 'Hello'}), (:A {name: 'hello'}), (:A {name: 'HELLO'})",
     );
 
-    const results = executeTckQuery(
-      graph,
-      "MATCH (a:A) WHERE a.name = 'Hello' RETURN a.name",
-    );
+    const results = executeTckQuery(graph, "MATCH (a:A) WHERE a.name = 'Hello' RETURN a.name");
 
     expect(results).toHaveLength(1);
     expect(results[0]).toBe("Hello");
@@ -259,10 +226,7 @@ describe("Literals6 - String", () => {
     const graph = createTckGraph();
     executeTckQuery(graph, "CREATE (:A {name: 'a-b_c.d'})");
 
-    const results = executeTckQuery(
-      graph,
-      "MATCH (a:A) WHERE a.name = 'a-b_c.d' RETURN a.name",
-    );
+    const results = executeTckQuery(graph, "MATCH (a:A) WHERE a.name = 'a-b_c.d' RETURN a.name");
 
     expect(results).toHaveLength(1);
     expect(results[0]).toBe("a-b_c.d");
@@ -272,10 +236,7 @@ describe("Literals6 - String", () => {
     const graph = createTckGraph();
     executeTckQuery(graph, "CREATE (:A {name: 'alpha'}), (:A {name: 'beta'})");
 
-    const results = executeTckQuery(
-      graph,
-      "MATCH (a:A) WHERE a.name <> 'alpha' RETURN a.name",
-    );
+    const results = executeTckQuery(graph, "MATCH (a:A) WHERE a.name <> 'alpha' RETURN a.name");
 
     expect(results).toHaveLength(1);
     expect(results[0]).toBe("beta");
@@ -285,10 +246,7 @@ describe("Literals6 - String", () => {
     const graph = createTckGraph();
     executeTckQuery(graph, 'CREATE (:A {name: "it\'s"})');
 
-    const results = executeTckQuery(
-      graph,
-      'MATCH (a:A) WHERE a.name = "it\'s" RETURN a.name',
-    );
+    const results = executeTckQuery(graph, 'MATCH (a:A) WHERE a.name = "it\'s" RETURN a.name');
 
     expect(results).toHaveLength(1);
     expect(results[0]).toBe("it's");

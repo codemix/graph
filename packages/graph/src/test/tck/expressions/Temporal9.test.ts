@@ -4,11 +4,7 @@
  */
 import { describe, test, expect } from "vitest";
 import { createTckGraph, executeTckQuery } from "../tckHelpers.js";
-import {
-  DateValue,
-  DateTimeValue,
-  LocalDateTimeValue,
-} from "../../../TemporalTypes.js";
+import { DateValue, DateTimeValue, LocalDateTimeValue } from "../../../TemporalTypes.js";
 
 describe("Temporal9 - Truncate Temporal Values", () => {
   test("[1] Should truncate date to year", () => {

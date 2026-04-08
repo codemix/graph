@@ -18,9 +18,7 @@ test("Edge operations with union and intersect - union() combines edges from mul
   // Should contain edges from both Alice and Bob
   const aliceEdges = Array.from(g.V(alice.id).outE("knows").values());
   const bobEdges = Array.from(g.V(bob.id).outE("knows").values());
-  expect(unionEdges.length).toBeGreaterThanOrEqual(
-    Math.max(aliceEdges.length, bobEdges.length),
-  );
+  expect(unionEdges.length).toBeGreaterThanOrEqual(Math.max(aliceEdges.length, bobEdges.length));
 });
 
 test("Edge operations with union and intersect - intersect() returns common edges between traversals", () => {

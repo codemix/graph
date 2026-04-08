@@ -74,16 +74,12 @@ describe("Cypher syntax support - extended Cypher patterns", () => {
   });
 
   test("Simple: WITH followed by MATCH", () => {
-    expect(() =>
-      parse(`MATCH (c:Concept) WITH c MATCH (dt:DataType) RETURN c, dt`),
-    ).not.toThrow();
+    expect(() => parse(`MATCH (c:Concept) WITH c MATCH (dt:DataType) RETURN c, dt`)).not.toThrow();
   });
 
   test("Simple: WITH followed by MATCH and CREATE", () => {
     expect(() =>
-      parse(
-        `MATCH (c:Concept) WITH c MATCH (dt:DataType) CREATE (c)-[:HasType]->(dt)`,
-      ),
+      parse(`MATCH (c:Concept) WITH c MATCH (dt:DataType) CREATE (c)-[:HasType]->(dt)`),
     ).not.toThrow();
   });
 
@@ -92,9 +88,7 @@ describe("Cypher syntax support - extended Cypher patterns", () => {
   });
 
   test("Simple: Multiple MATCH before WITH", () => {
-    expect(() =>
-      parse(`MATCH (a:A) MATCH (b:B) WITH a, b RETURN a, b`),
-    ).not.toThrow();
+    expect(() => parse(`MATCH (a:A) MATCH (b:B) WITH a, b RETURN a, b`)).not.toThrow();
   });
 
   test("Simple: CREATE after WITH + MATCH", () => {
@@ -107,17 +101,13 @@ describe("Cypher syntax support - extended Cypher patterns", () => {
 
   test("Simple: NOT pattern in WHERE", () => {
     expect(() =>
-      parse(
-        `MATCH (c:Concept) WHERE NOT (c)-[:Contains]->(:Property) RETURN c`,
-      ),
+      parse(`MATCH (c:Concept) WHERE NOT (c)-[:Contains]->(:Property) RETURN c`),
     ).not.toThrow();
   });
 
   test("Simple: Deeply nested object property", () => {
     expect(() =>
-      parse(
-        `CREATE (n:Node {config: {server: {host: "localhost", port: 8080}, debug: true}})`,
-      ),
+      parse(`CREATE (n:Node {config: {server: {host: "localhost", port: 8080}, debug: true}})`),
     ).not.toThrow();
   });
 

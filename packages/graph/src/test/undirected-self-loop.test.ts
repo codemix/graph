@@ -51,16 +51,10 @@ describe("Undirected self-loop patterns", () => {
 
   it("should return correct nodes in undirected match", () => {
     const graph = createTckGraph();
-    executeTckQuery(
-      graph,
-      "CREATE (a:A {num: 1})-[:REL {name: 'r'}]->(b:B {num: 2})",
-    );
+    executeTckQuery(graph, "CREATE (a:A {num: 1})-[:REL {name: 'r'}]->(b:B {num: 2})");
 
     // This is Match3 test [5]
-    const results = executeTckQuery(
-      graph,
-      "MATCH (a)-[r {name: 'r'}]-(b) RETURN a, b",
-    );
+    const results = executeTckQuery(graph, "MATCH (a)-[r {name: 'r'}]-(b) RETURN a, b");
 
     // Both directions - should have 2 results
     expect(results).toHaveLength(2);

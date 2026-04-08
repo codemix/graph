@@ -19,49 +19,37 @@ describe("Literals5 - Float", () => {
     expect(results[0]).toBe(1.0);
   });
 
-  test.fails(
-    "[2] Return a short positive float without integer digits - grammar requires integer part",
-    () => {
-      // Query: RETURN .1 AS literal
-      // Expected: 0.1
-      const graph = createTckGraph();
-      const results = executeTckQuery(graph, "RETURN .1 AS literal");
-      expect(results).toHaveLength(1);
-      expect(results[0]).toBe(0.1);
-    },
-  );
+  test.fails("[2] Return a short positive float without integer digits - grammar requires integer part", () => {
+    // Query: RETURN .1 AS literal
+    // Expected: 0.1
+    const graph = createTckGraph();
+    const results = executeTckQuery(graph, "RETURN .1 AS literal");
+    expect(results).toHaveLength(1);
+    expect(results[0]).toBe(0.1);
+  });
 
   test("[3] Return a long positive float", () => {
     const graph = createTckGraph();
-    const results = executeTckQuery(
-      graph,
-      "RETURN 3985764.3405892687 AS literal",
-    );
+    const results = executeTckQuery(graph, "RETURN 3985764.3405892687 AS literal");
     expect(results).toHaveLength(1);
     // JavaScript floating point precision
     expect(results[0]).toBeCloseTo(3985764.3405892686, 6);
   });
 
-  test.fails(
-    "[4] Return a long positive float without integer digits - grammar requires integer part",
-    () => {
-      // Query: RETURN .3405892687 AS literal
-      // Expected: 0.3405892687
-      const graph = createTckGraph();
-      const results = executeTckQuery(graph, "RETURN .3405892687 AS literal");
-      expect(results).toHaveLength(1);
-      expect(results[0]).toBeCloseTo(0.3405892687, 10);
-    },
-  );
+  test.fails("[4] Return a long positive float without integer digits - grammar requires integer part", () => {
+    // Query: RETURN .3405892687 AS literal
+    // Expected: 0.3405892687
+    const graph = createTckGraph();
+    const results = executeTckQuery(graph, "RETURN .3405892687 AS literal");
+    expect(results).toHaveLength(1);
+    expect(results[0]).toBeCloseTo(0.3405892687, 10);
+  });
 
   test("[5] Return a very long positive float - precision limits", () => {
     // Query: RETURN 1.2635418652381264e305 AS literal
     // Expected: 1.2635418652381264e305
     const graph = createTckGraph();
-    const results = executeTckQuery(
-      graph,
-      "RETURN 1.2635418652381264e305 AS literal",
-    );
+    const results = executeTckQuery(graph, "RETURN 1.2635418652381264e305 AS literal");
     expect(results).toHaveLength(1);
     expect(results[0]).toBeCloseTo(1.2635418652381264e305, 290);
   });
@@ -83,17 +71,14 @@ describe("Literals5 - Float", () => {
     expect(results[0]).toBe(0);
   });
 
-  test.fails(
-    "[8] Return a positive zero float without integer digits - grammar requires integer part",
-    () => {
-      // Query: RETURN .0 AS literal
-      // Expected: 0.0
-      const graph = createTckGraph();
-      const results = executeTckQuery(graph, "RETURN .0 AS literal");
-      expect(results).toHaveLength(1);
-      expect(results[0]).toBe(0);
-    },
-  );
+  test.fails("[8] Return a positive zero float without integer digits - grammar requires integer part", () => {
+    // Query: RETURN .0 AS literal
+    // Expected: 0.0
+    const graph = createTckGraph();
+    const results = executeTckQuery(graph, "RETURN .0 AS literal");
+    expect(results).toHaveLength(1);
+    expect(results[0]).toBe(0);
+  });
 
   test("[9] Return a negative zero float", () => {
     const graph = createTckGraph();
@@ -103,26 +88,20 @@ describe("Literals5 - Float", () => {
     expect(results[0] === 0).toBe(true);
   });
 
-  test.fails(
-    "[10] Return a negative zero float without integer digits - grammar requires integer part",
-    () => {
-      // Query: RETURN -.0 AS literal
-      // Expected: 0.0
-      const graph = createTckGraph();
-      const results = executeTckQuery(graph, "RETURN -.0 AS literal");
-      expect(results).toHaveLength(1);
-      expect(results[0] === 0).toBe(true);
-    },
-  );
+  test.fails("[10] Return a negative zero float without integer digits - grammar requires integer part", () => {
+    // Query: RETURN -.0 AS literal
+    // Expected: 0.0
+    const graph = createTckGraph();
+    const results = executeTckQuery(graph, "RETURN -.0 AS literal");
+    expect(results).toHaveLength(1);
+    expect(results[0] === 0).toBe(true);
+  });
 
   test("[11] Return a very long negative float - precision limits", () => {
     // Query: RETURN -1.2635418652381264e305 AS literal
     // Expected: -1.2635418652381264e305
     const graph = createTckGraph();
-    const results = executeTckQuery(
-      graph,
-      "RETURN -1.2635418652381264e305 AS literal",
-    );
+    const results = executeTckQuery(graph, "RETURN -1.2635418652381264e305 AS literal");
     expect(results).toHaveLength(1);
     expect(results[0]).toBeCloseTo(-1.2635418652381264e305, 290);
   });
@@ -178,10 +157,7 @@ describe("Literals5 - Float", () => {
     const graph = createTckGraph();
     executeTckQuery(graph, "CREATE (:A {name: 'float', num: 1.0})");
 
-    const results = executeTckQuery(
-      graph,
-      "MATCH (a:A) WHERE a.num = 1.0 RETURN a.name",
-    );
+    const results = executeTckQuery(graph, "MATCH (a:A) WHERE a.num = 1.0 RETURN a.name");
 
     expect(results).toHaveLength(1);
     expect(results[0]).toBe("float");
@@ -191,10 +167,7 @@ describe("Literals5 - Float", () => {
     const graph = createTckGraph();
     executeTckQuery(graph, "CREATE (:A {name: 'half', num: 0.5})");
 
-    const results = executeTckQuery(
-      graph,
-      "MATCH (a:A) WHERE a.num = 0.5 RETURN a.name",
-    );
+    const results = executeTckQuery(graph, "MATCH (a:A) WHERE a.num = 0.5 RETURN a.name");
 
     expect(results).toHaveLength(1);
     expect(results[0]).toBe("half");
@@ -221,10 +194,7 @@ describe("Literals5 - Float", () => {
     const graph = createTckGraph();
     executeTckQuery(graph, "CREATE (:A {name: 'neg', num: -3.14})");
 
-    const results = executeTckQuery(
-      graph,
-      "MATCH (a:A) WHERE a.num < 0 RETURN a.name",
-    );
+    const results = executeTckQuery(graph, "MATCH (a:A) WHERE a.num < 0 RETURN a.name");
 
     expect(results).toHaveLength(1);
     expect(results[0]).toBe("neg");
@@ -232,10 +202,7 @@ describe("Literals5 - Float", () => {
 
   test("[custom-5] Float zero equals integer zero", () => {
     const graph = createTckGraph();
-    executeTckQuery(
-      graph,
-      "CREATE (:A {name: 'int', num: 0}), (:A {name: 'float', num: 0.0})",
-    );
+    executeTckQuery(graph, "CREATE (:A {name: 'int', num: 0}), (:A {name: 'float', num: 0.0})");
 
     // Both should match when comparing to 0
     const results = executeTckQuery(
@@ -250,10 +217,7 @@ describe("Literals5 - Float", () => {
     const graph = createTckGraph();
     executeTckQuery(graph, "CREATE (:A {name: 'exp', num: 1e3})");
 
-    const results = executeTckQuery(
-      graph,
-      "MATCH (a:A) WHERE a.num = 1000 RETURN a.name",
-    );
+    const results = executeTckQuery(graph, "MATCH (a:A) WHERE a.num = 1000 RETURN a.name");
 
     expect(results).toHaveLength(1);
     expect(results[0]).toBe("exp");
@@ -263,10 +227,7 @@ describe("Literals5 - Float", () => {
     const graph = createTckGraph();
     executeTckQuery(graph, "CREATE (:A {name: 'small', num: 1e-3})");
 
-    const results = executeTckQuery(
-      graph,
-      "MATCH (a:A) WHERE a.num = 0.001 RETURN a.name",
-    );
+    const results = executeTckQuery(graph, "MATCH (a:A) WHERE a.num = 0.001 RETURN a.name");
 
     expect(results).toHaveLength(1);
     expect(results[0]).toBe("small");
@@ -275,10 +236,7 @@ describe("Literals5 - Float", () => {
   test("[custom-8] Float in UNWIND list", () => {
     const graph = createTckGraph();
 
-    const results = executeTckQuery(
-      graph,
-      "UNWIND [1.0, 2.5, 3.14] AS num RETURN num",
-    );
+    const results = executeTckQuery(graph, "UNWIND [1.0, 2.5, 3.14] AS num RETURN num");
 
     expect(results).toHaveLength(3);
     expect(results[0]).toEqual([1.0]);
@@ -304,10 +262,7 @@ describe("Literals5 - Float", () => {
     executeTckQuery(graph, "CREATE (:A {name: 'test', num: 5.0})");
 
     // 5.0 should equal 5
-    const results = executeTckQuery(
-      graph,
-      "MATCH (a:A) WHERE a.num = 5 RETURN a.name",
-    );
+    const results = executeTckQuery(graph, "MATCH (a:A) WHERE a.num = 5 RETURN a.name");
 
     expect(results).toHaveLength(1);
     expect(results[0]).toBe("test");
@@ -315,10 +270,7 @@ describe("Literals5 - Float", () => {
 
   test("[custom-11] Float in relationship property", () => {
     const graph = createTckGraph();
-    executeTckQuery(
-      graph,
-      "CREATE (:A {name: 'start'})-[:T {weight: 0.75}]->(:B {name: 'end'})",
-    );
+    executeTckQuery(graph, "CREATE (:A {name: 'start'})-[:T {weight: 0.75}]->(:B {name: 'end'})");
 
     const results = executeTckQuery(
       graph,

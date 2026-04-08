@@ -6,25 +6,22 @@ import { describe, test, expect } from "vitest";
 import { createTckGraph, executeTckQuery } from "../tckHelpers.js";
 
 describe("ReturnOrderBy3 - Order by multiple expressions", () => {
-  test.fails(
-    "[1] Sort on aggregate function and normal property - unlabeled nodes, count(*), implicit grouping not supported",
-    () => {
-      const graph = createTckGraph();
-      executeTckQuery(
-        graph,
-        "CREATE ({division: 'Sweden'}), ({division: 'Germany'}), ({division: 'England'}), ({division: 'Sweden'})",
-      );
-      const results = executeTckQuery(
-        graph,
-        "MATCH (n) RETURN n.division, count(*) ORDER BY count(*) DESC, n.division ASC",
-      );
-      expect(results).toEqual([
-        ["Sweden", 2],
-        ["England", 1],
-        ["Germany", 1],
-      ]);
-    },
-  );
+  test.fails("[1] Sort on aggregate function and normal property - unlabeled nodes, count(*), implicit grouping not supported", () => {
+    const graph = createTckGraph();
+    executeTckQuery(
+      graph,
+      "CREATE ({division: 'Sweden'}), ({division: 'Germany'}), ({division: 'England'}), ({division: 'Sweden'})",
+    );
+    const results = executeTckQuery(
+      graph,
+      "MATCH (n) RETURN n.division, count(*) ORDER BY count(*) DESC, n.division ASC",
+    );
+    expect(results).toEqual([
+      ["Sweden", 2],
+      ["England", 1],
+      ["Germany", 1],
+    ]);
+  });
 
   // Custom test for multi-column ORDER BY
   test("[custom-1] ORDER BY multiple columns ASC", () => {
@@ -34,10 +31,7 @@ describe("ReturnOrderBy3 - Order by multiple expressions", () => {
     executeTckQuery(graph, "CREATE (:A {x: 1, y: 'a'})");
     executeTckQuery(graph, "CREATE (:A {x: 2, y: 'b'})");
 
-    const results = executeTckQuery(
-      graph,
-      "MATCH (n:A) RETURN n.x, n.y ORDER BY n.x, n.y",
-    );
+    const results = executeTckQuery(graph, "MATCH (n:A) RETURN n.x, n.y ORDER BY n.x, n.y");
     expect(results).toEqual([
       [1, "a"],
       [1, "b"],
