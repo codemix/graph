@@ -1,23 +1,26 @@
 # @codemix/graph
 
-A full type safe,TypeScript-first in-memory property graph database with a Cypher query language parser, multiple index types, and pluggable storage adapters.
+A fully type-safe, TypeScript-first in-memory property graph database with a Cypher query language parser, a **type-safe [TinkerPop](https://tinkerpop.apache.org/) / [Gremlin](https://tinkerpop.apache.org/docs/current/reference/#gremlin)-style traversal API** (`GraphTraversal`), multiple index types, and pluggable storage adapters including a [Yjs](https://yjs.dev/) CRDT-based adapter for collaborative/realtime/offline-first use.
+
+This is the knowledge graph database for the [codemix](https://codemix.com/) product intelligence platform.
 
 ## Packages
 
-| Package                                                  | Version | Description                                                                      |
-| -------------------------------------------------------- | ------- | -------------------------------------------------------------------------------- |
-| [`@codemix/graph`](./packages/graph)                     | 0.0.1   | Core graph database with Cypher query support                                    |
-| [`@codemix/text-search`](./packages/text-search)         | 0.0.1   | BM25-based full-text search with English stemming                                |
-| [`@codemix/y-graph-storage`](./packages/y-graph-storage) | 0.0.1   | [Yjs](https://yjs.dev/) CRDT storage adapter for collaborative/offline-first use |
+| Package                                                  | Version | Description                                                                                 |
+| -------------------------------------------------------- | ------- | ------------------------------------------------------------------------------------------- |
+| [`@codemix/graph`](./packages/graph)                     | 0.0.1   | Core graph database: Cypher queries + type-safe Gremlin-style traversals (`GraphTraversal`) |
+| [`@codemix/text-search`](./packages/text-search)         | 0.0.1   | BM25-based full-text search with English stemming                                           |
+| [`@codemix/y-graph-storage`](./packages/y-graph-storage) | 0.0.1   | [Yjs](https://yjs.dev/) CRDT storage adapter for collaborative/offline-first use            |
 
 ---
 
 ## `@codemix/graph`
 
-A fully typed, in-memory graph database. Vertices and edges are strongly typed against a user-defined schema. Queries are written in a subset of [Cypher](https://neo4j.com/docs/cypher-manual/current/).
+A fully typed, in-memory graph database. Vertices and edges are strongly typed against a user-defined schema. You can query with a subset of [Cypher](https://neo4j.com/docs/cypher-manual/current/) **or** with a fluent, **type-safe [Apache TinkerPop](https://tinkerpop.apache.org/) / [Gremlin](https://tinkerpop.apache.org/docs/current/reference/#gremlin)-style API** — see [`GraphTraversal`](./packages/graph/README.md#type-safe-tinkerpop--gremlin-traversal-api) in the package docs.
 
 ### Features
 
+- **Type-safe TinkerPop / Gremlin traversals** — `GraphTraversal` exposes familiar steps (`V()`, `E()`, `out()`, `in()`, `both()`, `hasLabel()`, `as()` / `select()`, `repeat()` …) with schema-derived typing on paths and properties; pairs with `AsyncGraph.query` for remote execution
 - **Cypher query language** — parsed via a PEG grammar, supporting `MATCH`, `WHERE`, `RETURN`, `CREATE`, `SET`, `DELETE`, `MERGE`, `UNWIND`, `UNION`, `WITH`, multi-statement queries, and more
 - **Strongly typed schema** — vertex/edge labels and their properties are defined once and inferred throughout
 - **Standard Schema validation** — property values are validated using [Standard Schema](https://standardschema.dev/) compatible validators (works with Zod, Valibot, etc.)
@@ -70,6 +73,21 @@ const results = graph.query(
 );
 // [{ a: { name: "Alice" }, b: { name: "Bob" } }]
 ```
+
+### Type-safe Gremlin-style traversals
+
+The same graph is navigable with a fluent API modeled on [Apache TinkerPop Gremlin](https://tinkerpop.apache.org/docs/current/reference/#gremlin); labels and properties stay typed end-to-end:
+
+```typescript
+import { GraphTraversal } from "@codemix/graph";
+
+const g = new GraphTraversal(graph);
+for (const path of g.V().hasLabel("Person").out("knows")) {
+  console.log(path.value.get("name"));
+}
+```
+
+See the [type-safe TinkerPop / Gremlin traversal API](./packages/graph/README.md#type-safe-tinkerpop--gremlin-traversal-api) section in `@codemix/graph` for the full step reference.
 
 ### Defining a Schema
 
