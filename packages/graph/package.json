@@ -1,6 +1,6 @@
 {
   "name": "@codemix/graph",
-  "version": "0.0.2",
+  "version": "0.1.0",
   "description": "The codemix graph database.",
   "license": "MIT",
   "files": [
