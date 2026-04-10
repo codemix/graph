@@ -85,6 +85,21 @@ test("ValueTraversal Operations - filter() operation - filter() after values() k
   expect(names).toEqual(["Fiona", "George"]);
 });
 
+test("ValueTraversal Operations - limit() operation - limit() after values() truncates extracted values", () => {
+  const names = Array.from(
+    g
+      .V()
+      .hasLabel("Person")
+      .order()
+      .by("name")
+      .values()
+      .limit(3)
+      .map((vertex) => vertex.get("name")),
+  );
+
+  expect(names).toEqual(["Alice", "Bob", "Charlie"]);
+});
+
 test("ValueTraversal Operations - order() operation - order().by() sorts primitive values", () => {
   const names = Array.from(
     g

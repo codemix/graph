@@ -1107,6 +1107,17 @@ export class ValueTraversal<const TSchema extends GraphSchema, const TValue> ext
   TValue
 > {
   /**
+   * Take the first n values in the traversal.
+   * @param n The number of values to take.
+   */
+  public limit(n: number) {
+    return new ValueTraversal<TSchema, TValue>(this.graph, [
+      ...this.steps,
+      new RangeStep({ start: 0, end: n }),
+    ]);
+  }
+
+  /**
    * Map each value in the traversal to a new value.
    * @param mapper A function that maps the current value to a new value.
    */
