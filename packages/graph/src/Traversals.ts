@@ -1133,10 +1133,10 @@ export class ValueTraversal<const TSchema extends GraphSchema, const TValue> ext
   }
 }
 
-export class OrderValueTraversal<const TSchema extends GraphSchema, const TValue> extends ValueTraversal<
-  TSchema,
-  TValue
-> {
+export class OrderValueTraversal<
+  const TSchema extends GraphSchema,
+  const TValue,
+> extends ValueTraversal<TSchema, TValue> {
   /**
    * Order the values in the traversal by their natural value.
    */
