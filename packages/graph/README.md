@@ -1,6 +1,8 @@
 # @codemix/graph
 
-A fully type-safe, TypeScript-first in-memory property graph database with a Cypher-compatible query language, a **type-safe [Apache TinkerPop](https://tinkerpop.apache.org/) / [Gremlin](https://tinkerpop.apache.org/docs/current/reference/#gremlin)-style traversal API** (`GraphTraversal`), lazy indexes, and async transport support.
+A fully type-safe, TypeScript-first in-memory property graph database with a (mostly) Cypher-compatible query language, a **type-safe [Apache TinkerPop](https://tinkerpop.apache.org/) / [Gremlin](https://tinkerpop.apache.org/docs/current/reference/#gremlin)-style traversal API** (`GraphTraversal`), lazy indexes, and async transport support.
+
+Part of the [codemix product intelligence platform](https://codemix.com/).
 
 ## Table of Contents
 

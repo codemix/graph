@@ -2,6 +2,8 @@
 
 A [Yjs](https://yjs.dev) storage adapter for `@codemix/graph` that persists the graph inside a `Y.Doc`, enabling real-time collaborative graph editing, CRDT-based conflict resolution, live reactive queries, and support for rich Yjs shared types (`Y.Text`, `Y.Array`, `Y.Map`) as property values.
 
+Part of the [codemix product intelligence platform](https://codemix.com/).
+
 ## Table of Contents
 
 - [Features](#features)
