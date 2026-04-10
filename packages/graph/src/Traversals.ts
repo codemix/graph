@@ -1197,6 +1197,93 @@ export class ValueTraversal<const TSchema extends GraphSchema, const TValue> ext
   }
 
   /**
+   * Select a single property of the values in the traversal.
+   * Supports both graph elements and plain object values.
+   * @param propertyName The name of the property to select.
+   */
+  public property<const TPropertyName extends keyof GetValueTraversalProperties<TValue>>(
+    propertyName: TPropertyName,
+  ) {
+    return new ValueTraversal<TSchema, GetValueTraversalProperties<TValue>[TPropertyName]>(
+      this.graph,
+      [
+        ...this.steps,
+        new MapElementsStep<TValue>({
+          mapper: (value) => {
+            if (value instanceof Element) {
+              return value.get(propertyName as never);
+            }
+            if (typeof value === "object" && value !== null) {
+              return value[propertyName as keyof typeof value];
+            }
+            return undefined as GetValueTraversalProperties<TValue>[TPropertyName];
+          },
+        }),
+      ],
+    );
+  }
+
+  /**
+   * Select specific properties of the values in the traversal.
+   * Supports both graph elements and plain object values.
+   * @param propertyNames The names of the properties to select.
+   */
+  public properties(): ValueTraversal<TSchema, GetValueTraversalProperties<TValue>>;
+  public properties<
+    const TPropertyNames extends readonly (keyof GetValueTraversalProperties<TValue>)[],
+  >(
+    ...propertyNames: TPropertyNames
+  ): ValueTraversal<TSchema, Pick<GetValueTraversalProperties<TValue>, TPropertyNames[number]>>;
+  public properties<
+    const TPropertyNames extends readonly (keyof GetValueTraversalProperties<TValue>)[],
+  >(...propertyNames: TPropertyNames): ValueTraversal<TSchema, any> {
+    return new ValueTraversal<
+      TSchema,
+      Pick<GetValueTraversalProperties<TValue>, TPropertyNames[number]>
+    >(this.graph, [
+      ...this.steps,
+      new MapElementsStep<TValue>({
+        mapper: (value) => {
+          if (value instanceof Element) {
+            const storedProps = value[$StoredElement].properties;
+            if (propertyNames.length === 0) {
+              return storedProps as Pick<
+                GetValueTraversalProperties<TValue>,
+                TPropertyNames[number]
+              >;
+            }
+            const properties = {} as Pick<
+              GetValueTraversalProperties<TValue>,
+              TPropertyNames[number]
+            >;
+            for (const propertyName of propertyNames) {
+              properties[propertyName] = value.get(propertyName as never);
+            }
+            return properties;
+          }
+          if (typeof value === "object" && value !== null) {
+            if (propertyNames.length === 0) {
+              return value as Pick<GetValueTraversalProperties<TValue>, TPropertyNames[number]>;
+            }
+            const properties = {} as Pick<
+              GetValueTraversalProperties<TValue>,
+              TPropertyNames[number]
+            >;
+            for (const propertyName of propertyNames) {
+              properties[propertyName] = value[propertyName as keyof typeof value] as Pick<
+                GetValueTraversalProperties<TValue>,
+                TPropertyNames[number]
+              >[typeof propertyName];
+            }
+            return properties;
+          }
+          return {} as Pick<GetValueTraversalProperties<TValue>, TPropertyNames[number]>;
+        },
+      }),
+    ]);
+  }
+
+  /**
    * Order the values in the traversal.
    */
   public order() {

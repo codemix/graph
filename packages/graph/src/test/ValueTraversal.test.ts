@@ -194,6 +194,61 @@ test("ValueTraversal Operations - order() operation - order().by(property) sorts
   expect(keys).toEqual([...keys].sort());
 });
 
+test("ValueTraversal Operations - property() operation - property() after values() extracts element properties", () => {
+  const names = Array.from(
+    g
+      .V()
+      .hasLabel("Person")
+      .order()
+      .by("name")
+      .values()
+      .property("name"),
+  );
+
+  expect(names).toEqual(["Alice", "Bob", "Charlie", "Dave", "Erin", "Fiona", "George"]);
+});
+
+test("ValueTraversal Operations - property() operation - property() extracts object properties", () => {
+  const names = Array.from(
+    g
+      .V(alice.id)
+      .map((path) => ({
+        name: path.value.get("name"),
+        age: path.value.get("age"),
+      }))
+      .property("name"),
+  );
+
+  expect(names).toEqual(["Alice"]);
+});
+
+test("ValueTraversal Operations - properties() operation - properties() after values() extracts all element properties", () => {
+  const results = Array.from(g.V(alice.id).values().properties());
+
+  expect(results).toHaveLength(1);
+  expect(results[0]).toMatchObject({ name: "Alice", age: 30 });
+});
+
+test("ValueTraversal Operations - properties() operation - properties() extracts selected object properties", () => {
+  const results = Array.from(
+    g
+      .V()
+      .hasLabel("Person")
+      .limit(2)
+      .map((path) => ({
+        bucket: path.value.get("age") >= 30 ? "older" : "younger",
+        name: path.value.get("name"),
+        age: path.value.get("age"),
+      }))
+      .properties("bucket", "name"),
+  );
+
+  expect(results).toEqual([
+    { bucket: "older", name: "Alice" },
+    { bucket: "younger", name: "Bob" },
+  ]);
+});
+
 test("ValueTraversal Operations - values() extraction - values() on edge traversal", () => {
   const edges = Array.from(g.E().values());
 
