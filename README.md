@@ -72,9 +72,7 @@ const bob = graph.addVertex("Person", { name: "Bob", age: 25 });
 graph.addEdge(alice, "knows", bob, {});
 
 // 4. Query with Cypher
-const results = graph.query(
-  "MATCH (a:Person)-[:knows]->(b:Person) RETURN a.name, b.name",
-);
+const results = graph.query("MATCH (a:Person)-[:knows]->(b:Person) RETURN a.name, b.name");
 // [{ a: { name: "Alice" }, b: { name: "Bob" } }]
 ```
 
