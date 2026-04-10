@@ -1017,7 +1017,7 @@ export class VertexTraversal<const TSchema extends GraphSchema, const TPath> ext
       [
         ...this.steps,
         new MapElementsStep<any>({
-          mapper: (path) => path.value.properties[propertyName],
+          mapper: (path) => path.value.get(propertyName),
         }),
       ],
     );
@@ -1107,6 +1107,23 @@ export class ValueTraversal<const TSchema extends GraphSchema, const TValue> ext
   TValue
 > {
   /**
+   * Deduplicate the values in the traversal.
+   */
+  public dedup() {
+    return new ValueTraversal<TSchema, TValue>(this.graph, [...this.steps, new DedupStep({})]);
+  }
+
+  /**
+   * Skip the first n values in the traversal.
+   */
+  public skip(n: number) {
+    return new ValueTraversal<TSchema, TValue>(this.graph, [
+      ...this.steps,
+      new RangeStep({ start: n, end: Infinity }),
+    ]);
+  }
+
+  /**
    * Take the first n values in the traversal.
    * @param n The number of values to take.
    */
@@ -1115,6 +1132,25 @@ export class ValueTraversal<const TSchema extends GraphSchema, const TValue> ext
       ...this.steps,
       new RangeStep({ start: 0, end: n }),
     ]);
+  }
+
+  /**
+   * Slice the values in the traversal.
+   * @param start The index to start slicing
+   * @param end The index to end slicing
+   */
+  public range(start: number, end: number) {
+    return new ValueTraversal<TSchema, TValue>(this.graph, [
+      ...this.steps,
+      new RangeStep({ start, end }),
+    ]);
+  }
+
+  /**
+   * Count the number of values in the traversal.
+   */
+  public count() {
+    return new ValueTraversal<TSchema, number>(this.graph, [...this.steps, new CountStep({})]);
   }
 
   /**
@@ -1912,6 +1948,46 @@ export class EdgeTraversal<const TSchema extends GraphSchema, const TPath> exten
   }
 
   /**
+   * Skip the first n edges in the traversal.
+   */
+  public skip(n: number) {
+    return new EdgeTraversal<TSchema, TPath>(this.graph, [
+      ...this.steps,
+      new RangeStep({ start: n, end: Infinity }),
+    ]);
+  }
+
+  /**
+   * Take the first n edges in the traversal.
+   * @param n The number of edges to take.
+   */
+  public limit(n: number) {
+    return new EdgeTraversal<TSchema, TPath>(this.graph, [
+      ...this.steps,
+      new RangeStep({ start: 0, end: n }),
+    ]);
+  }
+
+  /**
+   * Slice the edges in the traversal.
+   * @param start The index to start slicing
+   * @param end The index to end slicing
+   */
+  public range(start: number, end: number) {
+    return new EdgeTraversal<TSchema, TPath>(this.graph, [
+      ...this.steps,
+      new RangeStep({ start, end }),
+    ]);
+  }
+
+  /**
+   * Count the number of edges in the traversal.
+   */
+  public count() {
+    return new ValueTraversal<TSchema, number>(this.graph, [...this.steps, new CountStep({})]);
+  }
+
+  /**
    * Select the labeled elements in the path
    * @param pathLabels The labels to select.
    */
@@ -1937,5 +2013,101 @@ export class EdgeTraversal<const TSchema extends GraphSchema, const TPath> exten
       ...this.steps,
       new ValuesStep({}),
     ]);
+  }
+
+  /**
+   * Select a single property of the edges in the traversal.
+   * @param propertyName The name of the property to select.
+   */
+  public property<const TPropertyName extends keyof GetTraversalPathProperties<TPath>>(
+    propertyName: TPropertyName,
+  ) {
+    return new ValueTraversal<TSchema, GetTraversalPathProperties<TPath>[TPropertyName]>(
+      this.graph,
+      [
+        ...this.steps,
+        new MapElementsStep<any>({
+          mapper: (path) => path.value.get(propertyName),
+        }),
+      ],
+    );
+  }
+
+  /**
+   * Select specific properties of the edges in the traversal.
+   * @param propertyNames The names of the properties to select.
+   */
+  public properties(): ValueTraversal<TSchema, GetTraversalPathProperties<TPath>>;
+  public properties<
+    const TPropertyNames extends readonly (keyof GetTraversalPathProperties<TPath>)[],
+  >(
+    ...propertyNames: TPropertyNames
+  ): ValueTraversal<TSchema, Pick<GetTraversalPathProperties<TPath>, TPropertyNames[number]>>;
+  public properties<
+    const TPropertyNames extends readonly (keyof GetTraversalPathProperties<TPath>)[],
+  >(...propertyNames: TPropertyNames) {
+    return new ValueTraversal<
+      TSchema,
+      Pick<GetTraversalPathProperties<TPath>, TPropertyNames[number]>
+    >(this.graph, [
+      ...this.steps,
+      new MapElementsStep<any>({
+        mapper: (path) => {
+          const value = path.value;
+          const storedProps = value[$StoredElement].properties;
+          if (propertyNames.length === 0) {
+            return storedProps;
+          }
+          const properties = {} as any;
+          for (const propertyName of propertyNames) {
+            properties[propertyName] = storedProps[propertyName as keyof typeof storedProps];
+          }
+          return properties;
+        },
+      }),
+    ]);
+  }
+
+  /**
+   * Map each edge in the traversal to a new value.
+   * @param mapper A function that maps the path to a new value.
+   */
+  public map<const TValue>(mapper: (path: TPath) => TValue) {
+    return new ValueTraversal<TSchema, TValue>(this.graph, [
+      ...this.steps,
+      new MapElementsStep<TPath>({
+        mapper,
+      }),
+    ]);
+  }
+
+  /**
+   * Order the edges in the traversal.
+   */
+  public order() {
+    return new OrderEdgeTraversal<TSchema, TPath>(this.graph, [
+      ...this.steps,
+      new OrderStep({ directions: [] }),
+    ]);
+  }
+}
+
+export class OrderEdgeTraversal<
+  const TSchema extends GraphSchema,
+  const TPath,
+> extends EdgeTraversal<TSchema, TPath> {
+  /**
+   * Order the edges in the traversal by a property.
+   * @param propertyName The name of the property to order by.
+   * @param direction The direction to order by.
+   */
+  public by<const TPropertyName extends keyof GetTraversalPathProperties<TPath> & string>(
+    propertyName: TPropertyName,
+    direction: OrderDirection = "asc",
+  ) {
+    return new OrderEdgeTraversal<TSchema, TPath>(
+      this.graph,
+      appendOrderDirection(this.steps, { key: propertyName, direction }),
+    );
   }
 }

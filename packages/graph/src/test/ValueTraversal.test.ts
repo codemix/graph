@@ -100,6 +100,50 @@ test("ValueTraversal Operations - limit() operation - limit() after values() tru
   expect(names).toEqual(["Alice", "Bob", "Charlie"]);
 });
 
+test("ValueTraversal Operations - skip() operation - skip() after values() drops leading values", () => {
+  const names = Array.from(
+    g
+      .V()
+      .hasLabel("Person")
+      .order()
+      .by("name")
+      .values()
+      .skip(2)
+      .map((vertex) => vertex.get("name")),
+  );
+
+  expect(names).toEqual(["Charlie", "Dave", "Erin", "Fiona", "George"]);
+});
+
+test("ValueTraversal Operations - range() operation - range() after values() slices extracted values", () => {
+  const names = Array.from(
+    g
+      .V()
+      .hasLabel("Person")
+      .order()
+      .by("name")
+      .values()
+      .range(1, 4)
+      .map((vertex) => vertex.get("name")),
+  );
+
+  expect(names).toEqual(["Bob", "Charlie", "Dave"]);
+});
+
+test("ValueTraversal Operations - dedup() operation - dedup() after values() removes duplicate extracted values", () => {
+  const vertices = Array.from(g.union(g.V(alice.id), g.V(alice.id)).values().dedup());
+
+  expect(vertices).toHaveLength(1);
+  expect(vertices[0]!.id).toBe(alice.id);
+});
+
+test("ValueTraversal Operations - count() operation - count() after values() counts extracted values", () => {
+  const people = Array.from(g.V().hasLabel("Person").values());
+  const counts = Array.from(g.V().hasLabel("Person").values().count());
+
+  expect(counts).toEqual([people.length]);
+});
+
 test("ValueTraversal Operations - order() operation - order().by() sorts primitive values", () => {
   const names = Array.from(
     g
