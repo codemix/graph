@@ -2876,6 +2876,46 @@ export class MapElementsStep<TInput> extends Step<MapElementsStepConfig<TInput>>
   }
 }
 
+export interface FilterPredicateStepConfig<TInput> extends StepConfig {
+  /**
+   * The predicate used to decide whether to keep each element.
+   */
+  predicate: (value: TInput) => boolean;
+}
+
+export class FilterPredicateStep<TInput> extends Step<FilterPredicateStepConfig<TInput>> {
+  public get name() {
+    return "FilterPredicate";
+  }
+
+  public *traverse(
+    _source: GraphSource<any>,
+    input: Iterable<TInput>,
+    _context?: QueryContext,
+  ): IterableIterator<unknown> {
+    const { predicate } = this.config;
+    for (const value of input) {
+      this.traversed++;
+      if (predicate(value as TInput)) {
+        this.emitted++;
+        yield value;
+      }
+    }
+  }
+
+  public override clone(partial?: Partial<FilterPredicateStepConfig<TInput>>) {
+    const { config } = this;
+    return new FilterPredicateStep({
+      predicate: partial?.predicate ?? config.predicate,
+      stepLabels: partial?.stepLabels ?? (config.stepLabels ? [...config.stepLabels] : undefined),
+    });
+  }
+
+  public override toJSON(): [string, FilterPredicateStepConfig<TInput>, unknown?] {
+    throw new Error("Cannot convert FilterPredicateStep to JSON.");
+  }
+}
+
 export interface GroupByStepConfig extends StepConfig {
   /**
    * The items to group by (variable, property, function like labels/type).
@@ -7360,6 +7400,7 @@ const KnownSteps = {
   Unwind: UnwindStep,
   Call: CallStep,
   MapElements: MapElementsStep,
+  FilterPredicate: FilterPredicateStep,
   Range: RangeStep,
   Order: OrderStep,
   FilterElements: FilterElementsStep,
@@ -7394,6 +7435,7 @@ export type KnownSteps =
   | RepeatStep<any>
   | DedupStep
   | MapElementsStep<any>
+  | FilterPredicateStep<any>
   | RangeStep
   | OrderStep
   | SumStep

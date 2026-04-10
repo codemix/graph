@@ -18,6 +18,7 @@ import {
   FetchEdgesStep,
   FetchVerticesStep,
   FilterElementsStep,
+  FilterPredicateStep,
   IntersectStep,
   MapElementsStep,
   OrderDirection,
@@ -1105,6 +1106,32 @@ export class ValueTraversal<const TSchema extends GraphSchema, const TValue> ext
   TSchema,
   TValue
 > {
+  /**
+   * Map each value in the traversal to a new value.
+   * @param mapper A function that maps the current value to a new value.
+   */
+  public map<const TNextValue>(mapper: (value: TValue) => TNextValue) {
+    return new ValueTraversal<TSchema, TNextValue>(this.graph, [
+      ...this.steps,
+      new MapElementsStep<TValue>({
+        mapper,
+      }),
+    ]);
+  }
+
+  /**
+   * Filter the values in the traversal using a predicate.
+   * @param predicate A function that returns true for values to keep.
+   */
+  public filter(predicate: (value: TValue) => boolean) {
+    return new ValueTraversal<TSchema, TValue>(this.graph, [
+      ...this.steps,
+      new FilterPredicateStep<TValue>({
+        predicate,
+      }),
+    ]);
+  }
+
   /**
    * Unfold each value in the traversal.
    */
