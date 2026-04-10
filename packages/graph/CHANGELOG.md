@@ -1,5 +1,11 @@
 # @codemix/graph
 
+## 0.3.0
+
+### Minor Changes
+
+- 83a2baf: Add `TraversalPath.nodes()`, `relationships()`, `length()`, and `sum()` to make path post-processing easier, and support `ORDER BY` expressions that reference projected aliases before `RETURN` and `WITH`.
+
 ## 0.2.0
 
 ### Minor Changes
