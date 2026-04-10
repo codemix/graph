@@ -1,7 +1,60 @@
+import { StandardSchemaV1 } from "@standard-schema/spec";
 import { expect, test } from "vitest";
 import { createDemoGraph, DemoSchema } from "../getDemoGraph.js";
 import { GraphTraversal } from "../Traversals.js";
 import { Edge, Vertex, Graph } from "../Graph.js";
+import { InMemoryGraphStorage } from "../GraphStorage.js";
+import type { GraphSchema } from "../GraphSchema.js";
+
+function makeType<T>(_defaultValue: T): StandardSchemaV1<T> {
+  return {
+    "~standard": {
+      version: 1,
+      vendor: "codemix",
+      validate: (value) => {
+        return { value: value as T };
+      },
+    },
+  };
+}
+
+const weightedEdgeSchema = {
+  vertices: {
+    Person: {
+      properties: {
+        name: { type: makeType("") },
+      },
+    },
+  },
+  edges: {
+    knows: {
+      properties: {
+        strength: { type: makeType(0) },
+        note: { type: makeType("") },
+      },
+    },
+  },
+} as const satisfies GraphSchema;
+
+type WeightedEdgeSchema = typeof weightedEdgeSchema;
+
+function createWeightedEdgeGraph() {
+  const graph = new Graph<WeightedEdgeSchema>({
+    schema: weightedEdgeSchema,
+    storage: new InMemoryGraphStorage(),
+    validateProperties: false,
+  });
+
+  const ann = graph.addVertex("Person", { name: "Ann" });
+  const ben = graph.addVertex("Person", { name: "Ben" });
+  const cam = graph.addVertex("Person", { name: "Cam" });
+
+  graph.addEdge(ann, "knows", ben, { strength: 2, note: "peer" });
+  graph.addEdge(ann, "knows", cam, { strength: 1, note: "mentor" });
+  graph.addEdge(ben, "knows", cam, { strength: 3, note: "teammate" });
+
+  return new GraphTraversal(graph);
+}
 
 const { graph, alice, bob } = createDemoGraph();
 const g = new GraphTraversal(graph);
@@ -183,6 +236,13 @@ test("Edge ordering and pagination - outV() converts edges to vertices for pagin
   expect(vertices.every((v) => v instanceof Vertex)).toBe(true);
 });
 
+test("Edge ordering and pagination - limit() truncates direct edge traversals", () => {
+  const edges = Array.from(g.E().limit(3).values());
+
+  expect(edges.length).toBeLessThanOrEqual(3);
+  expect(edges.every((edge) => edge instanceof Edge)).toBe(true);
+});
+
 test("Edge ordering and pagination - Edge to vertex with skip", () => {
   const allVertices = Array.from(g.E().outV().values());
   const skippedVertices = Array.from(g.E().outV().skip(2).values());
@@ -190,11 +250,26 @@ test("Edge ordering and pagination - Edge to vertex with skip", () => {
   expect(skippedVertices.length).toBe(allVertices.length - 2);
 });
 
+test("Edge ordering and pagination - skip() skips leading edges", () => {
+  const allEdges = Array.from(g.E().values());
+  const skippedEdges = Array.from(g.E().skip(2).values());
+
+  expect(skippedEdges.length).toBe(allEdges.length - 2);
+  expect(skippedEdges.every((edge) => edge instanceof Edge)).toBe(true);
+});
+
 test("Edge ordering and pagination - Edge to vertex with range", () => {
   const vertices = Array.from(g.E().outV().range(1, 4).values());
 
   expect(vertices.length).toBeLessThanOrEqual(3);
   expect(vertices.every((v) => v instanceof Vertex)).toBe(true);
+});
+
+test("Edge ordering and pagination - range() slices direct edge traversals", () => {
+  const edges = Array.from(g.E().range(1, 4).values());
+
+  expect(edges.length).toBeLessThanOrEqual(3);
+  expect(edges.every((edge) => edge instanceof Edge)).toBe(true);
 });
 
 test("Edge traversal with select - select() retrieves labeled edges and vertices", () => {
@@ -252,6 +327,13 @@ test("Edge counting and aggregation - count() counts edges via outV", () => {
   expect(counts[0]!).toBeGreaterThan(0);
 });
 
+test("Edge counting and aggregation - count() counts edges directly", () => {
+  const edges = Array.from(g.E().values());
+  const counts = Array.from(g.E().count());
+
+  expect(counts).toEqual([edges.length]);
+});
+
 test("Edge counting and aggregation - count() on filtered edges", () => {
   const knowsCount = Array.from(g.E().hasLabel("knows").outV().count())[0]!;
   const likesCount = Array.from(g.E().hasLabel("likes").outV().count())[0]!;
@@ -260,6 +342,54 @@ test("Edge counting and aggregation - count() on filtered edges", () => {
   expect(likesCount).toBeGreaterThan(0);
   expect(typeof knowsCount).toBe("number");
   expect(typeof likesCount).toBe("number");
+});
+
+test("Edge value extraction - map() transforms edges into derived values", () => {
+  const targetNames = Array.from(
+    g
+      .V(alice.id)
+      .outE("knows")
+      .map((path) => path.value.inV.get("name"))
+      .order()
+      .by()
+      .values(),
+  );
+
+  expect(targetNames).toEqual(["Bob", "Charlie"]);
+});
+
+test("Edge value extraction - property() extracts edge properties", () => {
+  const weighted = createWeightedEdgeGraph();
+  const strengths = Array.from(weighted.E().order().by("strength").property("strength"));
+
+  expect(strengths).toEqual([1, 2, 3]);
+});
+
+test("Edge value extraction - properties() extracts selected edge properties", () => {
+  const weighted = createWeightedEdgeGraph();
+  const properties = Array.from(
+    weighted.E().order().by("strength").properties("strength", "note").values(),
+  );
+
+  expect(properties).toEqual([
+    { strength: 1, note: "mentor" },
+    { strength: 2, note: "peer" },
+    { strength: 3, note: "teammate" },
+  ]);
+});
+
+test("Edge ordering and pagination - order().by(property) sorts edges", () => {
+  const weighted = createWeightedEdgeGraph();
+  const strengths = Array.from(
+    weighted
+      .E()
+      .order()
+      .by("strength", "desc")
+      .map((path) => path.value.get("strength"))
+      .values(),
+  );
+
+  expect(strengths).toEqual([3, 2, 1]);
 });
 
 test("Complex edge patterns - Chain multiple edge traversals", () => {

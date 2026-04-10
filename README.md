@@ -38,6 +38,12 @@ A fully typed, in-memory graph database. Vertices and edges are strongly typed a
 pnpm add @codemix/graph
 ```
 
+### Development
+
+Running `pnpm install` in the monorepo configures Git to use the tracked hooks in `.githooks`.
+
+The pre-commit hook formats staged supported source files with `oxfmt` and restages them automatically. You can re-run the hook setup at any time with `pnpm run setup:hooks`.
+
 ### Quick Start
 
 ```typescript
