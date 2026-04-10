@@ -3931,6 +3931,7 @@ export interface OrderStepConfig extends StepConfig {
    */
   directions: readonly {
     key?: string;
+    expression?: ConditionValue;
     direction: OrderDirection;
     nulls?: NullsOrdering;
   }[];
@@ -3944,13 +3945,13 @@ export class OrderStep extends Step<OrderStepConfig> {
   public *traverse(
     source: GraphSource<any>,
     input: Iterable<unknown>,
-    _context?: QueryContext,
+    context?: QueryContext,
   ): IterableIterator<unknown> {
     const { directions } = this.config;
     const sorted = [...input].sort((a, b) => {
-      for (const { key, direction, nulls } of directions) {
-        const aValue = resolveOrderValue(a, key);
-        const bValue = resolveOrderValue(b, key);
+      for (const { key, expression, direction, nulls } of directions) {
+        const aValue = resolveOrderValue(a, key, expression, context);
+        const bValue = resolveOrderValue(b, key, expression, context);
 
         // Handle null values according to nulls ordering
         const aIsNull = aValue === null || aValue === undefined;
@@ -3991,7 +3992,19 @@ export class OrderStep extends Step<OrderStepConfig> {
   }
 }
 
-function resolveOrderValue(item: unknown, key: string | undefined): unknown {
+function resolveOrderValue(
+  item: unknown,
+  key: string | undefined,
+  expression?: ConditionValue,
+  context?: QueryContext,
+): unknown {
+  if (expression !== undefined) {
+    if (item instanceof TraversalPath) {
+      return resolveConditionValue(item, expression, context);
+    }
+    return undefined;
+  }
+
   if (key === undefined) {
     return item instanceof TraversalPath ? item.value : item;
   }
@@ -6639,7 +6652,8 @@ export interface WithStepConfig extends StepConfig {
    * Optional ORDER BY within the WITH clause.
    */
   orderBy?: readonly {
-    key: string;
+    key?: string;
+    expression?: ConditionValue;
     direction: OrderDirection;
     nulls?: NullsOrdering;
   }[];
@@ -6791,13 +6805,15 @@ export class WithStep extends Step<WithStepConfig> {
     // Apply ORDER BY if present
     if (orderBy && orderBy.length > 0) {
       results.sort((a, b) => {
-        for (const { key, direction, nulls } of orderBy) {
-          // First try to get the value as a bound variable (for aliases like `WITH a.num AS val`)
-          // then fall back to property access (for expressions like `ORDER BY a.num`)
-          const aNode = a.get(key);
-          const bNode = b.get(key);
-          const aValue = aNode !== undefined ? aNode.value : a.property(key as never);
-          const bValue = bNode !== undefined ? bNode.value : b.property(key as never);
+        for (const { key, expression, direction, nulls } of orderBy) {
+          const aValue =
+            expression !== undefined
+              ? resolveConditionValue(a, expression, context)
+              : resolveProjectedOrderValue(a, key);
+          const bValue =
+            expression !== undefined
+              ? resolveConditionValue(b, expression, context)
+              : resolveProjectedOrderValue(b, key);
 
           const aIsNull = aValue === null || aValue === undefined;
           const bIsNull = bValue === null || bValue === undefined;
@@ -7086,6 +7102,20 @@ export class WithStep extends Step<WithStepConfig> {
     tokens.push({ kind: "end" });
     return tokens;
   }
+}
+
+function resolveProjectedOrderValue(
+  path: TraversalPath<any, any, any>,
+  key: string | undefined,
+): unknown {
+  if (key === undefined) {
+    return path.value;
+  }
+
+  // First try to get the value as a bound variable (for aliases like `WITH a.num AS val`)
+  // then fall back to property access (for expressions like `ORDER BY a.num`)
+  const pathNode = path.get(key);
+  return pathNode !== undefined ? pathNode.value : path.property(key as never);
 }
 
 /**

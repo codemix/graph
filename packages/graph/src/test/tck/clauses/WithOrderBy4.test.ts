@@ -45,7 +45,7 @@ describe("WithOrderBy4 - Order by in combination with projection and aliasing", 
     expect(results[2]).toEqual([3, 33]);
   });
 
-  test.fails("[3] Sort by two projected expressions - ORDER BY expression evaluation not supported at runtime", () => {
+  test("[3] Sort by two projected expressions", () => {
     const graph = createTckGraph();
     executeTckQuery(
       graph,
@@ -63,7 +63,7 @@ describe("WithOrderBy4 - Order by in combination with projection and aliasing", 
 
   // [4] Sort by one projected expression and one alias with order priority different than projection
   // Requires runtime evaluation of expressions in ORDER BY (a.num2 % 3), not just alias lookup
-  test.fails("[4] Sort by projected expression and alias - ORDER BY expression evaluation not supported", () => {
+  test("[4] Sort by projected expression and alias", () => {
     const graph = createTckGraph();
     executeTckQuery(
       graph,
@@ -182,7 +182,7 @@ describe("WithOrderBy4 - Order by in combination with projection and aliasing", 
 
   // [10] Sort by non-projected expression containing alias containing shadowed variable
   // Requires runtime evaluation of expressions in ORDER BY (x * -1), not just alias lookup
-  test.fails("[10] Sort by expression containing alias - ORDER BY expression evaluation not supported", () => {
+  test("[10] Sort by expression containing alias", () => {
     const graph = createTckGraph();
     executeTckQuery(
       graph,

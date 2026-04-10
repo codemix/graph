@@ -6,6 +6,7 @@ import {
   VertexProperties,
   EdgeProperties,
   AnyEdgePropertyName,
+  AnyVertexPropertyName,
 } from "./GraphSchema.js";
 import { ElementId } from "./GraphStorage.js";
 import {
@@ -108,7 +109,11 @@ export class TraversalPath<
   public with<const TValue, const TLabels extends readonly string[] = []>(
     value: TValue,
     labels: TLabels = [] as unknown as TLabels,
-  ): this extends TraversalPath<any, unknown, any> ? TraversalPath<this, TValue, TLabels> : never {
+  ): this extends TraversalPath<any, unknown, any>
+    ? TLabels extends readonly []
+      ? this
+      : TraversalPath<this, TValue, TLabels>
+    : this {
     return new TraversalPath(this as any, value, labels) as any;
   }
 
@@ -130,19 +135,95 @@ export class TraversalPath<
   }
 
   /**
+   * Return the vertices in this path, in traversal order.
+   * Optionally extract a property from each vertex instead of returning the vertices themselves.
+   */
+  public nodes(): GetTraversalPathVertices<TraversalPath<TParent, TValue, TLabels>>;
+  public nodes<
+    const TPropertyName extends AnyVertexPropertyNameOrString<
+      GetTraversalPathSchema<TraversalPath<TParent, TValue, TLabels>>
+    >,
+  >(
+    propertyName: TPropertyName,
+  ): GetTraversalPathVertexPropertyValues<TraversalPath<TParent, TValue, TLabels>, TPropertyName>;
+  public nodes(propertyName?: string) {
+    const nodes: unknown[] = [];
+    for (const step of this) {
+      if (!(step.value instanceof Vertex)) {
+        continue;
+      }
+      nodes.push(propertyName ? step.property(propertyName as never) : step.value);
+    }
+    return nodes;
+  }
+
+  /**
+   * Return the edges/relationships in this path, in traversal order.
+   * Optionally extract a property from each edge instead of returning the edges themselves.
+   */
+  public relationships(): GetTraversalPathEdges<TraversalPath<TParent, TValue, TLabels>>;
+  public relationships<
+    const TPropertyName extends AnyEdgePropertyNameOrString<
+      GetTraversalPathSchema<TraversalPath<TParent, TValue, TLabels>>
+    >,
+  >(
+    propertyName: TPropertyName,
+  ): GetTraversalPathEdgePropertyValues<TraversalPath<TParent, TValue, TLabels>, TPropertyName>;
+  public relationships(propertyName?: string) {
+    const relationships: unknown[] = [];
+    for (const step of this) {
+      if (!(step.value instanceof Edge)) {
+        continue;
+      }
+      relationships.push(propertyName ? step.property(propertyName as never) : step.value);
+    }
+    return relationships;
+  }
+
+  /**
+   * Return the number of edges/relationships in this path.
+   * Mirrors Cypher's `length(path)`.
+   */
+  public length(): number {
+    let edgeCount = 0;
+    for (const step of this) {
+      if (step.value instanceof Edge) {
+        edgeCount++;
+      }
+    }
+    return edgeCount;
+  }
+
+  /**
+   * Sum a numeric property across all items in the path.
+   * Non-numeric or missing values are ignored.
+   */
+  public sum(propertyName: string): number {
+    let total = 0;
+    for (const step of this) {
+      const value = step.property(propertyName as never);
+      if (typeof value === "number") {
+        total += value;
+      }
+    }
+    return total;
+  }
+
+  /**
    * Get a node in the path by label.
    * @param label The label to get the node by.
    */
-  public get<const TLabel extends string>(label: TLabel): GetTraversalPathByLabel<this, TLabel> {
-    // eslint-disable-next-line @typescript-eslint/no-this-alias
-    let node: TraversalPath<any, unknown, any> = this;
+  public get<const TLabel extends string>(
+    label: TLabel,
+  ): GetTraversalPathByLabel<TraversalPath<TParent, TValue, TLabels>, TLabel> {
+    let node: TraversalPath<any, any, any> = this;
     while (node !== undefined) {
       if (node.labels.includes(label)) {
-        return node as GetTraversalPathByLabel<this, TLabel>;
+        return node as GetTraversalPathByLabel<TraversalPath<TParent, TValue, TLabels>, TLabel>;
       }
       node = node.parent;
     }
-    return undefined as GetTraversalPathByLabel<this, TLabel>;
+    return undefined as GetTraversalPathByLabel<TraversalPath<TParent, TValue, TLabels>, TLabel>;
   }
 
   /**
@@ -151,17 +232,16 @@ export class TraversalPath<
    */
   public getAll<const TLabel extends string>(
     label: TLabel,
-  ): GetAllTraversalPathsByLabel<this, TLabel> {
-    const nodes = [] as TraversalPath<any, unknown, any>[];
-    // eslint-disable-next-line @typescript-eslint/no-this-alias
-    let node: TraversalPath<any, unknown, any> = this;
+  ): GetAllTraversalPathsByLabel<TraversalPath<TParent, TValue, TLabels>, TLabel> {
+    const nodes = [] as TraversalPath<any, any, any>[];
+    let node: TraversalPath<any, any, any> = this;
     while (node !== undefined) {
       if (node.labels.includes(label)) {
         nodes.unshift(node);
       }
       node = node.parent;
     }
-    return nodes as GetAllTraversalPathsByLabel<this, TLabel>;
+    return nodes as GetAllTraversalPathsByLabel<TraversalPath<TParent, TValue, TLabels>, TLabel>;
   }
 
   public toJSON(): TraversalPathJSON {
@@ -223,6 +303,62 @@ export class TraversalPath<
 }
 
 type PropertyOf<T> = T extends Element<any, any, infer TProperties, any> ? TProperties : keyof T;
+
+type GetTraversalPathItems<TPath> =
+  TPath extends TraversalPath<infer TParent, infer TValue, any>
+    ? [...GetTraversalPathItems<TParent>, TValue]
+    : [];
+
+type GetTraversalPathSchema<TPath> =
+  Extract<GetTraversalPathItems<TPath>[number], Element<any, any, any, any>> extends Element<
+    infer TSchema,
+    any,
+    any,
+    any
+  >
+    ? TSchema
+    : GraphSchema;
+
+type AnyVertexPropertyNameOrString<TSchema extends GraphSchema> =
+  AnyVertexPropertyName<TSchema> extends never ? string : AnyVertexPropertyName<TSchema>;
+
+type AnyEdgePropertyNameOrString<TSchema extends GraphSchema> =
+  AnyEdgePropertyName<TSchema> extends never ? string : AnyEdgePropertyName<TSchema>;
+
+type AnyVertexPropertyValue<TSchema extends GraphSchema, TPropertyName extends string> = {
+  [TVertexLabel in VertexLabel<TSchema>]: TPropertyName extends keyof VertexProperties<
+    TSchema,
+    TVertexLabel
+  >
+    ? VertexProperties<TSchema, TVertexLabel>[TPropertyName]
+    : never;
+}[VertexLabel<TSchema>];
+
+type AnyEdgePropertyValue<TSchema extends GraphSchema, TPropertyName extends string> = {
+  [TEdgeLabel in EdgeLabel<TSchema>]: TPropertyName extends keyof EdgeProperties<
+    TSchema,
+    TEdgeLabel
+  >
+    ? EdgeProperties<TSchema, TEdgeLabel>[TPropertyName]
+    : never;
+}[EdgeLabel<TSchema>];
+
+type GetTraversalPathVertices<TPath> = Extract<
+  GetTraversalPathItems<TPath>[number],
+  Vertex<any, any>
+>[];
+
+type GetTraversalPathEdges<TPath> = Extract<GetTraversalPathItems<TPath>[number], Edge<any, any>>[];
+
+type GetTraversalPathVertexPropertyValues<
+  TPath,
+  TPropertyName extends string,
+> = AnyVertexPropertyValue<GetTraversalPathSchema<TPath>, TPropertyName>[];
+
+type GetTraversalPathEdgePropertyValues<TPath, TPropertyName extends string> = AnyEdgePropertyValue<
+  GetTraversalPathSchema<TPath>,
+  TPropertyName
+>[];
 
 type GetTraversalPathValue<TPath> =
   TPath extends TraversalPath<any, infer TValue, any>

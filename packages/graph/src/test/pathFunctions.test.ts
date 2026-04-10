@@ -297,6 +297,33 @@ describe("Query Execution: Path Functions with Traversal API", () => {
       const path = results[0] as TraversalPath<any, any, any>;
       expect(path.depth).toBe(5); // alice -> e1 -> bob -> e2 -> charlie
     });
+
+    it("should expose path helper methods for nodes, relationships, length, and sum", () => {
+      const g = new GraphTraversal(graph);
+
+      const results = [
+        ...g
+          .V(alice.id)
+          .shortestPath()
+          .to(charlie.id)
+          .through("KNOWS")
+          .map((path) => ({
+            hops: path.length(),
+            names: path.nodes("name"),
+            sinceValues: path.relationships("since"),
+            totalSince: path.sum("since"),
+          })),
+      ];
+
+      expect(results).toEqual([
+        {
+          hops: 2,
+          names: ["Alice", "Bob", "Charlie"],
+          sinceValues: [2020, 2021],
+          totalSince: 4041,
+        },
+      ]);
+    });
   });
 });
 
@@ -358,6 +385,31 @@ describe("Path Functions: Edge Cases", () => {
 
     const rels = evaluateFunction("relationships", [path], path) as Edge<any, any>[];
     expect(rels.map((r) => r.id)).toEqual(["e1", "e2"]);
+  });
+
+  it("TraversalPath helper methods should preserve order and support property extraction", () => {
+    const graph = new Graph({
+      schema: testSchema,
+      storage: new InMemoryGraphStorage(),
+    });
+    const alice = graph.addVertex("Person", { name: "Alice", age: 30 });
+    const bob = graph.addVertex("Person", { name: "Bob", age: 25 });
+    const charlie = graph.addVertex("Person", { name: "Charlie", age: 35 });
+    const e1 = graph.addEdge(alice, "KNOWS", bob, { since: 2020 });
+    const e2 = graph.addEdge(bob, "KNOWS", charlie, { since: 2021 });
+
+    const path = new TraversalPath(undefined, alice, [] as const)
+      .with(e1, [] as const)
+      .with(bob, [] as const)
+      .with(e2, [] as const)
+      .with(charlie, ["p"] as const);
+
+    expect(path.nodes().map((node) => node.id)).toEqual([alice.id, bob.id, charlie.id]);
+    expect(path.nodes("name")).toEqual(["Alice", "Bob", "Charlie"]);
+    expect(path.relationships().map((edge: any) => edge.id)).toEqual([e1.id, e2.id]);
+    expect(path.relationships("since")).toEqual([2020, 2021]);
+    expect(path.length()).toBe(2);
+    expect(path.sum("since")).toBe(4041);
   });
 });
 
