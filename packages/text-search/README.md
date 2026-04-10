@@ -2,6 +2,8 @@
 
 Fast, accurate text search with BM25-inspired scoring, English stemming, and phrase-aware ranking. Zero dependencies.
 
+Part of the [codemix product intelligence platform](https://codemix.com/).
+
 ## Features
 
 - **BM25-inspired scoring** — term frequency saturation and document length normalization
@@ -108,8 +110,16 @@ interface Article {
 }
 
 const articles: Article[] = [
-  { slug: "intro-react", title: "Introduction to React", content: "Learn React basics" },
-  { slug: "vue-guide", title: "Vue.js Guide", content: "Getting started with Vue" },
+  {
+    slug: "intro-react",
+    title: "Introduction to React",
+    content: "Learn React basics",
+  },
+  {
+    slug: "vue-guide",
+    title: "Vue.js Guide",
+    content: "Getting started with Vue",
+  },
 ];
 
 const results = rankDocuments(
@@ -315,7 +325,11 @@ faq.filter((q) => match(q) > 0.3);
 ```typescript
 const users = [
   { id: 1, name: "John Doe", bio: "Software engineer at TechCorp" },
-  { id: 2, name: "Jane Smith", bio: "Product manager with engineering background" },
+  {
+    id: 2,
+    name: "Jane Smith",
+    bio: "Product manager with engineering background",
+  },
   { id: 3, name: "Bob Wilson", bio: "Marketing specialist" },
 ];
 

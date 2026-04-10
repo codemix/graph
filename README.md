@@ -1,10 +1,12 @@
 <p align="center">
-  <img src="./codemix-logo.png" alt="codemix" width="240" />
+  <a href="https://codemix.com/">
+    <img src="./codemix-logo.png" alt="codemix" width="240" />
+  </a>
 </p>
 
 # @codemix/graph
 
-A fully type-safe, TypeScript-first in-memory property graph database with a Cypher query language parser, a **type-safe [TinkerPop](https://tinkerpop.apache.org/) / [Gremlin](https://tinkerpop.apache.org/docs/current/reference/#gremlin)-style traversal API** (`GraphTraversal`), multiple index types, and pluggable storage adapters including a [Yjs](https://yjs.dev/) CRDT-based adapter for collaborative/realtime/offline-first use.
+A fully type-safe, TypeScript-first in-memory property graph database with a Cypher-like query language, a **type-safe [TinkerPop](https://tinkerpop.apache.org/) / [Gremlin](https://tinkerpop.apache.org/docs/current/reference/#gremlin)-style traversal API** (`GraphTraversal`), multiple index types, and pluggable storage adapters including a [Yjs](https://yjs.dev/) CRDT-based adapter for collaborative/realtime/offline-first use.
 
 This is the knowledge graph database for the [codemix](https://codemix.com/) product intelligence platform.
 
