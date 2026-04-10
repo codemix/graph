@@ -195,15 +195,7 @@ test("ValueTraversal Operations - order() operation - order().by(property) sorts
 });
 
 test("ValueTraversal Operations - property() operation - property() after values() extracts element properties", () => {
-  const names = Array.from(
-    g
-      .V()
-      .hasLabel("Person")
-      .order()
-      .by("name")
-      .values()
-      .property("name"),
-  );
+  const names = Array.from(g.V().hasLabel("Person").order().by("name").values().property("name"));
 
   expect(names).toEqual(["Alice", "Bob", "Charlie", "Dave", "Erin", "Fiona", "George"]);
 });
