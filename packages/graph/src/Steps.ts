@@ -3890,7 +3890,7 @@ export interface OrderStepConfig extends StepConfig {
    * The directions to sort the results by.
    */
   directions: readonly {
-    key: string;
+    key?: string;
     direction: OrderDirection;
     nulls?: NullsOrdering;
   }[];
@@ -3903,18 +3903,14 @@ export class OrderStep extends Step<OrderStepConfig> {
 
   public *traverse(
     source: GraphSource<any>,
-    input: Iterable<TraversalPath<any, any, any>>,
+    input: Iterable<unknown>,
     _context?: QueryContext,
-  ): IterableIterator<TraversalPath<any, any, any>> {
+  ): IterableIterator<unknown> {
     const { directions } = this.config;
     const sorted = [...input].sort((a, b) => {
       for (const { key, direction, nulls } of directions) {
-        // First try to get the value as a bound variable (for aliases like UNWIND x)
-        // then fall back to property access (for expressions like ORDER BY n.name)
-        const aNode = a.get(key);
-        const bNode = b.get(key);
-        const aValue = aNode !== undefined ? aNode.value : a.property(key as never);
-        const bValue = bNode !== undefined ? bNode.value : b.property(key as never);
+        const aValue = resolveOrderValue(a, key);
+        const bValue = resolveOrderValue(b, key);
 
         // Handle null values according to nulls ordering
         const aIsNull = aValue === null || aValue === undefined;
@@ -3953,6 +3949,24 @@ export class OrderStep extends Step<OrderStepConfig> {
         partial?.stepLabels ?? (this.config.stepLabels ? [...this.config.stepLabels] : undefined),
     });
   }
+}
+
+function resolveOrderValue(item: unknown, key: string | undefined): unknown {
+  if (key === undefined) {
+    return item instanceof TraversalPath ? item.value : item;
+  }
+
+  if (item instanceof TraversalPath) {
+    // First try to get the value as a bound variable (for aliases like UNWIND x)
+    // then fall back to property access (for expressions like ORDER BY n.name)
+    return item.get(key)?.value ?? item.property(key as never);
+  }
+
+  if (typeof item === "object" && item !== null) {
+    return (item as Record<string, unknown>)[key];
+  }
+
+  return undefined;
 }
 
 export interface UnionStepConfig extends StepConfig {}
