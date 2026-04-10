@@ -11,8 +11,10 @@
   "scripts": {
     "build": "pnpm run -r build",
     "changeset": "changeset",
+    "prepare": "sh ./scripts/setup-git-hooks.sh",
     "version-packages": "changeset version",
     "release": "pnpm build && changeset publish",
+    "setup:hooks": "sh ./scripts/setup-git-hooks.sh",
     "typecheck": "pnpm run -r typecheck",
     "test": "vitest",
     "test:coverage": "vitest run --coverage",
