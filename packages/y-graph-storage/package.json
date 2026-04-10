@@ -1,6 +1,6 @@
 {
   "name": "@codemix/y-graph-storage",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "A YJS storage adapter for the codemix graph database.",
   "license": "MIT",
   "files": [
