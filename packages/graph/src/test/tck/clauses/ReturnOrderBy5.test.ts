@@ -6,7 +6,7 @@ import { describe, test, expect } from "vitest";
 import { createTckGraph, executeTckQuery } from "../tckHelpers.js";
 
 describe("ReturnOrderBy5 - Order by in combination with column renaming", () => {
-  test.fails("[1] Renaming columns before ORDER BY should return results in ascending order - unlabeled nodes, arithmetic in ORDER BY not supported", () => {
+  test("[1] Renaming columns before ORDER BY should return results in ascending order", () => {
     const graph = createTckGraph();
     executeTckQuery(graph, "CREATE ({num: 1}), ({num: 3}), ({num: -5})");
     const results = executeTckQuery(graph, "MATCH (n) RETURN n.num AS n ORDER BY n + 2");

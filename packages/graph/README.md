@@ -404,13 +404,7 @@ g.V()
 ### Shortest Path
 
 ```ts
-g.V()
-  .hasLabel("Person")
-  .shortestPath(
-    (t) => t.out("knows"), // expansion
-    targetVertex, // destination vertex or id
-    { maxDepth: 10 },
-  );
+g.V(alice.id).shortestPath().to(george.id).through("knows").direction("out");
 ```
 
 ### Union and Intersection

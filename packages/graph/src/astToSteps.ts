@@ -88,6 +88,7 @@ import {
   QueryUnionStep,
   GroupByStep,
   type Condition as StepCondition,
+  type ConditionValue,
   type YieldItemConfig,
   type BinaryOperator,
   type OrderDirection,
@@ -3093,40 +3094,257 @@ function resolveOrderItem(
   aliasMap: Map<string, AliasInfo>,
   useAliasDirectly: boolean = false,
 ): {
-  key: string;
+  key?: string;
+  expression?: ConditionValue;
   direction: OrderDirection;
   nulls?: "first" | "last";
 } {
-  let key: string;
-
-  if (order.alias) {
-    if (useAliasDirectly) {
-      // WITH ORDER BY: use alias directly since path has it bound after projection
-      key = order.alias;
-    } else {
-      // RETURN ORDER BY: look up source property/variable
-      const aliasInfo = aliasMap.get(order.alias);
-      if (aliasInfo && aliasInfo.property) {
-        // Alias maps to a property access - use the property name as key
-        key = aliasInfo.property;
-      } else if (aliasInfo) {
-        // Alias maps to a variable - use the source variable
-        key = aliasInfo.variable;
-      } else {
-        // Alias not found - use as-is
-        key = order.alias;
-      }
-    }
-  } else {
-    // ORDER BY variable.property - use property as key
-    key = order.property!;
-  }
+  const base =
+    order.expression !== undefined
+      ? {
+          expression: useAliasDirectly
+            ? convertConditionValue(order.expression)
+            : resolveReturnOrderExpression(order.expression, aliasMap),
+        }
+      : {
+          key: resolveOrderKey(order, aliasMap, useAliasDirectly),
+        };
 
   return {
-    key,
+    ...base,
     direction: order.direction.toLowerCase() as OrderDirection,
     ...(order.nulls && {
       nulls: order.nulls.toLowerCase() as "first" | "last",
     }),
   };
+}
+
+function resolveOrderKey(
+  order: OrderItem,
+  aliasMap: Map<string, AliasInfo>,
+  useAliasDirectly: boolean,
+): string | undefined {
+  if (order.alias) {
+    if (useAliasDirectly) {
+      // WITH ORDER BY: use alias directly since path has it bound after projection
+      return order.alias;
+    }
+
+    // RETURN ORDER BY: look up source property/variable
+    const aliasInfo = aliasMap.get(order.alias);
+    if (aliasInfo?.property) {
+      return aliasInfo.property;
+    }
+    if (aliasInfo) {
+      return aliasInfo.variable;
+    }
+    return order.alias;
+  }
+
+  // ORDER BY variable.property - use property as key
+  return order.property;
+}
+
+function resolveReturnOrderExpression(
+  expression: Exclude<OrderItem["expression"], undefined>,
+  aliasMap: Map<string, AliasInfo>,
+): ConditionValue {
+  return rewriteOrderAliases(convertConditionValue(expression), aliasMap);
+}
+
+function rewriteOrderAliases(
+  value: ConditionValue,
+  aliasMap: Map<string, AliasInfo>,
+): ConditionValue {
+  if (value === null || value === undefined) {
+    return value;
+  }
+
+  if (typeof value !== "object") {
+    return value;
+  }
+
+  switch (value.type) {
+    case "variableRef": {
+      const aliasInfo = aliasMap.get(value.variable);
+      if (!aliasInfo) {
+        return value;
+      }
+      if (aliasInfo.property) {
+        return {
+          type: "propertyRef",
+          variable: aliasInfo.variable,
+          property: aliasInfo.property,
+        };
+      }
+      return {
+        type: "variableRef",
+        variable: aliasInfo.variable,
+      };
+    }
+    case "pathRef": {
+      const aliasInfo = aliasMap.get(value.variable);
+      if (!aliasInfo || aliasInfo.property) {
+        return value;
+      }
+      return {
+        type: "pathRef",
+        variable: aliasInfo.variable,
+      };
+    }
+    case "propertyRef":
+      return value;
+    case "parameterRef":
+    case "null":
+      return value;
+    case "arithmeticExpression":
+      return {
+        ...value,
+        left: rewriteOrderAliases(value.left, aliasMap),
+        right: rewriteOrderAliases(value.right, aliasMap),
+      };
+    case "unaryExpression":
+      return {
+        ...value,
+        operand: rewriteOrderAliases(value.operand, aliasMap),
+      };
+    case "booleanExpression":
+      if (value.operator === "NOT") {
+        return {
+          ...value,
+          operand: rewriteOrderAliases(value.operand, aliasMap),
+        };
+      }
+      return {
+        ...value,
+        left: rewriteOrderAliases(value.left, aliasMap),
+        right: rewriteOrderAliases(value.right, aliasMap),
+      };
+    case "comparisonExpression":
+      if (value.operator === "IS NULL" || value.operator === "IS NOT NULL") {
+        return {
+          type: "comparisonExpression",
+          operator: value.operator,
+          left: rewriteOrderAliases(value.left, aliasMap),
+        };
+      }
+      if (!("right" in value)) {
+        return value;
+      }
+      return {
+        type: "comparisonExpression",
+        operator: value.operator,
+        left: rewriteOrderAliases(value.left, aliasMap),
+        right: rewriteOrderAliases(value.right, aliasMap),
+      };
+    case "functionCall":
+      return {
+        ...value,
+        args: value.args.map((arg) => rewriteOrderAliases(arg, aliasMap)),
+      };
+    case "simpleCaseExpression":
+      return {
+        ...value,
+        test: rewriteOrderAliases(value.test, aliasMap),
+        alternatives: value.alternatives.map((alternative) => ({
+          when: rewriteOrderAliases(alternative.when, aliasMap),
+          then: rewriteOrderAliases(alternative.then, aliasMap),
+        })),
+        ...(value.else !== undefined && {
+          else: rewriteOrderAliases(value.else, aliasMap),
+        }),
+      };
+    case "searchedCaseExpression":
+      return {
+        ...value,
+        alternatives: value.alternatives.map((alternative) => ({
+          when: alternative.when,
+          then: rewriteOrderAliases(alternative.then, aliasMap),
+        })),
+        ...(value.else !== undefined && {
+          else: rewriteOrderAliases(value.else, aliasMap),
+        }),
+      };
+    case "listLiteral":
+      return {
+        ...value,
+        values: value.values.map((entry) => rewriteOrderAliases(entry, aliasMap)),
+      };
+    case "mapLiteral":
+      return {
+        ...value,
+        entries: value.entries.map((entry) => ({
+          key: entry.key,
+          value: rewriteOrderAliases(entry.value, aliasMap),
+        })),
+      };
+    case "listIndexExpression":
+      return {
+        ...value,
+        list: rewriteOrderAliases(value.list, aliasMap),
+        index: rewriteOrderAliases(value.index, aliasMap),
+      };
+    case "sliceExpression":
+      return {
+        ...value,
+        list: rewriteOrderAliases(value.list, aliasMap),
+        ...(value.start !== undefined && {
+          start: rewriteOrderAliases(value.start, aliasMap),
+        }),
+        ...(value.end !== undefined && {
+          end: rewriteOrderAliases(value.end, aliasMap),
+        }),
+      };
+    case "listComprehension":
+      return {
+        ...value,
+        list: rewriteOrderAliases(value.list, aliasMap),
+        ...(value.projection !== undefined && {
+          projection: rewriteOrderAliases(value.projection, aliasMap),
+        }),
+      };
+    case "quantifierExpression":
+      return {
+        ...value,
+        list: rewriteOrderAliases(value.list, aliasMap),
+      };
+    case "reduceExpression":
+      return {
+        ...value,
+        init: rewriteOrderAliases(value.init, aliasMap),
+        list: rewriteOrderAliases(value.list, aliasMap),
+        expression: rewriteOrderAliases(value.expression, aliasMap),
+      };
+    case "dynamicPropertyAccess":
+      return {
+        ...value,
+        object: rewriteOrderAliases(value.object, aliasMap),
+        property: rewriteOrderAliases(value.property, aliasMap),
+      };
+    case "patternComprehension":
+      return {
+        ...value,
+        projection: rewriteOrderAliases(value.projection, aliasMap),
+      };
+    case "mapProjection":
+      return {
+        ...value,
+        selectors: value.selectors.map((selector) => {
+          if (selector.type !== "literalEntry") {
+            return selector;
+          }
+          return {
+            ...selector,
+            value: rewriteOrderAliases(selector.value, aliasMap),
+          };
+        }),
+      };
+    case "existsSubquery":
+      return value;
+    case "memberAccess":
+      return {
+        ...value,
+        object: rewriteOrderAliases(value.object, aliasMap),
+      };
+  }
 }
