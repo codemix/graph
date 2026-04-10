@@ -1094,19 +1094,10 @@ export class OrderVertexTraversal<
     propertyName: TPropertyName,
     direction: OrderDirection = "asc",
   ) {
-    const steps = [...this.steps];
-    let orderStep =
-      steps.length > 0 && steps[steps.length - 1] instanceof OrderStep
-        ? steps[steps.length - 1]
-        : undefined;
-    if (!orderStep) {
-      steps.push(new OrderStep({ directions: [{ key: propertyName, direction }] }));
-    } else {
-      steps[steps.length - 1] = orderStep.clone({
-        directions: [...orderStep.config.directions, { key: propertyName, direction }],
-      });
-    }
-    return new OrderVertexTraversal<TSchema, TPath>(this.graph, steps);
+    return new OrderVertexTraversal<TSchema, TPath>(
+      this.graph,
+      appendOrderDirection(this.steps, { key: propertyName, direction }),
+    );
   }
 }
 
@@ -1130,9 +1121,79 @@ export class ValueTraversal<const TSchema extends GraphSchema, const TValue> ext
       new ValuesStep({}),
     ]);
   }
+
+  /**
+   * Order the values in the traversal.
+   */
+  public order() {
+    return new OrderValueTraversal<TSchema, TValue>(this.graph, [
+      ...this.steps,
+      new OrderStep({ directions: [] }),
+    ]);
+  }
+}
+
+export class OrderValueTraversal<const TSchema extends GraphSchema, const TValue> extends ValueTraversal<
+  TSchema,
+  TValue
+> {
+  /**
+   * Order the values in the traversal by their natural value.
+   */
+  public by(): OrderValueTraversal<TSchema, TValue>;
+  /**
+   * Order the values in the traversal by a property on the value.
+   * @param propertyName The name of the property to order by.
+   * @param direction The direction to order by.
+   */
+  public by<const TPropertyName extends keyof GetValueTraversalProperties<TValue> & string>(
+    propertyName: TPropertyName,
+    direction?: OrderDirection,
+  ): OrderValueTraversal<TSchema, TValue>;
+  public by<const TPropertyName extends keyof GetValueTraversalProperties<TValue> & string>(
+    propertyName?: TPropertyName,
+    direction: OrderDirection = "asc",
+  ) {
+    return new OrderValueTraversal<TSchema, TValue>(
+      this.graph,
+      appendOrderDirection(this.steps, { key: propertyName, direction }),
+    );
+  }
 }
 
 type ValueOf<T> = T[keyof T];
+
+type GetValueTraversalProperties<TValue> =
+  TValue extends Element<any, any, infer TProperties, any>
+    ? TProperties
+    : TValue extends object
+      ? TValue
+      : never;
+
+function appendOrderDirection(
+  steps: readonly Step<any>[],
+  orderDirection: {
+    key?: string;
+    direction: OrderDirection;
+  },
+) {
+  const nextSteps = [...steps];
+  const orderStep =
+    nextSteps.length > 0 && nextSteps[nextSteps.length - 1] instanceof OrderStep
+      ? nextSteps[nextSteps.length - 1]
+      : undefined;
+
+  if (!orderStep) {
+    nextSteps.push(new OrderStep({ directions: [orderDirection] }));
+    return nextSteps;
+  }
+
+  nextSteps[nextSteps.length - 1] = orderStep.clone({
+    directions: [...orderStep.config.directions, orderDirection],
+  });
+
+  return nextSteps;
+}
 
 type ResolveTraversalPathProperty<
   TSchema extends GraphSchema,

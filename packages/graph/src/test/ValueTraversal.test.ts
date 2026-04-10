@@ -55,6 +55,56 @@ test("ValueTraversal Operations - values() extraction - values() after map extra
   expect(names.includes("Alice")).toBe(true);
 });
 
+test("ValueTraversal Operations - order() operation - order().by() sorts primitive values", () => {
+  const names = Array.from(
+    g
+      .V()
+      .hasLabel("Person")
+      .map((path) => path.value.get("name"))
+      .order()
+      .by()
+      .values(),
+  );
+
+  expect(names.length).toBeGreaterThan(0);
+  expect(names).toEqual([...names].sort());
+});
+
+test("ValueTraversal Operations - order() operation - order().by() sorts unfolded primitive values", () => {
+  const results = Array.from(
+    g
+      .V(alice.id)
+      .map(() => [3, 1, 2])
+      .unfold()
+      .order()
+      .by()
+      .values(),
+  );
+
+  expect(results).toEqual([1, 2, 3]);
+});
+
+test("ValueTraversal Operations - order() operation - order().by(property) sorts object values", () => {
+  const results = Array.from(
+    g
+      .V()
+      .hasLabel("Person")
+      .map((path) => ({
+        bucket: path.value.get("age") >= 35 ? "older" : "younger",
+        name: path.value.get("name"),
+      }))
+      .order()
+      .by("bucket")
+      .by("name")
+      .values(),
+  );
+
+  expect(results.length).toBeGreaterThan(0);
+
+  const keys = results.map(({ bucket, name }) => `${bucket}:${name}`);
+  expect(keys).toEqual([...keys].sort());
+});
+
 test("ValueTraversal Operations - values() extraction - values() on edge traversal", () => {
   const edges = Array.from(g.E().values());
 
