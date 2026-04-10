@@ -1,5 +1,12 @@
 # @codemix/y-graph-storage
 
+## 0.0.4
+
+### Patch Changes
+
+- Updated dependencies [e8213bf]
+  - @codemix/graph@0.2.0
+
 ## 0.0.3
 
 ### Patch Changes
