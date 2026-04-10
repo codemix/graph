@@ -55,6 +55,36 @@ test("ValueTraversal Operations - values() extraction - values() after map extra
   expect(names.includes("Alice")).toBe(true);
 });
 
+test("ValueTraversal Operations - map() operation - map() after values() transforms extracted vertices", () => {
+  const names = Array.from(
+    g
+      .V()
+      .hasLabel("Person")
+      .limit(3)
+      .values()
+      .map((vertex) => vertex.get("name"))
+      .order()
+      .by(),
+  );
+
+  expect(names).toEqual(["Alice", "Bob", "Charlie"]);
+});
+
+test("ValueTraversal Operations - filter() operation - filter() after values() keeps matching vertices", () => {
+  const names = Array.from(
+    g
+      .V()
+      .hasLabel("Person")
+      .values()
+      .filter((vertex) => vertex.get("age") >= 50)
+      .map((vertex) => vertex.get("name"))
+      .order()
+      .by(),
+  );
+
+  expect(names).toEqual(["Fiona", "George"]);
+});
+
 test("ValueTraversal Operations - order() operation - order().by() sorts primitive values", () => {
   const names = Array.from(
     g
@@ -243,10 +273,12 @@ test("ValueTraversal Operations - unfold() operation - unfold() with subsequent 
       .V(alice.id)
       .map(() => [10, 20, 30, 40])
       .unfold()
+      .filter((value) => value >= 20)
+      .map((value) => value / 10)
       .values(),
   );
 
-  expect(results).toEqual([10, 20, 30, 40]);
+  expect(results).toEqual([2, 3, 4]);
 });
 
 test("ValueTraversal Operations - Combined values() and unfold() operations - Select multiple labels, unfold, and extract values", () => {

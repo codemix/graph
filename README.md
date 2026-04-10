@@ -10,11 +10,11 @@ This is the knowledge graph database for the [codemix](https://codemix.com/) pro
 
 ## Packages
 
-| Package                                                  | Version | Description                                                                                 |
-| -------------------------------------------------------- | ------- | ------------------------------------------------------------------------------------------- |
-| [`@codemix/graph`](./packages/graph)                     | 0.0.1   | Core graph database: Cypher queries + type-safe Gremlin-style traversals (`GraphTraversal`) |
-| [`@codemix/text-search`](./packages/text-search)         | 0.0.1   | BM25-based full-text search with English stemming                                           |
-| [`@codemix/y-graph-storage`](./packages/y-graph-storage) | 0.0.1   | [Yjs](https://yjs.dev/) CRDT storage adapter for collaborative/offline-first use            |
+| Package                                                  | Description                                                                                 |
+| -------------------------------------------------------- | ------------------------------------------------------------------------------------------- |
+| [`@codemix/graph`](./packages/graph)                     | Core graph database: Cypher queries + type-safe Gremlin-style traversals (`GraphTraversal`) |
+| [`@codemix/text-search`](./packages/text-search)         | BM25-based full-text search with English stemming                                           |
+| [`@codemix/y-graph-storage`](./packages/y-graph-storage) | [Yjs](https://yjs.dev/) CRDT storage adapter for collaborative/offline-first use            |
 
 ---
 
@@ -72,7 +72,9 @@ const bob = graph.addVertex("Person", { name: "Bob", age: 25 });
 graph.addEdge(alice, "knows", bob, {});
 
 // 4. Query with Cypher
-const results = graph.query("MATCH (a:Person)-[:knows]->(b:Person) RETURN a.name, b.name");
+const results = graph.query(
+  "MATCH (a:Person)-[:knows]->(b:Person) RETURN a.name, b.name",
+);
 // [{ a: { name: "Alice" }, b: { name: "Bob" } }]
 ```
 
